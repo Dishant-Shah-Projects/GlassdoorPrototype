@@ -1,0 +1,21 @@
+CREATE TABLE `GENERAL_REVIEW` (
+  `CompanyId` int NOT NULL,
+  `StudentId` int NOT NULL,
+  `CompanyName` varchar(45) NOT NULL,
+  `Pros` varchar(45) NOT NULL,
+  `Cons` varchar(45) NOT NULL,
+  `Descriptions` varchar(45) NOT NULL,
+  `Rating` int NOT NULL,
+  `EmployeeStatus` enum('Current','Former') DEFAULT NULL,
+  `Status` enum('NotApproved','Approved','Disapproved') DEFAULT NULL,
+  `Helpful` int DEFAULT NULL,
+  `CEOApproval` tinyint DEFAULT NULL,
+  `JobType` enum('FullTime','PartTime','Contract','Intern','Freelance') NOT NULL,
+  `Recommended` tinyint DEFAULT NULL,
+  `JobTitle` varchar(45) DEFAULT NULL,
+  `Headline` varchar(45) NOT NULL,
+  `DatePosted` date NOT NULL,
+  `Response` varchar(45) DEFAULT NULL,
+  `Favorite` tinyint DEFAULT NULL,
+  PRIMARY KEY (`CompanyId`,`StudentId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
