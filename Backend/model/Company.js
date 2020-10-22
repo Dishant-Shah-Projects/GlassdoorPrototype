@@ -1,7 +1,6 @@
 
 var mongoose = require('mongoose');
 
-
 var CompanySchema = new mongoose.Schema({
     CompanyID: {type: String, required: true},
     CompanyName: {type: String, required: true},

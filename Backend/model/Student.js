@@ -5,7 +5,6 @@
 
 var mongoose = require('mongoose');
 
-
 var StudentSchema = new mongoose.Schema({
     StudentID: {type: String, required: true},
     ProfilePicURL: {type: String, required: true},
