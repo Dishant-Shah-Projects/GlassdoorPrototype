@@ -8,7 +8,7 @@ const JobsSchema = new mongoose.Schema({
     type: String,
     enum: ['Open', 'Close'],
   },
-  Industry: { type: String, required: true },
+  Industry: { type: String },
   Remote: {
     type: String,
     enum: ['Remote', 'InPerson'],
@@ -17,27 +17,13 @@ const JobsSchema = new mongoose.Schema({
   City: { type: String, required: true },
   State: { type: String, required: true },
   Country: { type: String, required: true },
-  Zip: { type: Number, required: true },
+  Zip: { type: Number, min: 10000, max: 99999, required: true },
   PostedDate: { type: Date, required: true },
   JobDescription: { type: String, required: true },
   Responsibilities: { type: String, required: true },
   Qualifications: { type: String, required: true },
   ExpectedSalary: { type: Number, required: true },
-  ApplicationsReceived: [
-    {
-      StudentID: Number,
-      StudentName: String,
-      CompanyName: String,
-      Status: {
-        type: String,
-        enum: ['Submitted', 'Reviewed', 'Initial Screening', 'Interviewing', 'Hired', 'Rejected'],
-      },
-      ResumeURL: String,
-      CoverLetterURL: String,
-      Withdrawn: Boolean,
-    },
-  ],
   Votes: { type: Number, required: true },
 });
 
-module.exports = mongoose.model('Jobs', JobsSchema);
+module.exports = mongoose.model('jobs', JobsSchema);

@@ -1,31 +1,61 @@
 const mongoose = require('mongoose');
 
 const StudentSchema = new mongoose.Schema({
-  StudentID: { type: String, required: true },
-  ProfilePicURL: { type: String, required: true },
+  StudentID: { type: Number, required: true },
+  Name: { type: String },
+  ProfilePicURL: { type: String },
   Email: { type: String, required: true },
-  PhoneNo: { type: String, required: true },
-  Website: { type: String, required: true },
-  AboutMe: { type: String, required: true },
-  CurrentJobTitle: { type: String, required: true },
+  PhoneNo: { type: Number },
+  Website: { type: String },
+  AboutMe: { type: String },
+  CurrentJobTitle: { type: String },
   Skills: [{ type: String }],
-  InterviewReview: [
-    {
-      companyID: String,
-      companyName: String,
-      imageURL: String,
-      reviewContent: String,
-    },
-  ],
   SalaryReview: [
     {
-      companyID: String,
-      companyName: String,
-      imageURL: String,
-      reviewContent: String,
+      ReviewID: { type: String },
+      Status: {
+        type: String,
+        enum: ['Not Approved', 'Approved', 'Disapproved'],
+      },
+      DatePosted: { type: Date },
+      BaseSalary: { type: Number },
+      Bonuses: { type: Number },
+      JobTitle: { type: String },
+      Years: { type: Number },
+      StreetAddress: { type: String },
+      State: { type: String },
+      Country: { type: String },
+      Zip: { type: Number, min: 10000, max: 99999 },
     },
   ],
-  ResumePrimary: { type: String, required: true },
+  InterviewReview: [
+    {
+      ReviewID: { type: String },
+      Status: {
+        type: String,
+        enum: ['Not Approved', 'Approved', 'Disapproved'],
+      },
+      Helpful: { type: Number },
+      DatePosted: { type: Date },
+      OverallExperience: {
+        type: String,
+        enum: ['Positive', 'Negative', 'Neutral'],
+      },
+      JobTitle: { type: String },
+      Description: { type: String },
+      Difficulty: {
+        type: String,
+        enum: ['Easy', 'Average', 'Difficult'],
+      },
+      OfferStatus: {
+        type: String,
+        enum: ['Rejected', 'Accepted'],
+      },
+      InterviewQuestions: { type: String },
+      Answers: { type: String },
+    },
+  ],
+  ResumePrimary: { type: String },
   Resumes: [{ type: String }],
   FavouriteJobs: { type: String, required: true },
   JobStatus: {
@@ -33,40 +63,39 @@ const StudentSchema = new mongoose.Schema({
     enum: ['Not Looking', 'Casually Looking', 'Actively Looking'],
     default: 'Actively Looking',
   },
-  JobTitle: { type: String, required: true },
-  TargetSalary: { type: Number, required: true },
-  OpentoRelocation: { type: Boolean, required: true },
-  Industry: { type: String, required: true },
-  Race: { type: String, required: true },
+  JobTitle: { type: String },
+  TargetSalary: { type: Number },
+  OpentoRelocation: { type: Boolean },
+  Industry: { type: String },
+  Race: {
+    type: String,
+    enum: [
+      'Indigenous American or Alaska Native',
+      'East Asian',
+      'South Asian',
+      'Southeast Asian',
+      'Native Hawaiian or Other Pacific Islander',
+      'Middle Eastern',
+      'Black or African American',
+      'Hispanic or Latinx',
+      'White',
+      'Prefer to Self Describe',
+      'Prefer Not to Say',
+    ],
+  },
   Gender: {
     type: String,
     enum: ['Male', 'Female', 'Prefer not to share'],
   },
-  AcceptedReviewCount: { type: Number, required: true },
+  AcceptedReviewCount: { type: Number },
   Disability: {
     type: String,
-    enum: ['Yes', 'No', 'Prefer not to share'],
+    enum: ['Yes', 'No', 'Prefer Not to Say'],
   },
   VeteranStatus: {
     type: String,
-    enum: ['Yes', 'No', 'Prefer not to share'],
+    enum: ['Yes', 'No', 'Prefer Not to Say'],
   },
-  ApplicationsReceived: [
-    {
-      JobID: Number,
-      Title: String,
-      CompanyName: String,
-      Status: {
-        type: String,
-        enum: ['Submitted', 'Reviewed', 'Initial Screening', 'Interviewing', 'Hired', 'Rejected'],
-      },
-      Withdrawn: Boolean,
-      PostedDate: Date,
-      StreetAddress: String,
-      City: String,
-      State: String,
-    },
-  ],
 });
 
-module.exports = mongoose.model('Student', StudentSchema);
+module.exports = mongoose.model('student', StudentSchema);

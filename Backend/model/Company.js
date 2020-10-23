@@ -101,4 +101,5 @@ const CompanySchema = new mongoose.Schema(
   }
 );
 
+CompanySchema.index({ CompanyName: 1 }, { unique: true });
 module.exports = mongoose.model('company', CompanySchema);
