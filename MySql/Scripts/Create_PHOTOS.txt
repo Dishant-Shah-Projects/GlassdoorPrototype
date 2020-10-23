@@ -1,8 +1,0 @@
-CREATE TABLE `PHOTOS` (
-  `CompanyId` int NOT NULL,
-  `StudentId` int NOT NULL,
-  `PhotoURL` varchar(45) NOT NULL,
-  `DateUploaded` varchar(45) DEFAULT NULL,
-  `ApprovalStatus` enum('NotApproved','Approved','Disapproved') DEFAULT NULL,
-  PRIMARY KEY (`CompanyId`,`StudentId`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

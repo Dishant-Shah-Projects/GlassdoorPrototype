@@ -1,8 +1,0 @@
-CREATE TABLE `SIGNUP` (
-  `UserID` int NOT NULL AUTO_INCREMENT,
-  `UserName` varchar(45) NOT NULL,
-  `Password` varchar(45) NOT NULL,
-  `Role` varchar(45) NOT NULL,
-  PRIMARY KEY (`UserID`),
-  UNIQUE KEY `UserID_UNIQUE` (`UserID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
