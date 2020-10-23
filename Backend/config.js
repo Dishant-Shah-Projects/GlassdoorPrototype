@@ -1,6 +1,6 @@
 const config = {
   mongoDB:
-    'mongodb+srv://zillowuser:pranjay01@zillow.nhmgb.mongodb.net/Zillow?retryWrites=true&w=majority',
+    'mongodb+srv://admin:ipPUEZQgUVOiIoz6@cluster0.dg0n5.mongodb.net/Glassdoor?retryWrites=true&w=majority',
   frontendURL: 'http://localhost:3000',
 };
 

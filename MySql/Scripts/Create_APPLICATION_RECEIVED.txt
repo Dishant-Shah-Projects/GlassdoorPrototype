@@ -1,0 +1,10 @@
+CREATE TABLE `APPLICATION_RECEIVED` (
+  `JobId` int NOT NULL,
+  `StudentId` int NOT NULL,
+  `StudentName` varchar(45) NOT NULL,
+  `ResumeURL` varchar(45) DEFAULT NULL,
+  `CoverLetterURL` varchar(45) DEFAULT NULL,
+  `Status` enum('Submitted','reviewed','initial screening','Interviewing','Hired','Rejected') DEFAULT NULL,
+  `Withdrawn` tinyint DEFAULT NULL,
+  PRIMARY KEY (`JobId`,`StudentId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
