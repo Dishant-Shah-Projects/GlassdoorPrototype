@@ -1,17 +1,23 @@
-/* eslint-disable no-console */
-/* eslint-disable func-names */
+if (process.env.NODE_ENV !== 'production') {
+  // eslint-disable-next-line global-require
+  require('dotenv').config();
+}
 const express = require('express');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
 
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const cors = require('cors');
 const { frontendURL, mongoDB } = require('./config');
 const commonPart = require('./Routes/headingRoutes');
-// const mysqlConnection = require("./mysqlConnection");
-// const cors = require('cors');
+const companyRoute = require('./Routes/companyRoutes');
+const studentRoute = require('./Routes/studentRoutes');
+const adminRoute = require('./Routes/adminRoutes');
 
 const app = express();
+
+app.use(cors({ origin: frontendURL, credentials: true }));
 // use express session to maintain session data
 app.use(
   session({
@@ -36,7 +42,7 @@ app.use(function (req, res, next) {
   res.setHeader('Cache-Control', 'no-cache');
   next();
 });
-// app.options('GET,HEAD,POST,PUT,DELETE,OPTIONS', cors());
+
 const options = {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -44,14 +50,23 @@ const options = {
   bufferMaxEntries: 0,
 };
 
+// eslint-disable-next-line no-unused-vars
 mongoose.connect(mongoDB, options, (err, res) => {
   if (err) {
-    console.log('MongoDB connection Failesd', err);
+    // eslint-disable-next-line no-console
+    console.log('MongoDB connection Failed', err);
   } else {
-    console.log('MongoDB Connected Succesfully', res);
+    // eslint-disable-next-line no-console
+    console.log('MongoDB Connected');
   }
 });
 
-app.use('/', commonPart);
+app.use('/glassdoor', commonPart);
+
+app.use('/company', companyRoute);
+
+app.use('/student', studentRoute);
+
+app.use('/admin', adminRoute);
 
 app.listen(3001);

@@ -57,7 +57,7 @@ const StudentSchema = new mongoose.Schema({
   ],
   ResumePrimary: { type: String },
   Resumes: [{ type: String }],
-  FavouriteJobs: { type: String, required: true },
+  FavouriteJobs: { type: String },
   JobStatus: {
     type: String,
     enum: ['Not Looking', 'Casually Looking', 'Actively Looking'],

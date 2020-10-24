@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const CompanySchema = new mongoose.Schema(
   {
     CompanyID: { type: String, required: true },
-    CompanyName: { type: String, required: true },
+    CompanyName: { type: String },
     Website: { type: String },
     Size: { type: Number },
     ProfileImg: { type: String },
@@ -101,5 +101,6 @@ const CompanySchema = new mongoose.Schema(
   }
 );
 
+mongoose.set('useCreateIndex', true);
 CompanySchema.index({ CompanyName: 1 }, { unique: true });
 module.exports = mongoose.model('company', CompanySchema);

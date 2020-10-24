@@ -1,7 +1,3 @@
-if (process.env.NODE_ENV !== 'production') {
-  // eslint-disable-next-line global-require
-  require('dotenv').config();
-}
 const mysql = require('mysql2/promise');
 
 /** Local DB */
