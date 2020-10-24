@@ -1,7 +1,8 @@
-import React, { Component } from "react";
-import LoginHeader from "./LoginHeader";
-import LoginBody from "./LoginBody";
-import "./Login.css";
+import React, { Component } from 'react';
+import LoginHeader from './LoginHeader';
+import LoginBody from './LoginBody';
+import './Login.css';
+
 class Login extends Component {
   constructor(props) {
     super(props);
@@ -9,7 +10,7 @@ class Login extends Component {
   }
   render() {
     return (
-      <div class="pageContentWrapper ">
+      <div className="pageContentWrapper ">
         <div id="PageContent">
           <div id="PageBodyContents" className=" meat">
             <div className="pageInsideContent cf">

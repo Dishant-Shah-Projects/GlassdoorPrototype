@@ -1,6 +1,6 @@
 body {
   color: #20262e;
-  font-family: "Lato", sans-serif;
+  font-family: 'Lato', sans-serif;
   font-size: 15px;
   font-weight: normal;
   font-style: normal;
@@ -276,8 +276,7 @@ a,
   position: relative;
 }
 .search__SearchStyles__searchForm .search__SearchStyles__searchBarLocationInput,
-.search__SearchStyles__searchForm
-  .search__SearchStyles__searchKeywordContainer {
+.search__SearchStyles__searchForm .search__SearchStyles__searchKeywordContainer {
   -webkit-flex-shrink: 1;
   -ms-flex-negative: 1;
   flex-shrink: 1;
@@ -326,7 +325,7 @@ a,
 }
 input {
   color: #20262e;
-  font-family: "Lato", sans-serif;
+  font-family: 'Lato', sans-serif;
 }
 .css-1etjok6 {
   box-sizing: border-box;
@@ -336,7 +335,7 @@ input {
   padding: 0 12px;
   padding-right: 12px;
   padding-left: 12px;
-  font-family: "Lato", sans-serif;
+  font-family: 'Lato', sans-serif;
   color: #505863;
   width: 100%;
   line-height: normal;
@@ -384,7 +383,7 @@ input {
   flex: 0 0 50%;
   max-width: 50%;
 }
-[class*="col-"] {
+[class*='col-'] {
   padding-right: 8px;
   padding-left: 8px;
 }
@@ -693,7 +692,7 @@ input {
   flex: 0 0 33.33333333%;
   max-width: 33.33333333%;
 }
-[class*="col-"] {
+[class*='col-'] {
   padding-right: 6px;
   padding-left: 6px;
 }
@@ -710,8 +709,7 @@ input {
 .p-0 {
   padding: 0 !important;
 }
-.search__SearchStyles__searchForm
-  .search__SearchStyles__searchBarLocationInput {
+.search__SearchStyles__searchForm .search__SearchStyles__searchBarLocationInput {
   min-width: 160px;
 }
 .flex-row {
@@ -751,7 +749,7 @@ input {
   vertical-align: middle;
   -webkit-transition: color 0.2s ease-out, background-color 0.2s ease-out;
   transition: color 0.2s ease-out, background-color 0.2s ease-out;
-  font-family: "Lato";
+  font-family: 'Lato';
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -819,9 +817,9 @@ p {
   -webkit-font-variant-ligatures: no-common-ligatures;
   -moz-font-variant-ligatures: no-common-ligatures;
   font-variant-ligatures: no-common-ligatures;
-  -webkit-font-feature-settings: "liga" 0, "clig" 0;
-  -moz-font-feature-settings: "liga" 0, "clig" 0;
-  font-feature-settings: "liga" 0, "clig" 0;
+  -webkit-font-feature-settings: 'liga' 0, 'clig' 0;
+  -moz-font-feature-settings: 'liga' 0, 'clig' 0;
+  font-feature-settings: 'liga' 0, 'clig' 0;
 }
 h1,
 h2,
@@ -876,7 +874,7 @@ h2 {
   vertical-align: middle;
   -webkit-transition: color 0.2s ease-out, background-color 0.2s ease-out;
   transition: color 0.2s ease-out, background-color 0.2s ease-out;
-  font-family: "Lato";
+  font-family: 'Lato';
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -927,4 +925,9 @@ a.css-1s7hc3h:visited {
 .mx-xsm {
   margin-right: 8px !important;
   margin-left: 8px !important;
+}
+
+.popup__PopupStyles__popupContentActive {
+  opacity: 1;
+  z-index: 9000;
 }

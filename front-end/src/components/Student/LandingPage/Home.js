@@ -1,13 +1,14 @@
-import React, { Component } from "react";
-import Navbar from "../Common/Navbar";
-import LeftBlock from "./LeftBlock";
-import RightBlock from "./RightBlock";
-import "./Home.css";
+import React, { Component } from 'react';
+import Navbar from '../Common/Navbar';
+import LeftBlock from './LeftBlock';
+import RightBlock from './RightBlock';
+import './Home.css';
 class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {};
   }
+
   render() {
     return (
       <div>

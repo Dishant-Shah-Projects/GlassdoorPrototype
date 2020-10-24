@@ -23,8 +23,8 @@ section.lockedHero .bannerImage {
   width: 4020px;
 }
 section.lockedHero .bannerImage .bannerImageLeft {
-  background: url(https://www.glassdoor.com/app/static/img/home/vr.jpg?v=79eecfy37)
-    no-repeat top right;
+  background: url(https://www.glassdoor.com/app/static/img/home/vr.jpg?v=79eecfy37) no-repeat top
+    right;
   -webkit-background-size: cover;
   background-size: cover;
 }
@@ -41,8 +41,8 @@ section.lockedHero .bannerImage .bannerImageLeft,
   height: 594px;
 }
 section.lockedHero .bannerImage .bannerImageCenter {
-  background: url(https://www.glassdoor.com/app/static/img/home/drone.jpg?v=46ac5evpx)
-    no-repeat top right;
+  background: url(https://www.glassdoor.com/app/static/img/home/drone.jpg?v=46ac5evpx) no-repeat top
+    right;
   width: 100%;
   -webkit-background-size: cover;
   background-size: cover;
@@ -60,8 +60,8 @@ section.lockedHero .bannerImage .bannerImageLeft,
   height: 594px;
 }
 section.lockedHero .bannerImage .bannerImageRight {
-  background: url(https://www.glassdoor.com/app/static/img/home/office.jpg?v=7f41fdy6h)
-    no-repeat top right;
+  background: url(https://www.glassdoor.com/app/static/img/home/office.jpg?v=7f41fdy6h) no-repeat
+    top right;
   -webkit-background-size: cover;
   background-size: cover;
 }
@@ -155,9 +155,9 @@ h6,
   -webkit-font-variant-ligatures: no-common-ligatures;
   -moz-font-variant-ligatures: no-common-ligatures;
   font-variant-ligatures: no-common-ligatures;
-  -moz-font-feature-settings: "liga" 0, "clig" 0;
-  -webkit-font-feature-settings: "liga" 0, "clig" 0;
-  font-feature-settings: "liga" 0, "clig" 0;
+  -moz-font-feature-settings: 'liga' 0, 'clig' 0;
+  -webkit-font-feature-settings: 'liga' 0, 'clig' 0;
+  font-feature-settings: 'liga' 0, 'clig' 0;
   font-weight: 400;
 }
 h1,
@@ -265,8 +265,8 @@ section.lockedHero .lockedSignUp .post-job,
 .lockedSignUp .gdUserLogin .legalText,
 .lockedSignUp .gdUserLogin .legalText a.link,
 .lockedSignUp .gdUserLogin .orText,
-.lockedSignUp .gdUserLogin [data-test="error"],
-.lockedSignUp .gdUserLogin [data-test="helper"] {
+.lockedSignUp .gdUserLogin [data-test='error'],
+.lockedSignUp .gdUserLogin [data-test='helper'] {
   color: #fff !important;
 }
 input,
@@ -285,7 +285,7 @@ textarea,
   font-size: 15px;
   font-style: normal;
   font-weight: normal;
-  font-family: "Lato", sans-serif;
+  font-family: 'Lato', sans-serif;
   font-smooth: always;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -419,4 +419,23 @@ button.css-8i7bc2[disabled] {
   line-height: 20px;
   padding: 5px 0px 0px 12px;
   color: rgb(217, 62, 48);
+}
+.css-w6c9ax {
+  padding-bottom: 4px;
+  transform-origin: 0px 50%;
+  transition: transform 0.2s ease 0s;
+  position: relative;
+  z-index: 1;
+  color: rgb(133, 140, 148);
+  font-size: 16px;
+  top: 37px;
+  margin-top: -23px;
+  left: 12px;
+  transform: scale(0.75) translateY(-14px);
+}
+.css-5eiq8t {
+  font-size: 12px;
+  line-height: 20px;
+  padding: 5px 0px 0px 12px;
+  color: rgb(217, 62, 48) !important;
 }

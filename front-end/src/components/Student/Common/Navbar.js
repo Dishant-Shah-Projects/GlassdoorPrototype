@@ -1,28 +1,79 @@
-import React, { Component } from "react";
-import "./Navbar.css";
+import React, { Component } from 'react';
+import './Navbar.css';
+import { updateSearcFilter } from '../../../constants/action-types';
+import { connect } from 'react-redux';
+import { Redirect } from 'react-router';
+import axios from 'axios';
+import serverUrl from '../../../config';
+
 class Navbar extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = { filterDropDownOpen: false };
   }
+
+  openFilterDropDown = () => {
+    this.setState({
+      filterDropDownOpen: !this.state.filterDropDownOpen,
+    });
+  };
+
+  updateSearchFilter = (event, selectedDropDown) => {
+    event.preventDefault();
+    const payload = {
+      selectedDropDown,
+    };
+    this.props.updateSearcFilter(payload);
+  };
+
+  showMainMenu = (event) => {
+    event.preventDefault();
+    const payload = {
+      mainDropDown: !this.props.searchDropDownStore.mainDropDown,
+    };
+    this.props.updateSearcFilter(payload);
+  };
+
+  mainMenuClicked = (event, selectedMenuoption) => {
+    if (selectedMenuoption === 'Sign Out') {
+      localStorage.clear();
+      axios.post(serverUrl + 'glassdoor/logout').then((response) => {
+        if (response.status === 200) {
+        }
+      });
+    }
+  };
+
   render() {
+    let redirectVar = null;
+    if (localStorage.getItem('token')) {
+      if (localStorage.getItem('userrole') === 'student') {
+        redirectVar = null;
+      } else if (localStorage.getItem('userrole') === 'company') {
+        redirectVar = <Redirect to="/home" />;
+      }
+    } else {
+      redirectVar = <Redirect to="/login" />;
+    }
     return (
       <header id="SiteNav">
+        {redirectVar}
         <nav className="d-flex align-items-center memberHeader__HeaderStyles__navigationBackground memberHeader__HeaderStyles__relativePosition">
           <div className="col memberHeader__HeaderStyles__bottomShadow">
             <div className="memberHeader__HeaderStyles__navigationWrapper">
               <div className="d-flex justify-content-between align-items-center px-std px-md-lg memberHeader__HeaderStyles__mainNav">
                 <div className="d-flex order-0 order-md-6">
-                  <div class="d-none d-md-flex">
+                  <div className="d-none d-md-flex">
                     <div>
                       <div
-                        class="d-flex "
+                        onClick={this.showMainMenu}
+                        className="d-flex "
                         data-test="user-profile-dropdown-trigger"
                       >
-                        <span class="SVGInline d-flex icon__IconStyles__colorDefault">
+                        <span className="SVGInline d-flex icon__IconStyles__colorDefault">
                           <svg
-                            class="SVGInline-svg d-flex-svg icon__IconStyles__colorDefault-svg"
-                            style={{ width: "36px", height: "36px" }}
+                            className="SVGInline-svg d-flex-svg icon__IconStyles__colorDefault-svg"
+                            style={{ width: '36px', height: '36px' }}
                             xmlns="http://www.w3.org/2000/svg"
                             width="24"
                             height="24"
@@ -36,75 +87,97 @@ class Navbar extends Component {
                           </svg>
                         </span>
                       </div>
-                      <div class="popup__PopupStyles__popupContainer">
-                        <div class="pt-xxsm popup__PopupStyles__popupContent popup__PopupStyles__popupContentRight  ">
-                          <div class="popup__PopupStyles__popupBackground">
-                            <div class="d-flex flex-column col">
-                              <div class="accountPopup__AccountPopupStyles__menuContainer">
-                                <div class="accountPopup__AccountPopupStyles__accountMenu accountPopup__AccountPopupStyles__active">
-                                  <ul class="p-0 m-0 memberHeader__HeaderStyles__list">
-                                    <li class="p-0 m-0">
+                      <div className="popup__PopupStyles__popupContainer">
+                        <div
+                          className={`pt-xxsm popup__PopupStyles__popupContent popup__PopupStyles__popupContentRight ${
+                            this.props.searchDropDownStore.mainDropDown
+                              ? 'popup__PopupStyles__popupContentActive'
+                              : ''
+                          }`}
+                        >
+                          <div className="popup__PopupStyles__popupBackground">
+                            <div className="d-flex flex-column col">
+                              <div className="accountPopup__AccountPopupStyles__menuContainer">
+                                <div className="accountPopup__AccountPopupStyles__accountMenu accountPopup__AccountPopupStyles__active">
+                                  <ul className="p-0 m-0 memberHeader__HeaderStyles__list">
+                                    <li
+                                      onClick={(event) => this.mainMenuClicked(event, 'Profile')}
+                                      className="p-0 m-0"
+                                    >
                                       <a
-                                        class="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
+                                        className="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
                                         href="/member/profile/index.htm"
                                         target="_top"
                                         rel="nofollow"
                                         data-ga-lbl="My Profile"
                                       >
-                                        <div class="d-flex align-items-center py-std col header-menu-item-label">
-                                          <span class="col">
-                                            <span class="menuItem__MenuItemStyles__menuItemColor">
+                                        <div className="d-flex align-items-center py-std col header-menu-item-label">
+                                          <span className="col">
+                                            <span className="menuItem__MenuItemStyles__menuItemColor">
                                               Profile
                                             </span>
                                           </span>
                                         </div>
                                       </a>
                                     </li>
-                                    <li class="p-0 m-0">
+                                    <li
+                                      onClick={(event) => this.mainMenuClicked(event, 'Resumes')}
+                                      className="p-0 m-0"
+                                    >
                                       <a
-                                        class="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
+                                        className="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
                                         href="/member/profile/resumes.htm"
                                         target="_top"
                                         rel="nofollow"
                                         data-ga-lbl="My Resumes"
                                       >
-                                        <div class="d-flex align-items-center py-std col header-menu-item-label">
-                                          <span class="col">
-                                            <span class="menuItem__MenuItemStyles__menuItemColor">
+                                        <div className="d-flex align-items-center py-std col header-menu-item-label">
+                                          <span className="col">
+                                            <span className="menuItem__MenuItemStyles__menuItemColor">
                                               Resumes
                                             </span>
                                           </span>
                                         </div>
                                       </a>
                                     </li>
-                                    <li class="p-0 m-0">
+                                    <li
+                                      onClick={(event) =>
+                                        this.mainMenuClicked(event, 'Job Preferences')
+                                      }
+                                      className="p-0 m-0"
+                                    >
                                       <a
-                                        class="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
+                                        className="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
                                         href="/member/profile/preferences.htm"
                                         target="_top"
                                         rel="nofollow"
                                         data-ga-lbl="Job Preferences"
                                       >
-                                        <div class="d-flex align-items-center py-std col header-menu-item-label">
-                                          <span class="col">
-                                            <span class="menuItem__MenuItemStyles__menuItemColor">
+                                        <div className="d-flex align-items-center py-std col header-menu-item-label">
+                                          <span className="col">
+                                            <span className="menuItem__MenuItemStyles__menuItemColor">
                                               Job Preferences
                                             </span>
                                           </span>
                                         </div>
                                       </a>
                                     </li>
-                                    <li class="p-0 m-0">
+                                    <li
+                                      onClick={(event) =>
+                                        this.mainMenuClicked(event, 'Demographics')
+                                      }
+                                      className="p-0 m-0"
+                                    >
                                       <a
-                                        class="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
+                                        className="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
                                         href="/member/profile/demographics.htm"
                                         target="_top"
                                         rel="nofollow"
                                         data-ga-lbl="Demographics"
                                       >
-                                        <div class="d-flex align-items-center py-std col header-menu-item-label">
-                                          <span class="col">
-                                            <span class="menuItem__MenuItemStyles__menuItemColor">
+                                        <div className="d-flex align-items-center py-std col header-menu-item-label">
+                                          <span className="col">
+                                            <span className="menuItem__MenuItemStyles__menuItemColor">
                                               Demographics
                                             </span>
                                           </span>
@@ -112,72 +185,70 @@ class Navbar extends Component {
                                       </a>
                                     </li>
                                   </ul>
-                                  <ul class="p-0 m-0 memberHeader__HeaderStyles__list">
-                                    <li class="p-0 m-0">
+                                  <ul className="p-0 m-0 memberHeader__HeaderStyles__list">
+                                    <li
+                                      onClick={(event) =>
+                                        this.mainMenuClicked(event, 'Contributions')
+                                      }
+                                      className="p-0 m-0"
+                                    >
                                       <a
-                                        class="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
+                                        className="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
                                         href="/member/account/salaries_input.htm"
                                         target="_top"
                                         rel="nofollow"
                                         data-ga-lbl="Contributions"
                                       >
-                                        <div class="d-flex align-items-center py-std col header-menu-item-label">
-                                          <span class="col">
-                                            <span class="menuItem__MenuItemStyles__menuItemColor">
+                                        <div className="d-flex align-items-center py-std col header-menu-item-label">
+                                          <span className="col">
+                                            <span className="menuItem__MenuItemStyles__menuItemColor">
                                               Contributions
                                             </span>
                                           </span>
                                         </div>
                                       </a>
                                     </li>
-                                    <li class="p-0 m-0">
+                                    <li
+                                      onClick={(event) =>
+                                        this.mainMenuClicked(event, 'Company Follows')
+                                      }
+                                      className="p-0 m-0"
+                                    >
                                       <a
-                                        class="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
+                                        className="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
                                         href="/member/account/followedCompanies_input.htm"
                                         target="_top"
                                         rel="nofollow"
                                         data-ga-lbl="Company Follows"
                                       >
-                                        <div class="d-flex align-items-center py-std col header-menu-item-label">
-                                          <span class="col">
-                                            <span class="menuItem__MenuItemStyles__menuItemColor">
+                                        <div className="d-flex align-items-center py-std col header-menu-item-label">
+                                          <span className="col">
+                                            <span className="menuItem__MenuItemStyles__menuItemColor">
                                               Company Follows
                                             </span>
                                           </span>
                                         </div>
                                       </a>
                                     </li>
-                                    <li class="p-0 m-0">
-                                      <a
-                                        class="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
-                                        href="/member/account/emailSettings_input.htm"
-                                        target="_top"
-                                        rel="nofollow"
-                                        data-ga-lbl="Email &amp; Alerts"
-                                      >
-                                        <div class="d-flex align-items-center py-std col header-menu-item-label">
-                                          <span class="col">
-                                            <span class="menuItem__MenuItemStyles__menuItemColor">
-                                              Emails &amp; Alerts
-                                            </span>
-                                          </span>
-                                        </div>
-                                      </a>
-                                    </li>
                                   </ul>
-                                  <ul class="p-0 m-0 memberHeader__HeaderStyles__list">
-                                    <li class="p-0 m-0">
+                                  <ul className="p-0 m-0 memberHeader__HeaderStyles__list">
+                                    <li
+                                      onClick={(event) =>
+                                        this.mainMenuClicked(event, 'Account Settings')
+                                      }
+                                      className="p-0 m-0"
+                                    >
                                       <a
-                                        class="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
+                                        className="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
                                         href="/member/account/settings_input.htm"
                                         target="_top"
                                         rel="nofollow"
                                         data-ga-lbl="Account"
                                         data-test="account-settings"
                                       >
-                                        <div class="d-flex align-items-center py-std col header-menu-item-label">
-                                          <span class="col">
-                                            <span class="menuItem__MenuItemStyles__menuItemColor">
+                                        <div className="d-flex align-items-center py-std col header-menu-item-label">
+                                          <span className="col">
+                                            <span className="menuItem__MenuItemStyles__menuItemColor">
                                               Account Settings
                                             </span>
                                           </span>
@@ -185,37 +256,22 @@ class Navbar extends Component {
                                       </a>
                                     </li>
                                   </ul>
-                                  <ul class="p-0 m-0 memberHeader__HeaderStyles__list">
-                                    <li class="p-0 m-0">
+                                  <ul className="p-0 m-0 memberHeader__HeaderStyles__list">
+                                    <li
+                                      onClick={(event) => this.mainMenuClicked(event, 'Sign Out')}
+                                      className="p-0 m-0"
+                                    >
                                       <a
-                                        class="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
-                                        href="http://help.glassdoor.com/GlassDoorHome/en_US"
-                                        target="_blank"
-                                        rel="nofollow"
-                                        data-ga-lbl="Account"
-                                        data-test="help-center"
-                                      >
-                                        <div class="d-flex align-items-center py-std col header-menu-item-label">
-                                          <span class="col">
-                                            <span class="menuItem__MenuItemStyles__menuItemColor">
-                                              Help Center
-                                            </span>
-                                          </span>
-                                        </div>
-                                      </a>
-                                    </li>
-                                    <li class="p-0 m-0">
-                                      <a
-                                        class="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
+                                        className="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
                                         href="/logout.htm"
                                         target=""
                                         rel=""
                                         data-ga-lbl="Sign Out"
                                         data-test="sign-out"
                                       >
-                                        <div class="d-flex align-items-center py-std col header-menu-item-label">
-                                          <span class="col">
-                                            <span class="menuItem__MenuItemStyles__menuItemColor">
+                                        <div className="d-flex align-items-center py-std col header-menu-item-label">
+                                          <span className="col">
+                                            <span className="menuItem__MenuItemStyles__menuItemColor">
                                               Sign Out
                                             </span>
                                           </span>
@@ -224,7 +280,7 @@ class Navbar extends Component {
                                     </li>
                                   </ul>
                                 </div>
-                                <div class="accountPopup__AccountPopupStyles__notificationMenu accountPopup__AccountPopupStyles__inactive">
+                                <div className="accountPopup__AccountPopupStyles__notificationMenu accountPopup__AccountPopupStyles__inactive">
                                   <div></div>
                                 </div>
                               </div>
@@ -237,16 +293,16 @@ class Navbar extends Component {
                 </div>
 
                 <div className="d-flex order-1 order-md-5">
-                  <div class="d-none d-md-flex">
-                    <div class="mr-std">
+                  <div className="d-none d-md-flex">
+                    <div className="mr-std">
                       <div
                         data-test="notifications-tray"
-                        class="notification__NotificationStyles__notificationsIconContainer"
+                        className="notification__NotificationStyles__notificationsIconContainer"
                       >
-                        <span class="SVGInline d-flex icon__IconStyles__colorDefault">
+                        <span className="SVGInline d-flex icon__IconStyles__colorDefault">
                           <svg
-                            class="SVGInline-svg d-flex-svg icon__IconStyles__colorDefault-svg"
-                            style={{ width: "36px", height: "36px" }}
+                            className="SVGInline-svg d-flex-svg icon__IconStyles__colorDefault-svg"
+                            style={{ width: '36px', height: '36px' }}
                             xmlns="http://www.w3.org/2000/svg"
                             width="24"
                             height="24"
@@ -273,9 +329,9 @@ class Navbar extends Component {
                     data-test="header-glassdoor-logo"
                     aria-label="Glassdoor Logo"
                   >
-                    <span class="SVGInline d-flex align-items-center memberHeader__HeaderStyles__brandLogo">
+                    <span className="SVGInline d-flex align-items-center memberHeader__HeaderStyles__brandLogo">
                       <svg
-                        class="SVGInline-svg d-flex-svg align-items-center-svg memberHeader__HeaderStyles__brandLogo-svg"
+                        className="SVGInline-svg d-flex-svg align-items-center-svg memberHeader__HeaderStyles__brandLogo-svg"
                         xmlns="http://www.w3.org/2000/svg"
                         width="122"
                         height="24"
@@ -293,15 +349,15 @@ class Navbar extends Component {
                 </div>
 
                 <div className="d-flex col justify-content-end order-3">
-                  <div class="d-flex d-md-none pr-std">
+                  <div className="d-flex d-md-none pr-std">
                     <button
                       type="button"
-                      class="p-0 search__SearchStyles__iconBtn"
+                      className="p-0 search__SearchStyles__iconBtn"
                       data-test="icon-search-menu-open-trigger"
                     >
-                      <span class="SVGInline d-flex search__SearchStyles__colorDefault">
+                      <span className="SVGInline d-flex search__SearchStyles__colorDefault">
                         <svg
-                          class="SVGInline-svg d-flex-svg search__SearchStyles__colorDefault-svg"
+                          className="SVGInline-svg d-flex-svg search__SearchStyles__colorDefault-svg"
                           xmlns="http://www.w3.org/2000/svg"
                           width="24"
                           height="24"
@@ -317,15 +373,15 @@ class Navbar extends Component {
                     </button>
                   </div>
 
-                  <div class="d-none d-md-flex d-lg-none px-xxl py-std col search__SearchStyles__searchForm">
+                  <div className="d-none d-md-flex d-lg-none px-xxl py-std col search__SearchStyles__searchForm">
                     <div
-                      class="d-flex col search__SearchStyles__searchKeywordContainer"
+                      className="d-flex col search__SearchStyles__searchKeywordContainer"
                       data-test="input-search-menu-open-trigger"
                     >
-                      <label class="d-flex align-items-center search__SearchStyles__searchInputLabel">
-                        <span class="SVGInline d-flex search__SearchStyles__searchIcon">
+                      <label className="d-flex align-items-center search__SearchStyles__searchInputLabel">
+                        <span className="SVGInline d-flex search__SearchStyles__searchIcon">
                           <svg
-                            class="SVGInline-svg d-flex-svg search__SearchStyles__searchIcon-svg"
+                            className="SVGInline-svg d-flex-svg search__SearchStyles__searchIcon-svg"
                             xmlns="http://www.w3.org/2000/svg"
                             width="24"
                             height="24"
@@ -339,56 +395,48 @@ class Navbar extends Component {
                           </svg>
                         </span>
                       </label>
-                      <div class="col headerSearchInput css-1ohf0ui">
-                        <div class="input-wrapper css-q444d9">
+                      <div className="col headerSearchInput css-1ohf0ui">
+                        <div className="input-wrapper css-q444d9">
                           <input
                             type="text"
                             placeholder="Job Title, Keywords, or Company"
                             data-test=""
                             aria-label=""
                             value=""
-                            class="css-1etjok6"
+                            className="css-1etjok6"
                           />
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  <div class="d-none d-lg-flex col px-xxl py-std ">
+                  <div className="d-none d-lg-flex col px-xxl py-std ">
                     <form
                       id="scBar"
                       action="/Job/jobs.htm"
                       method="GET"
                       target="_top"
                       novalidate=""
-                      class="col search__SearchStyles__searchForm"
+                      className="col search__SearchStyles__searchForm"
                       data-test="search-bar-form"
                     >
-                      <div class="d-flex flex-row align-items-center">
+                      <div className="d-flex flex-row align-items-center">
                         <input type="hidden" name="suggestCount" value="0" />
-                        <input
-                          type="hidden"
-                          name="suggestChosen"
-                          value="false"
-                        />
-                        <input
-                          type="hidden"
-                          name="clickSource"
-                          value="searchBtn"
-                        />
+                        <input type="hidden" name="suggestChosen" value="false" />
+                        <input type="hidden" name="clickSource" value="searchBtn" />
                         <input type="hidden" name="typedKeyword" value="" />
                         <input type="hidden" name="locT" value="C" />
                         <input type="hidden" name="locId" value="1147436" />
                         <input type="hidden" name="jobType" value="" />
                         <input type="hidden" name="context" value="Jobs" />
-                        <div class="d-flex col-6 p-0 search__SearchStyles__searchKeywordContainer">
+                        <div className="d-flex col-6 p-0 search__SearchStyles__searchKeywordContainer">
                           <label
                             for="sc.keyword"
-                            class="d-flex align-items-center search__SearchStyles__searchInputLabel"
+                            className="d-flex align-items-center search__SearchStyles__searchInputLabel"
                           >
-                            <span class="SVGInline d-flex search__SearchStyles__searchIcon">
+                            <span className="SVGInline d-flex search__SearchStyles__searchIcon">
                               <svg
-                                class="SVGInline-svg d-flex-svg search__SearchStyles__searchIcon-svg"
+                                className="SVGInline-svg d-flex-svg search__SearchStyles__searchIcon-svg"
                                 xmlns="http://www.w3.org/2000/svg"
                                 width="24"
                                 height="24"
@@ -402,8 +450,8 @@ class Navbar extends Component {
                               </svg>
                             </span>
                           </label>
-                          <div class="col headerSearchInput css-1ohf0ui">
-                            <div class="input-wrapper css-q444d9">
+                          <div className="col headerSearchInput css-1ohf0ui">
+                            <div className="input-wrapper css-q444d9">
                               <input
                                 type="text"
                                 id="sc.keyword"
@@ -412,48 +460,59 @@ class Navbar extends Component {
                                 data-test="search-bar-keyword-input"
                                 aria-label=""
                                 value=""
-                                class="css-1etjok6"
+                                className="css-1etjok6"
                                 autocomplete="off"
                               />
                               <div
-                                class="autocomplete-suggestions "
+                                className="autocomplete-suggestions "
                                 style={{
-                                  width: "399px",
-                                  left: "0px",
-                                  top: "41px",
-                                  display: "none",
+                                  width: '399px',
+                                  left: '0px',
+                                  top: '41px',
+                                  display: 'none',
                                 }}
                               ></div>
                             </div>
                           </div>
                         </div>
-                        <div class="ml-xsm search__SearchStyles__searchDropdown css-1ohf0ui">
+                        <div
+                          onClick={this.openFilterDropDown}
+                          className="ml-xsm search__SearchStyles__searchDropdown css-1ohf0ui"
+                        >
                           <select
                             data-test="search-bar-context-picker"
                             name="dropdown"
-                            style={{ display: "none" }}
+                            style={{ display: 'none' }}
                             aria-label=""
                           >
-                            <option selected="" value="0" checked=""></option>
+                            <option value="0"></option>
                             <option value="1"></option>
                             <option value="2"></option>
                             <option value="3"></option>
                           </select>
                           <div
                             tabindex="0"
-                            style={{ width: "132px" }}
+                            style={{ width: '132px' }}
                             direction="auto"
                             aria-expanded="false"
                             role="listbox"
                             aria-activedescendant="option_0_70d7575-d1fd-b3f8-b731-6ee81f80f30"
                             aria-label=""
-                            class="css-1o72mdj"
+                            className="css-1o72mdj"
                           >
-                            <div class="selectedLabel">
-                              Jobs
-                              <span alt="" class="SVGInline arrowDown">
+                            <div className="selectedLabel">
+                              {this.props.searchDropDownStore.selectedDropDown}
+                              <span
+                                alt=""
+                                style={
+                                  this.state.filterDropDownOpen
+                                    ? { transform: 'rotate(180deg)' }
+                                    : {}
+                                }
+                                className="SVGInline arrowDown"
+                              >
                                 <svg
-                                  class="SVGInline-svg arrowDown-svg"
+                                  className="SVGInline-svg arrowDown-svg"
                                   xmlns="http://www.w3.org/2000/svg"
                                   width="24"
                                   height="24"
@@ -466,9 +525,12 @@ class Navbar extends Component {
                                   ></path>
                                 </svg>
                               </span>
-                              <span alt="" class="SVGInline arrowUp">
+                              {/*<span alt="" className="SVGInline arrowUp">
                                 <svg
-                                  class="SVGInline-svg arrowUp-svg"
+                                  className={`SVGInline-svg ${this.state.filterDropDownOpen
+                                      ? 'arrowUp - svg'
+                                      : 'arrowDown-svg'
+                                    }`}
                                   xmlns="http://www.w3.org/2000/svg"
                                   width="24"
                                   height="24"
@@ -480,126 +542,153 @@ class Navbar extends Component {
                                     fill="currentColor"
                                   ></path>
                                 </svg>
-                              </span>
+                                  </span>*/}
                             </div>
-                            <div class="dropdownOptions dropdownCollapsed animated  ">
-                              <div class="dropDownOptionsContainer">
-                                <ul>
-                                  <li
-                                    class="dropdownOption  checked "
-                                    role="option"
-                                    aria-selected="true"
-                                    id="option_0"
-                                  >
-                                    <div class="checkmark">
-                                      <span alt="" class="SVGInline">
-                                        <svg
-                                          class="SVGInline-svg"
-                                          xmlns="http://www.w3.org/2000/svg"
-                                          width="24"
-                                          height="24"
-                                          viewBox="0 0 24 24"
-                                        >
-                                          <path
-                                            d="M9.89 15.76l-2.64-2.363a.793.793 0 010-1.157.884.884 0 011.211 0l2.039 1.785 5.039-5.785a.884.884 0 011.21 0 .793.793 0 010 1.157L11.1 15.76a.884.884 0 01-1.21 0z"
-                                            fill="currentColor"
-                                            fill-rule="evenodd"
-                                          ></path>
-                                        </svg>
-                                      </span>
-                                    </div>
-                                    <span class="dropdownOptionLabel">
-                                      Jobs
-                                    </span>
-                                  </li>
-                                  <li
-                                    class="dropdownOption   "
-                                    role="option"
-                                    aria-selected="false"
-                                    id="option_1"
-                                  >
-                                    <div class="checkmark">
-                                      <span alt="" class="SVGInline">
-                                        <svg
-                                          class="SVGInline-svg"
-                                          xmlns="http://www.w3.org/2000/svg"
-                                          width="24"
-                                          height="24"
-                                          viewBox="0 0 24 24"
-                                        >
-                                          <path
-                                            d="M9.89 15.76l-2.64-2.363a.793.793 0 010-1.157.884.884 0 011.211 0l2.039 1.785 5.039-5.785a.884.884 0 011.21 0 .793.793 0 010 1.157L11.1 15.76a.884.884 0 01-1.21 0z"
-                                            fill="currentColor"
-                                            fill-rule="evenodd"
-                                          ></path>
-                                        </svg>
-                                      </span>
-                                    </div>
-                                    <span class="dropdownOptionLabel">
-                                      Companies
-                                    </span>
-                                  </li>
-                                  <li
-                                    class="dropdownOption   "
-                                    role="option"
-                                    aria-selected="false"
-                                    id="option_2"
-                                  >
-                                    <div class="checkmark">
-                                      <span alt="" class="SVGInline">
-                                        <svg
-                                          class="SVGInline-svg"
-                                          xmlns="http://www.w3.org/2000/svg"
-                                          width="24"
-                                          height="24"
-                                          viewBox="0 0 24 24"
-                                        >
-                                          <path
-                                            d="M9.89 15.76l-2.64-2.363a.793.793 0 010-1.157.884.884 0 011.211 0l2.039 1.785 5.039-5.785a.884.884 0 011.21 0 .793.793 0 010 1.157L11.1 15.76a.884.884 0 01-1.21 0z"
-                                            fill="currentColor"
-                                            fill-rule="evenodd"
-                                          ></path>
-                                        </svg>
-                                      </span>
-                                    </div>
-                                    <span class="dropdownOptionLabel">
-                                      Salaries
-                                    </span>
-                                  </li>
-                                  <li
-                                    class="dropdownOption   "
-                                    role="option"
-                                    aria-selected="false"
-                                    id="option_3"
-                                  >
-                                    <div class="checkmark">
-                                      <span alt="" class="SVGInline">
-                                        <svg
-                                          class="SVGInline-svg"
-                                          xmlns="http://www.w3.org/2000/svg"
-                                          width="24"
-                                          height="24"
-                                          viewBox="0 0 24 24"
-                                        >
-                                          <path
-                                            d="M9.89 15.76l-2.64-2.363a.793.793 0 010-1.157.884.884 0 011.211 0l2.039 1.785 5.039-5.785a.884.884 0 011.21 0 .793.793 0 010 1.157L11.1 15.76a.884.884 0 01-1.21 0z"
-                                            fill="currentColor"
-                                            fill-rule="evenodd"
-                                          ></path>
-                                        </svg>
-                                      </span>
-                                    </div>
-                                    <span class="dropdownOptionLabel">
-                                      Interviews
-                                    </span>
-                                  </li>
-                                </ul>
+                            {this.state.filterDropDownOpen ? (
+                              <div className="dropdownOptions dropdownCollapsed animated  ">
+                                <div className="dropDownOptionsContainer">
+                                  <ul>
+                                    <li
+                                      onClick={(event) => this.updateSearchFilter(event, 'Jobs')}
+                                      className={`dropdownOption  ${
+                                        this.props.searchDropDownStore.selectedDropDown === 'Jobs'
+                                          ? 'checked'
+                                          : ''
+                                      } `}
+                                      role="option"
+                                      aria-selected="true"
+                                      id="option_0"
+                                    >
+                                      <div className="checkmark">
+                                        <span alt="" className="SVGInline">
+                                          <svg
+                                            className="SVGInline-svg"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="24"
+                                            height="24"
+                                            viewBox="0 0 24 24"
+                                          >
+                                            <path
+                                              d="M9.89 15.76l-2.64-2.363a.793.793 0 010-1.157.884.884 0 011.211 0l2.039 1.785 5.039-5.785a.884.884 0 011.21 0 .793.793 0 010 1.157L11.1 15.76a.884.884 0 01-1.21 0z"
+                                              fill="currentColor"
+                                              fill-rule="evenodd"
+                                            ></path>
+                                          </svg>
+                                        </span>
+                                      </div>
+
+                                      <span className="dropdownOptionLabel">Jobs</span>
+                                    </li>
+                                    <li
+                                      onClick={(event) =>
+                                        this.updateSearchFilter(event, 'Companies')
+                                      }
+                                      className={
+                                        this.props.searchDropDownStore.selectedDropDown ===
+                                        'Companies'
+                                          ? 'dropdownOption   checked'
+                                          : 'dropdownOption'
+                                      }
+                                      role="option"
+                                      aria-selected="false"
+                                      id="option_1"
+                                    >
+                                      <div className="checkmark">
+                                        <span alt="" className="SVGInline">
+                                          <svg
+                                            className="SVGInline-svg"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="24"
+                                            height="24"
+                                            viewBox="0 0 24 24"
+                                          >
+                                            <path
+                                              d="M9.89 15.76l-2.64-2.363a.793.793 0 010-1.157.884.884 0 011.211 0l2.039 1.785 5.039-5.785a.884.884 0 011.21 0 .793.793 0 010 1.157L11.1 15.76a.884.884 0 01-1.21 0z"
+                                              fill="currentColor"
+                                              fill-rule="evenodd"
+                                            ></path>
+                                          </svg>
+                                        </span>
+                                      </div>
+
+                                      <span className="dropdownOptionLabel">Companies</span>
+                                    </li>
+                                    <li
+                                      onClick={(event) =>
+                                        this.updateSearchFilter(event, 'Salaries')
+                                      }
+                                      className={`dropdownOption  ${
+                                        this.props.searchDropDownStore.selectedDropDown ===
+                                        'Salaries'
+                                          ? 'checked'
+                                          : ''
+                                      } `}
+                                      role="option"
+                                      aria-selected="false"
+                                      id="option_2"
+                                    >
+                                      <div className="checkmark">
+                                        <span alt="" className="SVGInline">
+                                          <svg
+                                            className="SVGInline-svg"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="24"
+                                            height="24"
+                                            viewBox="0 0 24 24"
+                                          >
+                                            <path
+                                              d="M9.89 15.76l-2.64-2.363a.793.793 0 010-1.157.884.884 0 011.211 0l2.039 1.785 5.039-5.785a.884.884 0 011.21 0 .793.793 0 010 1.157L11.1 15.76a.884.884 0 01-1.21 0z"
+                                              fill="currentColor"
+                                              fill-rule="evenodd"
+                                            ></path>
+                                          </svg>
+                                        </span>
+                                      </div>
+                                      <span className="dropdownOptionLabel">Salaries</span>
+                                    </li>
+                                    <li
+                                      onClick={(event) =>
+                                        this.updateSearchFilter(event, 'Interviews')
+                                      }
+                                      className={`dropdownOption  ${
+                                        this.props.searchDropDownStore.selectedDropDown ===
+                                        'Interviews'
+                                          ? 'checked'
+                                          : ''
+                                      } `}
+                                      role="option"
+                                      aria-selected="false"
+                                      id="option_3"
+                                    >
+                                      <div className="checkmark">
+                                        <span alt="" className="SVGInline">
+                                          <svg
+                                            className="SVGInline-svg"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="24"
+                                            height="24"
+                                            viewBox="0 0 24 24"
+                                          >
+                                            <path
+                                              d="M9.89 15.76l-2.64-2.363a.793.793 0 010-1.157.884.884 0 011.211 0l2.039 1.785 5.039-5.785a.884.884 0 011.21 0 .793.793 0 010 1.157L11.1 15.76a.884.884 0 01-1.21 0z"
+                                              fill="currentColor"
+                                              fill-rule="evenodd"
+                                            ></path>
+                                          </svg>
+                                        </span>
+                                      </div>
+                                      <span className="dropdownOptionLabel">Interviews</span>
+                                    </li>
+                                  </ul>
+                                </div>
                               </div>
-                            </div>
+                            ) : (
+                              ''
+                            )}
                           </div>
                         </div>
-                        <div class="ml-xsm col-4 p-0 headerSearchInput search__SearchStyles__searchBarLocationInput css-1ohf0ui">
-                          <div class="input-wrapper css-q444d9">
+                        <div className="ml-xsm col-4 p-0 headerSearchInput search__SearchStyles__searchBarLocationInput css-1ohf0ui">
+                          <div className="input-wrapper css-q444d9">
                             <input
                               type="text"
                               id="sc.location"
@@ -607,21 +696,21 @@ class Navbar extends Component {
                               data-test="search-bar-location-input"
                               aria-label=""
                               value="San Jose, CA"
-                              class="css-1etjok6"
+                              className="css-1etjok6"
                               autocomplete="off"
                             />
                             <div
                               style={{
-                                left: "0px",
-                                top: "41px",
-                                width: "266px",
+                                left: '0px',
+                                top: '41px',
+                                width: '266px',
                               }}
-                              class="autocomplete-suggestions "
+                              className="autocomplete-suggestions "
                             ></div>
                           </div>
                         </div>
                         <button
-                          class="gd-ui-button ml-std col-auto css-iixdfr"
+                          className="gd-ui-button ml-std col-auto css-iixdfr"
                           type="submit"
                           data-test="search-bar-submit"
                         >
@@ -638,37 +727,34 @@ class Navbar extends Component {
 
         <nav
           data-test="primary-header-nav"
-          class="mt-std mb-std mb-md-0 pb-xsm memberHeader__HeaderStyles__bottomShadow"
+          className="mt-std mb-std mb-md-0 pb-xsm memberHeader__HeaderStyles__bottomShadow"
         >
-          <div class="memberHeader__HeaderStyles__navigationWrapper">
-            <div class="px-std px-md-lg">
-              <div class="d-flex flex-row align-items-center">
-                <div class="col">
-                  <h2
-                    data-test="primary-header-title"
-                    class="d-none d-md-block"
-                  >
+          <div className="memberHeader__HeaderStyles__navigationWrapper">
+            <div className="px-std px-md-lg">
+              <div className="d-flex flex-row align-items-center">
+                <div className="col">
+                  <h2 data-test="primary-header-title" className="d-none d-md-block">
                     Hello, what would you like to explore today?
                   </h2>
                 </div>
               </div>
-              <div class="css-trqft4">
-                <div class="memberHeader__HeaderStyles__navigationItem">
-                  <div class="d-none d-md-flex align-items-center justify-content-center">
+              <div className="css-trqft4">
+                <div className="memberHeader__HeaderStyles__navigationItem">
+                  <div className="d-none d-md-flex align-items-center justify-content-center">
                     <div>
                       <a
-                        class="gd-ui-button p-0 css-ddqncx  css-1s7hc3h"
+                        className="gd-ui-button p-0 css-ddqncx  css-1s7hc3h"
                         type="button"
                         data-test="site-header-jobs"
                         href="/Job/jobsHomeRedirect.htm"
                         target="_top"
                         data-ga-lbl="null"
                       >
-                        <div class="d-flex flex-column align-items-center justify-content-center flex-md-row justify-content-md-start">
-                          <span class="SVGInline d-flex">
+                        <div className="d-flex flex-column align-items-center justify-content-center flex-md-row justify-content-md-start">
+                          <span className="SVGInline d-flex">
                             <svg
-                              class="SVGInline-svg d-flex-svg"
-                              style={{ width: "48px", height: "48px" }}
+                              className="SVGInline-svg d-flex-svg"
+                              style={{ width: '48px', height: '48px' }}
                               xmlns="http://www.w3.org/2000/svg"
                               width="48"
                               height="48"
@@ -686,93 +772,93 @@ class Navbar extends Component {
                               </g>
                             </svg>
                           </span>
-                          <h3 class="mx-xsm">Jobs</h3>
+                          <h3 className="mx-xsm">Jobs</h3>
                         </div>
                       </a>
-                      <div class="popup__PopupStyles__popupContainer">
-                        <div class="pt-xxsm popup__PopupStyles__popupContent popup__PopupStyles__popupContentLeft  ">
-                          <div class="popup__PopupStyles__popupBackground">
-                            <div class="d-flex flex-column col">
-                              <ul class="p-0 m-0 memberHeader__HeaderStyles__list">
-                                <li class="p-0 m-0">
+                      <div className="popup__PopupStyles__popupContainer">
+                        <div className="pt-xxsm popup__PopupStyles__popupContent popup__PopupStyles__popupContentLeft  ">
+                          <div className="popup__PopupStyles__popupBackground">
+                            <div className="d-flex flex-column col">
+                              <ul className="p-0 m-0 memberHeader__HeaderStyles__list">
+                                <li className="p-0 m-0">
                                   <a
-                                    class="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
+                                    className="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
                                     href="/Job/Home/recentActivity.htm"
                                     target="_top"
                                     rel=""
                                     data-ga-lbl="RecentActivity"
                                   >
-                                    <div class="d-flex align-items-center py-std col header-menu-item-label">
-                                      <span class="col">
-                                        <span class="menuItem__MenuItemStyles__menuItemColor">
+                                    <div className="d-flex align-items-center py-std col header-menu-item-label">
+                                      <span className="col">
+                                        <span className="menuItem__MenuItemStyles__menuItemColor">
                                           Recent Activity
                                         </span>
                                       </span>
                                     </div>
                                   </a>
                                 </li>
-                                <li class="p-0 m-0">
+                                <li className="p-0 m-0">
                                   <div
-                                    class="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
+                                    className="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
                                     href=""
                                     target="_top"
                                     rel=""
                                     data-ga-lbl="CareerInsights"
                                   >
-                                    <div class="d-flex align-items-center py-std col header-menu-item-label">
-                                      <span class="col">
-                                        <span class="menuItem__MenuItemStyles__menuItemColor">
+                                    <div className="d-flex align-items-center py-std col header-menu-item-label">
+                                      <span className="col">
+                                        <span className="menuItem__MenuItemStyles__menuItemColor">
                                           Career Insights
                                         </span>
                                       </span>
                                     </div>
                                   </div>
                                 </li>
-                                <li class="p-0 m-0">
+                                <li className="p-0 m-0">
                                   <a
-                                    class="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
+                                    className="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
                                     href="/Job/Home/jobAlerts.htm"
                                     target="_top"
                                     rel=""
                                     data-ga-lbl="Alerts"
                                   >
-                                    <div class="d-flex align-items-center py-std col header-menu-item-label">
-                                      <span class="col">
-                                        <span class="menuItem__MenuItemStyles__menuItemColor">
+                                    <div className="d-flex align-items-center py-std col header-menu-item-label">
+                                      <span className="col">
+                                        <span className="menuItem__MenuItemStyles__menuItemColor">
                                           Job Alerts
                                         </span>
                                       </span>
                                     </div>
                                   </a>
                                 </li>
-                                <li class="p-0 m-0">
+                                <li className="p-0 m-0">
                                   <a
-                                    class="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
+                                    className="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
                                     href="/Job/Home/savedJobs.htm"
                                     target="_top"
                                     rel=""
                                     data-ga-lbl="Saved"
                                   >
-                                    <div class="d-flex align-items-center py-std col header-menu-item-label">
-                                      <span class="col">
-                                        <span class="menuItem__MenuItemStyles__menuItemColor">
+                                    <div className="d-flex align-items-center py-std col header-menu-item-label">
+                                      <span className="col">
+                                        <span className="menuItem__MenuItemStyles__menuItemColor">
                                           Saved
                                         </span>
                                       </span>
                                     </div>
                                   </a>
                                 </li>
-                                <li class="p-0 m-0">
+                                <li className="p-0 m-0">
                                   <a
-                                    class="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
+                                    className="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
                                     href="/Job/Home/appliedJobs.htm"
                                     target="_top"
                                     rel=""
                                     data-ga-lbl="Applications"
                                   >
-                                    <div class="d-flex align-items-center py-std col header-menu-item-label">
-                                      <span class="col">
-                                        <span class="menuItem__MenuItemStyles__menuItemColor">
+                                    <div className="d-flex align-items-center py-std col header-menu-item-label">
+                                      <span className="col">
+                                        <span className="menuItem__MenuItemStyles__menuItemColor">
                                           Applications
                                         </span>
                                       </span>
@@ -786,19 +872,19 @@ class Navbar extends Component {
                       </div>
                     </div>
                   </div>
-                  {/*}   <div class="d-flex d-md-none align-items-center justify-content-center">
+                  {/*}   <div className="d-flex d-md-none align-items-center justify-content-center">
                     <a
-                      class="gd-ui-button p-0 css-ddqncx css-1s7hc3h"
+                      className="gd-ui-button p-0 css-ddqncx css-1s7hc3h"
                       type="button"
                       data-test="site-header-jobs"
                       href="/Job/jobsHomeRedirect.htm"
                       target="_top"
                       data-ga-lbl="null"
                     >
-                      <div class="d-flex flex-column align-items-center justify-content-center flex-md-row justify-content-md-start">
-                        <span class="SVGInline d-flex">
+                      <div className="d-flex flex-column align-items-center justify-content-center flex-md-row justify-content-md-start">
+                        <span className="SVGInline d-flex">
                           <svg
-                            class="SVGInline-svg d-flex-svg"
+                            className="SVGInline-svg d-flex-svg"
                             style={{ width: "48px", height: "48px" }}
                             xmlns="http://www.w3.org/2000/svg"
                             width="48"
@@ -817,28 +903,28 @@ class Navbar extends Component {
                             </g>
                           </svg>
                         </span>
-                        <span class="small css-1l7mgse">Jobs</span>
+                        <span className="small css-1l7mgse">Jobs</span>
                       </div>
                     </a>
                   </div>
-                            */}{" "}
+                            */}{' '}
                 </div>
-                <div class="memberHeader__HeaderStyles__navigationItem">
-                  <div class="d-none d-md-flex align-items-center justify-content-center">
+                <div className="memberHeader__HeaderStyles__navigationItem">
+                  <div className="d-none d-md-flex align-items-center justify-content-center">
                     <div>
                       <a
-                        class="gd-ui-button p-0 css-ddqncx  css-1s7hc3h"
+                        className="gd-ui-button p-0 css-ddqncx  css-1s7hc3h"
                         type="button"
                         data-test="site-header-companies"
                         href="/Reviews/index.htm"
                         target="_top"
                         data-ga-lbl="null"
                       >
-                        <div class="d-flex flex-column align-items-center justify-content-center flex-md-row justify-content-md-start">
-                          <span class="SVGInline d-flex">
+                        <div className="d-flex flex-column align-items-center justify-content-center flex-md-row justify-content-md-start">
+                          <span className="SVGInline d-flex">
                             <svg
-                              class="SVGInline-svg d-flex-svg"
-                              style={{ width: "48px", height: "48px" }}
+                              className="SVGInline-svg d-flex-svg"
+                              style={{ width: '48px', height: '48px' }}
                               xmlns="http://www.w3.org/2000/svg"
                               width="48"
                               height="48"
@@ -901,76 +987,76 @@ class Navbar extends Component {
                               </g>
                             </svg>
                           </span>
-                          <h3 class="mx-xsm">Companies</h3>
+                          <h3 className="mx-xsm">Companies</h3>
                         </div>
                       </a>
-                      <div class="popup__PopupStyles__popupContainer">
-                        <div class="pt-xxsm popup__PopupStyles__popupContent popup__PopupStyles__popupContentLeft  ">
-                          <div class="popup__PopupStyles__popupBackground">
-                            <div class="d-flex flex-column col">
-                              <ul class="p-0 m-0 memberHeader__HeaderStyles__list">
-                                <li class="p-0 m-0">
+                      <div className="popup__PopupStyles__popupContainer">
+                        <div className="pt-xxsm popup__PopupStyles__popupContent popup__PopupStyles__popupContentLeft  ">
+                          <div className="popup__PopupStyles__popupBackground">
+                            <div className="d-flex flex-column col">
+                              <ul className="p-0 m-0 memberHeader__HeaderStyles__list">
+                                <li className="p-0 m-0">
                                   <a
-                                    class="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
+                                    className="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
                                     href="/Reviews/index.htm"
                                     target="_top"
                                     rel=""
                                     data-ga-lbl="Discover"
                                   >
-                                    <div class="d-flex align-items-center py-std col header-menu-item-label">
-                                      <span class="col">
-                                        <span class="menuItem__MenuItemStyles__menuItemColor">
+                                    <div className="d-flex align-items-center py-std col header-menu-item-label">
+                                      <span className="col">
+                                        <span className="menuItem__MenuItemStyles__menuItemColor">
                                           Discover Companies
                                         </span>
                                       </span>
                                     </div>
                                   </a>
                                 </li>
-                                <li class="p-0 m-0">
+                                <li className="p-0 m-0">
                                   <a
-                                    class="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
+                                    className="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
                                     href="/Compare/index.htm"
                                     target="_top"
                                     rel=""
                                     data-ga-lbl="Compare"
                                   >
-                                    <div class="d-flex align-items-center py-std col header-menu-item-label">
-                                      <span class="col">
-                                        <span class="menuItem__MenuItemStyles__menuItemColor">
+                                    <div className="d-flex align-items-center py-std col header-menu-item-label">
+                                      <span className="col">
+                                        <span className="menuItem__MenuItemStyles__menuItemColor">
                                           Compare Companies
                                         </span>
                                       </span>
                                     </div>
                                   </a>
                                 </li>
-                                <li class="p-0 m-0">
+                                <li className="p-0 m-0">
                                   <a
-                                    class="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
+                                    className="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
                                     href="/follow/companySuggestions.htm"
                                     target="_top"
                                     rel=""
                                     data-ga-lbl="Suggested"
                                   >
-                                    <div class="d-flex align-items-center py-std col header-menu-item-label">
-                                      <span class="col">
-                                        <span class="menuItem__MenuItemStyles__menuItemColor">
+                                    <div className="d-flex align-items-center py-std col header-menu-item-label">
+                                      <span className="col">
+                                        <span className="menuItem__MenuItemStyles__menuItemColor">
                                           Suggested Follows
                                         </span>
                                       </span>
                                     </div>
                                   </a>
                                 </li>
-                                <li class="p-0 m-0">
+                                <li className="p-0 m-0">
                                   <a
-                                    class="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
+                                    className="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
                                     href="/mz-survey/start_input.htm?showSurvey=REVIEWS&amp;c=PAGE_HEADER_NAV"
                                     target="_top"
                                     rel=""
                                     data-ga-lbl="WriteReview"
                                   >
-                                    <div class="d-flex align-items-center py-std col header-menu-item-label">
-                                      <span class="col">
-                                        <span class="menuItem__MenuItemStyles__menuItemColor">
+                                    <div className="d-flex align-items-center py-std col header-menu-item-label">
+                                      <span className="col">
+                                        <span className="menuItem__MenuItemStyles__menuItemColor">
                                           Write a Review
                                         </span>
                                       </span>
@@ -984,19 +1070,19 @@ class Navbar extends Component {
                       </div>
                     </div>
                   </div>
-                  {/*<div class="d-flex d-md-none align-items-center justify-content-center">
+                  {/*<div className="d-flex d-md-none align-items-center justify-content-center">
                     <a
-                      class="gd-ui-button p-0 css-ddqncx css-1s7hc3h"
+                      className="gd-ui-button p-0 css-ddqncx css-1s7hc3h"
                       type="button"
                       data-test="site-header-companies"
                       href="/Reviews/index.htm"
                       target="_top"
                       data-ga-lbl="null"
                     >
-                      <div class="d-flex flex-column align-items-center justify-content-center flex-md-row justify-content-md-start">
-                        <span class="SVGInline d-flex">
+                      <div className="d-flex flex-column align-items-center justify-content-center flex-md-row justify-content-md-start">
+                        <span className="SVGInline d-flex">
                           <svg
-                            class="SVGInline-svg d-flex-svg"
+                            className="SVGInline-svg d-flex-svg"
                             style={{ width: "48px", height: "48px" }}
                             xmlns="http://www.w3.org/2000/svg"
                             width="48"
@@ -1060,28 +1146,28 @@ class Navbar extends Component {
                             </g>
                           </svg>
                         </span>
-                        <span class="small css-1l7mgse">Companies</span>
+                        <span className="small css-1l7mgse">Companies</span>
                       </div>
                     </a>
                   </div>
-                        */}{" "}
+                        */}{' '}
                 </div>
-                <div class="memberHeader__HeaderStyles__navigationItem">
-                  <div class="d-none d-md-flex align-items-center justify-content-center">
+                <div className="memberHeader__HeaderStyles__navigationItem">
+                  <div className="d-none d-md-flex align-items-center justify-content-center">
                     <div>
                       <a
-                        class="gd-ui-button p-0 css-ddqncx  css-1s7hc3h"
+                        className="gd-ui-button p-0 css-ddqncx  css-1s7hc3h"
                         type="button"
                         data-test="site-header-salaries"
                         href="/Salaries/index.htm"
                         target="_top"
                         data-ga-lbl="null"
                       >
-                        <div class="d-flex flex-column align-items-center justify-content-center flex-md-row justify-content-md-start">
-                          <span class="SVGInline d-flex">
+                        <div className="d-flex flex-column align-items-center justify-content-center flex-md-row justify-content-md-start">
+                          <span className="SVGInline d-flex">
                             <svg
-                              class="SVGInline-svg d-flex-svg"
-                              style={{ width: "48px", height: "48px" }}
+                              className="SVGInline-svg d-flex-svg"
+                              style={{ width: '48px', height: '48px' }}
                               xmlns="http://www.w3.org/2000/svg"
                               width="48"
                               height="48"
@@ -1099,59 +1185,59 @@ class Navbar extends Component {
                               </g>
                             </svg>
                           </span>
-                          <h3 class="mx-xsm">Salaries</h3>
+                          <h3 className="mx-xsm">Salaries</h3>
                         </div>
                       </a>
-                      <div class="popup__PopupStyles__popupContainer">
-                        <div class="pt-xxsm popup__PopupStyles__popupContent popup__PopupStyles__popupContentLeft  ">
-                          <div class="popup__PopupStyles__popupBackground">
-                            <div class="d-flex flex-column col">
-                              <ul class="p-0 m-0 memberHeader__HeaderStyles__list">
-                                <li class="p-0 m-0">
+                      <div className="popup__PopupStyles__popupContainer">
+                        <div className="pt-xxsm popup__PopupStyles__popupContent popup__PopupStyles__popupContentLeft  ">
+                          <div className="popup__PopupStyles__popupBackground">
+                            <div className="d-flex flex-column col">
+                              <ul className="p-0 m-0 memberHeader__HeaderStyles__list">
+                                <li className="p-0 m-0">
                                   <a
-                                    class="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
+                                    className="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
                                     href="/Salaries/index.htm"
                                     target="_top"
                                     rel=""
                                     data-ga-lbl="Discover"
                                   >
-                                    <div class="d-flex align-items-center py-std col header-menu-item-label">
-                                      <span class="col">
-                                        <span class="menuItem__MenuItemStyles__menuItemColor">
+                                    <div className="d-flex align-items-center py-std col header-menu-item-label">
+                                      <span className="col">
+                                        <span className="menuItem__MenuItemStyles__menuItemColor">
                                           Discover Salaries
                                         </span>
                                       </span>
                                     </div>
                                   </a>
                                 </li>
-                                <li class="p-0 m-0">
+                                <li className="p-0 m-0">
                                   <a
-                                    class="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
+                                    className="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
                                     href="/knowyourworth/dashboard.htm?resumeOriginHook=KYWI_HEADER"
                                     target="_top"
                                     rel=""
                                     data-ga-lbl="SalaryCal"
                                   >
-                                    <div class="d-flex align-items-center py-std col header-menu-item-label">
-                                      <span class="col">
-                                        <span class="menuItem__MenuItemStyles__menuItemColor">
+                                    <div className="d-flex align-items-center py-std col header-menu-item-label">
+                                      <span className="col">
+                                        <span className="menuItem__MenuItemStyles__menuItemColor">
                                           Salary Calculator
                                         </span>
                                       </span>
                                     </div>
                                   </a>
                                 </li>
-                                <li class="p-0 m-0">
+                                <li className="p-0 m-0">
                                   <a
-                                    class="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
+                                    className="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
                                     href="/mz-survey/start_input.htm?showSurvey=SALARIES&amp;c=PAGE_HEADER_NAV"
                                     target="_top"
                                     rel=""
                                     data-ga-lbl="AddSalary"
                                   >
-                                    <div class="d-flex align-items-center py-std col header-menu-item-label">
-                                      <span class="col">
-                                        <span class="menuItem__MenuItemStyles__menuItemColor">
+                                    <div className="d-flex align-items-center py-std col header-menu-item-label">
+                                      <span className="col">
+                                        <span className="menuItem__MenuItemStyles__menuItemColor">
                                           Add a Salary
                                         </span>
                                       </span>
@@ -1165,19 +1251,19 @@ class Navbar extends Component {
                       </div>
                     </div>
                   </div>
-                  {/*<div class="d-flex d-md-none align-items-center justify-content-center">
+                  {/*<div className="d-flex d-md-none align-items-center justify-content-center">
                     <a
-                      class="gd-ui-button p-0 css-ddqncx css-1s7hc3h"
+                      className="gd-ui-button p-0 css-ddqncx css-1s7hc3h"
                       type="button"
                       data-test="site-header-salaries"
                       href="/Salaries/index.htm"
                       target="_top"
                       data-ga-lbl="null"
                     >
-                      <div class="d-flex flex-column align-items-center justify-content-center flex-md-row justify-content-md-start">
-                        <span class="SVGInline d-flex">
+                      <div className="d-flex flex-column align-items-center justify-content-center flex-md-row justify-content-md-start">
+                        <span className="SVGInline d-flex">
                           <svg
-                            class="SVGInline-svg d-flex-svg"
+                            className="SVGInline-svg d-flex-svg"
                             style={{ width: "48px", height: "48px" }}
                             xmlns="http://www.w3.org/2000/svg"
                             width="48"
@@ -1196,28 +1282,28 @@ class Navbar extends Component {
                             </g>
                           </svg>
                         </span>
-                        <span class="small css-1l7mgse">Salaries</span>
+                        <span className="small css-1l7mgse">Salaries</span>
                       </div>
                     </a>
                   </div>
-                    */}{" "}
+                    */}{' '}
                 </div>
-                <div class="memberHeader__HeaderStyles__navigationItem">
-                  <div class="d-none d-md-flex align-items-center justify-content-center">
+                <div className="memberHeader__HeaderStyles__navigationItem">
+                  <div className="d-none d-md-flex align-items-center justify-content-center">
                     <div>
                       <a
-                        class="gd-ui-button p-0 css-ddqncx  css-1s7hc3h"
+                        className="gd-ui-button p-0 css-ddqncx  css-1s7hc3h"
                         type="button"
                         data-test="site-header-interviews"
                         href="/Interview/index.htm"
                         target="_top"
                         data-ga-lbl="null"
                       >
-                        <div class="d-flex flex-column align-items-center justify-content-center flex-md-row justify-content-md-start">
-                          <span class="SVGInline d-flex">
+                        <div className="d-flex flex-column align-items-center justify-content-center flex-md-row justify-content-md-start">
+                          <span className="SVGInline d-flex">
                             <svg
-                              class="SVGInline-svg d-flex-svg"
-                              style={{ width: "48px", height: "48px" }}
+                              className="SVGInline-svg d-flex-svg"
+                              style={{ width: '48px', height: '48px' }}
                               xmlns="http://www.w3.org/2000/svg"
                               width="48"
                               height="48"
@@ -1235,70 +1321,49 @@ class Navbar extends Component {
                                   stroke-width="2"
                                   d="M32.714 37.39a11.828 11.828 0 01.309-3.935l.124-.5.479-.19C38.73 30.748 42 26.586 42 22c0-6.576-6.675-12-15-12s-15 5.424-15 12 6.675 12 14.991 12l.327-.003.667-.016.309.364c.946 1.115 2.418 2.134 4.42 3.044z"
                                 ></path>
-                                <ellipse
-                                  cx="27"
-                                  cy="22"
-                                  fill="#DFF7E7"
-                                  rx="12"
-                                  ry="9"
-                                ></ellipse>
-                                <circle
-                                  cx="21"
-                                  cy="22"
-                                  r="2"
-                                  fill="#0CAA41"
-                                ></circle>
-                                <circle
-                                  cx="27"
-                                  cy="22"
-                                  r="2"
-                                  fill="#0CAA41"
-                                ></circle>
-                                <circle
-                                  cx="33"
-                                  cy="22"
-                                  r="2"
-                                  fill="#0CAA41"
-                                ></circle>
+                                <ellipse cx="27" cy="22" fill="#DFF7E7" rx="12" ry="9"></ellipse>
+                                <circle cx="21" cy="22" r="2" fill="#0CAA41"></circle>
+                                <circle cx="27" cy="22" r="2" fill="#0CAA41"></circle>
+                                <circle cx="33" cy="22" r="2" fill="#0CAA41"></circle>
                               </g>
                             </svg>
                           </span>
-                          <h3 class="mx-xsm">Interviews</h3>
+                          <h3 className="mx-xsm">Interviews</h3>
                         </div>
                       </a>
-                      <div class="popup__PopupStyles__popupContainer">
-                        <div class="pt-xxsm popup__PopupStyles__popupContent popup__PopupStyles__popupContentLeft  ">
-                          <div class="popup__PopupStyles__popupBackground">
-                            <div class="d-flex flex-column col">
-                              <ul class="p-0 m-0 memberHeader__HeaderStyles__list">
-                                <li class="p-0 m-0">
+                      <div className="popup__PopupStyles__popupContainer">
+                        <div className="pt-xxsm popup__PopupStyles__popupContent popup__PopupStyles__popupContentLeft  ">
+                          <div className="popup__PopupStyles__popupBackground">
+                            <div className="d-flex flex-column col">
+                              <ul className="p-0 m-0 memberHeader__HeaderStyles__list">
+                                <li className="p-0 m-0">
                                   <a
-                                    class="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
+                                    className="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
                                     href="/Interview/index.htm"
                                     target="_top"
                                     rel=""
                                     data-ga-lbl="Discover"
                                   >
-                                    <div class="d-flex align-items-center py-std col header-menu-item-label">
-                                      <span class="col">
-                                        <span class="menuItem__MenuItemStyles__menuItemColor">
+                                    <div className="d-flex align-items-center py-std col header-menu-item-label">
+                                      <span className="col">
+                                        <span className="menuItem__MenuItemStyles__menuItemColor">
                                           Discover Interviews
                                         </span>
                                       </span>
                                     </div>
                                   </a>
                                 </li>
-                                <li class="p-0 m-0">
+                                <li className="p-0 m-0">
                                   <a
-                                    class="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
+                                    className="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
                                     href="/mz-survey/start_input.htm?showSurvey=INTERVIEWS&amp;c=PAGE_HEADER_NAV"
                                     target="_top"
                                     rel=""
                                     data-ga-lbl="AddInterview"
                                   >
-                                    <div class="d-flex align-items-center py-std col header-menu-item-label">
-                                      <span class="col">
-                                        <span class="menuItem__MenuItemStyles__menuItemColor">
+                                    <div className="d-flex align-items-center py-std col header-menu-item-label">
+                                      <span className="col">
+                                        <span className="menuItem__MenuItemStyles__menuItemColor">
                                           Add an Interview
                                         </span>
                                       </span>
@@ -1312,19 +1377,19 @@ class Navbar extends Component {
                       </div>
                     </div>
                   </div>
-                  {/*} <div class="d-flex d-md-none align-items-center justify-content-center">
+                  {/*} <div className="d-flex d-md-none align-items-center justify-content-center">
                     <a
-                      class="gd-ui-button p-0 css-ddqncx css-1s7hc3h"
+                      className="gd-ui-button p-0 css-ddqncx css-1s7hc3h"
                       type="button"
                       data-test="site-header-interviews"
                       href="/Interview/index.htm"
                       target="_top"
                       data-ga-lbl="null"
                     >
-                      <div class="d-flex flex-column align-items-center justify-content-center flex-md-row justify-content-md-start">
-                        <span class="SVGInline d-flex">
+                      <div className="d-flex flex-column align-items-center justify-content-center flex-md-row justify-content-md-start">
+                        <span className="SVGInline d-flex">
                           <svg
-                            class="SVGInline-svg d-flex-svg"
+                            className="SVGInline-svg d-flex-svg"
                             style={{ width: "48px", height: "48px" }}
                             xmlns="http://www.w3.org/2000/svg"
                             width="48"
@@ -1371,11 +1436,11 @@ class Navbar extends Component {
                             </g>
                           </svg>
                         </span>
-                        <span class="small css-1l7mgse">Interviews</span>
+                        <span className="small css-1l7mgse">Interviews</span>
                       </div>
                     </a>
                   </div>
-                */}{" "}
+                */}{' '}
                 </div>
               </div>
             </div>
@@ -1385,4 +1450,25 @@ class Navbar extends Component {
     );
   }
 }
-export default Navbar;
+
+// export default Navbar;
+const mapStateToProps = (state) => {
+  const { searchDropDownStore } = state.searchDropDownReducer;
+  return {
+    searchDropDownStore,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    updateSearcFilter: (payload) => {
+      dispatch({
+        type: updateSearcFilter,
+        payload,
+      });
+    },
+  };
+};
+
+// export default LoginBody;
+export default connect(mapStateToProps, mapDispatchToProps)(Navbar);
