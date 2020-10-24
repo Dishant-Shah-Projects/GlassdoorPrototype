@@ -1,9 +1,11 @@
 /* eslint-disable no-unused-vars */
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const mysqlConnection = require('../mysqlConnection');
+const { secret } = require('../config');
 const Company = require('../model/Company');
 const Student = require('../model/Student');
-
+const { checkAuth } = require('./passport');
 // Fucntion to check if the emailID is already in use
 const checkEmail = async (emailID) => {
   try {
@@ -18,6 +20,46 @@ const checkEmail = async (emailID) => {
   } catch (error) {
     return false;
   }
+};
+
+// check the table for password and return the role and the user ID
+const checklogin = async (emailID, Password) => {
+  try {
+    const emailProcedure = 'CALL existingEmail(?)';
+    const con = await mysqlConnection();
+    const [results, fields] = await con.query(emailProcedure, emailID);
+    con.end();
+    if (await bcrypt.compare(Password, results[0][0].Password)) {
+      return [results[0][0].Role, results[0][0].UserID];
+    }
+    return false;
+  } catch (error) {
+    return false;
+  }
+};
+
+// check the login and set the jwt token
+const userLogin = async (req, res) => {
+  const { UserName, Password } = req.body;
+
+  // eslint-disable-next-line prefer-template
+  try {
+    const role = await checklogin(UserName, Password);
+    if (role) {
+      const payload = { rol: role[0], Name: UserName, ID: role[1] };
+      const accesstoken = jwt.sign(payload, secret, {
+        expiresIn: 1008000,
+      });
+      res.status(200).end(JSON.stringify(`JWT ${accesstoken}`));
+    } else {
+      res.writeHead(400, { 'content-type': 'text/json' });
+      res.end(JSON.stringify('Invalid Credentials'));
+    }
+  } catch (error) {
+    res.writeHead(403, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  }
+  return res;
 };
 
 // To insert the user into SIGNUP table
@@ -100,4 +142,4 @@ const logout = async (req, res) => {
   res.status(200).end('Logged out');
 };
 
-module.exports = { userSignup, logout };
+module.exports = { userSignup, logout, userLogin };
