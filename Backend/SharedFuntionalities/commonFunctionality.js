@@ -48,6 +48,7 @@ const userSignup = async (req, res) => {
         if (Role === 'company') {
           const company = new Company({
             CompanyID: userID,
+            ...req.body,
           });
           company.save((e, data) => {
             if (e) {
