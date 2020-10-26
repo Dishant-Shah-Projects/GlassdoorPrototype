@@ -8,7 +8,7 @@ class Home extends Component {
     super(props);
     this.state = {};
   }
-
+  componentDidMount() {}
   render() {
     return (
       <div>
