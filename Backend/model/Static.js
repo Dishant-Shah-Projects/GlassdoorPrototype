@@ -6,6 +6,7 @@ const StaticSchema = new mongoose.Schema({
   Ethnicity: [String],
   Gender: [String],
   State: [String],
+  Status:[String],
   Country: [String],
   VeteranStatus: [String],
   Disability: [String],

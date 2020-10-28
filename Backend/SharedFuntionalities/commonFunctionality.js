@@ -94,6 +94,7 @@ const staticDataInsert = async (req, res) => {
       Disability: ['Yes', 'No', 'Prefer Not to Say'],
       State: ['CA'],
       Country: ['USA'],
+      Status: ['apple'],
     });
     statichold.save((e, data) => {
       if (e) {
