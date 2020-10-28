@@ -6,10 +6,11 @@ const StaticSchema = new mongoose.Schema({
   Ethnicity: [String],
   Gender: [String],
   State: [String],
-  Status:[String],
+  Status: [String],
   Country: [String],
   VeteranStatus: [String],
   Disability: [String],
+  JobType: [String],
 });
 
 module.exports = mongoose.model('static_data', StaticSchema);

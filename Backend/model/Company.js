@@ -95,6 +95,10 @@ const CompanySchema = new mongoose.Schema(
       },
     ],
     Photos: [String],
+    JobType: {
+      type: String,
+      enum: ['Full-time', 'Part-time', 'Contract', 'Internship', 'Temporary', 'Entry Level'],
+    },
   },
   {
     versionKey: false,
