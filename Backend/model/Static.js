@@ -5,6 +5,8 @@ const StaticSchema = new mongoose.Schema({
   JobFilterInJobTab: [String],
   Ethnicity: [String],
   Gender: [String],
+  State: [String],
+  Country: [String],
   VeteranStatus: [String],
   Disability: [String],
 });

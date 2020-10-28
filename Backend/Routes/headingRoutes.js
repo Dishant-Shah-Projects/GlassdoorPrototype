@@ -6,9 +6,9 @@ const {
   userSignup,
   logout,
   userLogin,
-  staticdata,
-  staticdatainsert,
-  companyprofileupdate,
+  staticData,
+  staticDataInsert,
+  staticDataUpdate,
 } = require('../SharedFuntionalities/commonFunctionality');
 const { auth } = require('../SharedFuntionalities/passport');
 
@@ -32,17 +32,19 @@ Router.post('/logout', async (req, res) => {
 });
 // Get Static Data
 Router.get('/staticdata', async (req, res) => {
-  const value = await staticdata(req, res);
+  const value = await staticData(req, res);
   return value;
 });
 // Insert Sample Data
 Router.post('/staticdatainsert', async (req, res) => {
-  const value = await staticdatainsert(req, res);
+  console.log(req.body);
+  const value = await staticDataInsert(req, res);
   return value;
 });
 // Update Static Data
 Router.post('/staticdataupdate', async (req, res) => {
-  const value = await companyprofileupdate(req, res);
+  console.log(req.body);
+  const value = await staticDataUpdate(req, res);
   return value;
 });
 module.exports = Router;

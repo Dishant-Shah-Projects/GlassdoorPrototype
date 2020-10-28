@@ -64,7 +64,7 @@ const userLogin = async (req, res) => {
 };
 
 // get the static data
-const staticdata = async (req, res) => {
+const staticData = async (req, res) => {
   try {
     // eslint-disable-next-line array-callback-return
     Static.find((err, results) => {
@@ -83,7 +83,7 @@ const staticdata = async (req, res) => {
 };
 
 // insert the static data
-const staticdatainsert = async (req, res) => {
+const staticDataInsert = async (req, res) => {
   try {
     const statichold = new Static({
       JobSearchDropDowns: ['engineer', 'teacher', 'doctor'],
@@ -92,6 +92,8 @@ const staticdatainsert = async (req, res) => {
       Gender: ['Male', 'Female', 'Prefer Not to Say'],
       VeteranStatus: ['Yes', 'No', 'Prefer Not to Say'],
       Disability: ['Yes', 'No', 'Prefer Not to Say'],
+      State: ['CA'],
+      Country: ['USA'],
     });
     statichold.save((e, data) => {
       if (e) {
@@ -114,16 +116,11 @@ const staticdatainsert = async (req, res) => {
 };
 
 // update the static data
-const staticdataupdate = async (req, res) => {
+const staticDataUpdate = async (req, res) => {
   // eslint-disable-next-line prefer-template
   try {
     const statichold = {
-      JobSearchDropDowns: req.body.JobSearchDropDowns,
-      JobFilterInJobTab: req.body.JobFilterInJobTab,
-      Ethnicity: req.body.Ethnicity,
-      Gender: req.body.Gender,
-      VeteranStatus: req.body.VeteranStatus,
-      Disability: req.body.Disability,
+      ...req.body,
     };
     Static.update({}, statichold, (e, data) => {
       if (e) {
@@ -229,7 +226,7 @@ module.exports = {
   userSignup,
   logout,
   userLogin,
-  staticdata,
-  staticdatainsert,
-  staticdataupdate,
+  staticData,
+  staticDataInsert,
+  staticDataUpdate,
 };
