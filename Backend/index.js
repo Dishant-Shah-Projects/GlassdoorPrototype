@@ -31,6 +31,7 @@ app.use(
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+// eslint-disable-next-line func-names
 app.use(function (req, res, next) {
   res.setHeader('Access-Control-Allow-Origin', frontendURL);
   res.setHeader('Access-Control-Allow-Credentials', 'true');
@@ -48,6 +49,7 @@ const options = {
   useUnifiedTopology: true,
   poolSize: 500,
   bufferMaxEntries: 0,
+  useFindAndModify: false,
 };
 
 // eslint-disable-next-line no-unused-vars

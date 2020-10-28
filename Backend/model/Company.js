@@ -12,7 +12,7 @@ const CompanySchema = new mongoose.Schema(
     Headquarter: { type: String },
     Industry: { type: String },
     Founded: { type: Date },
-    CompayDescription: { type: String },
+    CompanyDescription: { type: String },
     CompanyMission: { type: String },
     CEO: { type: String },
     ViewCount: { type: Number },

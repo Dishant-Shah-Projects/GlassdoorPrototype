@@ -5,7 +5,8 @@ const mysqlConnection = require('../mysqlConnection');
 const { secret } = require('../config');
 const Company = require('../model/Company');
 const Student = require('../model/Student');
-const { checkAuth } = require('./passport');
+const Static = require('../model/Static');
+
 // Fucntion to check if the emailID is already in use
 const checkEmail = async (emailID) => {
   try {
@@ -55,6 +56,88 @@ const userLogin = async (req, res) => {
       res.writeHead(400, { 'content-type': 'text/json' });
       res.end(JSON.stringify('Invalid Credentials'));
     }
+  } catch (error) {
+    res.writeHead(403, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  }
+  return res;
+};
+
+// get the static data
+const staticdata = async (req, res) => {
+  try {
+    // eslint-disable-next-line array-callback-return
+    Static.find((err, results) => {
+      if (results) {
+        res.status(200).end(JSON.stringify(results));
+      } else {
+        res.writeHead(404, { 'content-type': 'text/json' });
+        res.end(JSON.stringify('Static Data not found'));
+      }
+    });
+  } catch (error) {
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  }
+  return res;
+};
+
+// insert the static data
+const staticdatainsert = async (req, res) => {
+  try {
+    const statichold = new Static({
+      JobSearchDropDowns: ['engineer', 'teacher', 'doctor'],
+      JobFilterInJobTab: ['None for Now'],
+      Ethnicity: ['Asian', 'White', 'African American', 'Native Indian'],
+      Gender: ['Male', 'Female', 'Prefer Not to Say'],
+      VeteranStatus: ['Yes', 'No', 'Prefer Not to Say'],
+      Disability: ['Yes', 'No', 'Prefer Not to Say'],
+    });
+    statichold.save((e, data) => {
+      if (e) {
+        res.writeHead(500, {
+          'Content-Type': 'text/plain',
+        });
+        res.end('Network Error');
+      } else {
+        res.writeHead(201, {
+          'Content-Type': 'text/plain',
+        });
+        res.end(JSON.stringify('datainserted Created'));
+      }
+    });
+  } catch (error) {
+    res.writeHead(403, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  }
+  return res;
+};
+
+// update the static data
+const staticdataupdate = async (req, res) => {
+  // eslint-disable-next-line prefer-template
+  try {
+    const statichold = {
+      JobSearchDropDowns: req.body.JobSearchDropDowns,
+      JobFilterInJobTab: req.body.JobFilterInJobTab,
+      Ethnicity: req.body.Ethnicity,
+      Gender: req.body.Gender,
+      VeteranStatus: req.body.VeteranStatus,
+      Disability: req.body.Disability,
+    };
+    Static.update({}, statichold, (e, data) => {
+      if (e) {
+        res.writeHead(500, {
+          'Content-Type': 'text/plain',
+        });
+        res.end('Network Error');
+      } else {
+        res.writeHead(201, {
+          'Content-Type': 'text/plain',
+        });
+        res.end(JSON.stringify('Static Updated Created'));
+      }
+    });
   } catch (error) {
     res.writeHead(403, { 'content-type': 'text/json' });
     res.end(JSON.stringify('Network Error'));
@@ -142,4 +225,11 @@ const logout = async (req, res) => {
   res.status(200).end('Logged out');
 };
 
-module.exports = { userSignup, logout, userLogin };
+module.exports = {
+  userSignup,
+  logout,
+  userLogin,
+  staticdata,
+  staticdatainsert,
+  staticdataupdate,
+};

@@ -2,7 +2,14 @@ const express = require('express');
 
 const Router = express.Router();
 
-const { userSignup, logout, userLogin } = require('../SharedFuntionalities/commonFunctionality');
+const {
+  userSignup,
+  logout,
+  userLogin,
+  staticdata,
+  staticdatainsert,
+  companyprofileupdate,
+} = require('../SharedFuntionalities/commonFunctionality');
 const { auth } = require('../SharedFuntionalities/passport');
 
 auth();
@@ -23,5 +30,19 @@ Router.post('/logout', async (req, res) => {
   const value = await logout(req, res);
   return value;
 });
-
+// Get Static Data
+Router.get('/staticdata', async (req, res) => {
+  const value = await staticdata(req, res);
+  return value;
+});
+// Insert Sample Data
+Router.post('/staticdatainsert', async (req, res) => {
+  const value = await staticdatainsert(req, res);
+  return value;
+});
+// Update Static Data
+Router.post('/staticdataupdate', async (req, res) => {
+  const value = await companyprofileupdate(req, res);
+  return value;
+});
 module.exports = Router;
