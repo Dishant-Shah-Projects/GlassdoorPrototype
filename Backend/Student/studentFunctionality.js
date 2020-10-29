@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable no-unused-vars */
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -55,6 +56,158 @@ const navbar = async (req, res) => {
   return res;
 };
 
+// To fetch the avgRating of a company
+const fetchAvgRating = async (ID) => {
+  try {
+    const fetchAvgRatingQuery = 'CALL avgRating(?)';
+    const con = await mysqlConnection();
+    const [results, fields] = await con.query(fetchAvgRatingQuery, ID);
+    con.end();
+    if (results[0][0].AvgRating === null) return 0;
+    return results[0][0].AvgRating;
+  } catch (error) {
+    return 0;
+  }
+};
+
+// fetch the results of the company search
+const searchCompany = async (req, res) => {
+  const { SearchString, State, PageNo } = url.parse(req.url, true).query;
+  let resultData = [];
+  const companyResult = [];
+  if (SearchString.length === 0 && State.length === 0) {
+    const companyResults = await Company.find()
+      .limit(4)
+      .skip(PageNo * 4)
+      .exec();
+    const count = await Company.find().countDocuments();
+    const noOfPages = Math.ceil(count / 4);
+    for (let i = 0; i < companyResults.length; i += 1) {
+      const ID = companyResults[i].CompanyID;
+      const tempObj = {};
+      tempObj.CompanyName = companyResults[i].CompanyID;
+      tempObj.CompanyName = companyResults[i].CompanyName;
+      tempObj.City = companyResults[i].City;
+      tempObj.State = companyResults[i].State;
+      tempObj.Website = companyResults[i].Website;
+      tempObj.GeneralReviewCount = companyResults[i].GeneralReviewCount;
+      tempObj.SalaryReviewCount = companyResults[i].SalaryReviewCount;
+      tempObj.InterviewReviewCount = companyResults[i].InterviewReviewCount;
+      // eslint-disable-next-line no-await-in-loop
+      const avgRating = await fetchAvgRating(ID);
+      tempObj.AvgRating = Math.round(avgRating * 10) / 10;
+      companyResult.push(tempObj);
+    }
+    resultData = [companyResult, count, noOfPages];
+    res.writeHead(200, {
+      'Content-Type': 'application/json',
+    });
+    res.end(JSON.stringify(resultData));
+  } else if (SearchString.length !== 0 && State.length === 0) {
+    const companyResults = await Company.find({
+      CompanyName: { $regex: `${SearchString}`, $options: 'i' },
+    })
+      .limit(4)
+      .skip(PageNo * 4)
+      .exec();
+    const count = await Company.find().countDocuments({
+      CompanyName: { $regex: `${SearchString}`, $options: 'i' },
+    });
+    const noOfPages = Math.ceil(count / 4);
+    for (let i = 0; i < companyResults.length; i += 1) {
+      const ID = companyResults[i].CompanyID;
+      const tempObj = {};
+      tempObj.CompanyName = companyResults[i].CompanyID;
+      tempObj.CompanyName = companyResults[i].CompanyName;
+      tempObj.City = companyResults[i].City;
+      tempObj.State = companyResults[i].State;
+      tempObj.Website = companyResults[i].Website;
+      tempObj.GeneralReviewCount = companyResults[i].GeneralReviewCount;
+      tempObj.SalaryReviewCount = companyResults[i].SalaryReviewCount;
+      tempObj.InterviewReviewCount = companyResults[i].InterviewReviewCount;
+      // eslint-disable-next-line no-await-in-loop
+      const avgRating = await fetchAvgRating(ID);
+      tempObj.AvgRating = Math.round(avgRating * 10) / 10;
+      companyResult.push(tempObj);
+    }
+    resultData = [companyResult, count, noOfPages];
+    res.writeHead(200, {
+      'Content-Type': 'application/json',
+    });
+    res.end(JSON.stringify(resultData));
+  } else if (SearchString.length === 0 && State.length !== 0) {
+    const companyResults = await Company.find({
+      State: { $regex: `${SearchString}`, $options: 'i' },
+    })
+      .limit(4)
+      .skip(PageNo * 4)
+      .exec();
+    const count = await Company.find().countDocuments({
+      State: { $regex: `${SearchString}`, $options: 'i' },
+    });
+    const noOfPages = Math.ceil(count / 4);
+    for (let i = 0; i < companyResults.length; i += 1) {
+      const ID = companyResults[i].CompanyID;
+      const tempObj = {};
+      tempObj.CompanyName = companyResults[i].CompanyID;
+      tempObj.CompanyName = companyResults[i].CompanyName;
+      tempObj.City = companyResults[i].City;
+      tempObj.State = companyResults[i].State;
+      tempObj.Website = companyResults[i].Website;
+      tempObj.GeneralReviewCount = companyResults[i].GeneralReviewCount;
+      tempObj.SalaryReviewCount = companyResults[i].SalaryReviewCount;
+      tempObj.InterviewReviewCount = companyResults[i].InterviewReviewCount;
+      // eslint-disable-next-line no-await-in-loop
+      const avgRating = await fetchAvgRating(ID);
+      tempObj.AvgRating = Math.round(avgRating * 10) / 10;
+      companyResult.push(tempObj);
+    }
+    resultData = [companyResult, count, noOfPages];
+    res.writeHead(200, {
+      'Content-Type': 'application/json',
+    });
+    res.end(JSON.stringify(resultData));
+  } else {
+    const companyResults = await Company.find({
+      $and: [
+        { CompanyName: { $regex: `${SearchString}`, $options: 'i' } },
+        { State: { $regex: `${State}`, $options: 'i' } },
+      ],
+    })
+      .limit(4)
+      .skip(PageNo * 4)
+      .exec();
+    const count = await Company.find().countDocuments({
+      $and: [
+        { CompanyName: { $regex: `${SearchString}`, $options: 'i' } },
+        { State: { $regex: `${State}`, $options: 'i' } },
+      ],
+    });
+    const noOfPages = Math.ceil(count / 4);
+    for (let i = 0; i < companyResults.length; i += 1) {
+      const ID = companyResults[i].CompanyID;
+      const tempObj = {};
+      tempObj.CompanyName = companyResults[i].CompanyID;
+      tempObj.CompanyName = companyResults[i].CompanyName;
+      tempObj.City = companyResults[i].City;
+      tempObj.State = companyResults[i].State;
+      tempObj.Website = companyResults[i].Website;
+      tempObj.GeneralReviewCount = companyResults[i].GeneralReviewCount;
+      tempObj.SalaryReviewCount = companyResults[i].SalaryReviewCount;
+      tempObj.InterviewReviewCount = companyResults[i].InterviewReviewCount;
+      // eslint-disable-next-line no-await-in-loop
+      const avgRating = await fetchAvgRating(ID);
+      tempObj.AvgRating = Math.round(avgRating * 10) / 10;
+      companyResult.push(tempObj);
+    }
+    resultData = [companyResult, count, noOfPages];
+    res.writeHead(200, {
+      'Content-Type': 'application/json',
+    });
+    res.end(JSON.stringify(resultData));
+  }
+};
+
 // update the company profile
 const companyProfileUpdate = async (req, res) => {
   try {
@@ -108,5 +261,5 @@ const companyProfileUpdate = async (req, res) => {
 
 module.exports = {
   navbar,
-  companyProfileUpdate,
+  searchCompany,
 };
