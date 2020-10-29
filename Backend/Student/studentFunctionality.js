@@ -77,8 +77,8 @@ const searchCompany = async (req, res) => {
   const companyResult = [];
   if (SearchString.length === 0 && State.length === 0) {
     const companyResults = await Company.find()
-      .limit(4)
-      .skip(PageNo * 4)
+      .limit(10)
+      .skip(PageNo * 10)
       .exec();
     const count = await Company.find().countDocuments();
     const noOfPages = Math.ceil(count / 4);
@@ -86,6 +86,7 @@ const searchCompany = async (req, res) => {
       const ID = companyResults[i].CompanyID;
       const tempObj = {};
       tempObj.CompanyName = companyResults[i].CompanyID;
+      tempObj.ProfileImg = companyResults[i].ProfileImg;
       tempObj.CompanyName = companyResults[i].CompanyName;
       tempObj.City = companyResults[i].City;
       tempObj.State = companyResults[i].State;
@@ -107,8 +108,8 @@ const searchCompany = async (req, res) => {
     const companyResults = await Company.find({
       CompanyName: { $regex: `${SearchString}`, $options: 'i' },
     })
-      .limit(4)
-      .skip(PageNo * 4)
+      .limit(10)
+      .skip(PageNo * 10)
       .exec();
     const count = await Company.find().countDocuments({
       CompanyName: { $regex: `${SearchString}`, $options: 'i' },
@@ -118,6 +119,7 @@ const searchCompany = async (req, res) => {
       const ID = companyResults[i].CompanyID;
       const tempObj = {};
       tempObj.CompanyName = companyResults[i].CompanyID;
+      tempObj.ProfileImg = companyResults[i].ProfileImg;
       tempObj.CompanyName = companyResults[i].CompanyName;
       tempObj.City = companyResults[i].City;
       tempObj.State = companyResults[i].State;
@@ -139,8 +141,8 @@ const searchCompany = async (req, res) => {
     const companyResults = await Company.find({
       State: { $regex: `${SearchString}`, $options: 'i' },
     })
-      .limit(4)
-      .skip(PageNo * 4)
+      .limit(10)
+      .skip(PageNo * 10)
       .exec();
     const count = await Company.find().countDocuments({
       State: { $regex: `${SearchString}`, $options: 'i' },
@@ -151,6 +153,7 @@ const searchCompany = async (req, res) => {
       const tempObj = {};
       tempObj.CompanyName = companyResults[i].CompanyID;
       tempObj.CompanyName = companyResults[i].CompanyName;
+      tempObj.ProfileImg = companyResults[i].ProfileImg;
       tempObj.City = companyResults[i].City;
       tempObj.State = companyResults[i].State;
       tempObj.Website = companyResults[i].Website;
@@ -174,8 +177,8 @@ const searchCompany = async (req, res) => {
         { State: { $regex: `${State}`, $options: 'i' } },
       ],
     })
-      .limit(4)
-      .skip(PageNo * 4)
+      .limit(10)
+      .skip(PageNo * 10)
       .exec();
     const count = await Company.find().countDocuments({
       $and: [
@@ -188,6 +191,7 @@ const searchCompany = async (req, res) => {
       const ID = companyResults[i].CompanyID;
       const tempObj = {};
       tempObj.CompanyName = companyResults[i].CompanyID;
+      tempObj.ProfileImg = companyResults[i].ProfileImg;
       tempObj.CompanyName = companyResults[i].CompanyName;
       tempObj.City = companyResults[i].City;
       tempObj.State = companyResults[i].State;
