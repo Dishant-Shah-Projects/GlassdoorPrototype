@@ -41,6 +41,8 @@ const companyProfileUpdate = async (req, res) => {
       CompanyMission,
       CEO,
       CompanyDescription,
+      City,
+      State,
     } = req.body;
     Company.findOneAndUpdate(
       { CompanyID },
@@ -55,6 +57,8 @@ const companyProfileUpdate = async (req, res) => {
         CompanyMission,
         CEO,
         CompanyDescription,
+        City,
+        State,
       },
       (e, output) => {
         if (e) {
