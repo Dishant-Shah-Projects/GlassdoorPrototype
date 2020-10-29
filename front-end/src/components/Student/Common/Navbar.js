@@ -61,7 +61,7 @@ class Navbar extends Component {
     localStorage.setItem('Location', this.props.searchDropDownStore.Location);
     switch (this.props.searchDropDownStore.selectedDropDown) {
       case 'Jobs':
-        history.push('#');
+        history.push('/JobList');
         break;
       case 'Companies':
         history.push('/CompanySearchResults');
