@@ -5,3 +5,6 @@ export const updateLowerNavBar = 'update-lower-navBar';
 export const LowerNavBarHome = 'Lower-nav-bar-home';
 export const LowerNavBarOther = 'Lower-nav-bar-other';
 export const updateCompanyList = 'update-company-list';
+export const updateJobListStore = 'update-job-list-store';
+export const updateJobFilterStore = 'update-job-filter-store';
+export const updateMasterData = 'update-master-data';

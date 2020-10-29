@@ -35,7 +35,6 @@ class CompanySearchResults extends Component {
 
   render() {
     this.props.LowerNavBarOther();
-    console.log(this.props.companyListStore.companyList);
     return (
       <body className="main flex loggedIn lang-en en-US hollywood  _initOk noTouch desktop">
         {<Navbar />}
@@ -82,18 +81,19 @@ class CompanySearchResults extends Component {
                             </div>
                           </header>
 
-                          <div
-                            className="single-company-result module "
-                            id=""
-                            data-track-serp-click="true"
-                            data-emp-id="6036"
-                            data-serp-pos="0"
-                            data-brandviews="MODULE:n=hub-companySearchResult:eid=6036"
-                          >
-                            {this.props.companyListStore.companyList.map(() => (
+                          {this.props.companyListStore.companyList.map(() => (
+                            <div
+                              className="single-company-result module "
+                              id=""
+                              data-track-serp-click="true"
+                              data-emp-id="6036"
+                              data-serp-pos="0"
+                              data-brandviews="MODULE:n=hub-companySearchResult:eid=6036"
+                            >
                               <CompanyCard />
-                            ))}
-                          </div>
+                            </div>
+                          ))}
+
                           <div className="module pt-xxsm">
                             <PaginationComponent
                               PageCount={this.props.companyListStore.PageCount}
