@@ -10,14 +10,23 @@ class LeftBlock extends Component {
 
   render() {
     return (
-      <div className="col-lg-4 col-12 mb-lg mb-lg-0">
-        <div className=" css-1vl67hm false ">
-          <div className="row css-15dnu4o mt-xsm">
-            <div className="col-sm-12">
-              <div className="d-block css-4w4zia el0n26p0" data-test="profile-container">
-                <div className="d-none d-lg-block p-std">
-                  <div className="d-flex flex-row container-fluid justify-content-between align-items-center">
-                    <span className="SVGInline mb-xsm css-1k2lqp9">
+      <div className="col-lg-4 col-12 mb-lg mb-lg-0" style={{
+        "-webkit-box-orient": "vertical !important",
+        "-webkit-box-direction": "normal !important",
+        "-webkit-flex-direction": "column !important",
+        "-ms-flex-direction": "column !important",
+        "flex-direction": "column !important",
+    }}>
+        <div class=" css-1vl67hm false ">
+          <div class="row css-15dnu4o mt-xsm">
+            <div class="col-sm-12">
+              <div
+                class="d-block css-4w4zia el0n26p0"
+                data-test="profile-container"
+              >
+                <div class="d-none d-lg-block p-std">
+                  <div class="d-flex flex-row container-fluid justify-content-between align-items-center">
+                    <span class="SVGInline mb-xsm css-1k2lqp9">
                       <svg
                         className="SVGInline-svg mb-xsm-svg css-1k2lqp9-svg"
                         xmlns="http://www.w3.org/2000/svg"

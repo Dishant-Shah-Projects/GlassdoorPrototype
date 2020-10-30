@@ -62,7 +62,9 @@ class LoginBody extends Component {
     axios.post(serverUrl + 'glassdoor/login', data).then(
       (response) => {
         if (response.status === 200) {
+          console.log(response);
           const decoded = jwt_decode(response.data.split(' ')[1]);
+          console.log('role',decoded.rol);
           localStorage.setItem('token', response.data);
           localStorage.setItem('userId', decoded.ID);
           localStorage.setItem('userrole', decoded.rol);
@@ -86,7 +88,7 @@ class LoginBody extends Component {
     let redirectVar = null;
     if (localStorage.getItem('token')) {
       if (localStorage.getItem('userrole') === 'company') {
-        redirectVar = <Redirect to="/restaurantHome" />;
+        redirectVar = <Redirect to="/Employer" />;
       } else if (localStorage.getItem('userrole') === 'student') {
         redirectVar = <Redirect to="/home" />;
       }

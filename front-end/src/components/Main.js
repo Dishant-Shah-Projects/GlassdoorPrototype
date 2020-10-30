@@ -8,6 +8,8 @@ import CompanySearchResults from './Student/Company/CompanySearchResults';
 import JobList from './Student/JobSearchResults/JobList';
 import { connect } from 'react-redux';
 import { updateMasterData } from '../constants/action-types';
+import EmployerHome from "./Employer/LandingPage/EmployerHome";
+import ProfileUpdate from "./Employer/ProfileUpdate/ProfileUpdate";
 
 class Main extends Component {
   // constructor(props) {
@@ -60,12 +62,16 @@ class Main extends Component {
   render() {
     return (
       <div>
-        <Switch>
+        <Switch>          
+          <Route path="/CompanySearchResults" component={CompanySearchResults} />
+          <Route path="/Employer" component={EmployerHome} />
+          <Route path="/EmployerProfile" component={ProfileUpdate} />
           <Route path="/Home" component={Home} />
           <Route path="/Login" component={Login} />
           <Route path="/CompanySearchResults" component={CompanySearchResults} />
           <Route path="/JobList" component={JobList} />
           <Route path="/" component={Home} />
+          <Route path="/" component={Home} />          
         </Switch>
       </div>
     );
