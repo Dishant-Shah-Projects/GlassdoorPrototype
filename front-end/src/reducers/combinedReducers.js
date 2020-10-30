@@ -5,6 +5,8 @@ import lowerNavBarReducer from './lowerNavBarReducer';
 import CompaniesListReducer from './CompaniesListReducer';
 import JobSearchPageReducer from './JobSearchPageReducer';
 import staticDataReducer from './staticDataReducer';
+import CompaniesProfileReducer from './CompaniesProfileReducer';
+
 
 const finalReducers = combineReducers({
   SignupModalViewReducer: SignupModalViewReducer,
@@ -13,6 +15,7 @@ const finalReducers = combineReducers({
   CompaniesListReducer: CompaniesListReducer,
   JobSearchPageReducer: JobSearchPageReducer,
   staticDataReducer: staticDataReducer,
+  CompaniesProfileReducer: CompaniesProfileReducer
 });
 
 export default finalReducers;

@@ -2,28 +2,29 @@ import React, { Component } from 'react';
 import { Redirect } from 'react-router';
 import axios from 'axios';
 import serverUrl from '../../../config.js';
+import { updateCompanyProfile } from '../../../constants/action-types';
+import { connect } from 'react-redux';
 import './Body.css';
-
 
 class RightBlock extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      errorMessage: '',
-      CompanyName: '',
-      Website: '',
-      Size: '',
-      ProfileImg: '',
-      Type: '',
-      Revenue: '',
-      Headquarter: '',
-      Industry: '',
-      Founded: '',
-      CompanyDescription: '',
-      CompanyMission: '',
-      CEO: '',
-      City: '',
-      State: '',
+      //   errorMessage: '',
+      //   CompanyName: '',
+      //   Website: '',
+      //   Size: '',
+      //   ProfileImg: '',
+      //   Type: '',
+      //   Revenue: '',
+      //   Headquarter: '',
+      //   Industry: '',
+      //   Founded: '',
+      //   CompanyDescription: '',
+      //   CompanyMission: '',
+      //   CEO: '',
+      //   City: '',
+      //   State: '',
       authFlag: false,
       updateProfile: false,
     };
@@ -44,7 +45,7 @@ class RightBlock extends Component {
         (response) => {
           if (response.status === 200) {
             console.log(response);
-            this.setState({
+            let payload = {
               CompanyName: response.data.CompanyName,
               Website: response.data.Website,
               Size: response.data.Size,
@@ -59,7 +60,9 @@ class RightBlock extends Component {
               CEO: response.data.CEO,
               City: response.data.City,
               State: response.data.State,
-            });
+            };
+            console.log('payload', payload);
+            this.props.updateCompanyProfile(payload);
             this.setState({
               authFlag: true,
             });
@@ -73,20 +76,19 @@ class RightBlock extends Component {
       );
   }
 
-  handleUpdateProfile= () => {
+  handleUpdateProfile = () => {
     console.log('Inside update profile');
-     this.setState({
-       updateProfile: true
-     })
-     console.log('flag', this.state.updateProfile);
-  }  
+    this.setState({
+      updateProfile: true,
+    });
+    console.log('flag', this.state.updateProfile);
+  };
   render() {
-    let redirectVar = null; 
-    if(this.state.updateProfile) {
+    let redirectVar = null;
+    if (this.state.updateProfile) {
       redirectVar = <Redirect to="/EmployerProfile" />;
     }
-    return (      
-      
+    return (
       <div class="col-12 col-md-8">
         {redirectVar}
         <div>
@@ -107,7 +109,7 @@ class RightBlock extends Component {
                       <div class="d-flex col justify-content-between align-items-center no-gutters SectionHeaderStyles__headingGroup___b6Lyf">
                         <div class="d-flex justify-content-start align-items-center SectionHeaderStyles__nameGroup___2N2pK SectionHeaderStyles__visible___3a7mt">
                           <h3 class="m-0 mr-sm SectionHeaderStyles__name___saD9S" title="Wipro">
-                            {this.state.CompanyName} Overview
+                            {this.props.companyInfo.CompanyName} Overview
                           </h3>
                         </div>
                       </div>
@@ -163,48 +165,58 @@ class RightBlock extends Component {
                         <li class="d-flex align-items-center col-12 col-sm-6 p-0 m-0 pb-sm pr-xxsm">
                           <label class="css-1f0lhlt ecl3kjh0">Website:</label>
                           <a
-                            href={this.state.Website}
+                            href={this.props.companyInfo.Website}
                             target="_blank"
                             rel="noopener noreferrer"
                             class="css-1hg9omi"
                             data-test="employer-website"
                           >
-                            {this.state.Website}
+                            {this.props.companyInfo.Website}
                           </a>
                         </li>
                         <li class="d-flex align-items-center col-12 col-sm-6 p-0 m-0 pb-sm pl-sm-xxsm">
                           <label class="css-1f0lhlt ecl3kjh0">Headquarters:</label>
-                          <div data-test="employer-headquarters">{this.state.Headquarter} </div>
+                          <div data-test="employer-headquarters">
+                            {this.props.companyInfo.Headquarter}{' '}
+                          </div>
                         </li>
                         <li class="d-flex align-items-center col-12 col-sm-6 p-0 m-0 pb-sm pr-sm-xxsm">
                           <label class="css-1f0lhlt ecl3kjh0">Size:</label>
-                          <div data-test="employer-size">{this.state.Size} Employees</div>
+                          <div data-test="employer-size">
+                            {this.props.companyInfo.Size} Employees
+                          </div>
                         </li>
                         <li class="d-flex align-items-center col-12 col-sm-6 p-0 m-0 pb-sm pr-sm-xxsm">
                           <label class="css-1f0lhlt ecl3kjh0">Location:</label>
                           <div data-test="employer-size">
-                            {this.state.City}, {this.state.State}
+                            {this.props.companyInfo.City}, {this.props.companyInfo.State}
                           </div>
                         </li>
                         <li class="d-flex align-items-center col-12 col-sm-6 p-0 m-0 pb-sm pl-sm-xxsm">
                           <label class="css-1f0lhlt ecl3kjh0">Founded:</label>
-                          <div data-test="employer-founded">{this.state.Founded} </div>
+                          <div data-test="employer-founded">{this.props.companyInfo.Founded} </div>
                         </li>
                         <li class="d-flex align-items-center col-12 col-sm-6 p-0 m-0 pb-sm pr-sm-xxsm">
                           <label class="css-1f0lhlt ecl3kjh0">Type:</label>
-                          <div data-test="employer-type">Company - {this.state.Type} </div>
+                          <div data-test="employer-type">
+                            Company - {this.props.companyInfo.Type}{' '}
+                          </div>
                         </li>
                         <li class="d-flex align-items-center col-12 col-sm-6 p-0 m-0 pb-sm pl-sm-xxsm">
                           <label class="css-1f0lhlt ecl3kjh0">Industry:</label>
-                          <div data-test="employer-industry">{this.state.Industry} </div>
+                          <div data-test="employer-industry">
+                            {this.props.companyInfo.Industry}{' '}
+                          </div>
                         </li>
                         <li class="d-flex align-items-center col-12 col-sm-6 p-0 m-0 pb-sm pr-sm-xxsm">
                           <label class="css-1f0lhlt ecl3kjh0">Revenue:</label>
-                          <div data-test="employer-revenue">{this.state.Revenue} (USD)</div>
+                          <div data-test="employer-revenue">
+                            {this.props.companyInfo.Revenue} (USD)
+                          </div>
                         </li>
                         <li class="d-flex align-items-center col-12 col-sm-6 p-0 m-0 pb-sm pr-sm-xxsm">
                           <label class="css-1f0lhlt ecl3kjh0">CEO:</label>
-                          <div data-test="employer-revenue">{this.state.CEO}</div>
+                          <div data-test="employer-revenue">{this.props.companyInfo.CEO}</div>
                         </li>
                       </ul>
                     </div>
@@ -239,8 +251,10 @@ class RightBlock extends Component {
                 </div>
                 <div class="d-flex no-gutters justify-content-center align-items-start profileInfoStyle__actions___3-CvK">
                   <div class="col-4 px-xxsm d-flex flex-column justify-content-center align-items-center">
-                    <button class="gd-ui-button m-0 mb-xsm p-0 d-flex justify-content-center align-items-center profileInfoStyle__actionBtn___2ectR css-1c2vj07"
-                      onClick={this.handleUpdateProfile}>
+                    <button
+                      class="gd-ui-button m-0 mb-xsm p-0 d-flex justify-content-center align-items-center profileInfoStyle__actionBtn___2ectR css-1c2vj07"
+                      onClick={this.handleUpdateProfile}
+                    >
                       <div class="d-flex mt-xsm justify-content-center align-items-center">
                         <div class="d-block d-md-none profileInfoStyle__actionIcon___iWiGy">
                           <span class="SVGInline">
@@ -268,8 +282,7 @@ class RightBlock extends Component {
                     </div>
                   </div>
                   <div class="col-4 px-xxsm d-flex flex-column justify-content-center align-items-center">
-                    <button class="gd-ui-button m-0 mb-xsm p-0 d-flex justify-content-center align-items-center profileInfoStyle__actionBtn___2ectR css-1c2vj07" 
-                        >
+                    <button class="gd-ui-button m-0 mb-xsm p-0 d-flex justify-content-center align-items-center profileInfoStyle__actionBtn___2ectR css-1c2vj07">
                       <div class="d-flex mt-xsm justify-content-center align-items-center profileInfoStyle__actionIcon___iWiGy">
                         <div class="d-block d-md-none profileInfoStyle__actionIcon___iWiGy">
                           <span class="SVGInline">
@@ -317,7 +330,7 @@ class RightBlock extends Component {
               class="m-0 preWrap"
               style={{ fontFamily: "'Lato', sans-serif" }}
             >
-              {this.state.CompanyDescription}
+              {this.props.companyInfo.CompanyDescription}
             </p>
           </section>
           <section
@@ -338,13 +351,31 @@ class RightBlock extends Component {
               class="m-0 preWrap"
               style={{ fontFamily: "'Lato', sans-serif" }}
             >
-              {this.state.CompanyMission}
+              {this.props.companyInfo.CompanyMission}
             </p>
           </section>
         </div>
-      </div>      
+      </div>
     );
   }
 }
 
-export default RightBlock;
+const mapStateToProps = (state) => {
+  const { companyInfo } = state.CompaniesProfileReducer;
+  return {
+    companyInfo,
+  };
+};
+const mapDispatchToProps = (dispatch) => {
+  return {
+    updateCompanyProfile: (payload) => {
+      dispatch({
+        type: updateCompanyProfile,
+        payload,
+      });
+    },
+  };
+};
+
+// export default LoginBody;
+export default connect(mapStateToProps, mapDispatchToProps)(RightBlock);

@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 import { updateMasterData } from '../constants/action-types';
 import EmployerHome from "./Employer/LandingPage/EmployerHome";
 import ProfileUpdate from "./Employer/ProfileUpdate/ProfileUpdate";
+import LoginBody from './Login/LoginBody';
 
 class Main extends Component {
   // constructor(props) {
@@ -70,8 +71,7 @@ class Main extends Component {
           <Route path="/Login" component={Login} />
           <Route path="/CompanySearchResults" component={CompanySearchResults} />
           <Route path="/JobList" component={JobList} />
-          <Route path="/" component={Home} />
-          <Route path="/" component={Home} />          
+          <Route path="/" component={Login} />                  
         </Switch>
       </div>
     );
