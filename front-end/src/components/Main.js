@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import axios from 'axios';
+import { connect } from 'react-redux';
+import { updateMasterData } from '../constants/action-types';
 import serverUrl from '../config';
 import Home from './Student/LandingPage/Home';
 import Login from './Login/Login';
-import CompanySearchResults from './Student/Company/CompanySearchResults';
+import CompanySearchResults from './Student/CompanySearchResults/CompanySearchResults';
 import JobList from './Student/JobSearchResults/JobList';
-import { connect } from 'react-redux';
-import { updateMasterData } from '../constants/action-types';
+import salaryList from './Student/SalarySearchResults/salaryList';
+import interviewList from './Student/InterviewSearchResults/interviewList';
 
 class Main extends Component {
   // constructor(props) {
@@ -65,6 +67,8 @@ class Main extends Component {
           <Route path="/Login" component={Login} />
           <Route path="/CompanySearchResults" component={CompanySearchResults} />
           <Route path="/JobList" component={JobList} />
+          <Route path="/salaryList" component={salaryList} />
+          <Route path="/interviewList" component={interviewList} />
           <Route path="/" component={Home} />
         </Switch>
       </div>

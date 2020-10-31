@@ -5,6 +5,9 @@ import lowerNavBarReducer from './lowerNavBarReducer';
 import CompaniesListReducer from './CompaniesListReducer';
 import JobSearchPageReducer from './JobSearchPageReducer';
 import staticDataReducer from './staticDataReducer';
+import SalaryListReducer from './SalaryListReducer';
+import SearchStringsReducer from './SearchStringsReducer';
+import StudentCompleteInfoReducer from './StudentCompleteInfoReducer';
 
 const finalReducers = combineReducers({
   SignupModalViewReducer: SignupModalViewReducer,
@@ -13,6 +16,9 @@ const finalReducers = combineReducers({
   CompaniesListReducer: CompaniesListReducer,
   JobSearchPageReducer: JobSearchPageReducer,
   staticDataReducer: staticDataReducer,
+  SalaryListReducer: SalaryListReducer,
+  SearchStringsReducer: SearchStringsReducer,
+  StudentCompleteInfoReducer: StudentCompleteInfoReducer,
 });
 
 export default finalReducers;

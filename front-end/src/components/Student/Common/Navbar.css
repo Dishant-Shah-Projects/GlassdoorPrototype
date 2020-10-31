@@ -1009,3 +1009,8 @@ a.css-1s7hc3h:visited {
   width: 100%;
   min-height: 1px;
 }
+.autocomplete-suggestions .fullFormat .suggestion-content > span {
+  padding-left: 16px;
+  font-weight: 700;
+  overflow: hidden;
+}

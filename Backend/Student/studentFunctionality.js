@@ -254,7 +254,7 @@ const companyProfileUpdate = async (req, res) => {
           });
           res.end(JSON.stringify('Profile Updated'));
         }
-      },
+      }
     );
   } catch (error) {
     res.writeHead(500, { 'content-type': 'text/json' });
@@ -280,39 +280,44 @@ const getJobSuggestions = async (req, res) => {
       }
     });
     /* eslint-disable*/
-    await Job.find({ Title: { $regex: `.*${jobTitle}.*` } }).limit(4).exec(function(err, results){
-      if (err) {
-        res.writeHead(500, {
-          'Content-Type': 'text/plain',
-        });
-        res.end('Jobs not found');
-      } else {
-        if (results.length == 4) {
-          resultData = results;
-          res.writeHead(200, {
-            'Content-Type': 'application/json',
+    await Job.find({ Title: { $regex: `.*${jobTitle}.*` } })
+      .limit(4)
+      .exec(function (err, results) {
+        if (err) {
+          res.writeHead(500, {
+            'Content-Type': 'text/plain',
           });
-          res.end(JSON.stringify(resultData));
+          res.end('Jobs not found');
         } else {
-          resultData = results;
-          Job.find({}).sort({ PostedDate: -1 }).limit(4 - resultData.length).exec(function(err, results) {
-            if (err) {
-              res.writeHead(500, {
-                'Content-Type': 'text/plain',
+          if (results.length == 4) {
+            resultData = results;
+            res.writeHead(200, {
+              'Content-Type': 'application/json',
+            });
+            res.end(JSON.stringify(resultData));
+          } else {
+            resultData = results;
+            Job.find({})
+              .sort({ PostedDate: -1 })
+              .limit(4 - resultData.length)
+              .exec(function (err, results) {
+                if (err) {
+                  res.writeHead(500, {
+                    'Content-Type': 'text/plain',
+                  });
+                  res.end('Jobs not found');
+                } else {
+                  resultData = resultData.concat(results);
+
+                  res.writeHead(200, {
+                    'Content-Type': 'application/json',
+                  });
+                  res.end(JSON.stringify(resultData));
+                }
               });
-              res.end('Jobs not found');
-            } else {
-              resultData = resultData.concat(results);
-              
-              res.writeHead(200, {
-                'Content-Type': 'application/json',
-              });
-              res.end(JSON.stringify(resultData));
-            }
-          });
+          }
         }
-      }
-    });
+      });
   } catch (error) {
     res.writeHead(500, { 'content-type': 'text/json' });
     res.end(JSON.stringify('Network Error'));
