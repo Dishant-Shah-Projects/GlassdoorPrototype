@@ -24,6 +24,10 @@ const JobsSchema = new mongoose.Schema({
   Qualifications: { type: String, required: true },
   ExpectedSalary: { type: Number, required: true },
   Votes: { type: Number, required: true },
+  JobType: {
+    type: String,
+    enum: ['Full-time', 'Part-time', 'Contract', 'Internship', 'Temporary'],
+  },
 });
 
 module.exports = mongoose.model('jobs', JobsSchema);
