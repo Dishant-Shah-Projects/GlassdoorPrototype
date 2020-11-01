@@ -11,3 +11,4 @@ export const updateMasterData = 'update-master-data';
 export const updateSalaryList = 'update-salary-list';
 export const updateStudentProfile = 'update-student-profile';
 export const updateActiveStringList = 'update-active-stringList';
+export const updateCompanyProfile = 'update-company-profile';

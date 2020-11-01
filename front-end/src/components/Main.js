@@ -10,6 +10,9 @@ import CompanySearchResults from './Student/CompanySearchResults/CompanySearchRe
 import JobList from './Student/JobSearchResults/JobList';
 import salaryList from './Student/SalarySearchResults/salaryList';
 import interviewList from './Student/InterviewSearchResults/interviewList';
+import EmployerHome from "./Employer/LandingPage/EmployerHome";
+import ProfileUpdate from "./Employer/ProfileUpdate/ProfileUpdate";
+import LoginBody from './Login/LoginBody';
 
 class Main extends Component {
   // constructor(props) {
@@ -62,7 +65,10 @@ class Main extends Component {
   render() {
     return (
       <div>
-        <Switch>
+        <Switch>          
+          <Route path="/CompanySearchResults" component={CompanySearchResults} />
+          <Route path="/Employer" component={EmployerHome} />
+          <Route path="/EmployerProfile" component={ProfileUpdate} />
           <Route path="/Home" component={Home} />
           <Route path="/Login" component={Login} />
           <Route path="/CompanySearchResults" component={CompanySearchResults} />

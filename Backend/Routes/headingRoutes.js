@@ -37,13 +37,11 @@ Router.get('/staticdata', async (req, res) => {
 });
 // Insert Sample Data
 Router.post('/staticdatainsert', async (req, res) => {
-  console.log(req.body);
   const value = await staticDataInsert(req, res);
   return value;
 });
 // Update Static Data
 Router.post('/staticdataupdate', async (req, res) => {
-  console.log(req.body);
   const value = await staticDataUpdate(req, res);
   return value;
 });

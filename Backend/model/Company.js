@@ -21,6 +21,7 @@ const CompanySchema = new mongoose.Schema(
     SalaryReviewCount: { type: Number },
     GeneralReviewCount: { type: Number },
     InterviewReviewCount: { type: Number },
+    TotalGeneralReviewRating: { type: Number, default: 0 },
     JobCount: { type: Number },
     PhotoCount: { type: Number },
     FeaturedReview: [

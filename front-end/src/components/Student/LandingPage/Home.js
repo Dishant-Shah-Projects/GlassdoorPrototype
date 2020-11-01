@@ -24,6 +24,8 @@ class Home extends Component {
         });
       });
   }
+  componentDidMount() {   
+  }
   render() {
     return (
       <div>

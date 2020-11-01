@@ -8,6 +8,8 @@ import staticDataReducer from './staticDataReducer';
 import SalaryListReducer from './SalaryListReducer';
 import SearchStringsReducer from './SearchStringsReducer';
 import StudentCompleteInfoReducer from './StudentCompleteInfoReducer';
+import CompaniesProfileReducer from './CompaniesProfileReducer';
+
 
 const finalReducers = combineReducers({
   SignupModalViewReducer: SignupModalViewReducer,
@@ -19,6 +21,7 @@ const finalReducers = combineReducers({
   SalaryListReducer: SalaryListReducer,
   SearchStringsReducer: SearchStringsReducer,
   StudentCompleteInfoReducer: StudentCompleteInfoReducer,
+  CompaniesProfileReducer: CompaniesProfileReducer
 });
 
 export default finalReducers;
