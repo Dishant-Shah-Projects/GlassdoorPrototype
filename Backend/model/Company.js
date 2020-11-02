@@ -24,36 +24,35 @@ const CompanySchema = new mongoose.Schema(
     TotalGeneralReviewRating: { type: Number, default: 0 },
     JobCount: { type: Number },
     PhotoCount: { type: Number },
-    FeaturedReview: [
-      {
-        Status: {
-          type: String,
-          enum: ['NotApproved', 'Approved', 'Disapproved'],
-        },
-        CompanyName: { type: String },
-        StudentID: { type: Number },
-        Pros: { type: String },
-        Cons: { type: String },
-        Descriptions: { type: String },
-        Rating: { type: Number },
-        EmployeeStatus: {
-          type: String,
-          enum: ['Current', 'Former'],
-        },
-        Helpful: { type: Number },
-        CEOApproval: { type: Boolean },
-        JobType: {
-          type: String,
-          enum: ['FullTime', 'PartTime', 'Contract', 'Intern', 'Freelance'],
-        },
-        Recommended: { type: Boolean },
-        JobTitle: { type: String },
-        Headline: { type: Boolean },
-        DatePosted: { type: Date },
-        Response: { type: String },
-        Favorite: { type: Boolean },
+    FeaturedReview: {
+      Status: {
+        type: String,
+        enum: ['NotApproved', 'Approved', 'Disapproved'],
       },
-    ],
+      CompanyName: { type: String },
+      StudentID: { type: Number },
+      Pros: { type: String },
+      Cons: { type: String },
+      Descriptions: { type: String },
+      Rating: { type: Number },
+      EmployeeStatus: {
+        type: String,
+        enum: ['Current', 'Former'],
+      },
+      Helpful: { type: Number },
+      CEOApproval: { type: Boolean },
+      JobType: {
+        type: String,
+        enum: ['FullTime', 'PartTime', 'Contract', 'Intern', 'Freelance'],
+      },
+      Recommended: { type: Boolean },
+      JobTitle: { type: String },
+      Headline: { type: String },
+      DatePosted: { type: Date },
+      Response: { type: String },
+      Favorite: { type: Boolean },
+    },
+
     SalaryReview: [
       {
         Status: {
