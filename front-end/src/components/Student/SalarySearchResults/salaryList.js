@@ -37,7 +37,7 @@ class salaryList extends Component {
     return (
       <body className="main flex loggedIn lang-en en-US hollywood  _initOk noTouch desktop">
         {<Navbar />}
-        <div class="pageContentWrapper ">
+        <div class="pageContentWrapperStudent ">
           <div id="PageContent">
             <div id="PageBodyContents" class="meat">
               <div class="pageInsideContent cf">

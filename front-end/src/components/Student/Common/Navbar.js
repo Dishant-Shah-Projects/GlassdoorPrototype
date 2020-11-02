@@ -19,7 +19,7 @@ import SuggestedNames from './SuggestedNames';
 class Navbar extends Component {
   constructor(props) {
     super(props);
-    this.state = { filterDropDownOpen: false, showSuggestion: false };
+    this.state = { filterDropDownOpen: false, showSuggestion: true };
   }
   showSuggestion = (suggestionstate) => {
     this.setState({
@@ -104,6 +104,8 @@ class Navbar extends Component {
   };
 
   selectString = (event, string) => {
+    console.log(string);
+    event.preventDefault();
     const payload = {
       SearchString: string,
     };
@@ -203,7 +205,7 @@ class Navbar extends Component {
                           }`}
                         >
                           <div className="popup__PopupStyles__popupBackground">
-                            <div className="d-flex flex-column col">
+                            <div style={{ width: '100%' }} className="d-flex flex-column col">
                               <div className="accountPopup__AccountPopupStyles__menuContainer">
                                 <div className="accountPopup__AccountPopupStyles__accountMenu accountPopup__AccountPopupStyles__active">
                                   <ul className="p-0 m-0 memberHeader__HeaderStyles__list">
@@ -559,8 +561,8 @@ class Navbar extends Component {
                           <div className="col headerSearchInput css-1ohf0ui">
                             <div className="input-wrapper css-q444d9">
                               <input
-                                onFocus={() => this.showSuggestion(true)}
-                                onBlur={() => this.showSuggestion(false)}
+                                // onFocus={() => this.showSuggestion(true)}
+                                // onBlur={() => this.showSuggestion(false)}
                                 onChange={this.onChangeCommonHandler}
                                 type="text"
                                 id="sc.keyword"

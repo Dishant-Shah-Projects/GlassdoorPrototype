@@ -928,8 +928,8 @@ a.css-1s7hc3h:visited {
 }
 
 .popup__PopupStyles__popupContentActive {
-  opacity: 1;
-  z-index: 9000;
+  opacity: 1 !important;
+  z-index: 9000 !important;
 }
 
 .gdGrid .d-md-block {

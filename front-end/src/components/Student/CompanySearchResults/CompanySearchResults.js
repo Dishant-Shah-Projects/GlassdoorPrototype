@@ -58,7 +58,7 @@ class CompanySearchResults extends Component {
     return (
       <body className="main flex loggedIn lang-en en-US hollywood  _initOk noTouch desktop">
         {<Navbar />}
-        <div className="pageContentWrapper ">
+        <div className="pageContentWrapperStudent ">
           <div id="PageContent">
             <div id="PageBodyContents" className="meat">
               <div className="pageInsideContent cf">
