@@ -5,6 +5,8 @@ import { connect } from 'react-redux';
 import './CompanySearchResults.css';
 import PaginationComponent from '../Common/PaginationComponent';
 import CompanyCard from './CompanyCard';
+import axios from 'axios';
+import serverUrl from '../../../config';
 
 class CompanySearchResults extends Component {
   constructor(props) {
@@ -13,15 +15,33 @@ class CompanySearchResults extends Component {
   }
 
   commonFetch = (PageNo = 0) => {
-    let payload = {
-      companyList: [{ name: 'pr' }, { name: 'pr' }, { name: 'pr' }, { name: 'pr' }],
-      PageNo,
-      PageCount: Math.ceil(116 / 10),
-      Totalcount: 116,
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    axios
+      .get(serverUrl + 'student/searchCompany', {
+        params: {
+          SearchString: localStorage.getItem('SearchString'),
+          State: localStorage.getItem('Location'),
+          PageNo,
+        },
+        withCredentials: true,
+      })
+      .then(
+        (response) => {
+          console.log('searchCompany', response);
+          let payload = {
+            companyList: response.data[0],
+            PageNo,
+            PageCount: Math.ceil(response.data[1] / 10),
+            Totalcount: response.data[1],
 
-      // PageCount: Math.ceil(response.data.Totalcount / 3),
-    };
-    this.props.updateCompanyList(payload);
+            // PageCount: Math.ceil(response.data.Totalcount / 3),
+          };
+          this.props.updateCompanyList(payload);
+        },
+        (error) => {
+          console.log('error', error);
+        }
+      );
   };
 
   componentDidMount() {
@@ -38,7 +58,7 @@ class CompanySearchResults extends Component {
     return (
       <body className="main flex loggedIn lang-en en-US hollywood  _initOk noTouch desktop">
         {<Navbar />}
-        <div className="pageContentWrapper ">
+        <div className="pageContentWrapperStudent ">
           <div id="PageContent">
             <div id="PageBodyContents" className="meat">
               <div className="pageInsideContent cf">
@@ -81,7 +101,7 @@ class CompanySearchResults extends Component {
                             </div>
                           </header>
 
-                          {this.props.companyListStore.companyList.map(() => (
+                          {this.props.companyListStore.companyList.map((company) => (
                             <div
                               className="single-company-result module "
                               id=""
@@ -90,7 +110,7 @@ class CompanySearchResults extends Component {
                               data-serp-pos="0"
                               data-brandviews="MODULE:n=hub-companySearchResult:eid=6036"
                             >
-                              <CompanyCard />
+                              <CompanyCard company={company} />
                             </div>
                           ))}
 

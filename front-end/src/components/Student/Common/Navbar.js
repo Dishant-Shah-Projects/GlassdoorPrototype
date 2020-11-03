@@ -1,7 +1,12 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { Component } from 'react';
 import './Navbar.css';
-import { updateSearcFilter, updateLowerNavBar } from '../../../constants/action-types';
+import {
+  updateSearcFilter,
+  updateLowerNavBar,
+  updateActiveStringList,
+  updateStudentProfile,
+} from '../../../constants/action-types';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import axios from 'axios';
@@ -9,11 +14,50 @@ import serverUrl from '../../../config';
 import LowerNavBarHome from './LowerNavBarHome';
 import LowerNavBarOther from './LowerNavBarOther';
 import { history } from '../../../App';
+import SuggestedNames from './SuggestedNames';
 
 class Navbar extends Component {
   constructor(props) {
     super(props);
-    this.state = { filterDropDownOpen: false };
+    this.state = { filterDropDownOpen: false, showSuggestion: true };
+  }
+  showSuggestion = (suggestionstate) => {
+    this.setState({
+      showSuggestion: suggestionstate,
+    });
+  };
+  componentDidMount() {
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    axios
+      .get(serverUrl + 'student/navbar', {
+        params: { StudentID: localStorage.getItem('userId') },
+        withCredentials: true,
+      })
+      .then((response) => {
+        const payload1 = {
+          studentProfile: { CurrentJobTitle: '', Name: '', ...response.data[0] },
+        };
+        this.props.updateStudentProfile(payload1);
+
+        let Companies = response.data[1].map((company) => {
+          return company.CompanyName;
+        });
+        let JobTitles = response.data[2].map((job) => {
+          return job.Title;
+        });
+        const payload2 = {
+          companyList: Array.from(new Set(Companies)),
+
+          jobTitleList: Array.from(new Set(JobTitles)),
+          activeList: Array.from(new Set(JobTitles)),
+        };
+        this.props.updateActiveStringList(payload2);
+        // let payload = {
+        //   reviewCount: response.data.reviewCount,
+        //   customerProfile,
+        // };
+        // this.props.getCustomerBasicInfo(payload);
+      });
   }
 
   openFilterDropDown = () => {
@@ -24,6 +68,17 @@ class Navbar extends Component {
 
   updateSearchFilter = (event, selectedDropDown) => {
     event.preventDefault();
+    let payloadSearchStrings;
+    if (selectedDropDown === 'Jobs') {
+      payloadSearchStrings = {
+        activeList: this.props.searchStringStore.jobTitleList,
+      };
+    } else {
+      payloadSearchStrings = {
+        activeList: this.props.searchStringStore.companyList,
+      };
+    }
+    this.props.updateActiveStringList(payloadSearchStrings);
     const payload = {
       selectedDropDown,
     };
@@ -48,6 +103,15 @@ class Navbar extends Component {
     }
   };
 
+  selectString = (event, string) => {
+    console.log(string);
+    event.preventDefault();
+    const payload = {
+      SearchString: string,
+    };
+    this.props.updateSearcFilter(payload);
+  };
+
   onChangeCommonHandler = (e) => {
     const payload = {
       [e.target.name]: e.target.value,
@@ -67,14 +131,20 @@ class Navbar extends Component {
         history.push('/CompanySearchResults');
         break;
       case 'Salaries':
-        history.push('#');
+        history.push('/salaryList');
         break;
       case 'Interviews':
-        history.push('/#');
+        history.push('/interviewList');
         break;
       default:
         break;
     }
+  };
+
+  filterStrings = () => {
+    return this.props.searchStringStore.activeList.filter((string) =>
+      string.toLowerCase().includes(this.props.searchDropDownStore.SearchString.toLowerCase())
+    );
   };
 
   render() {
@@ -135,7 +205,7 @@ class Navbar extends Component {
                           }`}
                         >
                           <div className="popup__PopupStyles__popupBackground">
-                            <div className="d-flex flex-column col">
+                            <div style={{ width: '100%' }} className="d-flex flex-column col">
                               <div className="accountPopup__AccountPopupStyles__menuContainer">
                                 <div className="accountPopup__AccountPopupStyles__accountMenu accountPopup__AccountPopupStyles__active">
                                   <ul className="p-0 m-0 memberHeader__HeaderStyles__list">
@@ -491,6 +561,8 @@ class Navbar extends Component {
                           <div className="col headerSearchInput css-1ohf0ui">
                             <div className="input-wrapper css-q444d9">
                               <input
+                                // onFocus={() => this.showSuggestion(true)}
+                                // onBlur={() => this.showSuggestion(false)}
                                 onChange={this.onChangeCommonHandler}
                                 type="text"
                                 id="sc.keyword"
@@ -500,17 +572,13 @@ class Navbar extends Component {
                                 aria-label=""
                                 value={this.props.searchDropDownStore.SearchString}
                                 className="css-1etjok6"
-                                autocomplete="off"
+                                autoComplete="off"
                               />
-                              <div
-                                className="autocomplete-suggestions "
-                                style={{
-                                  width: '399px',
-                                  left: '0px',
-                                  top: '41px',
-                                  display: 'none',
-                                }}
-                              ></div>
+                              <SuggestedNames
+                                showSuggestion={this.state.showSuggestion}
+                                searchStrings={this.filterStrings()}
+                                selectString={(event, string) => this.selectString(event, string)}
+                              />
                             </div>
                           </div>
                         </div>
@@ -738,7 +806,7 @@ class Navbar extends Component {
                               aria-label=""
                               value={this.props.searchDropDownStore.Location}
                               className="css-1etjok6"
-                              autocomplete="off"
+                              autoComplete="off"
                             />
                             <div
                               style={{
@@ -746,7 +814,7 @@ class Navbar extends Component {
                                 top: '41px',
                                 width: '266px',
                               }}
-                              className="autocomplete-suggestions "
+                              className="autoComplete-suggestions "
                             ></div>
                           </div>
                         </div>
@@ -775,8 +843,10 @@ class Navbar extends Component {
 const mapStateToProps = (state) => {
   const { searchDropDownStore } = state.searchDropDownReducer;
   const { lowerNavbarType } = state.lowerNavBarReducer;
+  const { searchStringStore } = state.SearchStringsReducer;
   return {
     searchDropDownStore,
+    searchStringStore,
     lowerNavbarType,
   };
 };
@@ -792,6 +862,18 @@ const mapDispatchToProps = (dispatch) => {
     updateLowerNavBar: (payload) => {
       dispatch({
         type: updateLowerNavBar,
+        payload,
+      });
+    },
+    updateStudentProfile: (payload) => {
+      dispatch({
+        type: updateStudentProfile,
+        payload,
+      });
+    },
+    updateActiveStringList: (payload) => {
+      dispatch({
+        type: updateActiveStringList,
         payload,
       });
     },

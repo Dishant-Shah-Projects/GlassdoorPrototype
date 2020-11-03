@@ -6,6 +6,7 @@ const { secret } = require('../config');
 const Company = require('../model/Company');
 const Student = require('../model/Student');
 const Static = require('../model/Static');
+const Job = require('../model/Job');
 
 // get the profile for the company
 const getCompanyProfile = async (req, res) => {
@@ -86,8 +87,190 @@ const companyProfileUpdate = async (req, res) => {
   }
   return res;
 };
+// get the Company Review for the company
+const companyReviews = async (req, res) => {
+  // eslint-disable-next-line no-console
+  const ID = req.query.CompanyID;
+  // eslint-disable-next-line no-console
+  try {
+    const userInsertProcedure = 'CALL fetchReview(?)';
+
+    const con = await mysqlConnection();
+    const [results, fields] = await con.query(userInsertProcedure, ID);
+    con.end();
+    if (results) {
+      res.writeHead(200, { 'content-type': 'text/json' });
+      res.end(JSON.stringify(results));
+    } else {
+      res.writeHead(403, { 'content-type': 'text/json' });
+      res.end(JSON.stringify('No Reviews Found'));
+    }
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  }
+  return res;
+};
+// get the Company Review for the company
+const postJob = async (req, res) => {
+  // eslint-disable-next-line no-console
+  const {
+    CompanyID,
+    CompanyName,
+    Title,
+    JobDescription,
+    Responsibilities,
+    Qualifications,
+    ExpectedSalary,
+    Industry,
+    Country,
+    Remote,
+    StreetAddress,
+    City,
+    State,
+    Zip,
+  } = req.body;
+  // eslint-disable-next-line no-console
+  try {
+    const userInsertProcedure = 'CALL jobInsert(?,?,CURDATE(),?,?,?)';
+
+    const con = await mysqlConnection();
+    const [results, fields] = await con.query(userInsertProcedure, [
+      CompanyID,
+      CompanyName,
+      StreetAddress,
+      City,
+      State,
+    ]);
+    con.end();
+    const job = new Job({
+      JobID: results[0][0].JobID,
+      Title,
+      CompanyID,
+      CompanyName,
+      CurrentStatus: 'Open',
+      Industry,
+      Remote,
+      StreetAddress,
+      City,
+      State,
+      Country,
+      Zip,
+      PostedDate: Date.now(),
+      JobDescription,
+      Responsibilities,
+      Qualifications,
+      ExpectedSalary,
+      Votes: 0,
+    });
+    job.save((e, data) => {
+      if (e) {
+        res.writeHead(500, {
+          'Content-Type': 'text/plain',
+        });
+        res.end('Network Error');
+      } else {
+        res.writeHead(201, {
+          'Content-Type': 'text/plain',
+        });
+        res.end(JSON.stringify('Job Created'));
+      }
+    });
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  }
+  return res;
+};
+
+const favoriteReview = async (req, res) => {
+  // eslint-disable-next-line no-console
+  const { ID, Favorite } = req.body;
+  // eslint-disable-next-line no-console
+  try {
+    const query = 'UPDATE GENERAL_REVIEW SET Favorite = ? WHERE ID=?';
+
+    const con = await mysqlConnection();
+    const [results, fields] = await con.query(query, [Favorite, ID]);
+    con.end();
+    if (results) {
+      res.writeHead(201, { 'content-type': 'text/json' });
+      res.end(JSON.stringify('response submitted'));
+    } else {
+      res.writeHead(500, { 'content-type': 'text/json' });
+      res.end(JSON.stringify('error'));
+    }
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  }
+  return res;
+};
+const reviewResponse = async (req, res) => {
+  // eslint-disable-next-line no-console
+  const { ID, Response } = req.body;
+  // eslint-disable-next-line no-console
+  try {
+    const query = 'UPDATE GENERAL_REVIEW SET Response = ? WHERE ID=?';
+
+    const con = await mysqlConnection();
+    const [results, fields] = await con.query(query, [Response, ID]);
+    con.end();
+    if (results) {
+      res.writeHead(201, { 'content-type': 'text/json' });
+      res.end(JSON.stringify('response submitted'));
+    } else {
+      res.writeHead(500, { 'content-type': 'text/json' });
+      res.end(JSON.stringify('error'));
+    }
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  }
+  return res;
+};
+const featuredReview = async (req, res) => {
+  // eslint-disable-next-line no-console
+  const { CompanyID,ID, Response } = req.body;
+  // eslint-disable-next-line no-console
+  try {
+    const query = 'SELECT * FROM GENERAL_REVIEW WHERE ID=?';
+
+    const con = await mysqlConnection();
+    const [results, fields] = await con.query(query, ID);
+    con.end();
+    Company.findOneAndUpdate({ CompanyID }, { FeaturedReview: results[0] }, (e, output) => {
+      if (e) {
+        // eslint-disable-next-line no-console
+        res.writeHead(404, {
+          'Content-Type': 'text/plain',
+        });
+        res.end('Entry Not Found');
+      } else {
+        res.writeHead(201, {
+          'Content-Type': 'text/plain',
+        });
+        res.end(JSON.stringify('Review Updated'));
+      }
+    });
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  }
+  return res;
+};
 
 module.exports = {
   getCompanyProfile,
   companyProfileUpdate,
+  companyReviews,
+  postJob,
+  favoriteReview,
+  reviewResponse,
+  featuredReview,
 };

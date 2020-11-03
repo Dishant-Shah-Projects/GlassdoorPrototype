@@ -7,6 +7,9 @@ class CompanyCard extends Component {
     this.state = {};
   }
   render() {
+    const defaultImage =
+      'https://s3-media0.fl.yelpcdn.com/assets/public/user_60_square.yji-514f6997a3184af475d5adc800b6d0b1.png';
+    const company = this.props.company;
     return (
       <div className="row justify-content-between">
         <div className="col-lg-7">
@@ -19,7 +22,7 @@ class CompanyCard extends Component {
               >
                 <span className="sqLogo tighten medSqLogo logoOverlay">
                   <img
-                    src="https://media.glassdoor.com/sqls/6036/amazon-squarelogo-1552847650117.png"
+                    src={company.ProfileImg ? company.ProfileImg : defaultImage}
                     className=""
                     alt=" Logo"
                     title=""
@@ -29,10 +32,10 @@ class CompanyCard extends Component {
             </div>
             <div className="col-9 pr-0">
               <h2>
-                <a href="/Overview/Working-at-Amazon-EI_IE6036.11,17.htm">Amazon</a>
+                <a href="/Overview/Working-at-Amazon-EI_IE6036.11,17.htm">{company.CompanyName}</a>
                 <div className="ratingsSummary cf">
                   <span>
-                    <span className="bigRating strong margRtSm h2">3.9</span>
+                    <span className="bigRating strong margRtSm h2">{company.AvgRating}</span>
                     <span className="gdStars gdRatings sm ">
                       <i>
                         <i></i>
@@ -46,11 +49,13 @@ class CompanyCard extends Component {
               </h2>
               <div className="web-and-address-wrap">
                 <p className="hqInfo adr m-0">
-                  <span className="value">Seattle, WA</span>
+                  <span className="value">
+                    {company.City}, {company.State}
+                  </span>
                 </p>
                 <p className="webInfo mb-0 mt-xxsm">
                   <span className="url">
-                    <a href="http://www.amazon.jobs">www.amazon.jobs</a>
+                    <a href={company.Website}>{company.Website}</a>
                   </span>
                 </p>
               </div>
@@ -65,7 +70,9 @@ class CompanyCard extends Component {
                 href="/Reviews/Amazon-San-Jose-Reviews-EI_IE6036.0,6_IL.7,15_IM761.htm"
                 data-label=""
               >
-                <span className="num h2"> 52k</span>
+                <span className="num h2">
+                  {company.GeneralReviewCount ? company.GeneralReviewCount : 0}
+                </span>
                 <span className="subtle"> Reviews</span>
               </a>
             </div>
@@ -75,7 +82,10 @@ class CompanyCard extends Component {
                 href="/Salary/Amazon-San-Jose-Salaries-EI_IE6036.0,6_IL.7,15_IM761.htm"
                 data-label=""
               >
-                <span className="num h2"> 89k</span>
+                <span className="num h2">
+                  {' '}
+                  {company.SalaryReviewCount ? company.SalaryReviewCount : 0}
+                </span>
                 <span className="subtle"> Salaries</span>
               </a>
             </div>
@@ -85,7 +95,10 @@ class CompanyCard extends Component {
                 href="/Interview/Amazon-San-Jose-Interview-Questions-EI_IE6036.0,6_IL.7,15_IM761.htm"
                 data-label=""
               >
-                <span className="num h2"> 26k</span>
+                <span className="num h2">
+                  {' '}
+                  {company.InterviewReviewCount ? company.InterviewReviewCount : 0}
+                </span>
                 <span className="subtle"> Inter­views</span>
               </a>
             </div>

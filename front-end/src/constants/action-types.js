@@ -8,4 +8,7 @@ export const updateCompanyList = 'update-company-list';
 export const updateJobListStore = 'update-job-list-store';
 export const updateJobFilterStore = 'update-job-filter-store';
 export const updateMasterData = 'update-master-data';
+export const updateSalaryList = 'update-salary-list';
+export const updateStudentProfile = 'update-student-profile';
+export const updateActiveStringList = 'update-active-stringList';
 export const updateCompanyProfile = 'update-company-profile';

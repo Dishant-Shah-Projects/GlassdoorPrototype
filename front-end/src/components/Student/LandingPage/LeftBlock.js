@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { Component } from 'react';
 import './LeftBlock.css';
+import { connect } from 'react-redux';
 
 class LeftBlock extends Component {
   constructor(props) {
@@ -9,6 +10,10 @@ class LeftBlock extends Component {
   }
 
   render() {
+    console.log(
+      'this.props.studentInfoStore.studentProfile.Name',
+      this.props.studentInfoStore.studentProfile
+    );
     return (
       <div className="col-lg-4 col-12 mb-lg mb-lg-0" style={{
         "-webkit-box-orient": "vertical !important",
@@ -83,7 +88,11 @@ class LeftBlock extends Component {
                       </svg>
                     </span>
                   </div>
-                  <h3 className="css-17vthrg evfqoqj1">Pranjay Sagar</h3>
+                  <h3 className="css-17vthrg evfqoqj1">
+                    {this.props.studentInfoStore.studentProfile.Name.length === 0
+                      ? 'Please Update Your Name'
+                      : this.props.studentInfoStore.studentProfile.Name}
+                  </h3>
                   <div className="d-flex align-items-center mt-xsm mb-xsm">
                     <span className="SVGInline css-25qyin css-170llpw mr-xsm">
                       <svg
@@ -123,9 +132,13 @@ class LeftBlock extends Component {
                         </g>
                       </svg>
                     </span>
-                    <a data-test="profile-header-add-job-title">
-                      <strong>Add Job Title</strong>
-                    </a>
+                    {this.props.studentInfoStore.studentProfile.CurrentJobTitle.length === 0 ? (
+                      <a data-test="profile-header-add-job-title">
+                        <strong>Add Job Title</strong>
+                      </a>
+                    ) : (
+                      this.props.studentInfoStore.studentProfile.CurrentJobTitle
+                    )}
                   </div>
                   <div className="d-flex align-items-center">
                     <span className="SVGInline css-25qyin css-170llpw mr-xsm">
@@ -154,5 +167,13 @@ class LeftBlock extends Component {
     );
   }
 }
+const mapStateToProps = (state) => {
+  const { studentInfoStore } = state.StudentCompleteInfoReducer;
 
-export default LeftBlock;
+  return {
+    studentInfoStore,
+  };
+};
+
+// export default LeftBlock;
+export default connect(mapStateToProps, null)(LeftBlock);

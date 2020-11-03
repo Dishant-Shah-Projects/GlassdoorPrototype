@@ -1,17 +1,17 @@
-div.pageContentWrapper {
+div.pageContentWrapperStudent {
   position: relative;
   margin: 0 auto;
   width: 100%;
   background: #eaeaea none;
 }
-body.hasTwoPanes .pageContentWrapper {
+body.hasTwoPanes .pageContentWrapperStudent {
   height: 0;
   -webkit-box-flex: 1;
   -webkit-flex-grow: 1;
   -ms-flex-positive: 1;
   flex-grow: 1;
 }
-.pageContentWrapper #PageContent {
+.pageContentWrapperStudent #PageContent {
   position: initial;
 }
 body.wide #PageContent {

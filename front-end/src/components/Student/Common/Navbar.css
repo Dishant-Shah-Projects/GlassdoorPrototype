@@ -928,8 +928,8 @@ a.css-1s7hc3h:visited {
 }
 
 .popup__PopupStyles__popupContentActive {
-  opacity: 1;
-  z-index: 9000;
+  opacity: 1 !important;
+  z-index: 9000 !important;
 }
 
 .gdGrid .d-md-block {
@@ -1008,4 +1008,9 @@ a.css-1s7hc3h:visited {
   position: relative;
   width: 100%;
   min-height: 1px;
+}
+.autocomplete-suggestions .fullFormat .suggestion-content > span {
+  padding-left: 16px;
+  font-weight: 700;
+  overflow: hidden;
 }

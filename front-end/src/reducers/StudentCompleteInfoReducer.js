@@ -1,0 +1,25 @@
+import { updateStudentProfile } from '../constants/action-types';
+
+const defaultState = {
+  studentInfoStore: {
+    studentProfile: { Name: '', CurrentJobTitle: '' },
+  },
+};
+
+const StudentCompleteInfoReducer = (state = defaultState, action) => {
+  switch (action.type) {
+    case updateStudentProfile: {
+      return {
+        ...state,
+        studentInfoStore: { ...state.studentInfoStore, ...action.payload },
+        //   return Object.assign(state, action.payload);
+      };
+    }
+
+    default: {
+      return { ...state };
+    }
+  }
+};
+
+export default StudentCompleteInfoReducer;

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import moment from 'moment';
 import './JobSuggestion.css';
 
 class JobSuggestion extends Component {
@@ -8,6 +9,14 @@ class JobSuggestion extends Component {
   }
 
   render() {
+    const job = this.props.job;
+    const postedDate = moment(job.PostedDate);
+    const currentDate = moment();
+    const diff = currentDate.diff(postedDate);
+    const diffDuration = moment.duration(diff);
+    const postedSince =
+      diffDuration.hours() < 24 ? diffDuration.hours() : Math.ceil(diffDuration.days());
+    const h_d = diffDuration.hours() < 24 ? 'h' : 'd';
     return (
       <div>
         <a
@@ -31,9 +40,9 @@ class JobSuggestion extends Component {
           <div className="d-flex flex-column container-fluid">
             <div className="d-flex flex-row">
               <div className="d-flex flex-column container-fluid">
-                <p className="css-56kyx5 css-1xznj1f m-0">Nordstrom</p>
+                <p className="css-56kyx5 css-1xznj1f m-0">{job.CompanyName}</p>
                 <p className="css-forujw m-0">
-                  <strong>Warehouse Associate Hiring Event</strong>
+                  <strong>{job.Title}</strong>
                 </p>
               </div>
               <div className="pl-xsm">
@@ -64,14 +73,16 @@ class JobSuggestion extends Component {
             </div>
             <div className="d-flex flex-row flex-wrap css-1c3h18e">
               <div className="d-flex flex-column container-fluid css-v91a6a">
-                <p className="css-56kyx5 small m-0">Newark, CA</p>
+                <p className="css-56kyx5 small m-0">
+                  {job.StreetAddress}, {job.State}
+                </p>
                 <div className="css-r6z5ec d-flex flex-row container-fluid align-items-center">
                   <p className="d-flex flex-wrap css-56kyx5 small ml-0 my-0 mr-xsm">
                     <span className="css-120nkvx d-flex align-items-center mr-xxsm">
-                      $12 - $20 Per Hour
+                      {job.ExpectedSalary}$
                     </span>
                     <span className="css-120nkvx d-flex align-items-center">
-                      (Glassdoor Est.){' '}
+                      (Salary Range.){' '}
                       <span data-test="job-tile-salary-info" className="SVGInline css-1ejb6d6">
                         <svg
                           className="SVGInline-svg css-1ejb6d6-svg"
@@ -93,7 +104,10 @@ class JobSuggestion extends Component {
               </div>
               <div className="d-flex align-items-center align-self-end justify-content-end ml-xsm css-8jm638">
                 <p className="css-56kyx5 small m-0">
-                  <span className="css-120nkvx">2d</span>
+                  <span className="css-120nkvx">
+                    {postedSince}
+                    {h_d}
+                  </span>
                 </p>
               </div>
             </div>

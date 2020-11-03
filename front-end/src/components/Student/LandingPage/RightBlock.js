@@ -40,8 +40,8 @@ class RightBlock extends Component {
               </span>
             </div>
             <div className="mt-std css-1i303cs egi2yce0">
-              {this.state.loop.map((looping) => (
-                <JobSuggestion />
+              {this.props.jobList.map((job) => (
+                <JobSuggestion job={job} />
               ))}
             </div>
           </div>

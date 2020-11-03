@@ -1,8 +1,9 @@
 const mongoose = require('mongoose');
 
 const JobsSchema = new mongoose.Schema({
+  JobID: { type: Number, required: true },
   Title: { type: String, required: true },
-  CompanyID: { type: String, required: true },
+  CompanyID: { type: Number, required: true },
   CompanyName: { type: String, required: true },
   CurrentStatus: {
     type: String,

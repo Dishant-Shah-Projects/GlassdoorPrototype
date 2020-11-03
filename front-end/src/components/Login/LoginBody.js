@@ -69,6 +69,7 @@ class LoginBody extends Component {
           localStorage.setItem('userId', decoded.ID);
           localStorage.setItem('userrole', decoded.rol);
           localStorage.setItem('useremail', decoded.Name);
+          localStorage.setItem('selectedDropDown', 'Jobs');
 
           this.setState({
             authFlag: true,
