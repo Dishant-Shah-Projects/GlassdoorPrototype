@@ -11,9 +11,13 @@ class CompanyCard extends Component {
       'https://s3-media0.fl.yelpcdn.com/assets/public/user_60_square.yji-514f6997a3184af475d5adc800b6d0b1.png';
     const company = this.props.company;
     return (
-      <div className="row justify-content-between">
+      <div
+        id="companycard"
+        className="row justify-content-between"
+        style={{ display: 'flex !important' }}
+      >
         <div className="col-lg-7">
-          <div className="row justify-content-start">
+          <div id="companycard" className="row justify-content-start">
             <div className="col-3 logo-and-ratings-wrap">
               <a
                 href="/Overview/Working-at-Amazon-EI_IE6036.11,17.htm"
@@ -63,7 +67,7 @@ class CompanyCard extends Component {
           </div>
         </div>
         <div className="col-lg-5 ei-contributions-count-wrap mt-std">
-          <div className="row justify-content-between">
+          <div id="companycard" className="row justify-content-between">
             <div className="ei-contribution-wrap col-4 pl-lg-0 pr-0">
               <a
                 className="eiCell cell reviews d-inline-block py-sm"

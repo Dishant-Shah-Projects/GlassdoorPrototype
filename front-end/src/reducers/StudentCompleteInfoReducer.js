@@ -2,7 +2,19 @@ import { updateStudentProfile } from '../constants/action-types';
 
 const defaultState = {
   studentInfoStore: {
-    studentProfile: { Name: '', CurrentJobTitle: '' },
+    studentProfile: {
+      Name: '',
+      CurrentJobTitle: '',
+      PhoneNo: '',
+      AboutMe: '',
+      Skills: [],
+      Website: '',
+      StreetAddress: '',
+      City: '',
+      State: '',
+      Country: '',
+      Zip: '',
+    },
   },
 };
 

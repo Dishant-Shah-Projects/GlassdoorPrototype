@@ -13,6 +13,7 @@ import EmployerHome from './Employer/LandingPage/EmployerHome';
 import ProfileUpdate from './Employer/ProfileUpdate/ProfileUpdate';
 import salaryList from './Student/SalarySearchResults/salaryList';
 import Home from './Student/LandingPage/Home';
+import Profile from './Student/PersonalInformation/Profile/Profile';
 
 class Main extends Component {
   // constructor(props) {
@@ -75,6 +76,7 @@ class Main extends Component {
           <Route path="/JobList" component={JobList} />
           <Route path="/salaryList" component={salaryList} />
           <Route path="/interviewList" component={interviewList} />
+          <Route path="/Profile" component={Profile} />
           <Route path="/" component={Home} />
         </Switch>
       </div>

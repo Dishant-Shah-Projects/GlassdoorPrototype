@@ -15,8 +15,8 @@ class interviewList extends Component {
     this.props.LowerNavBarOther();
     return (
       <body className="main flex loggedIn lang-en en-US hollywood  _initOk noTouch desktop">
-        {<Navbar />}
-        <div class="pageContentWrapperStudent " style={{ background: '#eaeaea none !important' }}>
+        <Navbar />
+        <div class="pageContentWrapperStudent ">
           <div id="PageContent">
             <div id="PageBodyContents" class="meat">
               <div class="pageInsideContent cf">

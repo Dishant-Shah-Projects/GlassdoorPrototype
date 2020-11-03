@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import './LeftBlock.css';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 
 class LeftBlock extends Component {
   constructor(props) {
@@ -15,20 +16,20 @@ class LeftBlock extends Component {
       this.props.studentInfoStore.studentProfile
     );
     return (
-      <div className="col-lg-4 col-12 mb-lg mb-lg-0" style={{
-        "-webkit-box-orient": "vertical !important",
-        "-webkit-box-direction": "normal !important",
-        "-webkit-flex-direction": "column !important",
-        "-ms-flex-direction": "column !important",
-        "flex-direction": "column !important",
-    }}>
+      <div
+        className="col-lg-4 col-12 mb-lg mb-lg-0"
+        style={{
+          '-webkit-box-orient': 'vertical !important',
+          '-webkit-box-direction': 'normal !important',
+          '-webkit-flex-direction': 'column !important',
+          '-ms-flex-direction': 'column !important',
+          'flex-direction': 'column !important',
+        }}
+      >
         <div class=" css-1vl67hm false ">
           <div class="row css-15dnu4o mt-xsm">
-            <div class="col-sm-12">
-              <div
-                class="d-block css-4w4zia el0n26p0"
-                data-test="profile-container"
-              >
+            <div class="col-sm-12" style={{ width: '100%' }}>
+              <div class="d-block css-4w4zia el0n26p0" data-test="profile-container">
                 <div class="d-none d-lg-block p-std">
                   <div class="d-flex flex-row container-fluid justify-content-between align-items-center">
                     <span class="SVGInline mb-xsm css-1k2lqp9">
@@ -133,9 +134,9 @@ class LeftBlock extends Component {
                       </svg>
                     </span>
                     {this.props.studentInfoStore.studentProfile.CurrentJobTitle.length === 0 ? (
-                      <a data-test="profile-header-add-job-title">
+                      <Link to="/Profile" data-test="profile-header-add-job-title">
                         <strong>Add Job Title</strong>
-                      </a>
+                      </Link>
                     ) : (
                       this.props.studentInfoStore.studentProfile.CurrentJobTitle
                     )}
@@ -156,7 +157,14 @@ class LeftBlock extends Component {
                         ></path>
                       </svg>
                     </span>
-                    <div className="css-56kyx5">San Jose,CA</div>
+                    {this.props.studentInfoStore.studentProfile.City.length === 0 ||
+                    this.props.studentInfoStore.studentProfile.State.length === 0 ? (
+                      <Link to="/Profile" data-test="profile-header-add-job-title">
+                        <strong>Add Location</strong>
+                      </Link>
+                    ) : (
+                      <div className="css-56kyx5">San Jose,CA</div>
+                    )}
                   </div>
                 </div>
               </div>

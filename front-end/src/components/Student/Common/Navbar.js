@@ -15,6 +15,7 @@ import LowerNavBarHome from './LowerNavBarHome';
 import LowerNavBarOther from './LowerNavBarOther';
 import { history } from '../../../App';
 import SuggestedNames from './SuggestedNames';
+import { Link } from 'react-router-dom';
 
 class Navbar extends Component {
   constructor(props) {
@@ -35,7 +36,20 @@ class Navbar extends Component {
       })
       .then((response) => {
         const payload1 = {
-          studentProfile: { CurrentJobTitle: '', Name: '', ...response.data[0] },
+          studentProfile: {
+            CurrentJobTitle: '',
+            Name: '',
+            PhoneNo: '',
+            AboutMe: '',
+            Skills: [],
+            Website: '',
+            StreetAddress: '',
+            City: '',
+            State: '',
+            Country: '',
+            Zip: '',
+            ...response.data[0],
+          },
         };
         this.props.updateStudentProfile(payload1);
 
@@ -94,12 +108,19 @@ class Navbar extends Component {
   };
 
   mainMenuClicked = (event, selectedMenuoption) => {
-    if (selectedMenuoption === 'Sign Out') {
-      localStorage.clear();
-      axios.post(serverUrl + 'glassdoor/logout').then((response) => {
-        if (response.status === 200) {
-        }
-      });
+    event.preventDefault();
+    switch (selectedMenuoption) {
+      case 'Sign Out': {
+        localStorage.clear();
+        axios.post(serverUrl + 'glassdoor/logout').then((response) => {
+          if (response.status === 200) {
+          }
+        });
+        break;
+      }
+      default: {
+        break;
+      }
     }
   };
 
@@ -210,12 +231,12 @@ class Navbar extends Component {
                                 <div className="accountPopup__AccountPopupStyles__accountMenu accountPopup__AccountPopupStyles__active">
                                   <ul className="p-0 m-0 memberHeader__HeaderStyles__list">
                                     <li
-                                      onClick={(event) => this.mainMenuClicked(event, 'Profile')}
+                                      // onClick={(event) => this.mainMenuClicked(event, 'Profile')}
                                       className="p-0 m-0"
                                     >
-                                      <a
+                                      <Link
                                         className="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
-                                        href="#"
+                                        to="/Profile"
                                         target="_top"
                                         rel="nofollow"
                                         data-ga-lbl="My Profile"
@@ -227,7 +248,7 @@ class Navbar extends Component {
                                             </span>
                                           </span>
                                         </div>
-                                      </a>
+                                      </Link>
                                     </li>
                                     <li
                                       onClick={(event) => this.mainMenuClicked(event, 'Resumes')}
