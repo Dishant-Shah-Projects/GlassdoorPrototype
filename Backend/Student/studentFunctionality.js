@@ -25,7 +25,7 @@ const navbar = async (req, res) => {
         resultData.push(results);
       }
     });
-    await Company.find({}, { _id: 0, CompanyName: 1 }, (err, results) => {
+    await Company.find({}, { _id: 0, CompanyName: 1, CompanyID: 1 }, (err, results) => {
       if (err) {
         res.writeHead(500, {
           'Content-Type': 'text/plain',
@@ -212,55 +212,87 @@ const searchCompany = async (req, res) => {
   }
 };
 
-// update the company profile
-const companyProfileUpdate = async (req, res) => {
+// Search all jobs
+const searchJob = async (req, res) => {
   try {
-    const {
-      CompanyID,
-      Website,
-      Size,
-      Type,
-      Revenue,
-      Headquarter,
-      Industry,
-      Founded,
-      CompanyMission,
-      CEO,
-      CompanyDescription,
-    } = req.body;
-    Company.findOneAndUpdate(
-      { CompanyID },
+    const { JobType, State, SalStart, SalEnd, PageNo } = url.parse(req.url, true).query;
+    const filterObj = {};
+    if (JobType.length !== 0) {
+      filterObj.Title = JobType;
+    }
+    if (SalStart !== SalEnd) {
+      const tempObj = {};
+      tempObj.$gte = Number(SalStart);
+      tempObj.$lte = Number(SalEnd);
+      filterObj.ExpectedSalary = tempObj;
+    }
+    if (State.length !== 0) {
+      filterObj.State = State;
+    }
+    const jobResults = await Job.aggregate([
       {
-        Website,
-        Size,
-        Type,
-        Revenue,
-        Headquarter,
-        Industry,
-        Founded,
-        CompanyMission,
-        CEO,
-        CompanyDescription,
+        $match: filterObj,
       },
-      (e, output) => {
-        if (e) {
-          res.writeHead(404, {
-            'Content-Type': 'text/plain',
-          });
-          res.end('Entry Not Found');
-        } else {
-          res.writeHead(201, {
-            'Content-Type': 'text/plain',
-          });
-          res.end(JSON.stringify('Profile Updated'));
-        }
+      {
+        $lookup: {
+          from: 'companies',
+          localField: 'CompanyID',
+          foreignField: 'CompanyID',
+          as: 'jobdetails',
+          // pipeline: [{ $match: { $expr: { $eq: ['$CompanyID', '$CompanyID'] } } }],
+        },
       },
-    );
+      {
+        $project: {
+          Title: 1,
+          CompanyID: 1,
+          CompanyName: 1,
+          State: 1,
+          ExpectedSalary: 1,
+          jobdetails: 1,
+        },
+      },
+    ])
+      .sort({ PostedDate: -1 })
+      .limit(5)
+      .skip(PageNo * 10);
+    const resultCount = await Job.aggregate([
+      {
+        $match: filterObj,
+      },
+      {
+        $lookup: {
+          from: 'Company',
+          as: 'jobdetails',
+          pipeline: [{ $match: { $expr: { $eq: ['$CompanyID', '$CompanyID'] } } }],
+        },
+      },
+      // {
+      //   $project: {
+      //     Title: 1,
+      //     CompanyID: 1,
+      //     CompanyName: 1,
+      //     State: 1,
+      //     ExpectedSalary: 1,
+      //   },
+      // },
+    ]);
+    const count = resultCount.length;
+    const noOfPages = Math.ceil(count / 4);
+    const resultObj = {};
+    resultObj.jobs = jobResults;
+    resultObj.count = count;
+    resultObj.noOfPages = noOfPages;
+    res.writeHead(200, {
+      'Content-Type': 'application/json',
+    });
+    res.end(JSON.stringify(resultObj));
   } catch (error) {
-    res.writeHead(500, { 'content-type': 'text/json' });
-    res.end(JSON.stringify('Network Error'));
+    res.writeHead(500, {
+      'Content-Type': 'application/json',
+    });
+    res.end('Network Error');
   }
-  return res;
 };
 
 // get the suggested jobs for students
@@ -280,39 +312,44 @@ const getJobSuggestions = async (req, res) => {
       }
     });
     /* eslint-disable*/
-    await Job.find({ Title: { $regex: `.*${jobTitle}.*` } }).limit(4).exec(function(err, results){
-      if (err) {
-        res.writeHead(500, {
-          'Content-Type': 'text/plain',
-        });
-        res.end('Jobs not found');
-      } else {
-        if (results.length == 4) {
-          resultData = results;
-          res.writeHead(200, {
-            'Content-Type': 'application/json',
+    await Job.find({ Title: { $regex: `.*${jobTitle}.*` } })
+      .limit(4)
+      .exec(function (err, results) {
+        if (err) {
+          res.writeHead(500, {
+            'Content-Type': 'text/plain',
           });
-          res.end(JSON.stringify(resultData));
+          res.end('Jobs not found');
         } else {
-          resultData = results;
-          Job.find({}).sort({ PostedDate: -1 }).limit(4 - resultData.length).exec(function(err, results) {
-            if (err) {
-              res.writeHead(500, {
-                'Content-Type': 'text/plain',
+          if (results.length == 4) {
+            resultData = results;
+            res.writeHead(200, {
+              'Content-Type': 'application/json',
+            });
+            res.end(JSON.stringify(resultData));
+          } else {
+            resultData = results;
+            Job.find({})
+              .sort({ PostedDate: -1 })
+              .limit(4 - resultData.length)
+              .exec(function (err, results) {
+                if (err) {
+                  res.writeHead(500, {
+                    'Content-Type': 'text/plain',
+                  });
+                  res.end('Jobs not found');
+                } else {
+                  resultData = resultData.concat(results);
+
+                  res.writeHead(200, {
+                    'Content-Type': 'application/json',
+                  });
+                  res.end(JSON.stringify(resultData));
+                }
               });
-              res.end('Jobs not found');
-            } else {
-              resultData = resultData.concat(results);
-              
-              res.writeHead(200, {
-                'Content-Type': 'application/json',
-              });
-              res.end(JSON.stringify(resultData));
-            }
-          });
+          }
         }
-      }
-    });
+      });
   } catch (error) {
     res.writeHead(500, { 'content-type': 'text/json' });
     res.end(JSON.stringify('Network Error'));
@@ -324,4 +361,5 @@ module.exports = {
   navbar,
   searchCompany,
   getJobSuggestions,
+  searchJob,
 };

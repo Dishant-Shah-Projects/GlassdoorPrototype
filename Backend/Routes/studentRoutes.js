@@ -2,7 +2,12 @@ const express = require('express');
 
 const Router = express.Router();
 
-const { navbar, searchCompany, getJobSuggestions } = require('../Student/studentFunctionality');
+const {
+  navbar,
+  searchCompany,
+  getJobSuggestions,
+  searchJob,
+} = require('../Student/studentFunctionality');
 
 const { checkAuth } = require('../SharedFuntionalities/passport');
 
@@ -15,6 +20,12 @@ Router.get('/navbar', checkAuth, async (req, res) => {
 // To fetch the results of the company search
 Router.get('/searchCompany', checkAuth, async (req, res) => {
   const value = await searchCompany(req, res);
+  return value;
+});
+
+// To fetch the results of the job search
+Router.get('/searchJob', checkAuth, async (req, res) => {
+  const value = await searchJob(req, res);
   return value;
 });
 
