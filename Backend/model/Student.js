@@ -77,22 +77,12 @@ const StudentSchema = new mongoose.Schema({
   TargetSalary: { type: Number },
   OpentoRelocation: { type: Boolean },
   Industry: { type: String },
-  Race: {
-    type: String,
-    enum: [
-      'Indigenous American or Alaska Native',
-      'East Asian',
-      'South Asian',
-      'Southeast Asian',
-      'Native Hawaiian or Other Pacific Islander',
-      'Middle Eastern',
-      'Black or African American',
-      'Hispanic or Latinx',
-      'White',
-      'Prefer to Self Describe',
-      'Prefer Not to Say',
-    ],
-  },
+  Race: [
+    {
+      type: String,
+    },
+  ],
+
   Gender: {
     type: String,
     enum: ['Male', 'Female', 'Prefer not to share'],
