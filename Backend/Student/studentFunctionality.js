@@ -297,6 +297,7 @@ const searchJob = async (req, res) => {
 
 // get the suggested jobs for students
 const getJobSuggestions = async (req, res) => {
+  /* eslint-disable */
   const { StudentID } = url.parse(req.url, true).query;
   let jobTitle = '';
   let resultData = [];
@@ -311,8 +312,7 @@ const getJobSuggestions = async (req, res) => {
         jobTitle = results.JobTitle;
       }
     });
-    /* eslint-disable*/
-   let titleMatchJob =  await Job.find({ Title: { $regex: `.*${jobTitle}.*` } })
+   let titleMatchJob = await Job.find({ Title: { $regex: `.*${jobTitle}.*` } })
       .limit(4)
       .exec();
     resultData = titleMatchJob;
@@ -351,7 +351,34 @@ const getJobSuggestions = async (req, res) => {
       'Content-Type': 'application/json',
     });
     res.end(JSON.stringify(companyResult));
+  } catch (error) {
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  }
+  return res;
+  /* eslint-enable */
+};
 
+// get the suggested jobs for students
+const getFavouriteJobs = async (req, res) => {
+  const { StudentID } = url.parse(req.url, true).query;
+  const { JobID } = req.body;
+  try {
+    Student.update(
+      { StudentID },
+      { $push: { FavouriteJobs: JobID } },
+      (err) => {
+        if (err) {
+          res.writeHead(500, { 'content-type': 'text/json' });
+          res.end(JSON.stringify('Network Error'));
+        } else {
+          res.writeHead(200, {
+            'Content-Type': 'application/json',
+          });
+          res.end(JSON.stringify('Added'));
+        }
+      },
+    );
   } catch (error) {
     res.writeHead(500, { 'content-type': 'text/json' });
     res.end(JSON.stringify('Network Error'));
@@ -364,4 +391,5 @@ module.exports = {
   searchCompany,
   getJobSuggestions,
   searchJob,
+  getFavouriteJobs,
 };
