@@ -19,7 +19,7 @@ const CompanySchema = new mongoose.Schema(
     CEO: { type: String },
     ViewCount: { type: Number },
     SalaryReviewCount: { type: Number },
-    GeneralReviewCount: { type: Number },
+    GeneralReviewCount: { type: Number, default: 0 },
     InterviewReviewCount: { type: Number },
     TotalGeneralReviewRating: { type: Number, default: 0 },
     JobCount: { type: Number },

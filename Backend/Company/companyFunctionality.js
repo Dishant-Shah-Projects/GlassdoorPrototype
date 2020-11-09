@@ -235,7 +235,7 @@ const reviewResponse = async (req, res) => {
 };
 const featuredReview = async (req, res) => {
   // eslint-disable-next-line no-console
-  const { CompanyID,ID, Response } = req.body;
+  const { CompanyID, ID, Response } = req.body;
   // eslint-disable-next-line no-console
   try {
     const query = 'SELECT * FROM GENERAL_REVIEW WHERE ID=?';

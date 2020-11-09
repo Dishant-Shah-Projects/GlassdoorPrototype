@@ -298,6 +298,7 @@ const searchJob = async (req, res) => {
 
 // get the suggested jobs for students
 const getJobSuggestions = async (req, res) => {
+  /* eslint-disable */
   const { StudentID } = url.parse(req.url, true).query;
   let jobTitle = '';
   let resultData = [];
@@ -312,45 +313,68 @@ const getJobSuggestions = async (req, res) => {
         jobTitle = results.JobTitle;
       }
     });
-    /* eslint-disable*/
-    await Job.find({ Title: { $regex: `.*${jobTitle}.*` } })
+    let titleMatchJob = await Job.find({ Title: { $regex: `.*${jobTitle}.*` } })
       .limit(4)
-      .exec(function (err, results) {
-        if (err) {
-          res.writeHead(500, {
-            'Content-Type': 'text/plain',
-          });
-          res.end('Jobs not found');
-        } else {
-          if (results.length == 4) {
-            resultData = results;
-            res.writeHead(200, {
-              'Content-Type': 'application/json',
-            });
-            res.end(JSON.stringify(resultData));
-          } else {
-            resultData = results;
-            Job.find({})
-              .sort({ PostedDate: -1 })
-              .limit(4 - resultData.length)
-              .exec(function (err, results) {
-                if (err) {
-                  res.writeHead(500, {
-                    'Content-Type': 'text/plain',
-                  });
-                  res.end('Jobs not found');
-                } else {
-                  resultData = resultData.concat(results);
+      .exec();
+    resultData = titleMatchJob;
+    if (resultData.length < 4) {
+      let sortDateJob = await Job.find({ Title: { $not: /${jobTitle}/ } })
+        .sort({ PostedDate: -1 })
+        .limit(4 - resultData.length)
+        .exec();
+      resultData = resultData.concat(sortDateJob);
+    }
+    var companyResult = [];
+    for (var i = 0; i < resultData.length; i++) {
+      let companyID = resultData[i].CompanyID;
+      let company = await Company.findOne({ CompanyID: companyID }).exec();
+      let tmpObj = {};
+      tmpObj['Title'] = resultData[i].Title;
+      tmpObj['TitCompanyIDle'] = resultData[i].CompanyID;
+      tmpObj['CompanyName'] = resultData[i].CompanyName;
+      tmpObj['CurrentStatus'] = resultData[i].CurrentStatus;
+      tmpObj['Industry'] = resultData[i].Industry;
+      tmpObj['StreetAddress'] = resultData[i].StreetAddress;
+      tmpObj['City'] = resultData[i].City;
+      tmpObj['State'] = resultData[i].State;
+      tmpObj['Country'] = resultData[i].Country;
+      tmpObj['Zip'] = resultData[i].Zip;
+      tmpObj['PostedDate'] = resultData[i].PostedDate;
+      tmpObj['JobDescription'] = resultData[i].JobDescription;
+      tmpObj['Respobsibilities'] = resultData[i].Respobsibilities;
+      tmpObj['Qualifications'] = resultData[i].Qualifications;
+      tmpObj['ExpectedSalary'] = resultData[i].ExpectedSalary;
+      tmpObj['Votes'] = resultData[i].TitVotesle;
+      tmpObj['ProfileImg'] = company.ProfileImg;
+      companyResult.push(tmpObj);
+    }
+    res.writeHead(200, {
+      'Content-Type': 'application/json',
+    });
+    res.end(JSON.stringify(companyResult));
+  } catch (error) {
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  }
+  return res;
+  /* eslint-enable */
+};
 
-                  res.writeHead(200, {
-                    'Content-Type': 'application/json',
-                  });
-                  res.end(JSON.stringify(resultData));
-                }
-              });
-          }
-        }
-      });
+// get the suggested jobs for students
+const getFavouriteJobs = async (req, res) => {
+  const { StudentID, JobID } = req.body;
+  try {
+    Student.update({ StudentID }, { $push: { FavouriteJobs: JobID } }, (err) => {
+      if (err) {
+        res.writeHead(500, { 'content-type': 'text/json' });
+        res.end(JSON.stringify('Network Error'));
+      } else {
+        res.writeHead(200, {
+          'Content-Type': 'application/json',
+        });
+        res.end(JSON.stringify('Added'));
+      }
+    });
   } catch (error) {
     res.writeHead(500, { 'content-type': 'text/json' });
     res.end(JSON.stringify('Network Error'));
@@ -363,4 +387,5 @@ module.exports = {
   searchCompany,
   getJobSuggestions,
   searchJob,
+  getFavouriteJobs,
 };
