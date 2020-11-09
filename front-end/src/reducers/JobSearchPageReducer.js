@@ -1,11 +1,15 @@
-import { updateJobFilterStore, updateJobListStore } from '../constants/action-types';
+import {
+  updateJobFilterStore,
+  updateJobListStore,
+  updateOnFocusJob,
+} from '../constants/action-types';
 
 const defaultState = {
   jobListStore: {
     jobList: [],
     PageNo: 0,
-    PageCount: 5,
-    Totalcount: 10,
+    PageCount: 0,
+    Totalcount: 0,
     Sort: 'MostRecent',
     JobType: '',
     State: '',
@@ -15,6 +19,7 @@ const defaultState = {
   jobFilterStore: {
     fiterSlected: '',
   },
+  jobOonFocusStore: { jobOonFocus: { jobdetails: [] } },
 };
 
 const JobSearchPageReducer = (state = defaultState, action) => {
@@ -30,6 +35,13 @@ const JobSearchPageReducer = (state = defaultState, action) => {
       return {
         ...state,
         jobFilterStore: { ...state.jobFilterStore, ...action.payload },
+        //   return Object.assign(state, action.payload);
+      };
+    }
+    case updateOnFocusJob: {
+      return {
+        ...state,
+        jobOonFocusStore: { ...state.jobOonFocusStore, ...action.payload },
         //   return Object.assign(state, action.payload);
       };
     }

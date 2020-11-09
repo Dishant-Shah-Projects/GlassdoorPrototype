@@ -64,7 +64,10 @@ class PersonalDetails extends Component {
               </div>
               <div class="d-none d-sm-block">
                 <div class="profile-task-list profileTasksStyles__list___1gFP1 ">
-                  <div class="profile-task-entry profileTasksStyles__entryContainer___3UuYl">
+                  <div
+                    class="profile-task-entry profileTasksStyles__entryContainer___3UuYl"
+                    style={{ marginLeft: '180px' }}
+                  >
                     <button
                       onClick={this.openInformationForm}
                       class="gd-ui-button d-flex flex-column justify-content-start justify-content-sm-center align-items-center p-sm profileTasksStyles__entry___2tf7Z css-1c2vj07"

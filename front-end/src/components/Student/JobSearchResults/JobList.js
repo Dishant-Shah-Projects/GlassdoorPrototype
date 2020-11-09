@@ -4,11 +4,15 @@ import {
   LowerNavBarOther,
   updateJobFilterStore,
   updateJobListStore,
+  updateStudentProfile,
+  updateOnFocusJob,
 } from '../../../constants/action-types';
 import { connect } from 'react-redux';
 import './JobList.css';
 import JobNavBar from './JobNavBar';
 import JobResults from './JobResults';
+import axios from 'axios';
+import serverUrl from '../../../config';
 
 class JobList extends Component {
   constructor(props) {
@@ -30,26 +34,69 @@ class JobList extends Component {
     console.log(filter);
   };
   saveJob = (event, JobID) => {
-    console.log(JobID);
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    const data = {
+      JobID,
+      StudentID: localStorage.getItem('userId'),
+    };
+    axios.post(serverUrl + 'student/companyFavouriteJobs', data).then(
+      (response) => {
+        console.log('Status Code : ', response.status);
+        if (response.status === 200) {
+          console.log(response.data);
+
+          let studentProfile = { ...this.props.studentInfoStore.studentProfile };
+          studentProfile.FavouriteJobs.push(JobID);
+          const payload = {
+            studentProfile,
+          };
+          this.props.updateStudentProfile(payload);
+        }
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
   };
-  filterChangeCall = (event, Sort, JobType, State, SalStart, SalEnd, PageNo = 0) => {
-    let payload = {
-      jobList: [{ name: 'pr' }, { name: 'pr' }, { name: 'pr' }, { name: 'pr' }],
-      PageNo,
-      PageCount: Math.ceil(116 / 10),
-      Totalcount: 116,
-      Sort,
-      JobType,
-      State,
-      SalStart,
-      SalEnd,
-      // PageCount: Math.ceil(response.data.Totalcount / 3),
-    };
-    this.props.updateJobListStore(payload);
-    let payload2 = {
-      fiterSlected: '',
-    };
-    this.props.updateJobFilterStore(payload2);
+  filterChangeCall = (JobType, State, SalStart, SalEnd, PageNo = 0) => {
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    axios
+      .get(serverUrl + 'student/searchJob', {
+        params: {
+          // SearchString: localStorage.getItem('SearchString'),
+          JobType,
+          State: localStorage.getItem('Location'),
+          SalStart,
+          SalEnd,
+          PageNo,
+        },
+        withCredentials: true,
+      })
+      .then((response) => {
+        console.log(response.data);
+        let payload = {
+          jobList: response.data.jobs,
+          PageNo,
+          PageCount: Math.ceil(response.data.count / 10),
+          Totalcount: response.data.count,
+          JobType,
+          State,
+          SalStart,
+          SalEnd,
+        };
+        this.props.updateJobListStore(payload);
+        let payload2 = {
+          fiterSlected: '',
+        };
+        this.props.updateJobFilterStore(payload2);
+
+        if (response.data.jobs.length > 0) {
+          let payload3 = {
+            jobOonFocus: { ...response.data.jobs[0] },
+          };
+          this.props.updateOnFocusJob(payload3);
+        }
+      });
   };
   render() {
     this.props.LowerNavBarOther();
@@ -65,13 +112,20 @@ class JobList extends Component {
                 <div className="gdGrid noPad">
                   {
                     <JobNavBar
-                      filterChangeCall={(event, Sort, JobType, State, SalStart, SalEnd, PageNo) =>
-                        this.filterChangeCall(event, Sort, JobType, State, SalStart, SalEnd, PageNo)
+                      filterChangeCall={(JobType, State, SalStart, SalEnd, PageNo) =>
+                        this.filterChangeCall(JobType, State, SalStart, SalEnd, PageNo)
                       }
                       toggleFilter={(filter) => this.toggleFilter(filter)}
                     />
                   }
-                  {<JobResults saveJob={(event, JobID) => this.saveJob(event, JobID)} />}
+                  {
+                    <JobResults
+                      filterChangeCall={(JobType, State, SalStart, SalEnd, PageNo) =>
+                        this.filterChangeCall(JobType, State, SalStart, SalEnd, PageNo)
+                      }
+                      saveJob={(event, JobID) => this.saveJob(event, JobID)}
+                    />
+                  }
                 </div>
               </div>
             </div>
@@ -86,8 +140,10 @@ class JobList extends Component {
 
 const mapStateToProps = (state) => {
   const { jobFilterStore } = state.JobSearchPageReducer;
+  const { studentInfoStore } = state.StudentCompleteInfoReducer;
   return {
     jobFilterStore,
+    studentInfoStore,
   };
 };
 // export default CompanySearchResults;
@@ -111,8 +167,19 @@ const mapDispatchToProps = (dispatch) => {
         payload,
       });
     },
+    updateStudentProfile: (payload) => {
+      dispatch({
+        type: updateStudentProfile,
+        payload,
+      });
+    },
+    updateOnFocusJob: (payload) => {
+      dispatch({
+        type: updateOnFocusJob,
+        payload,
+      });
+    },
   };
 };
-
 // export default LoginBody;
 export default connect(mapStateToProps, mapDispatchToProps)(JobList);

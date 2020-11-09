@@ -1,22 +1,75 @@
 import React, { Component } from 'react';
+import moment from 'moment';
 import './JobResultCard.css';
+import { connect } from 'react-redux';
+import { updateOnFocusJob } from '../../../constants/action-types';
 
 class JobResultCard extends Component {
   constructor(props) {
     super(props);
     this.state = {};
   }
+  openJob(event, jobId) {
+    event.preventDefault();
+    const index = this.props.jobListStore.jobList.findIndex((x) => x._id === jobId);
+    const jobOonFocus = {
+      ...this.props.jobListStore.jobList[index],
+    };
+
+    let payload3 = {
+      jobOonFocus,
+    };
+    this.props.updateOnFocusJob(payload3);
+    console.log('jobId:', jobId);
+  }
   render() {
-    let saved = (
+    const job = this.props.job;
+    const postedDate = moment(job.PostedDate);
+    const currentDate = moment();
+    const diff = currentDate.diff(postedDate);
+    const diffDuration = moment.duration(diff);
+    const postedSince =
+      diffDuration.hours() < 24 ? diffDuration.hours() : Math.ceil(diffDuration.days());
+    const h_d = diffDuration.hours() < 24 ? 'h' : 'd';
+
+    let avgRating = 0;
+    if (
+      this.props.job.jobdetails[0].GeneralReviewCount &&
+      this.props.job.jobdetails[0].GeneralReviewCount > 0 &&
+      this.props.job.jobdetails[0].TotalGeneralReviewRating &&
+      this.props.job.jobdetails[0].TotalGeneralReviewRating > 0
+    ) {
+      avgRating = (
+        this.props.job.jobdetails[0].TotalGeneralReviewRating /
+        this.props.job.jobdetails[0].GeneralReviewCount
+      ).toFixed(1);
+    }
+    let heartIcon = (
       <path
-        d="M20.37 4.65a5.57 5.57 0 00-7.91 0l-.46.46-.46-.46a5.57 5.57 0 00-7.91 0 5.63 5.63 0 000 7.92L12 21l8.37-8.43a5.63 5.63 0 000-7.92z"
+        d="M12 5.11l.66-.65a5.56 5.56 0 017.71.19 5.63 5.63 0 010 7.92L12 21l-8.37-8.43a5.63 5.63 0 010-7.92 5.56 5.56 0 017.71-.19zm7.66 6.75a4.6 4.6 0 00-6.49-6.51L12 6.53l-1.17-1.18a4.6 4.6 0 10-6.49 6.51L12 19.58z"
         fill="currentColor"
         fill-rule="evenodd"
       ></path>
     );
+
+    if (this.props.studentInfoStore.studentProfile.FavouriteJobs.includes(job._id)) {
+      heartIcon = (
+        <path
+          d="M20.37 4.65a5.57 5.57 0 00-7.91 0l-.46.46-.46-.46a5.57 5.57 0 00-7.91 0 5.63 5.63 0 000 7.92L12 21l8.37-8.43a5.63 5.63 0 000-7.92z"
+          fill="currentColor"
+          fill-rule="evenodd"
+        ></path>
+      );
+    }
+
     return (
       <li
-        className="jl react-job-listing gdGrid selected"
+        onClick={(event) => this.openJob(event, job._id)}
+        className={
+          job._id === this.props.jobOonFocusStore.jobOonFocus._id
+            ? 'jl react-job-listing gdGrid selected'
+            : 'jl react-job-listing gdGrid'
+        }
         data-brandviews="BRAND:n=jsearch-job-listing:eid=1277356:jlid=3360350142"
         data-id="3360350142"
         data-adv-type="EMPLOYER"
@@ -40,14 +93,15 @@ class JobResultCard extends Component {
           >
             <span className=" css-9ujsbx euyrj9o1">
               <img
-                src="https://media.glassdoor.com/sql/1277356/roadrunner-recycling-squarelogo-1534260402401.png"
+                src={this.props.job.jobdetails[0].ProfileImg}
                 alt="RoadRunner Recycling Logo"
                 title="RoadRunner Recycling Logo"
               />
             </span>
           </a>
           <span className="compactStars ">
-            4.2<i className="star"></i>
+            {avgRating}
+            <i className="star"></i>
           </span>
         </div>
         <div className="d-flex flex-column pl-sm css-nq3w9f">
@@ -59,7 +113,7 @@ class JobResultCard extends Component {
               className=" css-10l5u4p e1n63ojh0 jobLink"
               style={{ pointerEvents: 'all' }}
             >
-              <span>RoadRunner Recycling</span>
+              <span>{this.props.job.CompanyName}</span>
             </a>
             <div
               onClick={(event) => this.props.saveJob(event)}
@@ -75,11 +129,7 @@ class JobResultCard extends Component {
                     height="24"
                     viewBox="0 0 24 24"
                   >
-                    <path
-                      d="M12 5.11l.66-.65a5.56 5.56 0 017.71.19 5.63 5.63 0 010 7.92L12 21l-8.37-8.43a5.63 5.63 0 010-7.92 5.56 5.56 0 017.71-.19zm7.66 6.75a4.6 4.6 0 00-6.49-6.51L12 6.53l-1.17-1.18a4.6 4.6 0 10-6.49 6.51L12 19.58z"
-                      fill="currentColor"
-                      fill-rule="evenodd"
-                    ></path>
+                    {heartIcon}
                   </svg>
                 </span>
               </span>
@@ -92,15 +142,19 @@ class JobResultCard extends Component {
             className="jobInfoItem jobTitle css-jq9w1v css-13w0lq6 eigr9kq1 jobLink"
             style={{ pointerEvents: 'all' }}
           >
-            <span>Software Engineer</span>
+            <span>{this.props.job.Title}</span>
           </a>
           <div className="d-flex flex-wrap css-yytu5e e1rrn5ka1">
-            <span className="loc css-nq3w9f pr-xxsm">Pittsburgh, PA</span>
+            <span className="loc css-nq3w9f pr-xxsm">
+              {' '}
+              {this.props.job.StreetAddress}, {this.props.job.State}
+            </span>
           </div>
           <div className="jobFooter d-flex flex-wrap css-1tspwab e1rrn5ka0">
             <div className="salaryEstimate css-nq3w9f pr-xxsm">
               <span className="css-18034rf e1wijj242">
-                $41K-$88K <span className="css-0 e1wijj240">(Glassdoor est.)</span>
+                {this.props.job.ExpectedSalary}$
+                <span className="css-0 e1wijj240"> (Salary Range.) </span>
                 <span className="SVGInline greyInfoIcon">
                   <svg
                     className="SVGInline-svg greyInfoIcon-svg"
@@ -128,13 +182,9 @@ class JobResultCard extends Component {
               </span>
             </div>
             <div className="d-flex justify-content-between css-1fjcg6i">
-              <div className="d-flex flex-wrap-reverse css-15ja3jn css-1qtdns2">
-                <div className="mx-xxsm pr-std css-q9egvk" data-test="viewedDate">
-                  Viewed on October 27
-                </div>
-              </div>
               <div data-test="job-age" className="d-flex align-items-end pl-std css-mi55ob">
-                8d
+                {postedSince}
+                {h_d}
               </div>
             </div>
           </div>
@@ -144,4 +194,27 @@ class JobResultCard extends Component {
   }
 }
 
-export default JobResultCard;
+const mapStateToProps = (state) => {
+  const { studentInfoStore } = state.StudentCompleteInfoReducer;
+  const { jobOonFocusStore, jobListStore } = state.JobSearchPageReducer;
+
+  return {
+    studentInfoStore,
+    jobOonFocusStore,
+    jobListStore,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    updateOnFocusJob: (payload) => {
+      dispatch({
+        type: updateOnFocusJob,
+        payload,
+      });
+    },
+  };
+};
+
+// export default JobResultCard;
+export default connect(mapStateToProps, mapDispatchToProps)(JobResultCard);

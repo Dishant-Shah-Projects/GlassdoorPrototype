@@ -12,6 +12,8 @@ class Home extends Component {
     this.state = { jobList: [] };
   }
   componentDidMount() {
+    localStorage.setItem('SearchString', '');
+    localStorage.setItem('Location', '');
     axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
     axios
       .get(serverUrl + 'student/jobSuggestions', {

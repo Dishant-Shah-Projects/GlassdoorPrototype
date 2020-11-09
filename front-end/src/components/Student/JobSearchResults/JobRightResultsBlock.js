@@ -4,6 +4,7 @@ import JobCompany from './JobCompany';
 import JobFeaturedReview from './JobFeaturedReview';
 import JobInfo from './JobInfo';
 import './JobRightResultsBlock.css';
+import { connect } from 'react-redux';
 
 class JobRightResultsBlock extends Component {
   constructor(props) {
@@ -18,11 +19,45 @@ class JobRightResultsBlock extends Component {
   };
 
   render() {
-    let showBlock = <JobInfo />;
+    const selectedJob = { ...this.props.jobOonFocusStore.jobOonFocus };
+
+    let heartIcon = (
+      <path
+        d="M12 5.11l.66-.65a5.56 5.56 0 017.71.19 5.63 5.63 0 010 7.92L12 21l-8.37-8.43a5.63 5.63 0 010-7.92 5.56 5.56 0 017.71-.19zm7.66 6.75a4.6 4.6 0 00-6.49-6.51L12 6.53l-1.17-1.18a4.6 4.6 0 10-6.49 6.51L12 19.58z"
+        fill="currentColor"
+        fill-rule="evenodd"
+      ></path>
+    );
+    if (this.props.studentInfoStore.studentProfile.FavouriteJobs.includes(selectedJob._id)) {
+      heartIcon = (
+        <path
+          d="M20.37 4.65a5.57 5.57 0 00-7.91 0l-.46.46-.46-.46a5.57 5.57 0 00-7.91 0 5.63 5.63 0 000 7.92L12 21l8.37-8.43a5.63 5.63 0 000-7.92z"
+          fill="currentColor"
+          fill-rule="evenodd"
+        ></path>
+      );
+    }
+
+    let avgRating = 0;
+    console.log('selectedJob:', selectedJob);
+    if (
+      selectedJob.jobdetails.length > 0 &&
+      selectedJob.jobdetails[0].GeneralReviewCount &&
+      selectedJob.jobdetails[0].GeneralReviewCount > 0 &&
+      selectedJob.jobdetails[0].TotalGeneralReviewRating &&
+      selectedJob.jobdetails[0].TotalGeneralReviewRating > 0
+    ) {
+      avgRating = (
+        selectedJob.jobdetails[0].TotalGeneralReviewRating /
+        selectedJob.jobdetails[0].GeneralReviewCount
+      ).toFixed(1);
+    }
+
+    let showBlock = <JobInfo selectedJob={selectedJob} />;
     if (this.state.tabOpened === 'Company') {
-      showBlock = <JobCompany />;
+      showBlock = <JobCompany selectedJob={selectedJob} />;
     } else if (this.state.tabOpened === 'Reviews') {
-      showBlock = <JobFeaturedReview />;
+      showBlock = <JobFeaturedReview selectedJob={selectedJob} />;
     }
     return (
       <div id="JDCol" className="noPad opened">
@@ -39,23 +74,31 @@ class JobRightResultsBlock extends Component {
                     <div id="CompanyBanner" className="content">
                       <img
                         alt="Cover for RoadRunner Recycling"
-                        src="https://media.glassdoor.com/banner/bh/1277356/roadrunner-recycling-banner-1534260090843.jpg"
+                        src={
+                          selectedJob.jobdetails.length > 0
+                            ? selectedJob.jobdetails[0].ProfileImg
+                            : ''
+                        }
                       />
                     </div>
                   </div>
                   <div className="empWrapper ctasTest">
                     <div className="empInfo newDetails">
                       <div className="employerName">
-                        RoadRunner Recycling
+                        {selectedJob.CompanyName}
                         <span className="rating">
-                          4.2<span className="ratingStar"></span>
+                          {avgRating}
+                          <span className="ratingStar"></span>
                         </span>
                       </div>
-                      <div className="title">Software Engineer</div>
-                      <div className="location">Pittsburgh, PA</div>
+                      <div className="title">{selectedJob.Title}</div>
+                      <div className="location">
+                        {selectedJob.StreetAddress}, {selectedJob.State}
+                      </div>
                       <div className="salary">
                         <span className="css-1uyte9r css-hca4ks e1wijj242">
-                          $41K-$88K <span className="css-0 e1wijj240">(Glassdoor est.)</span>
+                          {selectedJob.ExpectedSalary}${' '}
+                          <span className="css-0 e1wijj240">(Salary Range.)</span>
                           <span className="SVGInline greyInfoIcon">
                             <svg
                               className="SVGInline-svg greyInfoIcon-svg"
@@ -102,7 +145,9 @@ class JobRightResultsBlock extends Component {
                           </div>
                           <div className="saveCTA">
                             <button
-                              onClick={(event) => this.props.saveJob(event, 1 /**JobID */)}
+                              onClick={(event) =>
+                                this.props.saveJob(event, selectedJob._id /**JobID */)
+                              }
                               className="gd-btn gd-btn-2 gd-btn-icon fillMob save-job-button-3360350142"
                               data-ao-id="1131672"
                               data-job-id="3360350142"
@@ -118,11 +163,7 @@ class JobRightResultsBlock extends Component {
                                   height="24"
                                   viewBox="0 0 24 24"
                                 >
-                                  <path
-                                    d="M12 5.11l.66-.65a5.56 5.56 0 017.71.19 5.63 5.63 0 010 7.92L12 21l-8.37-8.43a5.63 5.63 0 010-7.92 5.56 5.56 0 017.71-.19zm7.66 6.75a4.6 4.6 0 00-6.49-6.51L12 6.53l-1.17-1.18a4.6 4.6 0 10-6.49 6.51L12 19.58z"
-                                    fill="currentColor"
-                                    fill-rule="evenodd"
-                                  ></path>
+                                  {heartIcon}
                                 </svg>
                               </span>
                               <span>Save</span>
@@ -147,17 +188,22 @@ class JobRightResultsBlock extends Component {
                     <div className="css-bhqyka epgue5a3">
                       <h3 className="css-4t3aaj epgue5a4">Job &amp; Company Insights</h3>
                       <div className="css-dqdcxk epgue5a5">
-                        <strong>Job Type:</strong> Full-time
+                        <strong>Job Type:</strong> {selectedJob.JobType}
                       </div>
                       <div className="css-dqdcxk epgue5a5">
                         <strong>Job Function:</strong>{' '}
-                        <span className="css-10iahqc">software engineer</span>
+                        <span className="css-10iahqc"> {selectedJob.Title}</span>
                       </div>
                       <div className="css-dqdcxk epgue5a5">
-                        <strong>Industry:</strong> Business Services
+                        <strong>Industry:</strong>{' '}
+                        {selectedJob.jobdetails.length > 0
+                          ? selectedJob.jobdetails[0].Industry
+                          : ''}
                       </div>
                       <div className="css-dqdcxk epgue5a5">
-                        <strong>Size:</strong> 51 to 200 Employees
+                        <strong>Size:</strong>{' '}
+                        {selectedJob.jobdetails.length > 0 ? selectedJob.jobdetails[0].Size : ''}{' '}
+                        Employees approx.
                       </div>
                     </div>
                   </div>
@@ -206,4 +252,14 @@ class JobRightResultsBlock extends Component {
   }
 }
 
-export default JobRightResultsBlock;
+const mapStateToProps = (state) => {
+  const { studentInfoStore } = state.StudentCompleteInfoReducer;
+  const { jobOonFocusStore } = state.JobSearchPageReducer;
+  return {
+    studentInfoStore,
+    jobOonFocusStore,
+  };
+};
+export default connect(mapStateToProps, null)(JobRightResultsBlock);
+
+// export default JobRightResultsBlock;

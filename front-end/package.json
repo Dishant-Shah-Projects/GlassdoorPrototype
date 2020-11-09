@@ -31,6 +31,7 @@
     "react-scripts": "3.4.3",
     "react-simple-snackbar": "^1.1.10",
     "react-switch": "^5.0.1",
+    "react-tooltip": "^4.2.10",
     "reactstrap": "^8.6.0",
     "redux": "^4.0.5",
     "redux-logger": "^3.0.6",

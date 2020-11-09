@@ -48,6 +48,11 @@ class Navbar extends Component {
             State: '',
             Country: '',
             Zip: '',
+            Disability: '',
+            Gender: '',
+            Race: [],
+            VeteranStatus: '',
+            FavouriteJobs: [],
             ...response.data[0],
           },
         };
@@ -231,6 +236,7 @@ class Navbar extends Component {
                                 <div className="accountPopup__AccountPopupStyles__accountMenu accountPopup__AccountPopupStyles__active">
                                   <ul className="p-0 m-0 memberHeader__HeaderStyles__list">
                                     <li
+                                      style={{ cursor: 'pointer' }}
                                       // onClick={(event) => this.mainMenuClicked(event, 'Profile')}
                                       className="p-0 m-0"
                                     >
@@ -251,10 +257,12 @@ class Navbar extends Component {
                                       </Link>
                                     </li>
                                     <li
-                                      onClick={(event) => this.mainMenuClicked(event, 'Resumes')}
+                                      style={{ cursor: 'pointer' }}
+                                      // onClick={(event) => this.mainMenuClicked(event, 'Resumes')}
                                       className="p-0 m-0"
                                     >
-                                      <a
+                                      <Link
+                                        to="/Resume"
                                         className="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
                                         href="#"
                                         target="_top"
@@ -268,15 +276,16 @@ class Navbar extends Component {
                                             </span>
                                           </span>
                                         </div>
-                                      </a>
+                                      </Link>
                                     </li>
                                     <li
-                                      onClick={(event) =>
-                                        this.mainMenuClicked(event, 'Job Preferences')
-                                      }
+                                      // onClick={(event) =>
+                                      //   this.mainMenuClicked(event, 'Job Preferences')
+                                      // }
                                       className="p-0 m-0"
                                     >
-                                      <a
+                                      <Link
+                                        to="/Demographics"
                                         className="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
                                         href="#"
                                         target="_top"
@@ -290,7 +299,7 @@ class Navbar extends Component {
                                             </span>
                                           </span>
                                         </div>
-                                      </a>
+                                      </Link>
                                     </li>
                                     <li
                                       onClick={(event) =>

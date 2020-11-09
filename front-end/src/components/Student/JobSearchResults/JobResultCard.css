@@ -264,3 +264,6 @@ a img {
   border-radius: 1px;
   background-color: #2aabde;
 }
+.jlGrid .jl .compactStars .star:before {
+  content: ' \2605';
+}

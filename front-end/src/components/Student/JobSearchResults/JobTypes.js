@@ -8,8 +8,6 @@ class JobTypes extends Component {
   }
   selectFilter = (event, JobType) => {
     this.props.filterChangeCall(
-      event,
-      this.props.jobListStore.Sort,
       JobType,
       this.props.jobListStore.State,
       this.props.jobListStore.SalStart,

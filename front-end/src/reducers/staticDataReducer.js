@@ -9,6 +9,7 @@ const defaultState = {
     States: [],
     Status: [],
     JobType: [],
+    Ethnicity: [],
   },
 };
 

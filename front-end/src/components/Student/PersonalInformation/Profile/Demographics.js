@@ -3,16 +3,13 @@ import { connect } from 'react-redux';
 import { LowerNavBarOther } from '../../../../constants/action-types';
 import Navbar from '../../Common/Navbar';
 import LeftPannel from '../Common/LeftPannel';
-import PersonalDetails from '../PersonalDetails/PersonalDetails';
+import DemographicsPage from '../DemographicsPage/DemographicsPage';
 import './Profile.css';
 
-class Profile extends Component {
+class Demographics extends Component {
   constructor(props) {
     super(props);
     this.state = {};
-  }
-  componentDidMount() {
-    localStorage.setItem('selectedDropDown', '');
   }
   render() {
     this.props.LowerNavBarOther();
@@ -25,8 +22,8 @@ class Profile extends Component {
               <div class="css-1tgr9d eds5rs80">
                 <div class="applicationStyle__profileApplication___Jyu4n">
                   <div class="row flex-column flex-md-row p-0 px-md-lg py-md-xxl" id="profilePage">
-                    {<LeftPannel />}
-                    <PersonalDetails />
+                    <LeftPannel />
+                    <DemographicsPage />
                   </div>
                 </div>
               </div>
@@ -38,8 +35,7 @@ class Profile extends Component {
   }
 }
 
-// export default Profile;
-
+// export default Demographics;
 const mapDispatchToProps = (dispatch) => {
   return {
     LowerNavBarOther: (payload) => {
@@ -51,4 +47,4 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(null, mapDispatchToProps)(Profile);
+export default connect(null, mapDispatchToProps)(Demographics);

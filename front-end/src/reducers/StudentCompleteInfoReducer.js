@@ -14,6 +14,11 @@ const defaultState = {
       State: '',
       Country: '',
       Zip: '',
+      Disability: '',
+      Gender: '',
+      Race: [],
+      VeteranStatus: '',
+      FavouriteJobs: [],
     },
   },
 };

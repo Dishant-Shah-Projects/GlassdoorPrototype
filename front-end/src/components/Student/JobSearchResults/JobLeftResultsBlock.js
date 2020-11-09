@@ -11,25 +11,38 @@ class JobLeftResultsBlock extends Component {
     this.state = {};
   }
 
-  commonFetch = (PageNo = 0) => {
-    let payload = {
-      jobList: [{ name: 'pr' }, { name: 'pr' }, { name: 'pr' }, { name: 'pr' }],
-      PageNo,
-      PageCount: Math.ceil(116 / 10),
-      Totalcount: 116,
+  // commonFetch = (PageNo = 0) => {
+  //   let payload = {
+  //     jobList: [{ name: 'pr' }, { name: 'pr' }, { name: 'pr' }, { name: 'pr' }],
+  //     PageNo,
+  //     PageCount: Math.ceil(116 / 10),
+  //     Totalcount: 116,
 
-      // PageCount: Math.ceil(response.data.Totalcount / 3),
-    };
-    this.props.updateJobListStore(payload);
-  };
+  //     // PageCount: Math.ceil(response.data.Totalcount / 3),
+  //   };
+  //   this.props.updateJobListStore(payload);
+  // };
 
   componentDidMount() {
-    this.commonFetch();
+    this.props.filterChangeCall(
+      this.props.jobListStore.JobType,
+      this.props.jobListStore.State,
+      this.props.jobListStore.SalStart,
+      this.props.jobListStore.SalEnd,
+      this.props.jobListStore.PageNo
+    );
   }
 
   onPageClick = (e) => {
+    this.props.filterChangeCall(
+      this.props.jobListStore.JobType,
+      this.props.jobListStore.State,
+      this.props.jobListStore.SalStart,
+      this.props.jobListStore.SalEnd,
+      e.selected
+    );
     // console.log('Page Clicked:', e.selected);
-    this.commonFetch(e.selected);
+    // this.commonFetch(e.selected);
   };
   render() {
     return (
@@ -59,11 +72,11 @@ class JobLeftResultsBlock extends Component {
                         ></path>
                       </svg>
                     </span>
-                    <span>Most Relevant</span>
+                    <span>Most Recent</span>
                   </div>
                 </div>
                 <div data-test="jobCount-H1title" className="hideHH css-19rczgc e15r6eig0">
-                  111956 Software Engineer Jobs
+                  {this.props.jobListStore.Totalcount} {localStorage.getItem('SearchString')} Jobs
                 </div>
               </div>
               <span></span>
@@ -71,13 +84,17 @@ class JobLeftResultsBlock extends Component {
           </div>
           <ul className="jlGrid hover p-0 ">
             {this.props.jobListStore.jobList.map((job) => (
-              <JobResultCard saveJob={(event) => this.props.saveJob(event, job._id /**JobID */)} />
+              <JobResultCard
+                key={job._id}
+                job={job}
+                saveJob={(event) => this.props.saveJob(event, job._id /**JobID */)}
+              />
             ))}
           </ul>
         </div>
         <div className="tbl fill padHorz margVert" id="ResultsFooter">
           <div className="cell middle hideMob padVertSm" data-test="page-x-of-y">
-            Page 1 of 30
+            Page {this.props.jobListStore.PageNo + 1} of {this.props.jobListStore.PageCount}
           </div>
           <div className="cell alignRt middle">
             <PaginationComponent

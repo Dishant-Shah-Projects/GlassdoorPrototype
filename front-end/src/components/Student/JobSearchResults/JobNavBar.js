@@ -115,8 +115,8 @@ class JobNavBar extends Component {
           <div id="PrimaryDropdown" style={dropDownStyle}>
             {this.props.jobFilterStore.fiterSlected === 'JOBTYPE' ? (
               <JobTypes
-                filterChangeCall={(event, Sort, JobType, State, SalStart, SalEnd, PageNo) =>
-                  this.props.filterChangeCall(event, Sort, JobType, State, SalStart, SalEnd, PageNo)
+                filterChangeCall={(JobType, State, SalStart, SalEnd, PageNo) =>
+                  this.props.filterChangeCall(JobType, State, SalStart, SalEnd, PageNo)
                 }
               />
             ) : (
@@ -124,8 +124,8 @@ class JobNavBar extends Component {
             )}
             {this.props.jobFilterStore.fiterSlected === 'SALRANGE' ? (
               <SalRange
-                filterChangeCall={(event, Sort, JobType, State, SalStart, SalEnd, PageNo) =>
-                  this.props.filterChangeCall(event, Sort, JobType, State, SalStart, SalEnd, PageNo)
+                filterChangeCall={(JobType, State, SalStart, SalEnd, PageNo) =>
+                  this.props.filterChangeCall(JobType, State, SalStart, SalEnd, PageNo)
                 }
               />
             ) : (
@@ -133,8 +133,8 @@ class JobNavBar extends Component {
             )}
             {this.props.jobFilterStore.fiterSlected === 'CITY' ? (
               <JobCities
-                filterChangeCall={(event, Sort, JobType, State, SalStart, SalEnd, PageNo) =>
-                  this.props.filterChangeCall(event, Sort, JobType, State, SalStart, SalEnd, PageNo)
+                filterChangeCall={(JobType, State, SalStart, SalEnd, PageNo) =>
+                  this.props.filterChangeCall(JobType, State, SalStart, SalEnd, PageNo)
                 }
               />
             ) : (

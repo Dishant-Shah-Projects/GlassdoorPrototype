@@ -14,8 +14,6 @@ class SalRange extends Component {
   };
   selectFilter = (event) => {
     this.props.filterChangeCall(
-      event,
-      this.props.jobListStore.Sort,
       this.props.jobListStore.JobType,
       this.props.jobListStore.State,
       this.state.StartSalary,

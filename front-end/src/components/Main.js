@@ -14,7 +14,9 @@ import ProfileUpdate from './Employer/ProfileUpdate/ProfileUpdate';
 import salaryList from './Student/SalarySearchResults/salaryList';
 import Home from './Student/LandingPage/Home';
 import Profile from './Student/PersonalInformation/Profile/Profile';
-
+import Resume from './Student/PersonalInformation/Profile/Resume';
+import Demographics from './Student/PersonalInformation/Profile/Demographics';
+import ResumeUploadPage from './Student/PersonalInformation/ResumePage/ResumeUploadPage';
 class Main extends Component {
   // constructor(props) {
   //     super(props);
@@ -44,6 +46,9 @@ class Main extends Component {
       let JobType = response.data[0].JobType.map((jobType) => {
         return jobType;
       });
+      let Ethnicity = response.data[0].Ethnicity.map((ethnicity) => {
+        return ethnicity;
+      });
 
       let payload = {
         Countries,
@@ -53,6 +58,7 @@ class Main extends Component {
         States,
         Status,
         JobType,
+        Ethnicity,
       };
       this.props.updateMasterData(payload);
       // this.setState({
@@ -77,6 +83,9 @@ class Main extends Component {
           <Route path="/salaryList" component={salaryList} />
           <Route path="/interviewList" component={interviewList} />
           <Route path="/Profile" component={Profile} />
+          <Route path="/Resume" component={Resume} />
+          <Route path="/Demographics" component={Demographics} />
+          <Route path="/ResumeUploadPage" component={ResumeUploadPage} />
           <Route path="/" component={Home} />
         </Switch>
       </div>

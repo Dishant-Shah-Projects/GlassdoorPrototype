@@ -7,9 +7,8 @@ class JobCities extends Component {
     this.state = {};
   }
   selectFilter = (event, State) => {
+    localStorage.setItem('Location', State);
     this.props.filterChangeCall(
-      event,
-      this.props.jobListStore.Sort,
       this.props.jobListStore.JobType,
       State,
       this.props.jobListStore.SalStart,
@@ -26,7 +25,7 @@ class JobCities extends Component {
           className={this.props.jobListStore.State === '' ? 'selected' : ''}
           onClick={(event) => this.selectFilter(event, '')}
         >
-          <span className="label">All Cities</span>
+          <span className="label">{localStorage.getItem('Location')}</span>
           <span className="labelTick"></span>
         </li>
         {this.props.masterData.States.map((state) => (

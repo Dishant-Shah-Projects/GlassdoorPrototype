@@ -12,3 +12,4 @@ export const updateSalaryList = 'update-salary-list';
 export const updateStudentProfile = 'update-student-profile';
 export const updateActiveStringList = 'update-active-stringList';
 export const updateCompanyProfile = 'update-company-profile';
+export const updateOnFocusJob = 'update-on-focus-job';

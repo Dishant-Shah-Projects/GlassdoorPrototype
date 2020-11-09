@@ -1,12 +1,24 @@
 import React, { Component } from 'react';
 import './LeftPannel';
+import { withRouter } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 
 class LeftPannel extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = { redirect: null };
   }
+
+  openPage = (page) => {
+    this.setState({
+      redirect: page,
+    });
+  };
   render() {
+    if (this.state.redirect) {
+      return <Redirect to={this.state.redirect} />;
+    }
+    // console.log('this.props.location.pathname', this.props.location.pathname);
     return (
       <div class="col-12 col-md-4 pr-md-xxl">
         <div class="d-none d-md-block">
@@ -41,12 +53,30 @@ class LeftPannel extends Component {
         </div>
         <div class="navigationStyle__nav___1PF4F gd-ui-tab css-o9yci5">
           <ul role="tablist">
-            <li role="tab" class="active css-1h7a53u" aria-selected="true" tabindex="0">
+            <li
+              onClick={() => this.openPage('/Profile')}
+              role="tab"
+              class="active css-1h7a53u"
+              // class={
+              // this.props.location.pathname === '/Profile' ? 'active css-1h7a53u' : 'css-1h7a53u'
+              // }
+              aria-selected="true"
+              tabindex="0"
+            >
               <div class="customItem css-wks0vk">
                 <div class="d-flex flex-row justify-content-start align-items-center">Profile</div>
               </div>
             </li>
-            <li role="tab" class=" css-1h7a53u" aria-selected="false" tabindex="0">
+            <li
+              // class={
+              //   this.props.location.pathname === '/Resume' ? 'active css-1h7a53u' : 'css-1h7a53u'
+              // }
+              onClick={() => this.openPage('/Resume')}
+              role="tab"
+              class=" css-1h7a53u"
+              aria-selected="false"
+              tabindex="0"
+            >
               <div class="customItem css-wks0vk">
                 <div class="d-flex flex-row justify-content-start align-items-center">Resumes</div>
               </div>
@@ -58,7 +88,13 @@ class LeftPannel extends Component {
                 </div>
               </div>
             </li>
-            <li role="tab" class=" css-1h7a53u" aria-selected="false" tabindex="0">
+            <li
+              onClick={() => this.openPage('/Demographics')}
+              role="tab"
+              class=" css-1h7a53u"
+              aria-selected="false"
+              tabindex="0"
+            >
               <div class="customItem css-wks0vk">
                 <div class="d-flex flex-row justify-content-start align-items-center">
                   Demographics
@@ -72,4 +108,4 @@ class LeftPannel extends Component {
   }
 }
 
-export default LeftPannel;
+export default withRouter(LeftPannel);
