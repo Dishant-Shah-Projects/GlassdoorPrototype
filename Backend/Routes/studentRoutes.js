@@ -7,7 +7,8 @@ const {
   searchCompany,
   getJobSuggestions,
   searchJob,
-  getFavouriteJobs,
+  companyFavouriteJobs,
+  removeFavouriteJobs,
   searchInterview,
 } = require('../Student/studentFunctionality');
 
@@ -37,11 +38,18 @@ Router.get('/jobSuggestions', checkAuth, async (req, res) => {
   return value;
 });
 
-// To get the suggested jobs for students
+// To post the favourite jobs for students
 Router.post('/companyFavouriteJobs', checkAuth, async (req, res) => {
-  const value = await getFavouriteJobs(req, res);
+  const value = await companyFavouriteJobs(req, res);
   return value;
 });
+
+// To remove the favourite jobs for students
+Router.post('/removeFavouriteJobs', checkAuth, async (req, res) => {
+  const value = await removeFavouriteJobs(req, res);
+  return value;
+});
+
 // To fetch the results of the interview search
 Router.get('/searchInterview', async (req, res) => {
   const value = await searchInterview(req, res);

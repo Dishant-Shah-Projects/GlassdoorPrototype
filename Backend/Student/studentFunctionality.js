@@ -373,8 +373,8 @@ const getJobSuggestions = async (req, res) => {
   return res;
   /* eslint-enable */
 };
-// get the suggested jobs for students
-const getFavouriteJobs = async (req, res) => {
+// post company favourite jobs for students
+const companyFavouriteJobs = async (req, res) => {
   const { StudentID, JobID } = req.body;
   try {
     Student.update({ StudentID }, { $push: { FavouriteJobs: JobID } }, (err) => {
@@ -386,6 +386,28 @@ const getFavouriteJobs = async (req, res) => {
           'Content-Type': 'application/json',
         });
         res.end(JSON.stringify('Added'));
+      }
+    });
+  } catch (error) {
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  }
+  return res;
+};
+
+// remove favourite jobs for students
+const removeFavouriteJobs = async (req, res) => {
+  const { StudentID, JobID } = req.body;
+  try {
+    Student.update({ StudentID }, { $pull: { FavouriteJobs: JobID } }, (err) => {
+      if (err) {
+        res.writeHead(500, { 'content-type': 'text/json' });
+        res.end(JSON.stringify('Network Error'));
+      } else {
+        res.writeHead(200, {
+          'Content-Type': 'application/json',
+        });
+        res.end(JSON.stringify('Removed'));
       }
     });
   } catch (error) {
@@ -439,6 +461,7 @@ module.exports = {
   searchCompany,
   getJobSuggestions,
   searchJob,
-  getFavouriteJobs,
+  companyFavouriteJobs,
+  removeFavouriteJobs,
   searchInterview,
 };
