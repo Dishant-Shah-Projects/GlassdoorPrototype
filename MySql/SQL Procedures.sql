@@ -24,3 +24,17 @@ SELECT LAST_INSERT_ID() AS ID;
 commit;
 END$$
 DELIMITER ;
+
+-- Procedure to submit job application
+drop procedure  if exists applicationSubmit;
+DELIMITER $$
+CREATE PROCEDURE `applicationSubmit` (IN _JobID bigint, IN _StudentID bigint , IN _StudentName varchar(45),
+IN _ResumeURL varchar(150), _CoverLetterURL varchar(150), _Status enum('Submitted','Reviewed','Initial Screening','Interviewing','Hired','Rejected'))
+BEGIN
+declare exit handler for sqlexception rollback;
+start transaction;
+INSERT INTO APPLICATION_RECEIVED (JobID, StudentID, StudentName, ResumeURL, CoverLetterURL, Status, Withdrawn) 
+VALUES (_JobID, _StudentID, _StudentName, _ResumeURL, _CoverLetterURL, _Status, 0);
+commit;
+END$$
+DELIMITER ;

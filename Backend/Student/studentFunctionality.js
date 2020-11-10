@@ -396,10 +396,34 @@ const getFavouriteJobs = async (req, res) => {
   return res;
 };
 
+// To submit an application for a job
+const companyApplyJob = async (req, res) => {
+  const { JobID, StudentID, StudentName, ResumeURL, CoverLetterURL } = req.body;
+  try {
+    const jobApplicationProcedure = 'CALL applicationSubmit(?,?,?,?,?)';
+    const con = await mysqlConnection();
+    // eslint-disable-next-line no-unused-vars
+    const [results, fields] = await con.query(jobApplicationProcedure, [
+      JobID,
+      StudentID,
+      StudentName,
+      ResumeURL,
+      CoverLetterURL,
+    ]);
+    con.end();
+    res.writeHead(200, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Applied Successfully'));
+  } catch (error) {
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  }
+};
+
 module.exports = {
   navbar,
   searchCompany,
   getJobSuggestions,
   searchJob,
   getFavouriteJobs,
+  companyApplyJob,
 };

@@ -68,11 +68,12 @@ const StudentSchema = new mongoose.Schema({
     enum: ['Not Looking', 'Casually Looking', 'Actively Looking'],
     default: 'Actively Looking',
   },
-  JobType: {
-    type: String,
-    enum: ['Full-time', 'Part-time', 'Contract', 'Internship', 'Temporary'],
-    default: 'Full-time',
-  },
+  JobType: [
+    {
+      type: String,
+      default: 'Full-time',
+    },
+  ],
   PreferredJobTitle: { type: String },
   TargetSalary: { type: Number },
   OpentoRelocation: { type: Boolean },
