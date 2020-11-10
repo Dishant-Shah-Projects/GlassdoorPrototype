@@ -13,6 +13,7 @@ const {
   searchInterview,
   resumesAdd,
   resumesDelete,
+  jobWithdraw,
 } = require('../Student/studentFunctionality');
 
 const { checkAuth } = require('../SharedFuntionalities/passport');
@@ -74,6 +75,12 @@ Router.post('/resumesDelete', async (req, res) => {
 // To submit the application for a job in the company
 Router.post('/companyApplyJob', checkAuth, async (req, res) => {
   const value = await companyApplyJob(req, res);
+  return value;
+});
+
+// To withdraw an application from a job
+Router.post('/jobWithdraw', checkAuth, async (req, res) => {
+  const value = await jobWithdraw(req, res);
   return value;
 });
 

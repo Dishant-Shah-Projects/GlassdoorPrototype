@@ -526,6 +526,24 @@ const resumesDelete = async (req, res) => {
   return res;
 };
 
+// To withdraw from a job application
+const jobWithdraw = async (req, res) => {
+  const { JobID, StudentID } = req.body;
+  try {
+    const applicationWithdrawProcedure = 'CALL applicationWithDraw(?,?)';
+    const con = await mysqlConnection();
+    // eslint-disable-next-line no-unused-vars
+    const [results, fields] = await con.query(applicationWithdrawProcedure, [JobID, StudentID]);
+    con.end();
+    res.writeHead(200, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Withdrawn Successfully'));
+  } catch (error) {
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  }
+  return res;
+};
+
 module.exports = {
   navbar,
   searchCompany,
@@ -537,4 +555,5 @@ module.exports = {
   searchInterview,
   resumesAdd,
   resumesDelete,
+  jobWithdraw,
 };

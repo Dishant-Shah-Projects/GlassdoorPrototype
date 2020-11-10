@@ -9,10 +9,9 @@ SELECT * FROM SIGNUP
 WHERE UserName =  _EmailID;
 commit;
 END$$
-DELIMITER ;GENERAL_REVIEW
+DELIMITER ;
 
 -- Procedure to insert users in the SIGNUP table
-use glassdoor-proto
 drop procedure  if exists userInsert;
 DELIMITER $$
 CREATE PROCEDURE `userInsert` (IN _UserName varchar(60), IN _Password varchar(150) , IN _Role enum('student','company','admin'))
@@ -65,3 +64,18 @@ WHERE CompanyID =  _ID;
 commit;
 END$$
 DELIMITER ;
+
+-- Procedure for withdrawing application
+drop procedure  if exists applicationWithDraw;
+DELIMITER $$
+CREATE PROCEDURE `applicationWithDraw` (IN _JobID bigint, IN _StudentID bigint)
+BEGIN
+declare exit handler for sqlexception rollback;
+start transaction;
+UPDATE APPLICATION_RECEIVED
+SET Withdrawn = 1
+WHERE JobID = _JobID AND StudentID =_StudentID;
+commit;
+END$$
+DELIMITER ;
+
