@@ -215,10 +215,16 @@ const searchCompany = async (req, res) => {
 // Search all jobs
 const searchJob = async (req, res) => {
   try {
-    const { JobType, State, SalStart, SalEnd, PageNo } = url.parse(req.url, true).query;
+    const { SearchString, JobType, State, SalStart, SalEnd, PageNo } = url.parse(
+      req.url,
+      true
+    ).query;
     const filterObj = {};
+    if (SearchString.length !== 0) {
+      filterObj.CompanyName = { $regex: `${SearchString}`, $options: 'i' };
+    }
     if (JobType.length !== 0) {
-      filterObj.Title = JobType;
+      filterObj.JobType = JobType;
     }
     if (SalStart !== SalEnd) {
       const tempObj = {};
@@ -250,6 +256,14 @@ const searchJob = async (req, res) => {
           State: 1,
           City: 1,
           ExpectedSalary: 1,
+          PostedDate: 1,
+          StreetAddress: 1,
+          JobType: 1,
+          Qualifications: 1,
+          Responsibilities: 1,
+          JobDescription: 1,
+          Country: 1,
+          CurrentStatus: 1,
           jobdetails: 1,
         },
       },
