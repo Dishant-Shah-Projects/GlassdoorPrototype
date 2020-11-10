@@ -7,8 +7,12 @@ const {
   searchCompany,
   getJobSuggestions,
   searchJob,
-  getFavouriteJobs,
   companyApplyJob,
+  companyFavouriteJobs,
+  removeFavouriteJobs,
+  searchInterview,
+  resumesAdd,
+  resumesDelete,
 } = require('../Student/studentFunctionality');
 
 const { checkAuth } = require('../SharedFuntionalities/passport');
@@ -37,9 +41,33 @@ Router.get('/jobSuggestions', checkAuth, async (req, res) => {
   return value;
 });
 
-// To get the suggested jobs for students
+// To post the favourite jobs for students
 Router.post('/companyFavouriteJobs', checkAuth, async (req, res) => {
-  const value = await getFavouriteJobs(req, res);
+  const value = await companyFavouriteJobs(req, res);
+  return value;
+});
+
+// To remove the favourite jobs for students
+Router.post('/removeFavouriteJobs', checkAuth, async (req, res) => {
+  const value = await removeFavouriteJobs(req, res);
+  return value;
+});
+
+// To fetch the results of the interview search
+Router.get('/searchInterview', async (req, res) => {
+  const value = await searchInterview(req, res);
+  return value;
+});
+
+// To add resume of student
+Router.post('/resumesAdd', async (req, res) => {
+  const value = await resumesAdd(req, res);
+  return value;
+});
+
+// To remove resume of student
+Router.post('/resumesDelete', async (req, res) => {
+  const value = await resumesDelete(req, res);
   return value;
 });
 
