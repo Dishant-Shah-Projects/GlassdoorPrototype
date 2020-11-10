@@ -35,7 +35,7 @@ declare exit handler for sqlexception rollback;
 start transaction;
 INSERT INTO APPLICATION_JOB (CompanyName, CompanyID, PostedDate,StreetAddress,City,State) 
 VALUES (_CompanyName,_CompanyID, _PostedDate,_StreetAddress,_City,_State);
-SELECT LAST_INSERT_ID() AS ID;
+SELECT LAST_INSERT_ID() AS JobID;
 commit;
 END$$
 DELIMITER ;
