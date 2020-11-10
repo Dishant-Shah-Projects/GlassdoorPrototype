@@ -112,7 +112,7 @@ const companyReviews = async (req, res) => {
   }
   return res;
 };
-// get the Company Review for the company
+// Post Job to the company
 const postJob = async (req, res) => {
   // eslint-disable-next-line no-console
   const {

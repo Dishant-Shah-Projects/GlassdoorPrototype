@@ -8,6 +8,7 @@ const {
   getJobSuggestions,
   searchJob,
   getFavouriteJobs,
+  searchInterview,
 } = require('../Student/studentFunctionality');
 
 const { checkAuth } = require('../SharedFuntionalities/passport');
@@ -39,6 +40,11 @@ Router.get('/jobSuggestions', checkAuth, async (req, res) => {
 // To get the suggested jobs for students
 Router.post('/companyFavouriteJobs', checkAuth, async (req, res) => {
   const value = await getFavouriteJobs(req, res);
+  return value;
+});
+// To fetch the results of the interview search
+Router.get('/searchInterview', async (req, res) => {
+  const value = await searchInterview(req, res);
   return value;
 });
 

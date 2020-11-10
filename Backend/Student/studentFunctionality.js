@@ -373,7 +373,6 @@ const getJobSuggestions = async (req, res) => {
   return res;
   /* eslint-enable */
 };
-
 // get the suggested jobs for students
 const getFavouriteJobs = async (req, res) => {
   const { StudentID, JobID } = req.body;
@@ -396,10 +395,50 @@ const getFavouriteJobs = async (req, res) => {
   return res;
 };
 
+// harvest interviews
+const getInterviews = async (objects) => {
+  const interviews = [];
+  try {
+    for (let i = 0; i < objects.length; i += 1) {
+      interviews.push(...objects[i].InterviewReview);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+  return interviews;
+};
+
+// API Calls for returning the interviews
+const searchInterview = async (req, res) => {
+  const { SearchString, State, PageNo } = req.body;
+  try {
+    const reviews = await Company.find({
+      CompanyName: { $regex: `.*${SearchString}.*` },
+      State,
+    }).select('InterviewReview');
+    let review2 = null;
+    review2 = await getInterviews(reviews);
+    const count = review2.length;
+    const noOfPages = Math.ceil(count / 10);
+    const resultObj = {};
+    resultObj.interviews = review2.slice(PageNo * 10, PageNo * 10 + 10);
+    resultObj.count = count;
+    resultObj.noOfPages = noOfPages;
+    res.writeHead(200, { 'content-type': 'text/json' });
+    res.end(JSON.stringify(resultObj));
+  } catch (error) {
+    console.log(error);
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  }
+  return res;
+};
+
 module.exports = {
   navbar,
   searchCompany,
   getJobSuggestions,
   searchJob,
   getFavouriteJobs,
+  searchInterview,
 };
