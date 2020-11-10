@@ -456,6 +456,53 @@ const searchInterview = async (req, res) => {
   return res;
 };
 
+// post resume of student
+const resumesAdd = async (req, res) => {
+  const { StudentID, ResumeURL } = req.body;
+  try {
+    Student.update({ StudentID }, { $push: { Resumes: ResumeURL } }, (err) => {
+      if (err) {
+        res.writeHead(500, { 'content-type': 'text/json' });
+        res.end(JSON.stringify('Network Error'));
+      } else {
+        res.writeHead(200, {
+          'Content-Type': 'application/json',
+        });
+        res.end(JSON.stringify('Added Resume'));
+      }
+    });
+  } catch (error) {
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  }
+  return res;
+};
+
+// remove resume for students
+const resumesDelete = async (req, res) => {
+  const { StudentID, ResumeURL } = req.body;
+  try {
+    await Student.update({ StudentID }, { $pull: { Resumes: ResumeURL } }, (err) => {
+      if (err) {
+        res.writeHead(500, { 'content-type': 'text/json' });
+        res.end(JSON.stringify('Network Error'));
+      }
+    });
+    const result = await Student.findOne({ StudentID }, { ResumePrimary: 1, _id: 0 }).exec();
+    if (result.ResumePrimary === ResumeURL) {
+      await Student.update({ StudentID }, { ResumePrimary: '' }).exec();
+    }
+    res.writeHead(200, {
+      'Content-Type': 'application/json',
+    });
+    res.end(JSON.stringify('Removed'));
+  } catch (error) {
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  }
+  return res;
+};
+
 module.exports = {
   navbar,
   searchCompany,
@@ -464,4 +511,6 @@ module.exports = {
   companyFavouriteJobs,
   removeFavouriteJobs,
   searchInterview,
+  resumesAdd,
+  resumesDelete,
 };
