@@ -544,6 +544,34 @@ const jobWithdraw = async (req, res) => {
   return res;
 };
 
+// Update the profile information
+const profileUpdate = async (req, res) => {
+  try {
+    const { StudentID } = req.body;
+    Student.findOne({ StudentID }, (err, results) => {
+      if (err) {
+        res.writeHead(500, { 'content-type': 'text/json' });
+        res.end(JSON.stringify('Network Error'));
+      }
+      if (results) {
+        Student.updateOne({ StudentID }, { ...req.body }, (er, data) => {
+          if (er) {
+            res.writeHead(500, { 'content-type': 'text/json' });
+            res.end(JSON.stringify('Network Error'));
+          }
+          if (data) {
+            res.writeHead(200, { 'content-type': 'text/json' });
+            res.end(JSON.stringify('Updated Successfully'));
+          }
+        });
+      }
+    });
+  } catch (error) {
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  }
+};
+
 module.exports = {
   navbar,
   searchCompany,
@@ -556,4 +584,5 @@ module.exports = {
   resumesAdd,
   resumesDelete,
   jobWithdraw,
+  profileUpdate,
 };

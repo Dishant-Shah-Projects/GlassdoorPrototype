@@ -14,6 +14,7 @@ const {
   resumesAdd,
   resumesDelete,
   jobWithdraw,
+  profileUpdate,
 } = require('../Student/studentFunctionality');
 
 const { checkAuth } = require('../SharedFuntionalities/passport');
@@ -81,6 +82,12 @@ Router.post('/companyApplyJob', checkAuth, async (req, res) => {
 // To withdraw an application from a job
 Router.post('/jobWithdraw', checkAuth, async (req, res) => {
   const value = await jobWithdraw(req, res);
+  return value;
+});
+
+// To update the profile of the student
+Router.post('/profileUpdate', checkAuth, async (req, res) => {
+  const value = await profileUpdate(req, res);
   return value;
 });
 
