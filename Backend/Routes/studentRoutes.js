@@ -1,7 +1,8 @@
 const express = require('express');
 
 const Router = express.Router();
-
+const multer = require('multer');
+const { uploadFile } = require('../S3Bucket/s3BucketUpload');
 const {
   navbar,
   searchCompany,
@@ -18,6 +19,8 @@ const {
 } = require('../Student/studentFunctionality');
 
 const { checkAuth } = require('../SharedFuntionalities/passport');
+
+const mult = multer({ dest: 'temp/', limits: { fieldSize: 8 * 1024 * 1024 } }).single('file');
 
 // To get the data required for navbar
 Router.get('/navbar', checkAuth, async (req, res) => {
@@ -91,4 +94,9 @@ Router.post('/profileUpdate', checkAuth, async (req, res) => {
   return value;
 });
 
+// upload to e3 bucket and return the URL of file.
+Router.post('/upload', mult, checkAuth, async (req, res) => {
+  const value = await uploadFile(req, res);
+  return value;
+});
 module.exports = Router;
