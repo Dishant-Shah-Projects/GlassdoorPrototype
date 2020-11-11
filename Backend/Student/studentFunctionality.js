@@ -81,7 +81,7 @@ const searchCompany = async (req, res) => {
       .skip(PageNo * 10)
       .exec();
     const count = await Company.find().countDocuments();
-    const noOfPages = Math.ceil(count / 4);
+    const noOfPages = Math.ceil(count / 10);
     for (let i = 0; i < companyResults.length; i += 1) {
       const ID = companyResults[i].CompanyID;
       const tempObj = {};
@@ -448,7 +448,7 @@ const getInterviews = async (objects) => {
       interviews.push(...objects[i].InterviewReview);
     }
   } catch (error) {
-    console.log(error);
+    return interviews;
   }
   return interviews;
 };
@@ -472,7 +472,6 @@ const searchInterview = async (req, res) => {
     res.writeHead(200, { 'content-type': 'text/json' });
     res.end(JSON.stringify(resultObj));
   } catch (error) {
-    console.log(error);
     res.writeHead(500, { 'content-type': 'text/json' });
     res.end(JSON.stringify('Network Error'));
   }
