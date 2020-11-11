@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { LowerNavBarOther } from '../../../../constants/action-types';
+import { LowerNavBarOther, openProfileTabOnClick } from '../../../../constants/action-types';
 import Navbar from '../../Common/Navbar';
 import LeftPannel from '../Common/LeftPannel';
+import DemographicsPage from '../DemographicsPage/DemographicsPage';
+import JobPreferencePage from '../JobPreferencePage/JobPreferencePage';
 import PersonalDetails from '../PersonalDetails/PersonalDetails';
+import ResumeList from '../ResumePage/ResumeList';
 import './Profile.css';
 
 class Profile extends Component {
@@ -12,13 +15,34 @@ class Profile extends Component {
     this.state = {};
   }
   componentDidMount() {
+    let payload = { openTab: localStorage.getItem('openTab') };
+    this.props.openProfileTabOnClick(payload);
     localStorage.setItem('selectedDropDown', '');
   }
   render() {
     this.props.LowerNavBarOther();
+    let tabOpened = <PersonalDetails />;
+    switch (this.props.leftPannelStore.openTab) {
+      case 'Resumes': {
+        tabOpened = <ResumeList />;
+        break;
+      }
+      case 'Job Preferences': {
+        tabOpened = <JobPreferencePage />;
+        break;
+      }
+      case 'Demographics': {
+        tabOpened = <DemographicsPage />;
+        break;
+      }
+      default: {
+        tabOpened = <PersonalDetails />;
+        break;
+      }
+    }
     return (
       <body className="main flex loggedIn lang-en en-US hollywood  _initOk noTouch desktop">
-        <Navbar />
+        {/*<Navbar />*/}
         <div class="pageContentWrapperStudent ">
           <div id="UserProfilePageContent">
             <div id="UserProfile" class="gdGrid container">
@@ -26,7 +50,7 @@ class Profile extends Component {
                 <div class="applicationStyle__profileApplication___Jyu4n">
                   <div class="row flex-column flex-md-row p-0 px-md-lg py-md-xxl" id="profilePage">
                     {<LeftPannel />}
-                    <PersonalDetails />
+                    {tabOpened}
                   </div>
                 </div>
               </div>
@@ -39,6 +63,12 @@ class Profile extends Component {
 }
 
 // export default Profile;
+const mapStateToProps = (state) => {
+  const { leftPannelStore } = state.studentProfileLeftPanelReducer;
+  return {
+    leftPannelStore,
+  };
+};
 
 const mapDispatchToProps = (dispatch) => {
   return {
@@ -48,7 +78,13 @@ const mapDispatchToProps = (dispatch) => {
         payload,
       });
     },
+    openProfileTabOnClick: (payload) => {
+      dispatch({
+        type: openProfileTabOnClick,
+        payload,
+      });
+    },
   };
 };
 
-export default connect(null, mapDispatchToProps)(Profile);
+export default connect(mapStateToProps, mapDispatchToProps)(Profile);

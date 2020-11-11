@@ -36,7 +36,7 @@ class salaryList extends Component {
     this.props.LowerNavBarOther();
     return (
       <body className="main flex loggedIn lang-en en-US hollywood  _initOk noTouch desktop">
-        {<Navbar />}
+        {/*<Navbar />*/}
         <div class="pageContentWrapperStudent ">
           <div id="PageContent">
             <div id="PageBodyContents" class="meat">

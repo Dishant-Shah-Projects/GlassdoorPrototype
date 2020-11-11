@@ -19,7 +19,7 @@ class LoginHeader extends Component {
       <header id="TopNav" className="transparent">
         <nav>
           <div className="locked-home-lg-margins d-block pt-xsm px-std">
-            <div className="row justify-content-between align-items-baseline">
+            <div id="loginheder" className="row justify-content-between align-items-baseline">
               <div
                 style={{ width: 'auto' }}
                 className="track-click locked-home-logo d-flex justify-content-start col-6 col-lg-auto order-lg-first"

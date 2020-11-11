@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 class AboutMeModal extends Component {
   constructor(props) {
     super(props);
-    this.state = { studentProfile: this.props.studentInfoStore.studentProfile };
+    this.state = { studentProfile: { ...this.props.studentInfoStore.studentProfile } };
   }
   onChangeHandler = (event) => {
     this.setState({

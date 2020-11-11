@@ -17,6 +17,9 @@ import Profile from './Student/PersonalInformation/Profile/Profile';
 import Resume from './Student/PersonalInformation/Profile/Resume';
 import Demographics from './Student/PersonalInformation/Profile/Demographics';
 import ResumeUploadPage from './Student/PersonalInformation/ResumePage/ResumeUploadPage';
+import Navbar from './Student/Common/Navbar';
+import CommonNavBar from './CommonNavBar';
+
 class Main extends Component {
   // constructor(props) {
   //     super(props);
@@ -72,22 +75,20 @@ class Main extends Component {
   render() {
     return (
       <div>
-        <Switch>
-          <Route path="/CompanySearchResults" component={CompanySearchResults} />
-          <Route path="/Employer" component={EmployerHome} />
-          <Route path="/EmployerProfile" component={ProfileUpdate} />
-          <Route path="/Home" component={Home} />
-          <Route path="/Login" component={Login} />
-          <Route path="/CompanySearchResults" component={CompanySearchResults} />
-          <Route path="/JobList" component={JobList} />
-          <Route path="/salaryList" component={salaryList} />
-          <Route path="/interviewList" component={interviewList} />
-          <Route path="/Profile" component={Profile} />
-          <Route path="/Resume" component={Resume} />
-          <Route path="/Demographics" component={Demographics} />
-          <Route path="/ResumeUploadPage" component={ResumeUploadPage} />
-          <Route path="/" component={Home} />
-        </Switch>
+        {/* <Switch>*/}
+
+        <Route path="/" component={CommonNavBar} />
+        <Route path="/Login" component={Login} />
+        <Route path="/CompanySearchResults" component={CompanySearchResults} />
+        <Route path="/Employer" component={EmployerHome} />
+        <Route path="/EmployerProfile" component={ProfileUpdate} />
+        <Route path="/Home" component={Home} />
+        <Route path="/JobList" component={JobList} />
+        <Route path="/salaryList" component={salaryList} />
+        <Route path="/interviewList" component={interviewList} />
+        <Route path="/Profile" component={Profile} />
+        <Route path="/ResumeUploadPage" component={ResumeUploadPage} />
+        {/*</Switch>*/}
       </div>
     );
   }

@@ -57,7 +57,7 @@ class CompanySearchResults extends Component {
     this.props.LowerNavBarOther();
     return (
       <body className="main flex loggedIn lang-en en-US hollywood  _initOk noTouch desktop">
-        {<Navbar />}
+        {/*<Navbar />*/}
         <div className="pageContentWrapperStudent ">
           <div id="PageContent">
             <div id="PageBodyContents" className="meat">

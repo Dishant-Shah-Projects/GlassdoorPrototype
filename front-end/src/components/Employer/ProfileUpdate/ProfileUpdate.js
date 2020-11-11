@@ -11,7 +11,7 @@ class ProfileUpdate extends Component {
   render() {
     return (
       <div>
-        {<Navbar />}
+        {/*<Navbar />*/}
         <div class="pageContentWrapper">
           {' '}
                     
@@ -19,8 +19,8 @@ class ProfileUpdate extends Component {
             <div id="UserProfile" class="gdGrid Container">
               <div class="css-1tgr9d eds5rs80">
                 <div class="applicationStyle__profileApplication___Jyu4n">
-                  {<ProfileUpdateBody />}                  
-                  </div>
+                  {<ProfileUpdateBody />}
+                </div>
               </div>
             </div>
           </div>

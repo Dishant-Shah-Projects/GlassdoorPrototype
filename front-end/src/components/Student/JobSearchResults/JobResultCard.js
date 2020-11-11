@@ -34,6 +34,7 @@ class JobResultCard extends Component {
 
     let avgRating = 0;
     if (
+      this.props.job.jobdetails.length > 0 &&
       this.props.job.jobdetails[0].GeneralReviewCount &&
       this.props.job.jobdetails[0].GeneralReviewCount > 0 &&
       this.props.job.jobdetails[0].TotalGeneralReviewRating &&
@@ -93,7 +94,11 @@ class JobResultCard extends Component {
           >
             <span className=" css-9ujsbx euyrj9o1">
               <img
-                src={this.props.job.jobdetails[0].ProfileImg}
+                src={
+                  this.props.job.jobdetails.length > 0
+                    ? this.props.job.jobdetails[0].ProfileImg
+                    : ''
+                }
                 alt="RoadRunner Recycling Logo"
                 title="RoadRunner Recycling Logo"
               />

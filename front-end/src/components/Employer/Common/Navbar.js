@@ -1,13 +1,22 @@
-import React, { Component } from "react";
-import "./Navbar.css";
+import React, { Component } from 'react';
+import './Navbar.css';
+import { Redirect } from 'react-router';
+
 class Navbar extends Component {
   constructor(props) {
     super(props);
     this.state = {};
   }
   render() {
+    let redirectVar = null;
+    if (localStorage.getItem('token')) {
+      if (localStorage.getItem('userrole') === 'student') {
+        redirectVar = <Redirect to="/Home" />;
+      } else if (localStorage.getItem('userrole') === 'company') {
+        redirectVar = null;
+      }
+    }
     return (
-     
       <header id="SiteNav">
         <nav className="d-flex align-items-center memberHeader__HeaderStyles__navigationBackground memberHeader__HeaderStyles__relativePosition">
           <div className="col memberHeader__HeaderStyles__bottomShadow">
@@ -16,14 +25,11 @@ class Navbar extends Component {
                 <div className="d-flex order-0 order-md-6">
                   <div class="d-none d-md-flex">
                     <div>
-                      <div
-                        class="d-flex "
-                        data-test="user-profile-dropdown-trigger"
-                      >
+                      <div class="d-flex " data-test="user-profile-dropdown-trigger">
                         <span class="SVGInline d-flex icon__IconStyles__colorDefault">
                           <svg
                             class="SVGInline-svg d-flex-svg icon__IconStyles__colorDefault-svg"
-                            style={{ width: "36px", height: "36px" }}
+                            style={{ width: '36px', height: '36px' }}
                             xmlns="http://www.w3.org/2000/svg"
                             width="24"
                             height="24"
@@ -94,11 +100,10 @@ class Navbar extends Component {
                                           </span>
                                         </div>
                                       </a>
-                                    </li>                                    
-                                  </ul>                                 
-                                  
+                                    </li>
+                                  </ul>
+
                                   <ul class="p-0 m-0 memberHeader__HeaderStyles__list">
-                                    
                                     <li class="p-0 m-0">
                                       <a
                                         class="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
@@ -141,7 +146,7 @@ class Navbar extends Component {
                         <span class="SVGInline d-flex icon__IconStyles__colorDefault">
                           <svg
                             class="SVGInline-svg d-flex-svg icon__IconStyles__colorDefault-svg"
-                            style={{ width: "36px", height: "36px" }}
+                            style={{ width: '36px', height: '36px' }}
                             xmlns="http://www.w3.org/2000/svg"
                             width="24"
                             height="24"
@@ -210,7 +215,7 @@ class Navbar extends Component {
                         </svg>
                       </span>
                     </button>
-                  </div>       
+                  </div>
                 </div>
               </div>
             </div>
@@ -225,10 +230,7 @@ class Navbar extends Component {
             <div class="px-std px-md-lg">
               <div class="d-flex flex-row align-items-center">
                 <div class="col">
-                  <h2
-                    data-test="primary-header-title"
-                    class="d-none d-md-block"
-                  >
+                  <h2 data-test="primary-header-title" class="d-none d-md-block">
                     Hello, what would you like to explore today?
                   </h2>
                 </div>
@@ -249,7 +251,7 @@ class Navbar extends Component {
                           <span class="SVGInline d-flex">
                             <svg
                               class="SVGInline-svg d-flex-svg"
-                              style={{ width: "48px", height: "48px" }}
+                              style={{ width: '48px', height: '48px' }}
                               xmlns="http://www.w3.org/2000/svg"
                               width="48"
                               height="48"
@@ -402,7 +404,7 @@ class Navbar extends Component {
                       </div>
                     </a>
                   </div>
-                            */}{" "}
+                            */}{' '}
                 </div>
                 <div class="memberHeader__HeaderStyles__navigationItem">
                   <div class="d-none d-md-flex align-items-center justify-content-center">
@@ -419,7 +421,7 @@ class Navbar extends Component {
                           <span class="SVGInline d-flex">
                             <svg
                               class="SVGInline-svg d-flex-svg"
-                              style={{ width: "48px", height: "48px" }}
+                              style={{ width: '48px', height: '48px' }}
                               xmlns="http://www.w3.org/2000/svg"
                               width="48"
                               height="48"
@@ -645,7 +647,7 @@ class Navbar extends Component {
                       </div>
                     </a>
                   </div>
-                        */}{" "}
+                        */}{' '}
                 </div>
                 <div class="memberHeader__HeaderStyles__navigationItem">
                   <div class="d-none d-md-flex align-items-center justify-content-center">
@@ -662,7 +664,7 @@ class Navbar extends Component {
                           <span class="SVGInline d-flex">
                             <svg
                               class="SVGInline-svg d-flex-svg"
-                              style={{ width: "48px", height: "48px" }}
+                              style={{ width: '48px', height: '48px' }}
                               xmlns="http://www.w3.org/2000/svg"
                               width="48"
                               height="48"
@@ -781,7 +783,7 @@ class Navbar extends Component {
                       </div>
                     </a>
                   </div>
-                    */}{" "}
+                    */}{' '}
                 </div>
                 <div class="memberHeader__HeaderStyles__navigationItem">
                   <div class="d-none d-md-flex align-items-center justify-content-center">
@@ -798,7 +800,7 @@ class Navbar extends Component {
                           <span class="SVGInline d-flex">
                             <svg
                               class="SVGInline-svg d-flex-svg"
-                              style={{ width: "48px", height: "48px" }}
+                              style={{ width: '48px', height: '48px' }}
                               xmlns="http://www.w3.org/2000/svg"
                               width="48"
                               height="48"
@@ -816,31 +818,10 @@ class Navbar extends Component {
                                   stroke-width="2"
                                   d="M32.714 37.39a11.828 11.828 0 01.309-3.935l.124-.5.479-.19C38.73 30.748 42 26.586 42 22c0-6.576-6.675-12-15-12s-15 5.424-15 12 6.675 12 14.991 12l.327-.003.667-.016.309.364c.946 1.115 2.418 2.134 4.42 3.044z"
                                 ></path>
-                                <ellipse
-                                  cx="27"
-                                  cy="22"
-                                  fill="#DFF7E7"
-                                  rx="12"
-                                  ry="9"
-                                ></ellipse>
-                                <circle
-                                  cx="21"
-                                  cy="22"
-                                  r="2"
-                                  fill="#0CAA41"
-                                ></circle>
-                                <circle
-                                  cx="27"
-                                  cy="22"
-                                  r="2"
-                                  fill="#0CAA41"
-                                ></circle>
-                                <circle
-                                  cx="33"
-                                  cy="22"
-                                  r="2"
-                                  fill="#0CAA41"
-                                ></circle>
+                                <ellipse cx="27" cy="22" fill="#DFF7E7" rx="12" ry="9"></ellipse>
+                                <circle cx="21" cy="22" r="2" fill="#0CAA41"></circle>
+                                <circle cx="27" cy="22" r="2" fill="#0CAA41"></circle>
+                                <circle cx="33" cy="22" r="2" fill="#0CAA41"></circle>
                               </g>
                             </svg>
                           </span>
@@ -956,7 +937,7 @@ class Navbar extends Component {
                       </div>
                     </a>
                   </div>
-                */}{" "}
+                */}{' '}
                 </div>
               </div>
             </div>

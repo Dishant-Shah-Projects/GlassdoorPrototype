@@ -11,16 +11,14 @@ class EmployerHome extends Component {
   render() {
     return (
       <div>
-        {<Navbar />}
+        {/*<Navbar />*/}
         <div class="pageContentWrapper">
           {' '}
                     
           <div id="UserProfilePageContent" class>
             <div id="UserProfile" class="gdGrid Container">
               <div class="css-1tgr9d eds5rs80">
-                <div class="applicationStyle__profileApplication___Jyu4n">
-                  {<Body />}                  
-                  </div>
+                <div class="applicationStyle__profileApplication___Jyu4n">{<Body />}</div>
               </div>
             </div>
           </div>

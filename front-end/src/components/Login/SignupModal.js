@@ -147,7 +147,11 @@ class SignupModal extends Component {
                 <div className="modal_content">
                   <div className="signup  ">
                     <div>
-                      <div className="mt-xsm mt-sm-md d-flex flex-column flex-sm-row flex-sm-wrap">
+                      <div
+                        id="signupmodal"
+                        style={{ }}
+                        className="mt-xsm mt-sm-md d-flex flex-column flex-sm-row flex-sm-wrap"
+                      >
                         <div className="mt-std col-sm-6 p-0 pr-sm-std order-last order-sm-first">
                           <div className="valueProps">
                             <div className="valueProp mb-std row mx-0">

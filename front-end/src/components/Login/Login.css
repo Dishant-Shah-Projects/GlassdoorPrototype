@@ -70,8 +70,23 @@ summary {
 }
 .mainCol {
   color: #404040;
-  font-family: "Lato", sans-serif;
+  font-family: 'Lato', sans-serif;
   font-weight: normal;
   font-size: 16px;
   line-height: 24px;
+}
+.flex-wide #PageContent {
+  width: 100%;
+  margin: 0;
+}
+.lockedHome #PageContent {
+  background: #fff;
+}
+.lockedHome header#TopNav {
+  -webkit-box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.2);
+  box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.2);
+  display: block;
+  font-size: 15px;
+  line-height: 24px;
+  z-index: 1000;
 }

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './LeftPannel';
-import { withRouter } from 'react-router-dom';
-import { Redirect } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { openProfileTabOnClick } from '../../../../constants/action-types';
 
 class LeftPannel extends Component {
   constructor(props) {
@@ -10,14 +10,17 @@ class LeftPannel extends Component {
   }
 
   openPage = (page) => {
-    this.setState({
-      redirect: page,
-    });
+    // this.setState({
+    //   redirect: page,
+    // });
+    localStorage.setItem('openTab', page);
+    let payload = { openTab: page };
+    this.props.openProfileTabOnClick(payload);
   };
   render() {
-    if (this.state.redirect) {
-      return <Redirect to={this.state.redirect} />;
-    }
+    // if (this.state.redirect) {
+    //   return <Redirect to={this.state.redirect} />;
+    // }
     // console.log('this.props.location.pathname', this.props.location.pathname);
     return (
       <div class="col-12 col-md-4 pr-md-xxl">
@@ -54,9 +57,13 @@ class LeftPannel extends Component {
         <div class="navigationStyle__nav___1PF4F gd-ui-tab css-o9yci5">
           <ul role="tablist">
             <li
-              onClick={() => this.openPage('/Profile')}
+              onClick={() => this.openPage('Profile')}
               role="tab"
-              class="active css-1h7a53u"
+              class={
+                this.props.leftPannelStore.openTab === 'Profile'
+                  ? 'active css-1h7a53u'
+                  : 'css-1h7a53u'
+              }
               // class={
               // this.props.location.pathname === '/Profile' ? 'active css-1h7a53u' : 'css-1h7a53u'
               // }
@@ -71,9 +78,13 @@ class LeftPannel extends Component {
               // class={
               //   this.props.location.pathname === '/Resume' ? 'active css-1h7a53u' : 'css-1h7a53u'
               // }
-              onClick={() => this.openPage('/Resume')}
+              onClick={() => this.openPage('Resumes')}
               role="tab"
-              class=" css-1h7a53u"
+              class={
+                this.props.leftPannelStore.openTab === 'Resumes'
+                  ? 'active css-1h7a53u'
+                  : 'css-1h7a53u'
+              }
               aria-selected="false"
               tabindex="0"
             >
@@ -81,7 +92,17 @@ class LeftPannel extends Component {
                 <div class="d-flex flex-row justify-content-start align-items-center">Resumes</div>
               </div>
             </li>
-            <li role="tab" class=" css-1h7a53u" aria-selected="false" tabindex="0">
+            <li
+              onClick={() => this.openPage('Job Preferences')}
+              role="tab"
+              class={
+                this.props.leftPannelStore.openTab === 'Job Preferences'
+                  ? 'active css-1h7a53u'
+                  : 'css-1h7a53u'
+              }
+              aria-selected="false"
+              tabindex="0"
+            >
               <div class="customItem css-wks0vk">
                 <div class="d-flex flex-row justify-content-start align-items-center">
                   Job Preferences
@@ -89,9 +110,13 @@ class LeftPannel extends Component {
               </div>
             </li>
             <li
-              onClick={() => this.openPage('/Demographics')}
+              onClick={() => this.openPage('Demographics')}
               role="tab"
-              class=" css-1h7a53u"
+              class={
+                this.props.leftPannelStore.openTab === 'Demographics'
+                  ? 'active css-1h7a53u'
+                  : 'css-1h7a53u'
+              }
               aria-selected="false"
               tabindex="0"
             >
@@ -108,4 +133,24 @@ class LeftPannel extends Component {
   }
 }
 
-export default withRouter(LeftPannel);
+// export default withRouter(LeftPannel);
+const mapStateToProps = (state) => {
+  const { leftPannelStore } = state.studentProfileLeftPanelReducer;
+
+  return {
+    leftPannelStore,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    openProfileTabOnClick: (payload) => {
+      dispatch({
+        type: openProfileTabOnClick,
+        payload,
+      });
+    },
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(LeftPannel);

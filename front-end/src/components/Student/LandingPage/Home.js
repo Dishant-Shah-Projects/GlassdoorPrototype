@@ -14,6 +14,7 @@ class Home extends Component {
   componentDidMount() {
     localStorage.setItem('SearchString', '');
     localStorage.setItem('Location', '');
+    localStorage.setItem('openTab', '');
     axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
     axios
       .get(serverUrl + 'student/jobSuggestions', {
@@ -30,7 +31,7 @@ class Home extends Component {
   render() {
     return (
       <div>
-        {<Navbar />}
+        {/*<Navbar />*/}
         <div id="Discover">
           <div>
             <div>

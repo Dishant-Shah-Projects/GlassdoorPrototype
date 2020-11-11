@@ -9,7 +9,7 @@ import SalaryListReducer from './SalaryListReducer';
 import SearchStringsReducer from './SearchStringsReducer';
 import StudentCompleteInfoReducer from './StudentCompleteInfoReducer';
 import CompaniesProfileReducer from './CompaniesProfileReducer';
-
+import studentProfileLeftPanelReducer from './studentProfileLeftPanelReducer';
 
 const finalReducers = combineReducers({
   SignupModalViewReducer: SignupModalViewReducer,
@@ -21,7 +21,8 @@ const finalReducers = combineReducers({
   SalaryListReducer: SalaryListReducer,
   SearchStringsReducer: SearchStringsReducer,
   StudentCompleteInfoReducer: StudentCompleteInfoReducer,
-  CompaniesProfileReducer: CompaniesProfileReducer
+  CompaniesProfileReducer: CompaniesProfileReducer,
+  studentProfileLeftPanelReducer: studentProfileLeftPanelReducer,
 });
 
 export default finalReducers;

@@ -30,7 +30,7 @@ class ResumeUploadPage extends Component {
     }
     return (
       <body className="main flex loggedIn lang-en en-US hollywood  _initOk noTouch desktop">
-        <Navbar />
+        {/* <Navbar />*/}
         <div class="pageContentWrapper ">
           <div id="UserProfilePageContent" class="">
             <div id="UserProfile" class="gdGrid container">

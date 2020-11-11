@@ -10,22 +10,24 @@ class Login extends Component {
   }
   render() {
     return (
-      <div className="pageContentWrapper ">
-        <div id="PageContent">
-          <div id="PageBodyContents" className=" meat">
-            <div className="pageInsideContent cf">
-              <div id="Home" className="gdGrid">
-                <div id="NonMemberHome">
-                  <article id="mainCol" className="mainCol">
-                    {<LoginHeader />}
-                    {<LoginBody />}
-                  </article>
+      <body className="main flex flex-wide loggedOut lang-en en-US gdGrid lockedHome _initOk noTouch desktop">
+        <div className="pageContentWrapper ">
+          <div id="PageContent">
+            <div id="PageBodyContents" className=" meat">
+              <div className="pageInsideContent cf">
+                <div id="Home" className="gdGrid">
+                  <div id="NonMemberHome">
+                    <article id="mainCol" className="mainCol">
+                      {<LoginHeader />}
+                      {<LoginBody />}
+                    </article>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </body>
     );
   }
 }

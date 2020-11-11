@@ -19,6 +19,9 @@ const defaultState = {
       Race: [],
       VeteranStatus: '',
       FavouriteJobs: [],
+      JobStatus: '',
+      PreferredJobTitle: '',
+      JobType: [],
     },
   },
 };

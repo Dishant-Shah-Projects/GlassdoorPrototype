@@ -10,7 +10,7 @@ class ProfileFormModal extends Component {
     this.state = {
       showBasicInformation: true,
       Openedtab: 'BasicInformation',
-      studentProfile: this.props.studentInfoStore.studentProfile,
+      studentProfile: { ...this.props.studentInfoStore.studentProfile },
     };
   }
   onChangeCommonHandler = (event) => {

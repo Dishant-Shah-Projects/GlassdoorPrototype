@@ -322,3 +322,7 @@ table.tbl tr,
 .signup-success {
   color: rgb(57 115 65) !important;
 }
+
+#signupmodal {
+  flex-direction: row !important;
+}

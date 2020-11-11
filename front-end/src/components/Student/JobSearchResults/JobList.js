@@ -103,7 +103,7 @@ class JobList extends Component {
     return (
       <body className="main flex loggedIn lang-en en-US hollywood wide hasTwoPanes _initOk serpControl">
         {' '}
-        {<Navbar />}
+        {/*<Navbar />*/}
         <div className="gdGrid pageContentWrapperStudent ">
           <div id="PageContent">
             <div id="PageBodyContents" className="meat">
