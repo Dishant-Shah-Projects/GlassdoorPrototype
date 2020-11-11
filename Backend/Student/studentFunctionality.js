@@ -215,10 +215,16 @@ const searchCompany = async (req, res) => {
 // Search all jobs
 const searchJob = async (req, res) => {
   try {
-    const { JobType, State, SalStart, SalEnd, PageNo } = url.parse(req.url, true).query;
+    const { SearchString, JobType, State, SalStart, SalEnd, PageNo } = url.parse(
+      req.url,
+      true
+    ).query;
     const filterObj = {};
+    if (SearchString.length !== 0) {
+      filterObj.CompanyName = { $regex: `${SearchString}`, $options: 'i' };
+    }
     if (JobType.length !== 0) {
-      filterObj.Title = JobType;
+      filterObj.JobType = JobType;
     }
     if (SalStart !== SalEnd) {
       const tempObj = {};
@@ -250,6 +256,14 @@ const searchJob = async (req, res) => {
           State: 1,
           City: 1,
           ExpectedSalary: 1,
+          PostedDate: 1,
+          StreetAddress: 1,
+          JobType: 1,
+          Qualifications: 1,
+          Responsibilities: 1,
+          JobDescription: 1,
+          Country: 1,
+          CurrentStatus: 1,
           jobdetails: 1,
         },
       },
@@ -359,9 +373,8 @@ const getJobSuggestions = async (req, res) => {
   return res;
   /* eslint-enable */
 };
-
-// get the suggested jobs for students
-const getFavouriteJobs = async (req, res) => {
+// post company favourite jobs for students
+const companyFavouriteJobs = async (req, res) => {
   const { StudentID, JobID } = req.body;
   try {
     Student.update({ StudentID }, { $push: { FavouriteJobs: JobID } }, (err) => {
@@ -382,10 +395,194 @@ const getFavouriteJobs = async (req, res) => {
   return res;
 };
 
+// To submit an application for a job
+const companyApplyJob = async (req, res) => {
+  const { JobID, StudentID, StudentName, ResumeURL, CoverLetterURL } = req.body;
+  try {
+    const jobApplicationProcedure = 'CALL applicationSubmit(?,?,?,?,?)';
+    const con = await mysqlConnection();
+    // eslint-disable-next-line no-unused-vars
+    const [results, fields] = await con.query(jobApplicationProcedure, [
+      JobID,
+      StudentID,
+      StudentName,
+      ResumeURL,
+      CoverLetterURL,
+    ]);
+    con.end();
+    res.writeHead(200, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Applied Successfully'));
+  } catch (error) {
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  }
+  return res;
+};
+// remove favourite jobs for students
+const removeFavouriteJobs = async (req, res) => {
+  const { StudentID, JobID } = req.body;
+  try {
+    Student.update({ StudentID }, { $pull: { FavouriteJobs: JobID } }, (err) => {
+      if (err) {
+        res.writeHead(500, { 'content-type': 'text/json' });
+        res.end(JSON.stringify('Network Error'));
+      } else {
+        res.writeHead(200, {
+          'Content-Type': 'application/json',
+        });
+        res.end(JSON.stringify('Removed'));
+      }
+    });
+  } catch (error) {
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  }
+  return res;
+};
+
+// harvest interviews
+const getInterviews = async (objects) => {
+  const interviews = [];
+  try {
+    for (let i = 0; i < objects.length; i += 1) {
+      interviews.push(...objects[i].InterviewReview);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+  return interviews;
+};
+
+// API Calls for returning the interviews
+const searchInterview = async (req, res) => {
+  const { SearchString, State, PageNo } = req.body;
+  try {
+    const reviews = await Company.find({
+      CompanyName: { $regex: `.*${SearchString}.*` },
+      State,
+    }).select('InterviewReview');
+    let review2 = null;
+    review2 = await getInterviews(reviews);
+    const count = review2.length;
+    const noOfPages = Math.ceil(count / 10);
+    const resultObj = {};
+    resultObj.interviews = review2.slice(PageNo * 10, PageNo * 10 + 10);
+    resultObj.count = count;
+    resultObj.noOfPages = noOfPages;
+    res.writeHead(200, { 'content-type': 'text/json' });
+    res.end(JSON.stringify(resultObj));
+  } catch (error) {
+    console.log(error);
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  }
+  return res;
+};
+
+// post resume of student
+const resumesAdd = async (req, res) => {
+  const { StudentID, ResumeURL } = req.body;
+  try {
+    Student.update({ StudentID }, { $push: { Resumes: ResumeURL } }, (err) => {
+      if (err) {
+        res.writeHead(500, { 'content-type': 'text/json' });
+        res.end(JSON.stringify('Network Error'));
+      } else {
+        res.writeHead(200, {
+          'Content-Type': 'application/json',
+        });
+        res.end(JSON.stringify('Added Resume'));
+      }
+    });
+  } catch (error) {
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  }
+  return res;
+};
+
+// remove resume for students
+const resumesDelete = async (req, res) => {
+  const { StudentID, ResumeURL } = req.body;
+  try {
+    await Student.update({ StudentID }, { $pull: { Resumes: ResumeURL } }, (err) => {
+      if (err) {
+        res.writeHead(500, { 'content-type': 'text/json' });
+        res.end(JSON.stringify('Network Error'));
+      }
+    });
+    const result = await Student.findOne({ StudentID }, { ResumePrimary: 1, _id: 0 }).exec();
+    if (result.ResumePrimary === ResumeURL) {
+      await Student.update({ StudentID }, { ResumePrimary: '' }).exec();
+    }
+    res.writeHead(200, {
+      'Content-Type': 'application/json',
+    });
+    res.end(JSON.stringify('Removed'));
+  } catch (error) {
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  }
+  return res;
+};
+
+// To withdraw from a job application
+const jobWithdraw = async (req, res) => {
+  const { JobID, StudentID } = req.body;
+  try {
+    const applicationWithdrawProcedure = 'CALL applicationWithDraw(?,?)';
+    const con = await mysqlConnection();
+    // eslint-disable-next-line no-unused-vars
+    const [results, fields] = await con.query(applicationWithdrawProcedure, [JobID, StudentID]);
+    con.end();
+    res.writeHead(200, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Withdrawn Successfully'));
+  } catch (error) {
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  }
+  return res;
+};
+
+// Update the profile information
+const profileUpdate = async (req, res) => {
+  try {
+    const { StudentID } = req.body;
+    Student.findOne({ StudentID }, (err, results) => {
+      if (err) {
+        res.writeHead(500, { 'content-type': 'text/json' });
+        res.end(JSON.stringify('Network Error'));
+      }
+      if (results) {
+        Student.updateOne({ StudentID }, { ...req.body }, (er, data) => {
+          if (er) {
+            res.writeHead(500, { 'content-type': 'text/json' });
+            res.end(JSON.stringify('Network Error'));
+          }
+          if (data) {
+            res.writeHead(200, { 'content-type': 'text/json' });
+            res.end(JSON.stringify('Updated Successfully'));
+          }
+        });
+      }
+    });
+  } catch (error) {
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  }
+};
+
 module.exports = {
   navbar,
   searchCompany,
   getJobSuggestions,
   searchJob,
-  getFavouriteJobs,
+  companyApplyJob,
+  companyFavouriteJobs,
+  removeFavouriteJobs,
+  searchInterview,
+  resumesAdd,
+  resumesDelete,
+  jobWithdraw,
+  profileUpdate,
 };
