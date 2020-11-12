@@ -14,3 +14,4 @@ export const updateActiveStringList = 'update-active-stringList';
 export const updateCompanyProfile = 'update-company-profile';
 export const updateOnFocusJob = 'update-on-focus-job';
 export const openProfileTabOnClick = 'open-profile-tab-on-click';
+export const updateContributionOption = 'update-contribution-option';

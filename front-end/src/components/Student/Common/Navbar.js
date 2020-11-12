@@ -391,14 +391,15 @@ class Navbar extends Component {
                                     </ul>
                                     <ul className="p-0 m-0 memberHeader__HeaderStyles__list">
                                       <li
-                                        onClick={(event) =>
-                                          this.mainMenuClicked(event, 'Contributions')
-                                        }
+                                        // onClick={(event) =>
+                                        //   this.mainMenuClicked(event, 'Contributions')
+                                        // }
                                         className="p-0 m-0"
                                       >
-                                        <a
+                                        <Link
+                                          to="/ContributionPage"
                                           className="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
-                                          href="/member/account/salaries_input.htm"
+                                          // href="/member/account/salaries_input.htm"
                                           target="_top"
                                           rel="nofollow"
                                           data-ga-lbl="Contributions"
@@ -410,7 +411,7 @@ class Navbar extends Component {
                                               </span>
                                             </span>
                                           </div>
-                                        </a>
+                                        </Link>
                                       </li>
                                       <li
                                         onClick={(event) =>

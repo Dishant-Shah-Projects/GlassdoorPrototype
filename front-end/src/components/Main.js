@@ -14,11 +14,13 @@ import ProfileUpdate from './Employer/ProfileUpdate/ProfileUpdate';
 import salaryList from './Student/SalarySearchResults/salaryList';
 import Home from './Student/LandingPage/Home';
 import Profile from './Student/PersonalInformation/Profile/Profile';
-import Resume from './Student/PersonalInformation/Profile/Resume';
-import Demographics from './Student/PersonalInformation/Profile/Demographics';
+// import Resume from './Student/PersonalInformation/Profile/Resume';
+// import Demographics from './Student/PersonalInformation/Profile/Demographics';
 import ResumeUploadPage from './Student/PersonalInformation/ResumePage/ResumeUploadPage';
-import Navbar from './Student/Common/Navbar';
+// import Navbar from './Student/Common/Navbar';
 import CommonNavBar from './CommonNavBar';
+import ContributionPage from './Student/Contributions/ContributionPage';
+import CommonContribute from './Student/Contributions/CommonContribute';
 
 class Main extends Component {
   // constructor(props) {
@@ -76,7 +78,6 @@ class Main extends Component {
     return (
       <div>
         {/* <Switch>*/}
-
         <Route path="/" component={CommonNavBar} />
         <Route path="/Login" component={Login} />
         <Route path="/CompanySearchResults" component={CompanySearchResults} />
@@ -88,6 +89,8 @@ class Main extends Component {
         <Route path="/interviewList" component={interviewList} />
         <Route path="/Profile" component={Profile} />
         <Route path="/ResumeUploadPage" component={ResumeUploadPage} />
+        <Route path="/ContributionPage" component={ContributionPage} />
+        <Route path="/CommonContribute" component={CommonContribute} />
         {/*</Switch>*/}
       </div>
     );

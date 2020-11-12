@@ -34,6 +34,9 @@ class CommonNavBar extends Component {
           redirectVar = <Redirect to="/Home" />;
         }
         selectedNavBar = <Navbar />;
+        if (this.props.location.pathname === '/CommonContribute') {
+          selectedNavBar = null;
+        }
       } else if (localStorage.getItem('userrole') === 'company') {
         if (this.props.location.pathname === '/') {
           redirectVar = <Redirect to="/Employer" />;
