@@ -2,6 +2,7 @@ const express = require('express');
 
 const Router = express.Router();
 
+const { uploadFile } = require('../S3Bucket/s3BucketUpload');
 const {
   navbar,
   searchCompany,
@@ -91,4 +92,9 @@ Router.post('/profileUpdate', checkAuth, async (req, res) => {
   return value;
 });
 
+// upload to e3 bucket and return the URL of file.
+Router.post('/upload', checkAuth, async (req, res) => {
+  const value = await uploadFile(req, res);
+  return value;
+});
 module.exports = Router;
