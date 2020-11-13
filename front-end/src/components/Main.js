@@ -21,7 +21,7 @@ import ResumeUploadPage from './Student/PersonalInformation/ResumePage/ResumeUpl
 import CommonNavBar from './CommonNavBar';
 import ContributionPage from './Student/Contributions/ContributionPage';
 import CommonContribute from './Student/Contributions/CommonContribute';
-
+import CompanyPage from './Student/CompanyProfile/CompanyPage';
 class Main extends Component {
   // constructor(props) {
   //     super(props);
@@ -91,6 +91,7 @@ class Main extends Component {
         <Route path="/ResumeUploadPage" component={ResumeUploadPage} />
         <Route path="/ContributionPage" component={ContributionPage} />
         <Route path="/CommonContribute" component={CommonContribute} />
+        <Route path="/CompanyPage" component={CompanyPage} />
         {/*</Switch>*/}
       </div>
     );

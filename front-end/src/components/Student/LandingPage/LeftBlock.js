@@ -134,9 +134,13 @@ class LeftBlock extends Component {
                       </svg>
                     </span>
                     {this.props.studentInfoStore.studentProfile.CurrentJobTitle.length === 0 ? (
-                      <Link to="/Profile" data-test="profile-header-add-job-title">
+                      <a
+                        href="#"
+                        onClick={this.props.openProfile}
+                        data-test="profile-header-add-job-title"
+                      >
                         <strong>Add Job Title</strong>
-                      </Link>
+                      </a>
                     ) : (
                       this.props.studentInfoStore.studentProfile.CurrentJobTitle
                     )}
@@ -159,9 +163,13 @@ class LeftBlock extends Component {
                     </span>
                     {this.props.studentInfoStore.studentProfile.City.length === 0 ||
                     this.props.studentInfoStore.studentProfile.State.length === 0 ? (
-                      <Link to="/Profile" data-test="profile-header-add-job-title">
+                      <a
+                        href="#"
+                        onClick={this.props.openProfile}
+                        data-test="profile-header-add-job-title"
+                      >
                         <strong>Add Location</strong>
-                      </Link>
+                      </a>
                     ) : (
                       <div className="css-56kyx5">San Jose,CA</div>
                     )}

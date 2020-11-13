@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import Navbar from '../../../Employer/Common/Navbar';
 import './ResumeUploadPage.css';
 import { Redirect } from 'react-router-dom';
+import { history } from '../../../../App';
+import { openProfileTabOnClick } from '../../../../constants/action-types';
+import { connect } from 'react-redux';
 
 class ResumeUploadPage extends Component {
   constructor(props) {
@@ -19,9 +22,11 @@ class ResumeUploadPage extends Component {
   };
 
   openResumePage = (event) => {
-    this.setState({
-      redirect: '/Resume',
-    });
+    history.push('/Profile');
+
+    localStorage.setItem('openTab', 'Resumes');
+    let payload = { openTab: 'Resumes' };
+    this.props.openProfileTabOnClick(payload);
   };
 
   render() {
@@ -83,30 +88,31 @@ class ResumeUploadPage extends Component {
                       <div>
                         <div id="resumeUploadPage" class="row mx-0">
                           <div class="d-none d-md-block col-md-4">
-                            <button
-                              onClick={this.openResumePage}
-                              class="gd-ui-button m-0 p-0 d-flex justify-content-start align-items-center resumeImportStyle__backBtn___3NR7k css-1c2vj07"
-                              data-test="backBtn"
-                            >
-                              <span class="SVGInline mr-xsm backIcon">
-                                <svg
-                                  class="SVGInline-svg mr-xsm-svg backIcon-svg"
-                                  style={{ width: '10px', height: '12px' }}
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  height="24"
-                                  viewBox="0 0 10 13"
-                                  width="24"
-                                >
-                                  <path
-                                    stroke-width="2"
-                                    d="M9 1L2 6.5 9 12"
-                                    fill="none"
-                                    stroke="currentColor"
-                                  ></path>
-                                </svg>
-                              </span>
-                              <span>Back</span>
-                            </button>
+                            <a href="#" onClick={this.openResumePage}>
+                              <button
+                                class="gd-ui-button m-0 p-0 d-flex justify-content-start align-items-center resumeImportStyle__backBtn___3NR7k css-1c2vj07"
+                                data-test="backBtn"
+                              >
+                                <span class="SVGInline mr-xsm backIcon">
+                                  <svg
+                                    class="SVGInline-svg mr-xsm-svg backIcon-svg"
+                                    style={{ width: '10px', height: '12px' }}
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    height="24"
+                                    viewBox="0 0 10 13"
+                                    width="24"
+                                  >
+                                    <path
+                                      stroke-width="2"
+                                      d="M9 1L2 6.5 9 12"
+                                      fill="none"
+                                      stroke="currentColor"
+                                    ></path>
+                                  </svg>
+                                </span>
+                                <span>Back</span>
+                              </button>
+                            </a>
                           </div>
                           <div class="col-12 col-md-4">
                             <div class="">
@@ -295,4 +301,18 @@ class ResumeUploadPage extends Component {
   }
 }
 
-export default ResumeUploadPage;
+// export default ResumeUploadPage;
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    openProfileTabOnClick: (payload) => {
+      dispatch({
+        type: openProfileTabOnClick,
+        payload,
+      });
+    },
+  };
+};
+
+// export default LoginBody;
+export default connect(null, mapDispatchToProps)(ResumeUploadPage);

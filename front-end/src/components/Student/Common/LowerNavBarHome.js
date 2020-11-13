@@ -30,6 +30,7 @@ class LowerNavBarHome extends Component {
   render() {
     return (
       <nav
+        style={{ background: '#fff' }}
         data-test="primary-header-nav"
         className="mt-std mb-std mb-md-0 pb-xsm memberHeader__HeaderStyles__bottomShadow"
       >

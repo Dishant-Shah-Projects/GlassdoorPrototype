@@ -7,11 +7,13 @@ import PaginationComponent from '../Common/PaginationComponent';
 import CompanyCard from './CompanyCard';
 import axios from 'axios';
 import serverUrl from '../../../config';
+import { Redirect } from 'react-router';
+import { history } from '../../../App';
 
 class CompanySearchResults extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = { redirect: null };
   }
 
   commonFetch = (PageNo = 0) => {
@@ -53,10 +55,24 @@ class CompanySearchResults extends Component {
     this.commonFetch(e.selected);
   };
 
+  openCompanyProfile = (event, CompanyID) => {
+    // event.preventDefault();
+    // event.stopPropagation();
+    history.push('/CompanyPage');
+    // this.setState({
+    //   redirect: '/CompanyPage',
+    // });
+  };
+
   render() {
+    // let redirectVar = null;
+    // if (this.state.redirect) {
+    //   redirectVar = <Redirect to={this.state.redirect} />;
+    // }
     this.props.LowerNavBarOther();
     return (
       <body className="main flex loggedIn lang-en en-US hollywood  _initOk noTouch desktop">
+        {/*redirectVar*/}
         {/*<Navbar />*/}
         <div className="pageContentWrapperStudent ">
           <div id="PageContent">
@@ -110,7 +126,12 @@ class CompanySearchResults extends Component {
                               data-serp-pos="0"
                               data-brandviews="MODULE:n=hub-companySearchResult:eid=6036"
                             >
-                              <CompanyCard company={company} />
+                              <CompanyCard
+                                openCompanyProfile={(event) =>
+                                  this.openCompanyProfile(event, company.CompanyID)
+                                }
+                                company={company}
+                              />
                             </div>
                           ))}
 

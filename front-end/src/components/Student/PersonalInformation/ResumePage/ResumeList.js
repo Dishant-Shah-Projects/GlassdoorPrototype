@@ -7,20 +7,23 @@ class ResumeList extends Component {
     super(props);
     this.state = { redirect: null };
   }
-  openResumeUploadPage = (page) => {
-    this.setState({
-      redirect: '/ResumeUploadPage',
-    });
-  };
+  // openResumeUploadPage = () => {
+  // this.props.openResumeUploadPage();
+  //   this.setState({
+  //     redirect: '/ResumeUploadPage',
+  //   });
+  // };
   //   openResumeUploadPage = () => {
   //     history.push('/ResumeUploadPage');
   //   };
   render() {
+    let redirectVar = null;
     if (this.state.redirect) {
-      return <Redirect to={this.state.redirect} />;
+      redirectVar = <Redirect to={this.state.redirect} />;
     }
     return (
       <div class="col-12 col-md-8" style={{ flex: '0 0 66.666667%' }}>
+        {redirectVar}
         <div class="resumesPageStyle__resumesPage___10PUZ">
           <div id="ResumePage" class="row flex-row px-lg px-md-0">
             <div class="col-12">
@@ -33,31 +36,35 @@ class ResumeList extends Component {
                     <div class="d-flex justify-content-start align-items-center">
                       <h1>Manage resumes</h1>
                     </div>
-                    <button
-                      onClick={this.openResumeUploadPage}
-                      class="gd-ui-button SectionHeaderStyles__addIcon___2YMd- p-0 css-1c2vj07"
-                    >
-                      <span class="SVGInline">
-                        <svg
-                          class="SVGInline-svg"
-                          height="24"
-                          viewBox="0 0 24 24"
-                          width="24"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <g fill="none" fill-rule="evenodd">
-                            <circle cx="12" cy="12" fill="#f5f6f7" r="12"></circle>
-                            <path
-                              d="M12.5 12.5H18h-5.5V7zm0 0V18v-5.5H7z"
-                              stroke="#1861bf"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              stroke-width="2"
-                            ></path>
-                          </g>
-                        </svg>
-                      </span>
-                    </button>
+                    <a href="#" onClick={this.props.openResumeUploadPage}>
+                      <button
+                        // onClick={(event) => event.preventDefault()}
+                        // type="button"
+                        // onClick={this.openResumeUploadPage}
+                        class="gd-ui-button SectionHeaderStyles__addIcon___2YMd- p-0 css-1c2vj07"
+                      >
+                        <span class="SVGInline">
+                          <svg
+                            class="SVGInline-svg"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            width="24"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <g fill="none" fill-rule="evenodd">
+                              <circle cx="12" cy="12" fill="#f5f6f7" r="12"></circle>
+                              <path
+                                d="M12.5 12.5H18h-5.5V7zm0 0V18v-5.5H7z"
+                                stroke="#1861bf"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                              ></path>
+                            </g>
+                          </svg>
+                        </span>
+                      </button>
+                    </a>
                   </div>
                   <div>
                     <div class="mx-0 mx-md-xsm pb-md d-flex flex-row justify-content-between align-items-center manageResumesStyle__resume___1cZaU">

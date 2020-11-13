@@ -124,7 +124,7 @@ class Navbar extends Component {
   };
 
   mainMenuClicked = (event, selectedMenuoption) => {
-    event.preventDefault();
+    // event.preventDefault();
     switch (selectedMenuoption) {
       case 'Sign Out': {
         localStorage.clear();
@@ -138,43 +138,62 @@ class Navbar extends Component {
         break;
       }
       case 'Profile': {
-        this.setState({
-          redirect: '/Profile',
-        });
+        history.push('/Profile');
+        // this.setState({
+        //   redirect: '/Profile',
+        // });
         localStorage.setItem('openTab', selectedMenuoption);
         let payload = { openTab: selectedMenuoption };
         this.props.openProfileTabOnClick(payload);
+        break;
       }
       case 'Resumes': {
-        this.setState({
-          redirect: '/Profile',
-        });
+        history.push('/Profile');
+        // this.setState({
+        //   redirect: '/Profile',
+        // });
         localStorage.setItem('openTab', selectedMenuoption);
         let payload = { openTab: selectedMenuoption };
         this.props.openProfileTabOnClick(payload);
+        break;
       }
       case 'Job Preferences': {
-        this.setState({
-          redirect: '/Profile',
-        });
+        history.push('/Profile');
+        // this.setState({
+        //   redirect: '/Profile',
+        // });
         localStorage.setItem('openTab', selectedMenuoption);
         let payload = { openTab: selectedMenuoption };
         this.props.openProfileTabOnClick(payload);
+        break;
       }
       case 'Demographics': {
-        this.setState({
-          redirect: '/Profile',
-        });
+        history.push('/Profile');
+        // this.setState({
+        //   redirect: '/Profile',
+        // });
         localStorage.setItem('openTab', selectedMenuoption);
         let payload = { openTab: selectedMenuoption };
         this.props.openProfileTabOnClick(payload);
+        break;
+      }
+      case 'Contributions': {
+        history.push('/Contributions');
+        break;
       }
       default: {
         break;
       }
     }
+    const payload = {
+      mainDropDown: false,
+    };
+    this.props.updateSearcFilter(payload);
   };
 
+  goToHomePage = () => {
+    history.push('/Home');
+  };
   selectString = (event, string) => {
     console.log(string);
     event.preventDefault();
@@ -196,18 +215,22 @@ class Navbar extends Component {
     localStorage.setItem('SearchString', this.props.searchDropDownStore.SearchString);
     localStorage.setItem('Location', this.props.searchDropDownStore.Location);
     switch (this.props.searchDropDownStore.selectedDropDown) {
-      case 'Jobs':
+      case 'Jobs': {
         history.push('/JobList');
         break;
-      case 'Companies':
+      }
+      case 'Companies': {
         history.push('/CompanySearchResults');
         break;
-      case 'Salaries':
+      }
+      case 'Salaries': {
         history.push('/salaryList');
         break;
-      case 'Interviews':
+      }
+      case 'Interviews': {
         history.push('/interviewList');
         break;
+      }
       default:
         break;
     }
@@ -224,9 +247,9 @@ class Navbar extends Component {
     //   return <Redirect to={this.state.redirect} />;
     // }
     let tabOpen = null;
-    if (this.state.redirect) {
-      tabOpen = <Redirect to={this.state.redirect} />;
-    }
+    // if (this.state.redirect) {
+    //   tabOpen = <Redirect to={this.state.redirect} />;
+    // }
     let LowerNavBar = null;
     if (this.props.lowerNavbarType.type === 'LowerNavBarHome') {
       LowerNavBar = <LowerNavBarHome />;
@@ -299,7 +322,6 @@ class Navbar extends Component {
                                       <li
                                         style={{ cursor: 'pointer' }}
                                         onClick={(event) => {
-                                          event.preventDefault();
                                           this.mainMenuClicked(event, 'Profile');
                                         }}
                                         className="p-0 m-0"
@@ -391,13 +413,14 @@ class Navbar extends Component {
                                     </ul>
                                     <ul className="p-0 m-0 memberHeader__HeaderStyles__list">
                                       <li
-                                        // onClick={(event) =>
-                                        //   this.mainMenuClicked(event, 'Contributions')
-                                        // }
+                                        onClick={(event) =>
+                                          this.mainMenuClicked(event, 'Contributions')
+                                        }
                                         className="p-0 m-0"
                                       >
-                                        <Link
-                                          to="/ContributionPage"
+                                        <a
+                                          href="#"
+                                          // to="/ContributionPage"
                                           className="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
                                           // href="/member/account/salaries_input.htm"
                                           target="_top"
@@ -411,7 +434,7 @@ class Navbar extends Component {
                                               </span>
                                             </span>
                                           </div>
-                                        </Link>
+                                        </a>
                                       </li>
                                       <li
                                         onClick={(event) =>
@@ -526,8 +549,10 @@ class Navbar extends Component {
                   </div>
 
                   <div className="d-flex order-2 memberHeader__HeaderStyles__brandLogoContainer">
-                    <Link
-                      to="/Home"
+                    <a
+                      onClick={this.goToHomePage}
+                      href="#"
+                      // to="/Home"
                       alt=""
                       target="_top"
                       rel="nofollow"
@@ -550,7 +575,7 @@ class Navbar extends Component {
                           </g>
                         </svg>
                       </span>
-                    </Link>
+                    </a>
                   </div>
 
                   <div className="d-flex col justify-content-end order-3">
@@ -615,8 +640,8 @@ class Navbar extends Component {
                     </div>
 
                     <div className="d-none d-lg-flex col px-xxl py-std ">
-                      <form
-                        onSubmit={this.searchResult}
+                      <div
+                        // onSubmit={(event) => event.preventDefault()}
                         id="scBar"
                         // method="GET"
                         // target="_top"
@@ -914,15 +939,17 @@ class Navbar extends Component {
                               ></div>
                             </div>
                           </div>
-                          <button
-                            className="gd-ui-button ml-std col-auto css-iixdfr"
-                            type="submit"
-                            data-test="search-bar-submit"
-                          >
-                            <span>Search</span>
-                          </button>
+                          <a href="#" onClick={this.searchResult}>
+                            <button
+                              className="gd-ui-button ml-std col-auto css-iixdfr"
+                              // type="submit"
+                              data-test="search-bar-submit"
+                            >
+                              <span>Search</span>
+                            </button>
+                          </a>
                         </div>
-                      </form>
+                      </div>
                     </div>
                   </div>
                 </div>

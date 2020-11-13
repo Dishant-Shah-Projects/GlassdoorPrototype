@@ -19,11 +19,7 @@ class CompanyCard extends Component {
         <div className="col-lg-7">
           <div id="companycard" className="row justify-content-start">
             <div className="col-3 logo-and-ratings-wrap">
-              <a
-                href="/Overview/Working-at-Amazon-EI_IE6036.11,17.htm"
-                data-ajax="true"
-                className="sqLogoLink"
-              >
+              <a href="#" data-ajax="true" className="sqLogoLink">
                 <span className="sqLogo tighten medSqLogo logoOverlay">
                   <img
                     src={company.ProfileImg ? company.ProfileImg : defaultImage}
@@ -36,7 +32,9 @@ class CompanyCard extends Component {
             </div>
             <div className="col-9 pr-0">
               <h2>
-                <a href="/Overview/Working-at-Amazon-EI_IE6036.11,17.htm">{company.CompanyName}</a>
+                <a onClick={(event) => this.props.openCompanyProfile(event)} href="#">
+                  {company.CompanyName}
+                </a>
                 <div className="ratingsSummary cf">
                   <span>
                     <span className="bigRating strong margRtSm h2">{company.AvgRating}</span>

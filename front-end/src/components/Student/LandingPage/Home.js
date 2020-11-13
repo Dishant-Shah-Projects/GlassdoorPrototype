@@ -5,6 +5,9 @@ import Navbar from '../Common/Navbar';
 import LeftBlock from './LeftBlock';
 import RightBlock from './RightBlock';
 import './Home.css';
+import { history } from '../../../App';
+import { openProfileTabOnClick } from '../../../constants/action-types';
+import { connect } from 'react-redux';
 
 class Home extends Component {
   constructor(props) {
@@ -27,17 +30,23 @@ class Home extends Component {
         });
       });
   }
+  openProfile = () => {
+    history.push('/Profile');
+    localStorage.setItem('openTab', 'Profile');
+    let payload = { openTab: 'Profile' };
+    this.props.openProfileTabOnClick(payload);
+  };
 
   render() {
     return (
-      <div>
+      <div style={{ background: '#fff' }}>
         {/*<Navbar />*/}
         <div id="Discover">
           <div>
             <div>
               <div className="container-max-width mx-auto px-std px-md-lg pt-xsm pt-md-xxl pb-xxl">
                 <div className="d-flex flex-direction-column row">
-                  {<LeftBlock />}
+                  {<LeftBlock openProfile={this.openProfile} />}
                   {<RightBlock jobList={this.state.jobList} />}
                 </div>
               </div>
@@ -49,4 +58,16 @@ class Home extends Component {
   }
 }
 
-export default Home;
+// export default Home;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    openProfileTabOnClick: (payload) => {
+      dispatch({
+        type: openProfileTabOnClick,
+        payload,
+      });
+    },
+  };
+};
+
+export default connect(null, mapDispatchToProps)(Home);

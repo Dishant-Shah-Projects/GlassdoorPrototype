@@ -8,6 +8,7 @@ import JobPreferencePage from '../JobPreferencePage/JobPreferencePage';
 import PersonalDetails from '../PersonalDetails/PersonalDetails';
 import ResumeList from '../ResumePage/ResumeList';
 import './Profile.css';
+import { history } from '../../../../App';
 
 class Profile extends Component {
   constructor(props) {
@@ -19,12 +20,16 @@ class Profile extends Component {
     this.props.openProfileTabOnClick(payload);
     localStorage.setItem('selectedDropDown', '');
   }
+  openResumeUploadPage = () => {
+    console.log(' this.props.openResumeUploadPage();');
+    history.push('/ResumeUploadPage');
+  };
   render() {
     this.props.LowerNavBarOther();
     let tabOpened = <PersonalDetails />;
     switch (this.props.leftPannelStore.openTab) {
       case 'Resumes': {
-        tabOpened = <ResumeList />;
+        tabOpened = <ResumeList openResumeUploadPage={this.openResumeUploadPage} />;
         break;
       }
       case 'Job Preferences': {
