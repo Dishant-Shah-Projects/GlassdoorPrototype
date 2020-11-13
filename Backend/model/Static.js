@@ -11,6 +11,12 @@ const StaticSchema = new mongoose.Schema({
   VeteranStatus: [String],
   Disability: [String],
   JobType: [String],
+  reviews: [
+    {
+      Date: { type: Date },
+      reviewcount: { type: Number },
+    },
+  ],
 });
 
 module.exports = mongoose.model('static_data', StaticSchema);

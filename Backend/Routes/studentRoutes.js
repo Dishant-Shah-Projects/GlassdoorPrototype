@@ -16,6 +16,10 @@ const {
   resumesDelete,
   jobWithdraw,
   profileUpdate,
+  companyProfile,
+  companyReview,
+  addCompanyReview,
+  salaryAddReview,
 } = require('../Student/studentFunctionality');
 
 const { checkAuth } = require('../SharedFuntionalities/passport');
@@ -95,6 +99,30 @@ Router.post('/profileUpdate', checkAuth, async (req, res) => {
 // upload to e3 bucket and return the URL of file.
 Router.post('/upload', checkAuth, async (req, res) => {
   const value = await uploadFile(req, res);
+  return value;
+});
+
+// get the company profile
+Router.get('/companyProfile', checkAuth, async (req, res) => {
+  const value = await companyProfile(req, res);
+  return value;
+});
+
+// get the company reviews
+Router.get('/companyReview', checkAuth, async (req, res) => {
+  const value = await companyReview(req, res);
+  return value;
+});
+
+// add companyreview
+Router.post('/addReview', checkAuth, async (req, res) => {
+  const value = await addCompanyReview(req, res);
+  return value;
+});
+
+// add salaryreview
+Router.post('/salaryAddreview', checkAuth, async (req, res) => {
+  const value = await salaryAddReview(req, res);
   return value;
 });
 module.exports = Router;

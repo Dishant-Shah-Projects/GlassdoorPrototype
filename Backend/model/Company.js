@@ -17,13 +17,13 @@ const CompanySchema = new mongoose.Schema(
     State: { type: String },
     CompanyMission: { type: String },
     CEO: { type: String },
-    ViewCount: { type: Number },
-    SalaryReviewCount: { type: Number },
+    ViewCount: { type: Number, default: 0 },
+    SalaryReviewCount: { type: Number, default: 0 },
     GeneralReviewCount: { type: Number, default: 0 },
-    InterviewReviewCount: { type: Number },
+    InterviewReviewCount: { type: Number, default: 0 },
     TotalGeneralReviewRating: { type: Number, default: 0 },
-    JobCount: { type: Number },
-    PhotoCount: { type: Number },
+    JobCount: { type: Number, default: 0 },
+    PhotoCount: { type: Number, default: 0 },
     FeaturedReview: {
       Status: {
         type: String,

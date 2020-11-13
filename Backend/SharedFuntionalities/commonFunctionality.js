@@ -9,9 +9,10 @@ const Static = require('../model/Static');
 
 // Fucntion to check if the emailID is already in use
 const checkEmail = async (emailID) => {
+  let con = null;
   try {
     const emailProcedure = 'CALL existingEmail(?)';
-    const con = await mysqlConnection();
+    con = await mysqlConnection();
     const [results, fields] = await con.query(emailProcedure, emailID);
     con.end();
     if (results[0].length !== 0) {
@@ -20,14 +21,19 @@ const checkEmail = async (emailID) => {
     return false;
   } catch (error) {
     return false;
+  } finally {
+    if (con) {
+      con.end();
+    }
   }
 };
 
 // check the table for password and return the role and the user ID
 const checklogin = async (emailID, Password) => {
+  let con = null;
   try {
     const emailProcedure = 'CALL existingEmail(?)';
-    const con = await mysqlConnection();
+    con = await mysqlConnection();
     const [results, fields] = await con.query(emailProcedure, emailID);
     con.end();
     if (await bcrypt.compare(Password, results[0][0].Password)) {
@@ -36,6 +42,10 @@ const checklogin = async (emailID, Password) => {
     return false;
   } catch (error) {
     return false;
+  } finally {
+    if (con) {
+      con.end();
+    }
   }
 };
 
@@ -145,14 +155,19 @@ const staticDataUpdate = async (req, res) => {
 
 // To insert the user into SIGNUP table
 const userInsert = async (emailID, hashedPassword, role) => {
+  let con = null;
   try {
     const userInsertProcedure = 'CALL userInsert(?,?,?)';
-    const con = await mysqlConnection();
+    con = await mysqlConnection();
     const [results, fields] = await con.query(userInsertProcedure, [emailID, hashedPassword, role]);
     con.end();
     return results[0][0].ID;
   } catch (error) {
     return null;
+  } finally {
+    if (con) {
+      con.end();
+    }
   }
 };
 

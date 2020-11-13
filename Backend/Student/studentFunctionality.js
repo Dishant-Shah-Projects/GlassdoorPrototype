@@ -1,5 +1,5 @@
-/* eslint-disable no-underscore-dangle */
 /* eslint-disable no-unused-vars */
+/* eslint-disable no-underscore-dangle */
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const url = require('url');
@@ -398,9 +398,10 @@ const companyFavouriteJobs = async (req, res) => {
 // To submit an application for a job
 const companyApplyJob = async (req, res) => {
   const { JobID, StudentID, StudentName, ResumeURL, CoverLetterURL } = req.body;
+  let con = null;
   try {
     const jobApplicationProcedure = 'CALL applicationSubmit(?,?,?,?,?)';
-    const con = await mysqlConnection();
+    con = await mysqlConnection();
     // eslint-disable-next-line no-unused-vars
     const [results, fields] = await con.query(jobApplicationProcedure, [
       JobID,
@@ -415,6 +416,10 @@ const companyApplyJob = async (req, res) => {
   } catch (error) {
     res.writeHead(500, { 'content-type': 'text/json' });
     res.end(JSON.stringify('Network Error'));
+  } finally {
+    if (con) {
+      con.end();
+    }
   }
   return res;
 };
@@ -528,9 +533,10 @@ const resumesDelete = async (req, res) => {
 // To withdraw from a job application
 const jobWithdraw = async (req, res) => {
   const { JobID, StudentID } = req.body;
+  let con = null;
   try {
     const applicationWithdrawProcedure = 'CALL applicationWithDraw(?,?)';
-    const con = await mysqlConnection();
+    con = await mysqlConnection();
     // eslint-disable-next-line no-unused-vars
     const [results, fields] = await con.query(applicationWithdrawProcedure, [JobID, StudentID]);
     con.end();
@@ -539,6 +545,10 @@ const jobWithdraw = async (req, res) => {
   } catch (error) {
     res.writeHead(500, { 'content-type': 'text/json' });
     res.end(JSON.stringify('Network Error'));
+  } finally {
+    if (con) {
+      con.end();
+    }
   }
   return res;
 };
@@ -570,6 +580,233 @@ const profileUpdate = async (req, res) => {
     res.end(JSON.stringify('Network Error'));
   }
 };
+// get the details required for the student navigation bar
+const companyProfile = async (req, res) => {
+  const { CompanyID } = req.query;
+  let con = null;
+  try {
+    const resultData = [];
+    const company = await Company.findOne({ CompanyID }).select(
+      '-InterviewReview -SalaryReview -Photos'
+    );
+    resultData.push(company);
+    const posquery =
+      'SELECT* FROM GENERAL_REVIEW WHERE CompanyID=? AND Rating>3 ORDER BY Helpful DESC LIMIT 1;';
+    const negquery =
+      'SELECT* FROM GENERAL_REVIEW WHERE CompanyID=? AND Rating<=3 ORDER BY Helpful DESC LIMIT 1;';
+    con = await mysqlConnection();
+    const [results] = await con.query(posquery, CompanyID);
+    resultData.push({ positiveReview: results });
+    const [results2] = await con.query(negquery, CompanyID);
+    resultData.push({ negativeReview: results2 });
+    con.end();
+    Company.findOneAndUpdate(
+      { CompanyID },
+      { $inc: { ViewCount: 1 } },
+
+      (err) => {
+        if (err) {
+          res.writeHead(500, { 'content-type': 'text/json' });
+          res.end(JSON.stringify('Network'));
+        } else {
+          res.writeHead(200, { 'content-type': 'text/json' });
+          res.end(JSON.stringify(resultData));
+        }
+      }
+    );
+  } catch (error) {
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  } finally {
+    if (con) {
+      con.end();
+    }
+  }
+  return res;
+};
+
+// get the company reviews
+const companyReview = async (req, res) => {
+  // eslint-disable-next-line no-unused-vars
+  const { CompanyID, PageNo } = req.query;
+  let con = null;
+  try {
+    const resultData = [];
+    const count = 'SELECT count(*) as reviewcount FROM GENERAL_REVIEW WHERE CompanyID=?;';
+
+    const offset = PageNo * 10;
+    const searchQuery = 'SELECT* FROM GENERAL_REVIEW WHERE CompanyID=? LIMIT 10 OFFSET ?;';
+    con = await mysqlConnection();
+    const [results] = await con.query(count, CompanyID);
+    resultData.push({ count: results[0].reviewcount });
+    const no = Math.ceil(results[0].reviewcount / 10);
+    resultData.push({ noOfPages: no });
+    const [results2] = await con.query(searchQuery, [CompanyID, offset]);
+    resultData.push(results2);
+    con.end();
+    res.writeHead(200, { 'content-type': 'text/json' });
+    res.end(JSON.stringify(resultData));
+  } catch (error) {
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  } finally {
+    if (con) {
+      con.end();
+    }
+  }
+  return res;
+};
+
+// add the company review and increment the review count
+const addCompanyReview = async (req, res) => {
+  // eslint-disable-next-line no-unused-vars
+  const {
+    CompanyID,
+    StudentID,
+    CompanyName,
+    Pros,
+    Cons,
+    Description,
+    Rating,
+    EmployeeStatus,
+    CEOApproval,
+    JobType,
+    Recommended,
+    JobTitle,
+    Headline,
+  } = req.body;
+  let con = null;
+  try {
+    const count = 'CALL reviewInsert(?,?,?,?,?,?,?,?,"NotApproved",0,?,?,?,?,?,CURDATE(),NULL,0);';
+    con = await mysqlConnection();
+    await con.query(count, [
+      CompanyID,
+      StudentID,
+      CompanyName,
+      Pros,
+      Cons,
+      Description,
+      Rating,
+      EmployeeStatus,
+      CEOApproval,
+      JobType,
+      Recommended,
+      JobTitle,
+      Headline,
+    ]);
+    con.end();
+    const reviewday = await Static.findOne({}).select('reviews');
+    const today = new Date().toISOString().slice(0, 10);
+    if (reviewday.reviews[0].Date.toISOString().slice(0, 10) === today) {
+      reviewday.reviews[0].reviewcount += 1;
+    } else {
+      reviewday.reviews.unshift({ Date: today, reviewcount: 1 });
+    }
+    if (reviewday.reviews.length > 7) {
+      reviewday.reviews.pop();
+    }
+    await Static.findOneAndUpdate(
+      {},
+      { reviews: reviewday.reviews },
+
+      (err) => {
+        if (err) {
+          res.writeHead(500, { 'content-type': 'text/json' });
+          res.end(JSON.stringify('Network'));
+        }
+      }
+    );
+    Company.findOneAndUpdate(
+      { CompanyID },
+      { $inc: { GeneralReviewCount: 1, TotalGeneralReviewRating: Rating } },
+
+      (err, results) => {
+        if (err) {
+          res.writeHead(500, { 'content-type': 'text/json' });
+          res.end(JSON.stringify('Network'));
+        }
+        if (results) {
+          res.writeHead(200, { 'content-type': 'text/json' });
+          res.end(JSON.stringify('Company Review Added'));
+        }
+      }
+    );
+  } catch (error) {
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  } finally {
+    if (con) {
+      con.end();
+    }
+  }
+  return res;
+};
+
+// add the salary review and increment the salary review count
+const salaryAddReview = async (req, res) => {
+  // eslint-disable-next-line no-unused-vars
+  const {
+    CompanyID,
+    BaseSalary,
+    Bonuses,
+    JobTitle,
+    Years,
+    StreetAddress,
+    State,
+    Country,
+    Zip,
+  } = req.body;
+  try {
+    const review = {
+      Status: 'Not Approved',
+      DatePosted: Date.now(),
+      BaseSalary,
+      Bonuses,
+      JobTitle,
+      Years,
+      StreetAddress,
+      State,
+      Country,
+      Zip,
+    };
+    await Company.findOneAndUpdate(
+      { CompanyID },
+      {
+        $push: {
+          SalaryReview: review,
+        },
+      },
+      { safe: true, upsert: true, new: true },
+      // eslint-disable-next-line no-unused-vars
+      (err) => {
+        if (err) {
+          res.writeHead(500, { 'content-type': 'text/json' });
+          res.end(JSON.stringify('Network'));
+        }
+      }
+    );
+    Company.findOneAndUpdate(
+      { CompanyID },
+      { $inc: { SalaryReviewCount: 1 } },
+
+      (err, results) => {
+        if (err) {
+          res.writeHead(500, { 'content-type': 'text/json' });
+          res.end(JSON.stringify('Network'));
+        }
+        if (results) {
+          res.writeHead(200, { 'content-type': 'text/json' });
+          res.end(JSON.stringify('Salary Review Added'));
+        }
+      }
+    );
+  } catch (error) {
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  }
+
+  return res;
+};
 
 module.exports = {
   navbar,
@@ -584,4 +821,8 @@ module.exports = {
   resumesDelete,
   jobWithdraw,
   profileUpdate,
+  companyProfile,
+  companyReview,
+  addCompanyReview,
+  salaryAddReview,
 };

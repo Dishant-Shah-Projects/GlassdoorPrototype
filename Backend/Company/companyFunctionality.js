@@ -91,11 +91,12 @@ const companyProfileUpdate = async (req, res) => {
 const companyReviews = async (req, res) => {
   // eslint-disable-next-line no-console
   const ID = req.query.CompanyID;
+  let con = null;
   // eslint-disable-next-line no-console
   try {
     const userInsertProcedure = 'CALL fetchReview(?)';
 
-    const con = await mysqlConnection();
+    con = await mysqlConnection();
     const [results, fields] = await con.query(userInsertProcedure, ID);
     con.end();
     if (results) {
@@ -109,6 +110,10 @@ const companyReviews = async (req, res) => {
     // eslint-disable-next-line no-console
     res.writeHead(500, { 'content-type': 'text/json' });
     res.end(JSON.stringify('Network Error'));
+  } finally {
+    if (con) {
+      con.end();
+    }
   }
   return res;
 };
@@ -132,10 +137,11 @@ const postJob = async (req, res) => {
     Zip,
   } = req.body;
   // eslint-disable-next-line no-console
+  let con = null;
   try {
     const userInsertProcedure = 'CALL jobInsert(?,?,CURDATE(),?,?,?)';
 
-    const con = await mysqlConnection();
+    con = await mysqlConnection();
     const [results, fields] = await con.query(userInsertProcedure, [
       CompanyID,
       CompanyName,
@@ -181,6 +187,10 @@ const postJob = async (req, res) => {
     // eslint-disable-next-line no-console
     res.writeHead(500, { 'content-type': 'text/json' });
     res.end(JSON.stringify('Network Error'));
+  } finally {
+    if (con) {
+      con.end();
+    }
   }
   return res;
 };
@@ -188,11 +198,12 @@ const postJob = async (req, res) => {
 const favoriteReview = async (req, res) => {
   // eslint-disable-next-line no-console
   const { ID, Favorite } = req.body;
+  let con = null;
   // eslint-disable-next-line no-console
   try {
     const query = 'UPDATE GENERAL_REVIEW SET Favorite = ? WHERE ID=?';
 
-    const con = await mysqlConnection();
+    con = await mysqlConnection();
     const [results, fields] = await con.query(query, [Favorite, ID]);
     con.end();
     if (results) {
@@ -206,17 +217,22 @@ const favoriteReview = async (req, res) => {
     // eslint-disable-next-line no-console
     res.writeHead(500, { 'content-type': 'text/json' });
     res.end(JSON.stringify('Network Error'));
+  } finally {
+    if (con) {
+      con.end();
+    }
   }
   return res;
 };
 const reviewResponse = async (req, res) => {
   // eslint-disable-next-line no-console
   const { ID, Response } = req.body;
+  let con = null;
   // eslint-disable-next-line no-console
   try {
     const query = 'UPDATE GENERAL_REVIEW SET Response = ? WHERE ID=?';
 
-    const con = await mysqlConnection();
+    con = await mysqlConnection();
     const [results, fields] = await con.query(query, [Response, ID]);
     con.end();
     if (results) {
@@ -230,17 +246,22 @@ const reviewResponse = async (req, res) => {
     // eslint-disable-next-line no-console
     res.writeHead(500, { 'content-type': 'text/json' });
     res.end(JSON.stringify('Network Error'));
+  } finally {
+    if (con) {
+      con.end();
+    }
   }
   return res;
 };
 const featuredReview = async (req, res) => {
   // eslint-disable-next-line no-console
   const { CompanyID, ID, Response } = req.body;
+  let con = null;
   // eslint-disable-next-line no-console
   try {
     const query = 'SELECT * FROM GENERAL_REVIEW WHERE ID=?';
 
-    const con = await mysqlConnection();
+    con = await mysqlConnection();
     const [results, fields] = await con.query(query, ID);
     con.end();
     Company.findOneAndUpdate({ CompanyID }, { FeaturedReview: results[0] }, (e, output) => {
@@ -261,6 +282,10 @@ const featuredReview = async (req, res) => {
     // eslint-disable-next-line no-console
     res.writeHead(500, { 'content-type': 'text/json' });
     res.end(JSON.stringify('Network Error'));
+  } finally {
+    if (con) {
+      con.end();
+    }
   }
   return res;
 };
