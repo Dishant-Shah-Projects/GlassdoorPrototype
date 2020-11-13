@@ -83,17 +83,10 @@ class LeftBlock extends Component {
           <li role="tab" class=" css-1h7a53u" aria-selected="false" tabindex="0">
             <div class="customItem css-wks0vk">
               <div class="d-flex flex-row justify-content-start align-items-center">
-                Reviews
+                Reports
               </div>
             </div>
-          </li>
-          <li role="tab" class=" css-1h7a53u" aria-selected="false" tabindex="0">
-            <div class="customItem css-wks0vk">
-              <div class="d-flex flex-row justify-content-start align-items-center">
-                Job Postings
-              </div>
-            </div>
-          </li>
+          </li>          
         </ul>
       </div>
     </div>

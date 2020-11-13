@@ -2,11 +2,6 @@ import React, { Component } from 'react';
 import LeftBlock from '../LandingPage/LeftBlock.js';
 import '../LandingPage/Body.css';
 import RightBlock from './RightBlock.js';
-// import Navbar from '../Common/Navbar.js';
-// import axios from 'axios';
-// import serverUrl from '../../../config.js';
-// import { updateCompanyReviews } from '../../../constants/action-types';
-// import { connect } from 'react-redux';
 
 class ReviewsHome extends Component {
   constructor(props) {
@@ -39,15 +34,4 @@ class ReviewsHome extends Component {
   }
 }
 
-// const mapDispatchToProps = (dispatch) => {
-//   return {
-//     updateCompanyReviews: (payload) => {
-//       dispatch({
-//         type: updateCompanyReviews,
-//         payload,
-//       });
-//     },
-//   };
-// };
-// export default connect(null, mapDispatchToProps)(ReviewsHome);
 export default ReviewsHome;

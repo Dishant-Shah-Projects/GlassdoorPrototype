@@ -15,3 +15,5 @@ export const updateCompanyProfile = 'update-company-profile';
 export const updateOnFocusJob = 'update-on-focus-job';
 export const openProfileTabOnClick = 'open-profile-tab-on-click';
 export const updateContributionOption = 'update-contribution-option';
+export const showReplyModal = 'show-reply-modal';
+export const hideReplyModal = 'hide-reply-modal';

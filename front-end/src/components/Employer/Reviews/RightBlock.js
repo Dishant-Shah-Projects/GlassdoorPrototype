@@ -138,6 +138,7 @@ class RightBlock extends Component {
             <ol class=" empReviews emp-reviews-feed pl-0">
               {this.state.reviewsList.map((listitem) => (
                 <li class="empReview cf  " id="empReview_35973660" key={listitem.ID}>
+                  {listitem.Status == 'Approved' ? 
                   <div class="gdReview">
                     <div class="d-flex justify-content-between">
                       <div class="d-flex align-items-center">
@@ -281,6 +282,8 @@ class RightBlock extends Component {
                       </div>
                     </div>
                   </div>
+                  : 
+                            <p>No Reviews to Show!</p> }
                 </li>
               ))}
             </ol>

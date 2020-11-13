@@ -16,7 +16,7 @@ const { auth, checkAuth } = require('../SharedFuntionalities/passport');
 auth();
 // Company API calls
 // Load the company profile API 26
-Router.get('/profile', checkAuth, async (req, res) => {
+Router.get('/profile', async (req, res) => {
   // eslint-disable-next-line no-console
   const value = await getCompanyProfile(req, res);
   return value;
