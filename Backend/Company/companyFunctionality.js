@@ -290,6 +290,30 @@ const featuredReview = async (req, res) => {
   return res;
 };
 
+// get the profile for the company
+const getJobs = async (req, res) => {
+  const { CompanyID, PageNo } = req.query;
+  try {
+    const Jobs = await Job.find({ CompanyID });
+    const count = Jobs.length;
+    const noOfPages = Math.ceil(count / 10);
+    const resultObj = {};
+    const Jobresult = await Job.find({ CompanyID })
+      .limit(10)
+      .skip(PageNo * 10);
+    resultObj.jobs = Jobresult;
+    resultObj.count = count;
+    resultObj.noOfPages = noOfPages;
+    res.writeHead(200, {
+      'Content-Type': 'application/json',
+    });
+    res.end(JSON.stringify(resultObj));
+  } catch (error) {
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  }
+  return res;
+};
 module.exports = {
   getCompanyProfile,
   companyProfileUpdate,
@@ -298,4 +322,5 @@ module.exports = {
   favoriteReview,
   reviewResponse,
   featuredReview,
+  getJobs,
 };

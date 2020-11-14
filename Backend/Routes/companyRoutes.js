@@ -51,8 +51,8 @@ Router.post('/postJob', checkAuth, async (req, res) => {
   const value = await postJob(req, res);
   return value;
 });
-// Post Job
-Router.get('/jobs', checkAuth, async (req, res) => {
+// get Job
+Router.get('/jobs', async (req, res) => {
   const value = await getJobs(req, res);
   return value;
 });
