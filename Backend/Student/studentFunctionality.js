@@ -583,23 +583,10 @@ const profileUpdate = async (req, res) => {
 // get the details required for the student navigation bar
 const companyProfile = async (req, res) => {
   const { CompanyID } = req.query;
-  let con = null;
   try {
-    const resultData = [];
     const company = await Company.findOne({ CompanyID }).select(
       '-InterviewReview -SalaryReview -Photos'
     );
-    resultData.push(company);
-    const posquery =
-      'SELECT* FROM GENERAL_REVIEW WHERE CompanyID=? AND Rating>3 ORDER BY Helpful DESC LIMIT 1;';
-    const negquery =
-      'SELECT* FROM GENERAL_REVIEW WHERE CompanyID=? AND Rating<=3 ORDER BY Helpful DESC LIMIT 1;';
-    con = await mysqlConnection();
-    const [results] = await con.query(posquery, CompanyID);
-    resultData.push({ positiveReview: results });
-    const [results2] = await con.query(negquery, CompanyID);
-    resultData.push({ negativeReview: results2 });
-    con.end();
     Company.findOneAndUpdate(
       { CompanyID },
       { $inc: { ViewCount: 1 } },
@@ -610,17 +597,13 @@ const companyProfile = async (req, res) => {
           res.end(JSON.stringify('Network'));
         } else {
           res.writeHead(200, { 'content-type': 'text/json' });
-          res.end(JSON.stringify(resultData));
+          res.end(JSON.stringify(company));
         }
       }
     );
   } catch (error) {
     res.writeHead(500, { 'content-type': 'text/json' });
     res.end(JSON.stringify('Network Error'));
-  } finally {
-    if (con) {
-      con.end();
-    }
   }
   return res;
 };
@@ -742,6 +725,29 @@ const addCompanyReview = async (req, res) => {
   return res;
 };
 
+// get the company reviews without pagination
+const getAllReview = async (req, res) => {
+  // eslint-disable-next-line no-unused-vars
+  const { CompanyID } = req.query;
+  let con = null;
+  try {
+    const searchQuery = 'SELECT * FROM GENERAL_REVIEW WHERE CompanyID=?;';
+    con = await mysqlConnection();
+    const [results2] = await con.query(searchQuery, CompanyID);
+    con.end();
+    res.writeHead(200, { 'content-type': 'text/json' });
+    res.end(JSON.stringify(results2));
+  } catch (error) {
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  } finally {
+    if (con) {
+      con.end();
+    }
+  }
+  return res;
+};
+
 // add the salary review and increment the salary review count
 const salaryAddReview = async (req, res) => {
   // eslint-disable-next-line no-unused-vars
@@ -807,6 +813,38 @@ const salaryAddReview = async (req, res) => {
 
   return res;
 };
+// get the feature Reviews for the company
+const featureReview = async (req, res) => {
+  const { CompanyID } = req.query;
+  let con = null;
+  try {
+    const resultData = {};
+    const company = await Company.findOne({ CompanyID }).select('FeaturedReview');
+    resultData.featuredReview = company.FeaturedReview;
+    const posquery =
+      'SELECT* FROM GENERAL_REVIEW WHERE CompanyID=? AND Rating>3 ORDER BY Helpful DESC LIMIT 1;';
+    const negquery =
+      'SELECT* FROM GENERAL_REVIEW WHERE CompanyID=? AND Rating<=3 ORDER BY Helpful DESC LIMIT 1;';
+    con = await mysqlConnection();
+    const [results] = await con.query(posquery, CompanyID);
+    // eslint-disable-next-line prefer-destructuring
+    resultData.positiveReview = results[0];
+    const [results2] = await con.query(negquery, CompanyID);
+    // eslint-disable-next-line prefer-destructuring
+    resultData.negativeReview = results2[0];
+    con.end();
+    res.writeHead(200, { 'content-type': 'text/json' });
+    res.end(JSON.stringify(resultData));
+  } catch (error) {
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  } finally {
+    if (con) {
+      con.end();
+    }
+  }
+  return res;
+};
 
 module.exports = {
   navbar,
@@ -825,4 +863,6 @@ module.exports = {
   companyReview,
   addCompanyReview,
   salaryAddReview,
+  featureReview,
+  getAllReview,
 };

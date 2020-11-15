@@ -20,6 +20,8 @@ const {
   companyReview,
   addCompanyReview,
   salaryAddReview,
+  featureReview,
+  getAllReview,
 } = require('../Student/studentFunctionality');
 
 const { checkAuth } = require('../SharedFuntionalities/passport');
@@ -111,6 +113,16 @@ Router.get('/companyProfile', checkAuth, async (req, res) => {
 // get the company reviews
 Router.get('/companyReview', checkAuth, async (req, res) => {
   const value = await companyReview(req, res);
+  return value;
+});
+// get all company reviews
+Router.get('/getAllReview', checkAuth, async (req, res) => {
+  const value = await getAllReview(req, res);
+  return value;
+});
+// get the featured reviews
+Router.get('/featureReview', checkAuth, async (req, res) => {
+  const value = await featureReview(req, res);
   return value;
 });
 
