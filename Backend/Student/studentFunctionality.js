@@ -9,6 +9,7 @@ const Company = require('../model/Company');
 const Student = require('../model/Student');
 const Job = require('../model/Job');
 const Static = require('../model/Static');
+const redisClient = require('../redisClient');
 
 // get the details required for the student navigation bar
 const navbar = async (req, res) => {
@@ -731,12 +732,28 @@ const getAllReview = async (req, res) => {
   const { CompanyID } = req.query;
   let con = null;
   try {
-    const searchQuery = 'SELECT * FROM GENERAL_REVIEW WHERE CompanyID=?;';
-    con = await mysqlConnection();
-    const [results2] = await con.query(searchQuery, CompanyID);
-    con.end();
-    res.writeHead(200, { 'content-type': 'text/json' });
-    res.end(JSON.stringify(results2));
+    const redisKey = `getAllReview-CompanyID=${CompanyID}`;
+    redisClient.get(redisKey, async (err, data) => {
+      // data is available in Redis
+      if (data) {
+        res.writeHead(200, { 'content-type': 'text/json' });
+        res.end(data);
+      } else {
+        try {
+          const searchQuery = 'SELECT * FROM GENERAL_REVIEW WHERE CompanyID=?;';
+          con = await mysqlConnection();
+          const [results2] = await con.query(searchQuery, CompanyID);
+          con.end();
+          // Add to redis
+          redisClient.setex(redisKey, 36000, JSON.stringify(results2));
+          res.writeHead(200, { 'content-type': 'text/json' });
+          res.end(JSON.stringify(results2));
+        } catch (error) {
+          res.writeHead(500, { 'content-type': 'text/json' });
+          res.end(JSON.stringify('Network Error'));
+        }
+      }
+    });
   } catch (error) {
     res.writeHead(500, { 'content-type': 'text/json' });
     res.end(JSON.stringify('Network Error'));
