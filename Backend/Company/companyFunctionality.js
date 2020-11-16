@@ -10,13 +10,10 @@ const Job = require('../model/Job');
 
 // get the profile for the company
 const getCompanyProfile = async (req, res) => {
-  // eslint-disable-next-line no-console
   const ID = req.query.CompanyID;
-  // eslint-disable-next-line no-console
   try {
     Company.findOne({ CompanyID: ID }, (err, results) => {
       if (results) {
-        // eslint-disable-next-line no-console
         res.status(200).end(JSON.stringify(results));
       } else {
         res.writeHead(403, { 'content-type': 'text/json' });

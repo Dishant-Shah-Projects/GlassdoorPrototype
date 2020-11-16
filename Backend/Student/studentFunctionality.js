@@ -678,42 +678,44 @@ const addCompanyReview = async (req, res) => {
       Headline,
     ]);
     con.end();
-    const reviewday = await Static.findOne({}).select('reviews');
-    const today = new Date().toISOString().slice(0, 10);
-    if (reviewday.reviews[0].Date.toISOString().slice(0, 10) === today) {
-      reviewday.reviews[0].reviewcount += 1;
-    } else {
-      reviewday.reviews.unshift({ Date: today, reviewcount: 1 });
-    }
-    if (reviewday.reviews.length > 7) {
-      reviewday.reviews.pop();
-    }
-    await Static.findOneAndUpdate(
-      {},
-      { reviews: reviewday.reviews },
+    res.writeHead(200, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Company Review Added'));
+    // const reviewday = await Static.findOne({}).select('reviews');
+    // const today = new Date().toISOString().slice(0, 10);
+    // if (reviewday.reviews[0].Date.toISOString().slice(0, 10) === today) {
+    //   reviewday.reviews[0].reviewcount += 1;
+    // } else {
+    //   reviewday.reviews.unshift({ Date: today, reviewcount: 1 });
+    // }
+    // if (reviewday.reviews.length > 7) {
+    //   reviewday.reviews.pop();
+    // }
+    // await Static.findOneAndUpdate(
+    //   {},
+    //   { reviews: reviewday.reviews },
 
-      (err) => {
-        if (err) {
-          res.writeHead(500, { 'content-type': 'text/json' });
-          res.end(JSON.stringify('Network'));
-        }
-      }
-    );
-    Company.findOneAndUpdate(
-      { CompanyID },
-      { $inc: { GeneralReviewCount: 1, TotalGeneralReviewRating: Rating } },
+    //   (err) => {
+    //     if (err) {
+    //       res.writeHead(500, { 'content-type': 'text/json' });
+    //       res.end(JSON.stringify('Network'));
+    //     }
+    //   }
+    // );
+    // Company.findOneAndUpdate(
+    //   { CompanyID },
+    //   { $inc: { GeneralReviewCount: 1, TotalGeneralReviewRating: Rating } },
 
-      (err, results) => {
-        if (err) {
-          res.writeHead(500, { 'content-type': 'text/json' });
-          res.end(JSON.stringify('Network'));
-        }
-        if (results) {
-          res.writeHead(200, { 'content-type': 'text/json' });
-          res.end(JSON.stringify('Company Review Added'));
-        }
-      }
-    );
+    //   (err, results) => {
+    //     if (err) {
+    //       res.writeHead(500, { 'content-type': 'text/json' });
+    //       res.end(JSON.stringify('Network'));
+    //     }
+    //     if (results) {
+    //       res.writeHead(200, { 'content-type': 'text/json' });
+    //       res.end(JSON.stringify('Company Review Added'));
+    //     }
+    //   }
+    // );
   } catch (error) {
     res.writeHead(500, { 'content-type': 'text/json' });
     res.end(JSON.stringify('Network Error'));

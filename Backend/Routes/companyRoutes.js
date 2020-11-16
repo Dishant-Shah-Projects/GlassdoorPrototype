@@ -1,8 +1,10 @@
 const express = require('express');
 
+const kafka = require('../kafka/client');
+
 const Router = express.Router();
 const {
-  getCompanyProfile,
+  // getCompanyProfile,
   companyProfileUpdate,
   companyReviews,
   postJob,
@@ -18,8 +20,21 @@ auth();
 // Load the company profile API 26
 Router.get('/profile', async (req, res) => {
   // eslint-disable-next-line no-console
-  const value = await getCompanyProfile(req, res);
-  return value;
+  const data = {
+    api: 'getCompanyProfile',
+    query: req.query,
+  };
+  kafka.make_request('company', data, (err, results) => {
+    // console.log('in result');
+    // console.log(results);
+    if (err) {
+      res.status(500);
+      res.end('Network Error');
+    } else {
+      res.status(results.status);
+      res.end(results.end);
+    }
+  });
 });
 // Update the company profile API 25
 Router.post('/profileupdate', checkAuth, async (req, res) => {

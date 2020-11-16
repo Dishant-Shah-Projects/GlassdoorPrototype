@@ -2,6 +2,8 @@ const express = require('express');
 
 const Router = express.Router();
 
+const kafka = require('../kafka/client');
+
 const { uploadFile } = require('../S3Bucket/s3BucketUpload');
 const {
   navbar,
@@ -21,7 +23,7 @@ const {
   addCompanyReview,
   salaryAddReview,
   featureReview,
-  getAllReview,
+  // getAllReview,
 } = require('../Student/studentFunctionality');
 
 const { checkAuth } = require('../SharedFuntionalities/passport');
@@ -117,8 +119,21 @@ Router.get('/companyReview', checkAuth, async (req, res) => {
 });
 // get all company reviews
 Router.get('/getAllReview', checkAuth, async (req, res) => {
-  const value = await getAllReview(req, res);
-  return value;
+  const data = {
+    api: 'getAllReview',
+    query: req.query,
+  };
+  kafka.make_request('student', data, (err, results) => {
+    // console.log('in result');
+    // console.log(results);
+    if (err) {
+      res.status(500);
+      res.end('Network Error');
+    } else {
+      res.status(results.status);
+      res.end(results.end);
+    }
+  });
 });
 // get the featured reviews
 Router.get('/featureReview', checkAuth, async (req, res) => {
@@ -127,7 +142,7 @@ Router.get('/featureReview', checkAuth, async (req, res) => {
 });
 
 // add companyreview
-Router.post('/addReview', checkAuth, async (req, res) => {
+Router.post('/addReview', async (req, res) => {
   const value = await addCompanyReview(req, res);
   return value;
 });
