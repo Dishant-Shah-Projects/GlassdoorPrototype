@@ -86,7 +86,7 @@ const searchCompany = async (req, res) => {
     for (let i = 0; i < companyResults.length; i += 1) {
       const ID = companyResults[i].CompanyID;
       const tempObj = {};
-      tempObj.CompanyName = companyResults[i].CompanyID;
+      tempObj.CompanyID = companyResults[i].CompanyID;
       tempObj.ProfileImg = companyResults[i].ProfileImg;
       tempObj.CompanyName = companyResults[i].CompanyName;
       tempObj.City = companyResults[i].City;
