@@ -1,11 +1,20 @@
 import React, { Component } from 'react';
 import './CompanyNavbar.css';
+import { switchTab } from '../../../../constants/action-types';
+import { connect } from 'react-redux';
 
 class CompanyNavbar extends Component {
   constructor(props) {
     super(props);
     this.state = {};
   }
+  switchTab = (event, tab) => {
+    event.preventDefault();
+    const payload = {
+      selectedTab: tab,
+    };
+    this.props.switchTab(payload);
+  };
   render() {
     return (
       <article id="WideCol">
@@ -23,7 +32,7 @@ class CompanyNavbar extends Component {
               <div class="lbSlideFrame">
                 <div class="titleBar">
                   <span class="viewAll">
-                    <a href="/Photos/Amazon-Office-Photos-E6036.htm">
+                    <a href="#">
                       <i></i>
                       <span>View All</span>
                     </a>
@@ -74,7 +83,7 @@ class CompanyNavbar extends Component {
                 >
                   <span class="sqLogo tighten lgSqLogo logoOverlay">
                     <img
-                      src="https://media.glassdoor.com/sql/6036/amazon-squarelogo-1552847650117.png"
+                      src={this.props.companyOverviewStore.companyOverview.ProfileImg}
                       class=""
                       alt=" Logo"
                       title=""
@@ -86,7 +95,7 @@ class CompanyNavbar extends Component {
                 <h1 class=" strong tightAll" title="" data-company="Amazon">
                   <span id="DivisionsDropdownComponent" class="d-inline-flex align-items-center">
                     {' '}
-                    Amazon
+                    {this.props.companyOverviewStore.companyOverview.CompanyName}
                   </span>
                 </h1>
               </div>
@@ -100,7 +109,13 @@ class CompanyNavbar extends Component {
                   <div id="EIProductHeaders" class="tbl eiProductCells">
                     <div class="row ">
                       <span
-                        class="eiCell cell overviews switchLogo active"
+                        onClick={(event) => this.switchTab(event, 'Overview')}
+                        class={
+                          this.props.companyNavbarStore.selectedTab === 'Overview'
+                            ? 'eiCell cell overviews switchLogo active'
+                            : 'eiCell cell overviews switchLogo '
+                        }
+                        // class="eiCell cell overviews switchLogo active"
                         data-selector="orgStructureOverviewDropdown"
                       >
                         <div id="HierarchiesDropdown"></div>
@@ -115,22 +130,39 @@ class CompanyNavbar extends Component {
                         <i></i>
                       </div>
                       <a
-                        class="eiCell cell reviews "
-                        href="/Reviews/Amazon-Reviews-E6036.htm"
+                        onClick={(event) => this.switchTab(event, 'GeneralReview')}
+                        class={
+                          this.props.companyNavbarStore.selectedTab === 'GeneralReview'
+                            ? 'eiCell cell reviews active'
+                            : 'eiCell cell reviews '
+                        }
+                        href="#"
                         data-label="Reviews"
                       >
-                        <span class="num h2"> 54k</span>
+                        <span class="num h2">
+                          {' '}
+                          {this.props.companyOverviewStore.companyOverview.GeneralReviewCount}
+                        </span>
                         <span class="subtle"> Reviews</span>
                       </a>
                       <div class="vline cell">
                         <i></i>
                       </div>
                       <a
-                        class="eiCell cell jobs "
-                        href="/Jobs/Amazon-Jobs-E6036.htm"
+                        onClick={(event) => this.switchTab(event, 'CompanyJobs')}
+                        class={
+                          this.props.companyNavbarStore.selectedTab === 'CompanyJobs'
+                            ? 'eiCell cell jobs active'
+                            : 'eiCell cell jobs '
+                        }
+                        // class="eiCell cell jobs "
+                        href="#"
                         data-label="Jobs"
                       >
-                        <span class="num h2"> 27k</span>
+                        <span class="num h2">
+                          {' '}
+                          {this.props.companyOverviewStore.companyOverview.JobCount}
+                        </span>
                         <span class="subtle"> Jobs</span>
                       </a>
                       <div class="vline cell">
@@ -141,40 +173,49 @@ class CompanyNavbar extends Component {
                         href="/Salary/Amazon-Salaries-E6036.htm"
                         data-label="Salaries"
                       >
-                        <span class="num h2"> 91k</span>
+                        <span class="num h2">
+                          {' '}
+                          {this.props.companyOverviewStore.companyOverview.SalaryReviewCount}
+                        </span>
                         <span class="subtle"> Salaries</span>
                       </a>
                       <div class="vline cell">
                         <i></i>
                       </div>
                       <a
-                        class="eiCell cell interviews "
+                        onClick={(event) => this.switchTab(event, 'CompanyInterviews')}
+                        class={
+                          this.props.companyNavbarStore.selectedTab === 'CompanyInterviews'
+                            ? 'eiCell cell interviews active'
+                            : 'eiCell cell interviews '
+                        }
+                        // class="eiCell cell interviews "
                         href="/Interview/Amazon-Interview-Questions-E6036.htm"
                         data-label="Inter­views"
                       >
-                        <span class="num h2"> 26k</span>
+                        <span class="num h2">
+                          {' '}
+                          {this.props.companyOverviewStore.companyOverview.InterviewReviewCount}
+                        </span>
                         <span class="subtle"> Inter­views</span>
                       </a>
                       <div class="vline cell">
                         <i></i>
                       </div>
                       <a
-                        class="eiCell cell benefits "
-                        href="/Benefits/Amazon-US-Benefits-EI_IE6036.0,6_IL.7,9_IN1.htm"
-                        data-label="Benefits"
-                      >
-                        <span class="num h2"> 15k</span>
-                        <span class="subtle"> Benefits</span>
-                      </a>
-                      <div class="vline cell">
-                        <i></i>
-                      </div>
-                      <a
-                        class="eiCell cell photos "
+                        class={
+                          this.props.companyNavbarStore.selectedTab === 'CompanyPhotos'
+                            ? 'eiCell cell photos active'
+                            : 'eiCell cell photos '
+                        }
+                        // class="eiCell cell photos "
                         href="/Photos/Amazon-Office-Photos-E6036.htm"
                         data-label="Photos"
                       >
-                        <span class="num h2"> 653</span>
+                        <span class="num h2">
+                          {' '}
+                          {this.props.companyOverviewStore.companyOverview.PhotoCount}
+                        </span>
                         <span class="subtle"> Photos</span>
                       </a>
                     </div>
@@ -212,4 +253,27 @@ class CompanyNavbar extends Component {
   }
 }
 
-export default CompanyNavbar;
+// export default CompanyNavbar;
+
+const mapStateToProps = (state) => {
+  const { companyNavbarStore } = state.CompanyResultPageReducer;
+  const { companyOverviewStore } = state.CompanyPageReducer;
+
+  return {
+    companyNavbarStore,
+    companyOverviewStore,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    switchTab: (payload) => {
+      dispatch({
+        type: switchTab,
+        payload,
+      });
+    },
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(CompanyNavbar);

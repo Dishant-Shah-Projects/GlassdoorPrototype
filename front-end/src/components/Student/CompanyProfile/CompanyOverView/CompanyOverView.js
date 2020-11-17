@@ -1,13 +1,42 @@
 import React, { Component } from 'react';
 import SpecialReview from '../CompanyReviews/SpecialReview';
 import './CompanyOverView.css';
+import axios from 'axios';
+import serverUrl from '../../../../config';
+import { updatespecialReviews } from '../../../../constants/action-types';
+import { connect } from 'react-redux';
+import moment from 'moment';
 
 class CompanyOverView extends Component {
   constructor(props) {
     super(props);
     this.state = {};
   }
+  componentDidMount() {
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    axios
+      .get(serverUrl + 'student/featureReview', {
+        params: { CompanyID: localStorage.getItem('companyID') },
+        withCredentials: true,
+      })
+      .then((response) => {
+        console.log('compsnyData:', response.data);
+        const payload = {
+          featuredReview: { ...response.data.featuredReview },
+          positiveReview: { ...response.data.positiveReview },
+          negatieReview: { ...response.data.negativeReview },
+        };
+        this.props.updatespecialReviews(payload);
+      });
+  }
   render() {
+    let rating = 0;
+    if (this.props.companyOverviewStore.companyOverview.GeneralReviewCount > 0) {
+      rating = Math.round(
+        this.props.companyOverviewStore.companyOverview.TotalGeneralReviewRating /
+          this.props.companyOverviewStore.companyOverview.GeneralReviewCount
+      );
+    }
     return (
       <article id="MainCol">
         <div class="gdGrid">
@@ -20,7 +49,7 @@ class CompanyOverView extends Component {
               >
                 <header class="d-flex align-items-center justify-content-between mb-std">
                   <h2 class="my-0" data-test="employerOverviewHeader">
-                    Amazon Overview
+                    {this.props.companyOverviewStore.companyOverview.CompanyName} Overview
                   </h2>
                 </header>
                 <ul id="companyOverView" class="css-155za0w row px-0 m-0">
@@ -33,41 +62,53 @@ class CompanyOverView extends Component {
                       class="css-1hg9omi"
                       data-test="employer-website"
                     >
-                      www.amazon.jobs
+                      {this.props.companyOverviewStore.companyOverview.Website}
                     </a>
                   </li>
                   <li class="d-flex align-items-center col-12 col-sm-6 p-0 m-0 pb-sm pl-sm-xxsm">
                     <label class="css-1f0lhlt ecl3kjh0">Headquarters:</label>
-                    <div data-test="employer-headquarters">Seattle, WA</div>
+                    <div data-test="employer-headquarters">
+                      {' '}
+                      {this.props.companyOverviewStore.companyOverview.Headquarter}
+                    </div>
                   </li>
                   <li class="d-flex align-items-center col-12 col-sm-6 p-0 m-0 pb-sm pr-sm-xxsm">
                     <label class="css-1f0lhlt ecl3kjh0">Size:</label>
-                    <div data-test="employer-size">10000+ Employees</div>
+                    <div data-test="employer-size">
+                      {this.props.companyOverviewStore.companyOverview.Size}+ Employees
+                    </div>
                   </li>
                   <li class="d-flex align-items-center col-12 col-sm-6 p-0 m-0 pb-sm pl-sm-xxsm">
                     <label class="css-1f0lhlt ecl3kjh0">Founded:</label>
-                    <div data-test="employer-founded">1994</div>
+                    <div data-test="employer-founded">
+                      {moment(this.props.companyOverviewStore.companyOverview.Founded).format(
+                        'YYYY'
+                      )}
+                    </div>
                   </li>
                   <li class="d-flex align-items-center col-12 col-sm-6 p-0 m-0 pb-sm pr-sm-xxsm">
                     <label class="css-1f0lhlt ecl3kjh0">Type:</label>
-                    <div data-test="employer-type">Company - Public</div>
+                    <div data-test="employer-type">
+                      Company - {this.props.companyOverviewStore.companyOverview.Type}
+                    </div>
                   </li>
                   <li class="d-flex align-items-center col-12 col-sm-6 p-0 m-0 pb-sm pl-sm-xxsm">
                     <label class="css-1f0lhlt ecl3kjh0">Industry:</label>
-                    <div data-test="employer-industry">Internet</div>
+                    <div data-test="employer-industry">
+                      {this.props.companyOverviewStore.companyOverview.Industry}
+                    </div>
                   </li>
                   <li class="d-flex align-items-center col-12 col-sm-6 p-0 m-0 pb-sm pr-sm-xxsm">
                     <label class="css-1f0lhlt ecl3kjh0">Revenue:</label>
-                    <div data-test="employer-revenue">$10+ billion (USD)</div>
+                    <div data-test="employer-revenue">
+                      ${this.props.companyOverviewStore.companyOverview.Revenue}+ billion (USD)
+                    </div>
                   </li>
                 </ul>
                 <div class="my-std css-1raszzq e16x8fv01">
                   <p class="strong"></p>
                   <span data-test="employerDescription">
-                    All Amazon teams and businesses, from Prime delivery to AWS, are guided by four
-                    key tenets: customer obsession rather than competitor focus, passion for
-                    invention, commitment to operational excellence, and long-term thinking.We are
-                    driven by the excitement of building ...
+                    {this.props.companyOverviewStore.companyOverview.CompanyDescription}
                   </span>
                 </div>
                 <hr class="my-std css-1g9ch1j e1keu4zk0" />
@@ -83,14 +124,7 @@ class CompanyOverView extends Component {
                         <p>
                           <strong>Our mission: </strong>
                         </p>
-                        <p>
-                          What unites Amazonians across teams and geographies is that we are all
-                          striving to delight our customers and make their lives easier. &nbsp;The
-                          scope and scale of our mission drives us to seek diverse perspectives, be
-                          resourceful, and navigate through ambiguity. &nbsp;Inventing and
-                          delivering things that were never thought possible isn't easy, but we
-                          embrace this challenge every day.
-                        </p>
+                        <p>{this.props.companyOverviewStore.companyOverview.CompanyMission}</p>
                       </div>
                     </div>
                   </div>
@@ -100,11 +134,13 @@ class CompanyOverView extends Component {
                 <h2 class="title css-1bqzjlu">Amazon Reviews</h2>
                 <header class="item m-0">
                   <span class="hidden fn">Amazon</span>
-                  <span class="hidden count">49005</span>
+                  <span class="hidden count">
+                    {this.props.companyOverviewStore.companyOverview.GeneralReviewCount}
+                  </span>
                 </header>
                 <div class="mb-md-md mb-xsm d-flex justify-content-center align-items-center">
-                  <div class="mr-xsm css-1udf4qc eky1qiu0">3.9</div>
-                  <div font-size="md" class="css-1nka8iu">
+                  <div class="mr-xsm css-1udf4qc eky1qiu0">{rating}</div>
+                  <div font-size="md" class={`css-1nka8iu${rating}s`}>
                     <span role="button">★</span>
                     <span role="button">★</span>
                     <span role="button">★</span>
@@ -242,13 +278,23 @@ class CompanyOverView extends Component {
                   </div>
                   <div class="col-4 d-flex flex-column flex-lg-row align-items-center d-table css-qr6okv e1khaexh0">
                     <div class="d-lg-table-cell ceoName pt-sm pt-lg-0 px-lg-sm">
-                      Jeff Bezos<div class="numCeoRatings">26,648 Ratings</div>
+                      {this.props.companyOverviewStore.companyOverview.CEO}
+                      <div class="numCeoRatings">{/*26,648 Ratings*/}</div>
                     </div>
                   </div>
                 </div>
-                <SpecialReview reviewType={'Featured Review'} />
-                <SpecialReview reviewType={'Most Helpufl Positive Review'} />
-                <SpecialReview reviewType={'Most Helpufl Negative Review'} />
+                <SpecialReview
+                  review={this.props.companyOverviewStore.featuredReview}
+                  reviewType={'Featured Review'}
+                />
+                <SpecialReview
+                  review={this.props.companyOverviewStore.positiveReview}
+                  reviewType={'Most Helpufl Positive Review'}
+                />
+                <SpecialReview
+                  review={this.props.companyOverviewStore.negatieReview}
+                  reviewType={'Most Helpufl Negative Review'}
+                />
               </div>
             </div>
           </div>
@@ -258,4 +304,26 @@ class CompanyOverView extends Component {
   }
 }
 
-export default CompanyOverView;
+// export default CompanyOverView;
+
+const mapStateToProps = (state) => {
+  const { companyOverviewStore } = state.CompanyPageReducer;
+
+  return {
+    companyOverviewStore,
+  };
+};
+// export default CompanySearchResults;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    updatespecialReviews: (payload) => {
+      dispatch({
+        type: updatespecialReviews,
+        payload,
+      });
+    },
+  };
+};
+
+// export default LoginBody;
+export default connect(mapStateToProps, mapDispatchToProps)(CompanyOverView);

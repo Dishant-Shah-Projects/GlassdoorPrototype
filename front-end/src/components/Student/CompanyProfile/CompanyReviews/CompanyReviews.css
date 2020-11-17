@@ -159,11 +159,76 @@ ol.empReviews > li:not(.noBorder) {
 span.common__StarStyles__gdStars {
   vertical-align: middle !important;
 }
-.css-9iyzoc {
+.css-9iyzoc0s {
   display: inline-block;
   line-height: 1;
   font-size: 14px;
-  background: linear-gradient(90deg, #0caa41 60%, #dee0e3 60%);
+  background: linear-gradient(90deg, #0caa41 0%, #dee0e3 0%);
+  -webkit-letter-spacing: 3px;
+  -moz-letter-spacing: 3px;
+  -ms-letter-spacing: 3px;
+  letter-spacing: 3px;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  cursor: pointer;
+}
+.css-9iyzoc1s {
+  display: inline-block;
+  line-height: 1;
+  font-size: 14px;
+  background: linear-gradient(90deg, #0caa41 19%, #dee0e3 0%);
+  -webkit-letter-spacing: 3px;
+  -moz-letter-spacing: 3px;
+  -ms-letter-spacing: 3px;
+  letter-spacing: 3px;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  cursor: pointer;
+}
+.css-9iyzoc2s {
+  display: inline-block;
+  line-height: 1;
+  font-size: 14px;
+  background: linear-gradient(90deg, #0caa41 38%, #dee0e3 0%);
+  -webkit-letter-spacing: 3px;
+  -moz-letter-spacing: 3px;
+  -ms-letter-spacing: 3px;
+  letter-spacing: 3px;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  cursor: pointer;
+}
+.css-9iyzoc3s {
+  display: inline-block;
+  line-height: 1;
+  font-size: 14px;
+  background: linear-gradient(90deg, #0caa41 57%, #dee0e3 0%);
+  -webkit-letter-spacing: 3px;
+  -moz-letter-spacing: 3px;
+  -ms-letter-spacing: 3px;
+  letter-spacing: 3px;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  cursor: pointer;
+}
+.css-9iyzoc4s {
+  display: inline-block;
+  line-height: 1;
+  font-size: 14px;
+  background: linear-gradient(90deg, #0caa41 78%, #dee0e3 0%);
+  -webkit-letter-spacing: 3px;
+  -moz-letter-spacing: 3px;
+  -ms-letter-spacing: 3px;
+  letter-spacing: 3px;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  cursor: pointer;
+}
+.css-9iyzoc5s {
+  display: inline-block;
+  line-height: 1;
+  font-size: 14px;
+  background: linear-gradient(90deg, #0caa41 100%, #dee0e3 0%);
   -webkit-letter-spacing: 3px;
   -moz-letter-spacing: 3px;
   -ms-letter-spacing: 3px;
@@ -247,4 +312,10 @@ button.css-glrvaa {
   background-color: #fff;
   border-color: #1861bf;
   padding: 3px 16px;
+}
+.css-ozq8ud.green {
+  background: #0caa41;
+}
+.css-ozq8ud.red {
+  background-color: #eb4133;
 }

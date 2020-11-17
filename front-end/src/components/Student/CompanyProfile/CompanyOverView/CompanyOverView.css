@@ -49,11 +49,76 @@
   font-size: 24px;
   font-weight: bold;
 }
-.css-1nka8iu {
+.css-1nka8iu4s {
   display: inline-block;
   line-height: 1;
   font-size: 22px;
   background: linear-gradient(90deg, #0caa41 78%, #dee0e3 78%);
+  -webkit-letter-spacing: 3px;
+  -moz-letter-spacing: 3px;
+  -ms-letter-spacing: 3px;
+  letter-spacing: 3px;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  cursor: pointer;
+}
+.css-1nka8iu3s {
+  display: inline-block;
+  line-height: 1;
+  font-size: 22px;
+  background: linear-gradient(90deg, #0caa41 57%, #dee0e3 0%);
+  -webkit-letter-spacing: 3px;
+  -moz-letter-spacing: 3px;
+  -ms-letter-spacing: 3px;
+  letter-spacing: 3px;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  cursor: pointer;
+}
+.css-1nka8iu2s {
+  display: inline-block;
+  line-height: 1;
+  font-size: 22px;
+  background: linear-gradient(90deg, #0caa41 38%, #dee0e3 0%);
+  -webkit-letter-spacing: 3px;
+  -moz-letter-spacing: 3px;
+  -ms-letter-spacing: 3px;
+  letter-spacing: 3px;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  cursor: pointer;
+}
+.css-1nka8iu1s {
+  display: inline-block;
+  line-height: 1;
+  font-size: 22px;
+  background: linear-gradient(90deg, #0caa41 19%, #dee0e3 0%);
+  -webkit-letter-spacing: 3px;
+  -moz-letter-spacing: 3px;
+  -ms-letter-spacing: 3px;
+  letter-spacing: 3px;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  cursor: pointer;
+}
+.css-1nka8iu0s {
+  display: inline-block;
+  line-height: 1;
+  font-size: 22px;
+  background: linear-gradient(90deg, #0caa41 0%, #dee0e3 0%);
+  -webkit-letter-spacing: 3px;
+  -moz-letter-spacing: 3px;
+  -ms-letter-spacing: 3px;
+  letter-spacing: 3px;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  cursor: pointer;
+}
+.css-1nka8iu5s {
+  display: inline-block;
+  line-height: 1;
+  font-size: 22px;
+  background: linear-gradient(90deg, #0caa41 100%, #dee0e3 0%);
   -webkit-letter-spacing: 3px;
   -moz-letter-spacing: 3px;
   -ms-letter-spacing: 3px;

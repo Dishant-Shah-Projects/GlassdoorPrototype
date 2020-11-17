@@ -12,6 +12,8 @@ import CompaniesProfileReducer from './CompaniesProfileReducer';
 import studentProfileLeftPanelReducer from './studentProfileLeftPanelReducer';
 import ContributionPageReducer from './ContributionPageReducer';
 import ReplyModalViewReducer from './ReplyModalViewReducer';
+import CompanyResultPageReducer from './CompanyResultPageReducer';
+import CompanyPageReducer from './CompanyPageReducer';
 
 const finalReducers = combineReducers({
   SignupModalViewReducer: SignupModalViewReducer,
@@ -27,6 +29,8 @@ const finalReducers = combineReducers({
   studentProfileLeftPanelReducer: studentProfileLeftPanelReducer,
   ContributionPageReducer: ContributionPageReducer,
   ReplyModalViewReducer: ReplyModalViewReducer,
+  CompanyResultPageReducer: CompanyResultPageReducer,
+  CompanyPageReducer: CompanyPageReducer,
 });
 
 export default finalReducers;

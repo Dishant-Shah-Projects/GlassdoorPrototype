@@ -4,13 +4,79 @@ import AllReview from './AllReview';
 // import '../CompanyOverView/CompanyOverView.css';
 import './CompanyReviews.css';
 import SpecialReview from './SpecialReview';
+import axios from 'axios';
+import serverUrl from '../../../../config';
+import {
+  updatespecialReviews,
+  updateCompanyReviewsStore,
+} from '../../../../constants/action-types';
+import { connect } from 'react-redux';
+import moment from 'moment';
 
 class CompanyReviews extends Component {
   constructor(props) {
     super(props);
     this.state = {};
   }
+  componentDidMount() {
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    axios
+      .get(serverUrl + 'student/featureReview', {
+        params: { CompanyID: localStorage.getItem('companyID') },
+        withCredentials: true,
+      })
+      .then((response) => {
+        // console.log('compsnyData:', response.data);
+        const payload = {
+          featuredReview: { ...response.data.featuredReview },
+          positiveReview: { ...response.data.positiveReview },
+          negatieReview: { ...response.data.negativeReview },
+        };
+        this.props.updatespecialReviews(payload);
+      });
+    this.commonFetch();
+  }
+  commonFetch = (PageNo = 0) => {
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    axios
+      .get(serverUrl + 'student/companyReview', {
+        params: {
+          CompanyID: localStorage.getItem('companyID'),
+          PageNo,
+        },
+        withCredentials: true,
+      })
+      .then(
+        (response) => {
+          console.log('companyReviews', response.data);
+          let payload = {
+            ReviewList: response.data[2],
+            PageNo,
+            Totalcount: response.data[0].count,
+            PageCount: Math.ceil(response.data[0].count / 10),
+
+            // PageCount: Math.ceil(response.data.Totalcount / 3),
+          };
+          this.props.updateCompanyReviewsStore(payload);
+        },
+        (error) => {
+          console.log('error', error);
+        }
+      );
+  };
+
+  onPageClick = (e) => {
+    // console.log('Page Clicked:', e.selected);
+    this.commonFetch(e.selected);
+  };
   render() {
+    let rating = 0;
+    if (this.props.companyOverviewStore.companyOverview.GeneralReviewCount > 0) {
+      rating = Math.round(
+        this.props.companyOverviewStore.companyOverview.TotalGeneralReviewRating /
+          this.props.companyOverviewStore.companyOverview.GeneralReviewCount
+      );
+    }
     return (
       <article id="MainCol">
         <div id="NodeReplace">
@@ -26,9 +92,9 @@ class CompanyReviews extends Component {
                   class="row justify-content-between align-items-center mb-std"
                 >
                   <h1 class="eiReviews__EIReviewsPageStyles__pageHeader col-12 col-md-auto m-0">
-                    Amazon Reviews
+                    {this.props.companyOverviewStore.companyOverview.CompanyName} Reviews
                   </h1>
-                  <p class="col-auto minor mb-0 mt-xxsm mt-md-0">Updated Nov 12, 2020</p>
+                  <p class="col-auto minor mb-0 mt-xxsm mt-md-0">Updated {moment().format('ll')}</p>
                 </header>
                 <div></div>
                 <div class="gdGrid">
@@ -38,13 +104,13 @@ class CompanyReviews extends Component {
                         <div class=" v2__EIReviewsRatingsStylesV2__ratingInfoWrapper">
                           <div class="v2__EIReviewsRatingsStylesV2__ratingInfo" rel="nofollow">
                             <div class="v2__EIReviewsRatingsStylesV2__ratingNum v2__EIReviewsRatingsStylesV2__large">
-                              3.9
+                              {rating}
                             </div>
                             <span class="gdStars gdRatings common__StarStyles__gdStars">
                               <span class="rating">
                                 <span title="3.9"></span>
                               </span>
-                              <div font-size="md" class="css-1nka8iu">
+                              <div font-size="md" class={`css-1nka8iu${rating}s`}>
                                 <span role="button">★</span>
                                 <span role="button">★</span>
                                 <span role="button">★</span>
@@ -182,8 +248,8 @@ class CompanyReviews extends Component {
                         <div class="d-table-cell ">
                           <div class="donut-wrap d-table">
                             <div class="donut-text d-lg-table-cell pt-sm pt-lg-0 pl-lg-sm">
-                              <div>Jeff Bezos</div>
-                              <div class="numCEORatings">26,648 Ratings</div>
+                              <div> {this.props.companyOverviewStore.companyOverview.CEO}</div>
+                              <div class="numCEORatings">{/*26,648 Ratings*/}</div>
                             </div>
                           </div>
                         </div>
@@ -191,20 +257,31 @@ class CompanyReviews extends Component {
                     </div>
                   </div>
                 </div>
-                <SpecialReview reviewType={'Featured Review'} />
-                <SpecialReview reviewType={'Most Helpufl Positive Review'} />
-                <SpecialReview reviewType={'Most Helpufl Negative Review'} />
+                <SpecialReview
+                  review={this.props.companyOverviewStore.featuredReview}
+                  reviewType={'Featured Review'}
+                />
+                <SpecialReview
+                  review={this.props.companyOverviewStore.positiveReview}
+                  reviewType={'Most Helpufl Positive Review'}
+                />
+                <SpecialReview
+                  review={this.props.companyOverviewStore.negatieReview}
+                  reviewType={'Most Helpufl Negative Review'}
+                />
                 <div id="ReviewsRef">
                   <div id="ReviewsFeed" class=" mt">
                     <ol class=" empReviews emp-reviews-feed pl-0">
-                      <AllReview />{' '}
+                      {this.props.companyReviewsStore.ReviewList.map((review) => (
+                        <AllReview review={review} />
+                      ))}
                     </ol>
                   </div>
                 </div>
                 <div class="eiReviews__EIReviewsPageStyles__pagination noTabover mt">
                   <PaginationComponent
-                    // PageCount={this.props.companyListStore.PageCount}
-                    // PageNo={this.props.companyListStore.PageNo}
+                    PageCount={this.props.companyReviewsStore.PageCount}
+                    PageNo={this.props.companyReviewsStore.PageNo}
                     onPageClick={(e) => {
                       this.onPageClick(e);
                     }}
@@ -219,4 +296,31 @@ class CompanyReviews extends Component {
   }
 }
 
-export default CompanyReviews;
+// export default CompanyReviews;
+
+const mapStateToProps = (state) => {
+  const { companyOverviewStore, companyReviewsStore } = state.CompanyPageReducer;
+
+  return {
+    companyOverviewStore,
+    companyReviewsStore,
+  };
+};
+const mapDispatchToProps = (dispatch) => {
+  return {
+    updatespecialReviews: (payload) => {
+      dispatch({
+        type: updatespecialReviews,
+        payload,
+      });
+    },
+    updateCompanyReviewsStore: (payload) => {
+      dispatch({
+        type: updateCompanyReviewsStore,
+        payload,
+      });
+    },
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(CompanyReviews);

@@ -17,3 +17,7 @@ export const openProfileTabOnClick = 'open-profile-tab-on-click';
 export const updateContributionOption = 'update-contribution-option';
 export const showReplyModal = 'show-reply-modal';
 export const hideReplyModal = 'hide-reply-modal';
+export const switchTab = 'switch-tab';
+export const updateCompanyOverview = 'update-company-overview';
+export const updatespecialReviews = 'update-special-reviews';
+export const updateCompanyReviewsStore = 'update-company-reviewsStore';

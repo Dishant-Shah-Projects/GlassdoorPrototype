@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 class SpecialReview extends Component {
   constructor(props) {
@@ -6,6 +7,9 @@ class SpecialReview extends Component {
     this.state = {};
   }
   render() {
+    const review = this.props.review;
+
+    const ceoAopproval = review.CEOApproval ? 'green' : 'red';
     return (
       <div class="mt-std pt-std css-1ecrgor e16bqfyh0">
         <div class="d-flex align-items-center justify-content-between mb-std">
@@ -15,28 +19,28 @@ class SpecialReview extends Component {
           >
             {this.props.reviewType}
           </span>
-          <span class="css-5hofmb e16bqfyh1">Helpful (159)</span>
+          <span class="css-5hofmb e16bqfyh1">Helpful ({review.Helpful})</span>
         </div>
         <div id="companyOverView" class="row mt-std">
           <div class="d-none d-md-block col-md-1">
             <span class="css-1p55m0f css-1gxqx4q e160gew40">
-              <img
-                src="https://media.glassdoor.com/sql/6036/amazon-squarelogo-1552847650117.png"
-                alt="Amazon icon"
-              />
+              <img src={this.props.companyOverviewStore.companyOverview.ProfileImg} alt=" icon" />
             </span>
           </div>
           <div class="col-12 col-md-11 pl-md-lg">
             <div>
               <h2 class="mb-xsm mt-0 linkHeader">
-                <a href="/Reviews/Employee-Review-Amazon-RVW35439983.htm">
-                  "Overall a Great Company with High Standards"
-                </a>
+                <a href="/Reviews/Employee-Review-Amazon-RVW35439983.htm">{review.Headline}</a>
               </h2>
               <div class="d-flex flex-column flex-md-row align-items-md-center">
                 <div class="d-flex align-items-center mr-std  css-lpxl5y e16bqfyh2">
                   <div class="d-flex">
-                    <div font-size="sm" class="css-1gf6lcl">
+                    <div
+                      font-size="sm"
+                      class={`css-1nka8iu${review.Rating}s`}
+                      style={{ fontSize: '14px' }}
+                      //  class="css-1gf6lcl"
+                    >
                       <span role="button">★</span>
                       <span role="button">★</span>
                       <span role="button">★</span>
@@ -125,54 +129,36 @@ class SpecialReview extends Component {
                            */}{' '}
                 </div>
                 <span class="pt-xsm pt-md-0 css-5hofmb e16bqfyh1">
-                  Current Employee - FC Associate I
+                  {review.EmployeeStatus} Employee - {review.JobTitle}
                 </span>
               </div>
             </div>
             <div id="companyOverView" class="row mt-std">
               <div class="col-12 col-md-4 d-flex align-items-center">
-                <span class="d-inline-block mr-xxsm green css-ozq8ud e18lin5w1"></span>
+                <span
+                  class={`d-inline-block mr-xxsm ${
+                    review.Recommended ? 'green' : 'red'
+                  } css-ozq8ud e18lin5w1`}
+                ></span>
                 Recommends
               </div>
-              <div class="col-12 col-md-4 pt-xsm pt-md-0 d-flex align-items-center">
-                <span class="d-inline-block mr-xxsm green css-ozq8ud e18lin5w1"></span>
+              {/*<div class="col-12 col-md-4 pt-xsm pt-md-0 d-flex align-items-center">
+                <span class={`d-inline-block mr-xxsm ${review.Recommended?'green':'false'} css-ozq8ud e18lin5w1`}></span>
                 Positive Outlook
-              </div>
+                          </div>*/}
               <div class="col-12 col-md-4 pt-xsm pt-md-0 d-flex align-items-center">
-                <span class="d-inline-block mr-xxsm green css-ozq8ud e18lin5w1"></span>
+                <span class={`d-inline-block mr-xxsm ${ceoAopproval} css-ozq8ud e18lin5w1`}></span>
                 Approves of CEO
               </div>
             </div>
-            <p>I have been working at Amazon full-time for more than 3 years</p>
+            <p>{review.Descriptions}</p>
             <div class="my-std css-1raszzq e16x8fv01">
               <p class="strong">Pros</p>
-              <span data-test="">
-                Challenging sometimes fun work environment
-                <br />
-                Being part of a team
-                <br />
-                Doing great things
-                <br />
-                Great people to work with
-                <br />
-              </span>
+              <span data-test="">{review.Pros}</span>
             </div>
             <div class="my-std css-1raszzq e16x8fv01">
               <p class="strong">Cons</p>
-              <span data-test="">
-                Organization and communication can be a challenge to maneuver around Hours can
-                become a challenge when managing a hectic schedule Having to be available for any
-                shift in order to move up in
-              </span>
-            </div>
-            <div class="my-std css-1raszzq e16x8fv01">
-              <p class="strong">Advice to Management</p>
-              <span data-test="">
-                Work on the Leadership principles a little more. Help associates be the best version
-                of themselves for the company, encourage and inspire change. Be forward in approach!
-                Let it make sense.
-                <br />
-              </span>
+              <span data-test="">{review.Cons}</span>
             </div>
           </div>
         </div>
@@ -181,4 +167,11 @@ class SpecialReview extends Component {
   }
 }
 
-export default SpecialReview;
+// export default SpecialReview;
+const mapStateToProps = (state) => {
+  const { companyOverviewStore } = state.CompanyPageReducer;
+  return {
+    companyOverviewStore,
+  };
+};
+export default connect(mapStateToProps, null)(SpecialReview);

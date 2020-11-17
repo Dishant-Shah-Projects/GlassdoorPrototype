@@ -47,6 +47,7 @@ class CompanySearchResults extends Component {
   };
 
   componentDidMount() {
+    localStorage.setItem('companyID', '');
     this.commonFetch();
   }
 
@@ -58,6 +59,7 @@ class CompanySearchResults extends Component {
   openCompanyProfile = (event, CompanyID) => {
     // event.preventDefault();
     // event.stopPropagation();
+    localStorage.setItem('companyID', CompanyID);
     history.push('/CompanyPage');
     // this.setState({
     //   redirect: '/CompanyPage',

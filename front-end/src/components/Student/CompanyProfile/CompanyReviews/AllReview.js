@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import moment from 'moment';
+import { connect } from 'react-redux';
 
 class AllReview extends Component {
   constructor(props) {
@@ -6,6 +8,7 @@ class AllReview extends Component {
     this.state = {};
   }
   render() {
+    const review = this.props.review;
     return (
       <li class="empReview cf  " id="empReview_9642081">
         <div class="gdReview">
@@ -15,10 +18,10 @@ class AllReview extends Component {
                 class="date subtle small"
                 datetime="Sat Feb 20 2016 18:05:10 GMT-0800 (Pacific Standard Time)"
               >
-                February 20, 2016
+                {moment(review.DatePosted).format('ll')}
               </time>
             </div>
-            <div class="helpfulReviews helpfulCount small subtle">Helpful (2402)</div>
+            <div class="helpfulReviews helpfulCount small subtle">Helpful ({review.Helpful})</div>
           </div>
           <div id="companyReview" class="row mt">
             <div class="col-sm-1">
@@ -26,10 +29,10 @@ class AllReview extends Component {
                 <img
                   alt="Amazon Logo"
                   class="lazy lazy-loaded"
-                  data-original="https://media.glassdoor.com/sql/6036/amazon-squarelogo-1552847650117.png"
-                  data-original-2x="https://media.glassdoor.com/sqll/6036/amazon-squarelogo-1552847650117.png"
+                  //data-original="https://media.glassdoor.com/sql/6036/amazon-squarelogo-1552847650117.png"
+                  //data-original-2x="https://media.glassdoor.com/sqll/6036/amazon-squarelogo-1552847650117.png"
                   data-retina-ok="true"
-                  src="https://media.glassdoor.com/sql/6036/amazon-squarelogo-1552847650117.png"
+                  src={this.props.companyOverviewStore.companyOverview.ProfileImg}
                   style={{ opacity: '1' }}
                   title=""
                 />
@@ -39,7 +42,7 @@ class AllReview extends Component {
               <div class="">
                 <h2 class="h2 summary strong mt-0 mb-xsm">
                   <a href="/Reviews/Employee-Review-Amazon-RVW9642081.htm" class="reviewLink">
-                    "Exciting Work, Abusive Culture"
+                    {review.Headline}{' '}
                   </a>
                 </h2>
                 <div class="mr-xsm d-lg-inline-block">
@@ -47,13 +50,13 @@ class AllReview extends Component {
                     <div class=" v2__EIReviewsRatingsStylesV2__ratingInfoWrapper">
                       <div class="v2__EIReviewsRatingsStylesV2__ratingInfo" rel="nofollow">
                         <div class="v2__EIReviewsRatingsStylesV2__ratingNum v2__EIReviewsRatingsStylesV2__small">
-                          3.0
+                          {review.Rating}
                         </div>
                         <span class="gdStars gdRatings common__StarStyles__gdStars">
                           <span class="rating">
                             <span title="3.0"></span>
                           </span>
-                          <div font-size="sm" class="css-9iyzoc">
+                          <div font-size="sm" class={`css-9iyzoc${review.Rating}s`}>
                             <span role="button">★</span>
                             <span role="button">★</span>
                             <span role="button">★</span>
@@ -69,11 +72,7 @@ class AllReview extends Component {
                   <div class="author minor">
                     <span class="authorInfo">
                       <span class="authorJobTitle middle">
-                        Current Employee - Senior Engineering Manager
-                      </span>
-                      &nbsp;
-                      <span class="middle">
-                        in <span class="authorLocation">Seattle, WA</span>
+                        {review.EmployeeStatus} Employee - {review.JobTitle}
                       </span>
                     </span>
                   </div>
@@ -81,46 +80,33 @@ class AllReview extends Component {
                 <div>
                   <div id="companyReview" class="row reviewBodyCell recommends">
                     <div class="col-sm-4 d-flex align-items-center">
-                      <i class="sqLed middle sm mr-xsm red"></i>
+                      <i
+                        class={`sqLed middle sm mr-xsm ${review.Recommended ? 'green' : 'red'}`}
+                      ></i>
                       <span>Doesn't Recommend</span>
                     </div>
+
                     <div class="col-sm-4 d-flex align-items-center">
-                      <i class="sqLed middle sm mr-xsm green"></i>
-                      <span>Positive Outlook</span>
-                    </div>
-                    <div class="col-sm-4 d-flex align-items-center">
-                      <i class="sqLed middle sm mr-xsm green"></i>
+                      <i
+                        class={`sqLed middle sm mr-xsm ${review.Recommended ? 'green' : 'red'}`}
+                      ></i>
                       <span>Approves of CEO</span>
                     </div>
                   </div>
                 </div>
-                <p class="mainText mb-0">
-                  I have been working at Amazon full-time for more than 8 years
-                </p>
+                <p class="mainText mb-0">{review.Descriptions}</p>
               </div>
               <div class="">
                 <div class="v2__EIReviewDetailsV2__fullWidth v2__EIReviewDetailsV2__clickable">
                   <p class="strong mb-0 mt-xsm">Pros</p>
                   <p class="mt-0 mb-xsm v2__EIReviewDetailsV2__bodyColor v2__EIReviewDetailsV2__lineHeightLarge v2__EIReviewDetailsV2__isCollapsed  ">
-                    <span data-test="pros">
-                      Jeff Bezos and his "S-Team" are brilliant and continue to make great decisions
-                      for long-term growth. You work with smart people, you work on exciting
-                      projects, you are pushed to your limits...which can be rewarding when you
-                      accomplish great things. The diversity of the potential work and innovation
-                      can be very alluring. I've often called Amazon my "Sexy Mistress...she's
-                      emotionally abusive, but she's so sexy that I go back for more punishment."
-                    </span>
+                    <span data-test="pros">{review.Pros}</span>
                   </p>
                 </div>
                 <div class="v2__EIReviewDetailsV2__fullWidth v2__EIReviewDetailsV2__clickable">
                   <p class="strong mb-0 mt-xsm">Cons</p>
                   <p class="mt-0 mb-xsm v2__EIReviewDetailsV2__bodyColor v2__EIReviewDetailsV2__lineHeightLarge v2__EIReviewDetailsV2__isCollapsed  ">
-                    <span data-test="cons">
-                      The management process is abusive, and I'm currently a manager. I've seen too
-                      much "behind the wall" and hate how our individual performers can be treated.
-                      You are forced to ride people and stack rank employees...I've been forced to
-                      give good employees bad overall ratings because of politics and stack ranking.
-                    </span>
+                    <span data-test="cons">{review.Cons}</span>
                   </p>
                 </div>
 
@@ -199,7 +185,7 @@ class AllReview extends Component {
                   </div>
                   <div class="d-flex">
                     <div class="mr-md">
-                      <button class="gd-ui-button  css-glrvaa">Helpful (2402)</button>
+                      <button class="gd-ui-button  css-glrvaa">Helpful ({review.Helpful})</button>
                     </div>
                   </div>
                 </div>
@@ -212,4 +198,13 @@ class AllReview extends Component {
   }
 }
 
-export default AllReview;
+// export default AllReview;
+const mapStateToProps = (state) => {
+  const { companyOverviewStore } = state.CompanyPageReducer;
+
+  return {
+    companyOverviewStore,
+  };
+};
+
+export default connect(mapStateToProps, null)(AllReview);
