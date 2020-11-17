@@ -73,143 +73,42 @@ const fetchAvgRating = async (ID) => {
 
 // fetch the results of the company search
 const searchCompany = async (req, res) => {
-  const { SearchString, State, PageNo } = url.parse(req.url, true).query;
-  let resultData = [];
-  const companyResult = [];
-  if (SearchString.length === 0 && State.length === 0) {
-    const companyResults = await Company.find()
-      .limit(10)
-      .skip(PageNo * 10)
-      .exec();
-    const count = await Company.find().countDocuments();
+  try {
+    const { SearchString, State, PageNo } = url.parse(req.url, true).query;
+    const filterArray = [];
+    if (SearchString.length !== 0) {
+      filterArray.push({ CompanyName: { $regex: `${SearchString}`, $options: 'i' } });
+    }
+    if (State.length !== 0) {
+      filterArray.push({ State });
+    }
+    let companyResults = null;
+    let count = 0;
+    if (filterArray.length !== 0) {
+      companyResults = await Company.find({ $and: filterArray })
+        .limit(10)
+        .skip(PageNo * 10)
+        .exec();
+      count = await Company.find({ $and: filterArray }).countDocuments();
+    } else {
+      companyResults = await Company.find()
+        .limit(10)
+        .skip(PageNo * 10)
+        .exec();
+      count = await Company.find().countDocuments();
+    }
+
     const noOfPages = Math.ceil(count / 10);
-    for (let i = 0; i < companyResults.length; i += 1) {
-      const ID = companyResults[i].CompanyID;
-      const tempObj = {};
-      tempObj.CompanyID = companyResults[i].CompanyID;
-      tempObj.ProfileImg = companyResults[i].ProfileImg;
-      tempObj.CompanyName = companyResults[i].CompanyName;
-      tempObj.City = companyResults[i].City;
-      tempObj.State = companyResults[i].State;
-      tempObj.Website = companyResults[i].Website;
-      tempObj.GeneralReviewCount = companyResults[i].GeneralReviewCount;
-      tempObj.SalaryReviewCount = companyResults[i].SalaryReviewCount;
-      tempObj.InterviewReviewCount = companyResults[i].InterviewReviewCount;
-      // eslint-disable-next-line no-await-in-loop
-      const avgRating = await fetchAvgRating(ID);
-      tempObj.AvgRating = Math.round(avgRating * 10) / 10;
-      companyResult.push(tempObj);
-    }
-    resultData = [companyResult, count, noOfPages];
+    const resultData = [companyResults, count, noOfPages];
     res.writeHead(200, {
       'Content-Type': 'application/json',
     });
     res.end(JSON.stringify(resultData));
-  } else if (SearchString.length !== 0 && State.length === 0) {
-    const companyResults = await Company.find({
-      CompanyName: { $regex: `${SearchString}`, $options: 'i' },
-    })
-      .limit(10)
-      .skip(PageNo * 10)
-      .exec();
-    const count = await Company.find().countDocuments({
-      CompanyName: { $regex: `${SearchString}`, $options: 'i' },
-    });
-    const noOfPages = Math.ceil(count / 4);
-    for (let i = 0; i < companyResults.length; i += 1) {
-      const ID = companyResults[i].CompanyID;
-      const tempObj = {};
-      tempObj.CompanyName = companyResults[i].CompanyID;
-      tempObj.ProfileImg = companyResults[i].ProfileImg;
-      tempObj.CompanyName = companyResults[i].CompanyName;
-      tempObj.City = companyResults[i].City;
-      tempObj.State = companyResults[i].State;
-      tempObj.Website = companyResults[i].Website;
-      tempObj.GeneralReviewCount = companyResults[i].GeneralReviewCount;
-      tempObj.SalaryReviewCount = companyResults[i].SalaryReviewCount;
-      tempObj.InterviewReviewCount = companyResults[i].InterviewReviewCount;
-      // eslint-disable-next-line no-await-in-loop
-      const avgRating = await fetchAvgRating(ID);
-      tempObj.AvgRating = Math.round(avgRating * 10) / 10;
-      companyResult.push(tempObj);
-    }
-    resultData = [companyResult, count, noOfPages];
-    res.writeHead(200, {
+  } catch (error) {
+    res.writeHead(500, {
       'Content-Type': 'application/json',
     });
-    res.end(JSON.stringify(resultData));
-  } else if (SearchString.length === 0 && State.length !== 0) {
-    const companyResults = await Company.find({
-      State: { $regex: `${SearchString}`, $options: 'i' },
-    })
-      .limit(10)
-      .skip(PageNo * 10)
-      .exec();
-    const count = await Company.find().countDocuments({
-      State: { $regex: `${SearchString}`, $options: 'i' },
-    });
-    const noOfPages = Math.ceil(count / 4);
-    for (let i = 0; i < companyResults.length; i += 1) {
-      const ID = companyResults[i].CompanyID;
-      const tempObj = {};
-      tempObj.CompanyName = companyResults[i].CompanyID;
-      tempObj.CompanyName = companyResults[i].CompanyName;
-      tempObj.ProfileImg = companyResults[i].ProfileImg;
-      tempObj.City = companyResults[i].City;
-      tempObj.State = companyResults[i].State;
-      tempObj.Website = companyResults[i].Website;
-      tempObj.GeneralReviewCount = companyResults[i].GeneralReviewCount;
-      tempObj.SalaryReviewCount = companyResults[i].SalaryReviewCount;
-      tempObj.InterviewReviewCount = companyResults[i].InterviewReviewCount;
-      // eslint-disable-next-line no-await-in-loop
-      const avgRating = await fetchAvgRating(ID);
-      tempObj.AvgRating = Math.round(avgRating * 10) / 10;
-      companyResult.push(tempObj);
-    }
-    resultData = [companyResult, count, noOfPages];
-    res.writeHead(200, {
-      'Content-Type': 'application/json',
-    });
-    res.end(JSON.stringify(resultData));
-  } else {
-    const companyResults = await Company.find({
-      $and: [
-        { CompanyName: { $regex: `${SearchString}`, $options: 'i' } },
-        { State: { $regex: `${State}`, $options: 'i' } },
-      ],
-    })
-      .limit(10)
-      .skip(PageNo * 10)
-      .exec();
-    const count = await Company.find().countDocuments({
-      $and: [
-        { CompanyName: { $regex: `${SearchString}`, $options: 'i' } },
-        { State: { $regex: `${State}`, $options: 'i' } },
-      ],
-    });
-    const noOfPages = Math.ceil(count / 4);
-    for (let i = 0; i < companyResults.length; i += 1) {
-      const ID = companyResults[i].CompanyID;
-      const tempObj = {};
-      tempObj.CompanyName = companyResults[i].CompanyID;
-      tempObj.ProfileImg = companyResults[i].ProfileImg;
-      tempObj.CompanyName = companyResults[i].CompanyName;
-      tempObj.City = companyResults[i].City;
-      tempObj.State = companyResults[i].State;
-      tempObj.Website = companyResults[i].Website;
-      tempObj.GeneralReviewCount = companyResults[i].GeneralReviewCount;
-      tempObj.SalaryReviewCount = companyResults[i].SalaryReviewCount;
-      tempObj.InterviewReviewCount = companyResults[i].InterviewReviewCount;
-      // eslint-disable-next-line no-await-in-loop
-      const avgRating = await fetchAvgRating(ID);
-      tempObj.AvgRating = Math.round(avgRating * 10) / 10;
-      companyResult.push(tempObj);
-    }
-    resultData = [companyResult, count, noOfPages];
-    res.writeHead(200, {
-      'Content-Type': 'application/json',
-    });
-    res.end(JSON.stringify(resultData));
+    res.end('Network Error');
   }
 };
 
@@ -616,16 +515,18 @@ const companyReview = async (req, res) => {
   let con = null;
   try {
     const resultData = [];
-    const count = 'SELECT count(*) as reviewcount FROM GENERAL_REVIEW WHERE CompanyID=?;';
+    const count =
+      'SELECT count(*) as reviewcount FROM GENERAL_REVIEW WHERE CompanyID=? AND Status = ?;';
 
     const offset = PageNo * 10;
-    const searchQuery = 'SELECT* FROM GENERAL_REVIEW WHERE CompanyID=? LIMIT 10 OFFSET ?;';
+    const searchQuery =
+      'SELECT * FROM GENERAL_REVIEW WHERE CompanyID=? AND Status = ? LIMIT 10 OFFSET ?;';
     con = await mysqlConnection();
-    const [results] = await con.query(count, CompanyID);
+    const [results] = await con.query(count, [CompanyID, 'Approved']);
     resultData.push({ count: results[0].reviewcount });
     const no = Math.ceil(results[0].reviewcount / 10);
     resultData.push({ noOfPages: no });
-    const [results2] = await con.query(searchQuery, [CompanyID, offset]);
+    const [results2] = await con.query(searchQuery, [CompanyID, 'Approved', offset]);
     resultData.push(results2);
     con.end();
     res.writeHead(200, { 'content-type': 'text/json' });
@@ -729,43 +630,43 @@ const addCompanyReview = async (req, res) => {
 };
 
 // get the company reviews without pagination
-const getAllReview = async (req, res) => {
-  // eslint-disable-next-line no-unused-vars
-  const { CompanyID } = req.query;
-  let con = null;
-  try {
-    const redisKey = `getAllReview-CompanyID=${CompanyID}`;
-    redisClient.get(redisKey, async (err, data) => {
-      // data is available in Redis
-      if (data) {
-        res.writeHead(200, { 'content-type': 'text/json' });
-        res.end(data);
-      } else {
-        try {
-          const searchQuery = 'SELECT * FROM GENERAL_REVIEW WHERE CompanyID=?;';
-          con = await mysqlConnection();
-          const [results2] = await con.query(searchQuery, CompanyID);
-          con.end();
-          // Add to redis
-          redisClient.setex(redisKey, 36000, JSON.stringify(results2));
-          res.writeHead(200, { 'content-type': 'text/json' });
-          res.end(JSON.stringify(results2));
-        } catch (error) {
-          res.writeHead(500, { 'content-type': 'text/json' });
-          res.end(JSON.stringify('Network Error'));
-        }
-      }
-    });
-  } catch (error) {
-    res.writeHead(500, { 'content-type': 'text/json' });
-    res.end(JSON.stringify('Network Error'));
-  } finally {
-    if (con) {
-      con.end();
-    }
-  }
-  return res;
-};
+// const getAllReview = async (req, res) => {
+//   // eslint-disable-next-line no-unused-vars
+//   const { CompanyID } = req.query;
+//   let con = null;
+//   try {
+//     const redisKey = `getAllReview-CompanyID=${CompanyID}`;
+//     redisClient.get(redisKey, async (err, data) => {
+//       // data is available in Redis
+//       if (data) {
+//         res.writeHead(200, { 'content-type': 'text/json' });
+//         res.end(data);
+//       } else {
+//         try {
+//           const searchQuery = 'SELECT * FROM GENERAL_REVIEW WHERE CompanyID=?;';
+//           con = await mysqlConnection();
+//           const [results2] = await con.query(searchQuery, CompanyID);
+//           con.end();
+//           // Add to redis
+//           redisClient.setex(redisKey, 36000, JSON.stringify(results2));
+//           res.writeHead(200, { 'content-type': 'text/json' });
+//           res.end(JSON.stringify(results2));
+//         } catch (error) {
+//           res.writeHead(500, { 'content-type': 'text/json' });
+//           res.end(JSON.stringify('Network Error'));
+//         }
+//       }
+//     });
+//   } catch (error) {
+//     res.writeHead(500, { 'content-type': 'text/json' });
+//     res.end(JSON.stringify('Network Error'));
+//   } finally {
+//     if (con) {
+//       con.end();
+//     }
+//   }
+//   return res;
+// };
 
 // add the salary review and increment the salary review count
 const salaryAddReview = async (req, res) => {
@@ -883,5 +784,5 @@ module.exports = {
   addCompanyReview,
   salaryAddReview,
   featureReview,
-  getAllReview,
+  // getAllReview,
 };
