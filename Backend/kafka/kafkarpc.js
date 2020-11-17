@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable no-multi-assign */
 /* eslint-disable func-names */
 /* eslint-disable no-console */
@@ -46,7 +47,7 @@ KafkaRPC.prototype.makeRequest = function (topic_name, content, callback) {
 
   // make sure we have a response topic
   self.setupResponseQueue(self.producer, topic_name, () => {
-    console.log('in response');
+    // console.log('in response');
     // put the request on a topic
 
     const payloads = [
@@ -60,12 +61,12 @@ KafkaRPC.prototype.makeRequest = function (topic_name, content, callback) {
         partition: 0,
       },
     ];
-    console.log('in response1');
-    console.log(self.producer.ready);
+    // console.log('in response1');
+    // console.log(self.producer.ready);
     self.producer.send(payloads, (err, data) => {
-      console.log('in response2');
+      // console.log('in response2');
       if (err) console.log(err);
-      console.log(data);
+      // console.log(data);
     });
   });
 };
@@ -81,7 +82,7 @@ KafkaRPC.prototype.setupResponseQueue = function (producer, topic_name, next) {
   // subscribe to messages
   const consumer = self.connection.getConsumer('response_topic2');
   consumer.on('message', (message) => {
-    console.log('msg received');
+    // console.log('msg received');
     const data = JSON.parse(message.value);
     // get the correlationId
     const { correlationId } = data;

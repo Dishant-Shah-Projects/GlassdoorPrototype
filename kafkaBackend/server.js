@@ -34,12 +34,12 @@ function handleTopicRequest(topic_name, fname) {
   const producer = connection.getProducer();
   console.log('server is running ');
   consumer.on('message', (message) => {
-    console.log(`message received for ${topic_name} `, fname);
-    console.log(JSON.stringify(message.value));
+    // console.log(`message received for ${topic_name} `, fname);
+    // console.log(JSON.stringify(message.value));
     const data = JSON.parse(message.value);
 
     fname.handle_request(data.data, (err, res) => {
-      console.log(`after handle${res}`);
+      // console.log(`after handle${res}`);
       const payloads = [
         {
           topic: data.replyTo,
@@ -51,7 +51,7 @@ function handleTopicRequest(topic_name, fname) {
         },
       ];
       producer.send(payloads, (err, out) => {
-        console.log(out);
+        // console.log(out);
       });
     });
   });
