@@ -60,7 +60,7 @@ BEGIN
 declare exit handler for sqlexception rollback;
 start transaction;
 SELECT * FROM GENERAL_REVIEW 
-WHERE CompanyID =  _ID;
+WHERE CompanyID =  _ID AND Status='Approved';
 commit;
 END$$
 DELIMITER ;
@@ -75,6 +75,20 @@ start transaction;
 UPDATE APPLICATION_RECEIVED
 SET Withdrawn = 1
 WHERE JobID = _JobID AND StudentID =_StudentID;
+commit;
+END$$
+DELIMITER ;
+
+-- Procedure to add jobs in the APPILCATION_JOB table
+drop procedure  if exists reviewInsert;
+DELIMITER $$
+CREATE PROCEDURE `reviewInsert` (IN _CompanyID bigint,IN _StudentID bigint,IN _CompanyName varchar(60), IN _Pros varchar(150), IN _Cons varchar(150),IN _Descriptions varchar(300),IN _Rating int, IN _EmployeeStatus enum('Current','Former'),IN _Status enum('NotApproved','Approved','Disapproved'),IN _Helpful bigint,IN _CEOApproval tinyint,IN _JobType enum('FullTime','PartTime','Contract','Intern','Freelance'),IN _Recommended tinyint, IN _JobTitle varchar(45), IN _Headline varchar(80),IN _DatePosted date, IN _Response varchar(300), In _Favorite tinyint )
+BEGIN
+declare exit handler for sqlexception rollback;
+start transaction;
+INSERT INTO GENERAL_REVIEW (CompanyID, StudentID, CompanyName,Pros,Cons,Descriptions,Rating,EmployeeStatus,Status,Helpful,CEOApproval,JobType,Recommended,JobTitle,Headline,DatePosted,Response,Favorite)
+VALUES (_CompanyID, _StudentID, _CompanyName,_Pros,_Cons,_Descriptions,_Rating,_EmployeeStatus,_Status,_Helpful,_CEOApproval,_JobType,_Recommended,_JobTitle,_Headline,_DatePosted,_Response,_Favorite);
+SELECT LAST_INSERT_ID() AS ID;
 commit;
 END$$
 DELIMITER ;
