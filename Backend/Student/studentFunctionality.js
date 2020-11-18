@@ -766,6 +766,133 @@ const featureReview = async (req, res) => {
   return res;
 };
 
+// get the interview Review for the company
+const getInterviewReivew = async (req, res) => {
+  const { CompanyID, PageNo } = req.query;
+  try {
+    const company = await Company.findOne({ CompanyID }).select('InterviewReview');
+    const count = company.InterviewReview.length;
+    const noOfPages = Math.ceil(count / 10);
+    const resultObj = {};
+    resultObj.interviews = company.InterviewReview.slice(PageNo * 10, PageNo * 10 + 10);
+    resultObj.count = count;
+    resultObj.noOfPages = noOfPages;
+    res.writeHead(200, { 'content-type': 'text/json' });
+    res.end(JSON.stringify(resultObj));
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  }
+  return res;
+};
+
+// add the salary review and increment the salary review count
+const interviewAddReview = async (req, res) => {
+  // eslint-disable-next-line no-unused-vars
+  const {
+    CompanyID,
+    OverallExperience,
+    JobTitle,
+    Description,
+    Difficulty,
+    OfferStatus,
+    InterviewQuestions,
+    Answers,
+  } = req.body;
+  try {
+    const review = {
+      Status: 'Not Approved',
+      DatePosted: Date.now(),
+      Helpful: 0,
+      OverallExperience,
+      JobTitle,
+      Description,
+      Difficulty,
+      OfferStatus,
+      InterviewQuestions,
+      Answers,
+    };
+    Company.findOneAndUpdate(
+      { CompanyID },
+      {
+        $push: {
+          InterviewReview: review,
+        },
+      },
+      { safe: true, upsert: true, new: true },
+      // eslint-disable-next-line no-unused-vars
+      (err) => {
+        if (err) {
+          res.writeHead(500, { 'content-type': 'text/json' });
+          res.end(JSON.stringify('Network'));
+        } else {
+          Company.findOneAndUpdate(
+            { CompanyID },
+            { $inc: { InterviewReviewCount: 1 } },
+
+            (error, results) => {
+              if (error) {
+                res.writeHead(500, { 'content-type': 'text/json' });
+                res.end(JSON.stringify('Network'));
+              }
+              if (results) {
+                res.writeHead(200, { 'content-type': 'text/json' });
+                res.end(JSON.stringify('Interview Review Added'));
+              }
+            }
+          );
+        }
+      }
+    );
+  } catch (error) {
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  }
+
+  return res;
+};
+
+// get the interview Data for the company
+const interviewData = async (req, res) => {
+  const { CompanyID } = req.query;
+  try {
+    const company = await Company.findOne({ CompanyID }).select('InterviewReview');
+    const count = company.InterviewReview.length;
+    const resultObj = {};
+    // eslint-disable-next-line func-names
+    resultObj.negative = company.InterviewReview.filter(function (item) {
+      if (item.OverallExperience === 'Negative') {
+        return true;
+      }
+      return false;
+    }).length;
+    resultObj.positive = company.InterviewReview.filter(function (item) {
+      if (item.OverallExperience === 'Positive') {
+        return true;
+      }
+      return false;
+    }).length;
+    resultObj.neutral = company.InterviewReview.filter(function (item) {
+      if (item.OverallExperience === 'Neutral') {
+        return true;
+      }
+      return false;
+    }).length;
+    resultObj.totalInterviews = count;
+    resultObj.avgDifficulty =
+      company.InterviewReview.reduce((total, next) => total + next.Difficulty, 0) /
+      company.InterviewReview.length;
+    res.writeHead(200, { 'content-type': 'text/json' });
+    res.end(JSON.stringify(resultObj));
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  }
+  return res;
+};
+
 module.exports = {
   navbar,
   searchCompany,
@@ -784,5 +911,8 @@ module.exports = {
   addCompanyReview,
   salaryAddReview,
   featureReview,
+  getInterviewReivew,
+  interviewAddReview,
+  interviewData,
   // getAllReview,
 };

@@ -86,8 +86,7 @@ const CompanySchema = new mongoose.Schema(
         JobTitle: { type: String },
         Description: { type: String },
         Difficulty: {
-          type: String,
-          enum: ['Easy', 'Average', 'Difficult'],
+          type: Number,
         },
         OfferStatus: {
           type: String,
