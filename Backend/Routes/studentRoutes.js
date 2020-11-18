@@ -4,7 +4,7 @@ const Router = express.Router();
 
 const kafka = require('../kafka/client');
 
-const { uploadFile } = require('../S3Bucket/s3BucketUpload');
+const { uploadFile, uploadmultiFile } = require('../S3Bucket/s3BucketUpload');
 const {
   navbar,
   searchCompany,
@@ -106,6 +106,12 @@ Router.post('/profileUpdate', checkAuth, async (req, res) => {
 // upload to e3 bucket and return the URL of file.
 Router.post('/upload', checkAuth, async (req, res) => {
   const value = await uploadFile(req, res);
+  return value;
+});
+
+// upload multiple files to e3 bucket and return the URL of file. USE multfiles as the field name
+Router.post('/uploadMultiple', checkAuth, async (req, res) => {
+  const value = await uploadmultiFile(req, res);
   return value;
 });
 

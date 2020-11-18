@@ -1,3 +1,4 @@
+/* eslint-disable func-names */
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-underscore-dangle */
 const bcrypt = require('bcrypt');
