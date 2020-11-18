@@ -26,6 +26,7 @@ const mult = multer({
 const imageUpload = mult.single('file');
 const multiupload = mult.array('multfiles');
 
+// single file upload
 const uploadFile = async (req, res) => {
   try {
     imageUpload(req, res, function (err) {
@@ -49,6 +50,7 @@ const uploadFile = async (req, res) => {
   return res;
 };
 
+// multiple file upload
 const uploadmultiFile = async (req, res) => {
   try {
     multiupload(req, res, function (err) {
