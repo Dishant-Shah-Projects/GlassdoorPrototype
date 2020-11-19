@@ -112,5 +112,16 @@ commit;
 END$$
 DELIMITER ;
 
-
+-- Procedure to update the application status
+drop procedure  if exists updateApplicationsStatus;
+DELIMITER $$
+CREATE PROCEDURE `updateApplicationsStatus` (IN _JobID bigint, IN _StudentID bigint, IN _Status varchar(30))
+BEGIN
+declare exit handler for sqlexception rollback;
+start transaction;
+UPDATE APPLICATION_RECEIVED SET Status = _Status
+WHERE JobID = _JobID AND  StudentID = _StudentID;
+commit;
+END$$
+DELIMITER ;
 
