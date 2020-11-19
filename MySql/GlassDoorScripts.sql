@@ -64,3 +64,38 @@ CREATE TABLE `APPLICATION_RECEIVED` (
   PRIMARY KEY (`JobID`,`StudentID`),
   FOREIGN KEY (`JobID`) REFERENCES `APPLICATION_JOB`(`JobID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `SALARY_REVIEW` (
+  `SalaryReviewID` bigint auto_increment primary key,
+  `CompanyID` bigint not null,
+  `StudentID` bigint not null,
+  `Status` enum('Not Approved', 'Approved', 'Disapproved') DEFAULT 'Not Approved',
+  `DatePosted` date NOT NULL,
+  `BaseSalary` bigint,
+  `Bonuses` bigint,
+  `JobTitle` varchar(50),
+  `Years` int,
+  `StreetAddress` varchar(45),
+  `City` varchar(45),
+  `State` varchar(45),
+  `Zip` int  
+);
+
+CREATE TABLE `INTERVIEW_REVIEW` (
+  `InterviewReviewID` bigint auto_increment primary key,
+  `CompanyID` bigint not null,
+  `StudentID` bigint not null,
+  `Status` enum('Not Approved', 'Approved', 'Disapproved') DEFAULT 'Not Approved',
+  `Helpful` bigint default 0,
+  `DatePosted` date NOT NULL,
+  `OverallExperience` enum('Positive', 'Negative', 'Neutral'),
+  `JobTitle` varchar(50),
+  `Description` varchar(350),
+  `Difficulty` int,
+  `OfferStatus` enum('Rejected', 'Accepted'),
+  `InterviewQuestions` varchar(350),
+  `Answers` varchar(400)
+);
+
+ALTER TABLE APPLICATION_RECEIVED
+ADD COLUMN ApplicationID bigint unique;
