@@ -8,7 +8,7 @@ const s3Storage = new AWS.S3({
   secretAccessKey: process.env.SECRETACCESSKEY,
 });
 
-const imageUpload = multer({
+const mult = multer({
   storage: multerS3({
     s3: s3Storage,
     bucket: BUCKET_NAME,
@@ -17,14 +17,16 @@ const imageUpload = multer({
     // eslint-disable-next-line func-names
     // eslint-disable-next-line object-shorthand
     key: function (req, file, cb) {
-      console.log(req.body);
       const folderName = 'glassdoor-proj';
-      console.log('Multer Called', folderName);
       cb(null, `${folderName}/${Date.now().toString()}${file.originalname}`);
     },
   }),
-}).single('file');
+});
 
+const imageUpload = mult.single('file');
+const multiupload = mult.array('multfiles');
+
+// single file upload
 const uploadFile = async (req, res) => {
   try {
     imageUpload(req, res, function (err) {
@@ -33,8 +35,6 @@ const uploadFile = async (req, res) => {
       } else if (err) {
         res.json({ status: 400, error: err.message });
       } else {
-        console.log(req.file.location);
-
         res.writeHead(200, {
           'Content-Type': 'text/plain',
         });
@@ -50,6 +50,33 @@ const uploadFile = async (req, res) => {
   return res;
 };
 
+// multiple file upload
+const uploadmultiFile = async (req, res) => {
+  try {
+    multiupload(req, res, function (err) {
+      if (err instanceof multer.MulterError) {
+        res.json({ status: 400, error: err.message });
+      } else if (err) {
+        res.json({ status: 400, error: err.message });
+      } else {
+        // console.log(req.file.location);
+        const result = req.files.map((a) => a.location);
+        res.writeHead(200, {
+          'Content-Type': 'text/plain',
+        });
+        res.end(JSON.stringify(result));
+      }
+    });
+  } catch (error) {
+    res.writeHead(401, {
+      'Content-Type': 'text/plain',
+    });
+    res.end('Network Error');
+  }
+  return res;
+};
+
 module.exports = {
   uploadFile,
+  uploadmultiFile,
 };

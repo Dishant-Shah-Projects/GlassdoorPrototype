@@ -87,14 +87,14 @@ const companyProfileUpdate = async (req, res) => {
 // get the Company Review for the company
 const companyReviews = async (req, res) => {
   // eslint-disable-next-line no-console
-  const ID = req.query.CompanyID;
+  const { CompanyID } = req.query;
   let con = null;
   // eslint-disable-next-line no-console
   try {
     const userInsertProcedure = 'CALL fetchReview(?)';
 
     con = await mysqlConnection();
-    const [results, fields] = await con.query(userInsertProcedure, ID);
+    const [results, fields] = await con.query(userInsertProcedure, CompanyID);
     con.end();
     if (results) {
       res.writeHead(200, { 'content-type': 'text/json' });
