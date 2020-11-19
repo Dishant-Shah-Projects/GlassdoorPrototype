@@ -25,6 +25,9 @@ import CommonContribute from './Student/Contributions/CommonContribute';
 import CompanyPage from './Student/CompanyProfile/CompanyPage';
 import ReviewForm from './Student/CompanyProfile/CompanyReviews/ReviewForm';
 import InterviewForm from './Student/CompanyProfile/CompanyInterviews/InterviewForm';
+import PhotoUploadForm from './Student/CompanyProfile/CompanyPhotos/PhotoUploadForm';
+import JobApplicationPage from './Student/CompanyProfile/CompanyNavbar/JobApplicationPage';
+import SalaryForm from './Student/CompanyProfile/CompanySalaries/SalaryForm';
 class Main extends Component {
   // constructor(props) {
   //     super(props);
@@ -84,6 +87,9 @@ class Main extends Component {
         <Route path="/" component={CommonNavBar} />
         <Route path="/ReviewForm" component={ReviewForm} />
         <Route path="/InterviewForm" component={InterviewForm} />
+        <Route path="/PhotoUploadForm" component={PhotoUploadForm} />
+        <Route path="/PhotoUploadForm" component={PhotoUploadForm} />
+        <Route path="/SalaryForm" component={SalaryForm} />
         <Route path="/Login" component={Login} />
         <Route path="/CompanySearchResults" component={CompanySearchResults} />
         <Route path="/Employer" component={EmployerHome} />
