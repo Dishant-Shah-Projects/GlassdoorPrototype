@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 /* eslint-disable no-unused-vars */
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -371,6 +372,7 @@ const jobsApplicantUpdate = async (req, res) => {
   return res;
 };
 
+// Get the applicant profile details
 const jobsApplicantProfile = async (req, res) => {
   try {
     const { StudentID } = req.query;
@@ -411,6 +413,50 @@ const jobsApplicantProfile = async (req, res) => {
   }
 };
 
+// Get the job statistics
+const report = async (req, res) => {
+  let con = null;
+  try {
+    const resultApplication = {};
+    const finalResult = [];
+    const jobID = [];
+    const { CompanyID, PageNo } = req.query;
+    const year = new Date().getFullYear();
+    const date = new Date(year, 0, 1);
+    const jobDataFetched = await Job.find({ CompanyID, PostedDate: { $lt: date } })
+      .limit(5)
+      .skip(PageNo * 5);
+    con = await mysqlConnection();
+    for (let i = 0; i < jobDataFetched.length; i += 1) {
+      // jobID.push(data[i].JobID);
+      const jobData = jobDataFetched[i];
+      resultApplication.jobDetails = { jobData };
+      let getQuery = 'SELECT * FROM APPLICATION_RECEIVED WHERE JobID = ?';
+      let [results] = await con.query(getQuery, jobData.JobID);
+      resultApplication.Applied = { results };
+      getQuery = 'SELECT * FROM APPLICATION_RECEIVED WHERE JobID = ? AND STATUS = ?';
+      [results] = await con.query(getQuery, [jobData.JobID, 'Hired']);
+      resultApplication.Selected = { results };
+      getQuery = 'SELECT * FROM APPLICATION_RECEIVED WHERE JobID = ? AND STATUS = ?';
+      [results] = await con.query(getQuery, [jobData.JobID, 'Rejected']);
+      resultApplication.Rejected = { results };
+      finalResult.push(resultApplication);
+    }
+    con.end();
+    const count = await Job.find({ CompanyID, PostedDate: { $lt: date } }).countDocuments();
+    const noOfPages = Math.ceil(count / 10);
+    res.writeHead(200, { 'content-type': 'text/json' });
+    const output = { statsData: finalResult, count, noOfPages };
+    res.end(JSON.stringify(output));
+  } catch (error) {
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  } finally {
+    if (con) {
+      con.end();
+    }
+  }
+};
 module.exports = {
   getCompanyProfile,
   companyProfileUpdate,
@@ -423,4 +469,5 @@ module.exports = {
   jobsApplications,
   jobsApplicantUpdate,
   jobsApplicantProfile,
+  report,
 };
