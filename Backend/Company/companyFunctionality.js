@@ -370,6 +370,46 @@ const jobsApplicantUpdate = async (req, res) => {
   return res;
 };
 
+const jobsApplicantProfile = async (req, res) => {
+  try {
+    const { StudentID } = req.query;
+    Student.findOne(
+      { StudentID },
+      {
+        _id: 0,
+        Name: 1,
+        ProfilePicURL: 1,
+        Gender: 1,
+        Disability: 1,
+        VeteranStatus: 1,
+        Race: 1,
+        Ethnicity: 1,
+        PreferredJobTitle: 1,
+        JobStatus: 1,
+        CurrentJobTitle: 1,
+        TargetSalary: 1,
+        OpentoRelocation: 1,
+      },
+      (err, data) => {
+        if (err) {
+          res.writeHead(500, { 'content-type': 'text/json' });
+          res.end(JSON.stringify('Network Error'));
+        }
+        if (data) {
+          res.writeHead(200, { 'content-type': 'text/json' });
+          res.end(JSON.stringify(data));
+        } else {
+          res.writeHead(400, { 'content-type': 'text/json' });
+          res.end(JSON.stringify('Not found'));
+        }
+      }
+    );
+  } catch (error) {
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  }
+};
+
 module.exports = {
   getCompanyProfile,
   companyProfileUpdate,
@@ -381,4 +421,5 @@ module.exports = {
   getJobs,
   jobsApplications,
   jobsApplicantUpdate,
+  jobsApplicantProfile,
 };

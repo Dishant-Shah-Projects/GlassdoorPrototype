@@ -29,6 +29,23 @@ const StudentSchema = new mongoose.Schema({
     ],
     default: 'Select',
   },
+  Ethicity: {
+    type: String,
+    enum: [
+      'Indigenous American or Alaska Native',
+      'East Asian',
+      'South Asian',
+      'Southeast Asian',
+      'Native Hawaiian or Other Pacific Islander',
+      'Middle Eastern',
+      'Black or African American',
+      'Hispanic or Latinx',
+      'White',
+      'Prefer to Self Describe',
+      'Prefer Not to Say',
+    ],
+    default: 'Select',
+  },
   JobType: [
     {
       type: String,
