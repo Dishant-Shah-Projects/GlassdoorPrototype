@@ -344,6 +344,32 @@ const jobsApplications = async (req, res) => {
   return res;
 };
 
+// update the applications status
+const jobsApplicantUpdate = async (req, res) => {
+  const { JobID, StudentID, Status } = req.query;
+  let con = null;
+  try {
+    const updateApplicationsStatusQuery = 'CALL updateApplicationsStatus(?,?,?)';
+    con = await mysqlConnection();
+    const [results, fields] = await con.query(updateApplicationsStatusQuery, [
+      JobID,
+      StudentID,
+      Status,
+    ]);
+    con.end();
+    res.writeHead(200, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Updated the status'));
+  } catch (error) {
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  } finally {
+    if (con) {
+      con.end();
+    }
+  }
+  return res;
+};
+
 module.exports = {
   getCompanyProfile,
   companyProfileUpdate,
@@ -354,4 +380,5 @@ module.exports = {
   featuredReview,
   getJobs,
   jobsApplications,
+  jobsApplicantUpdate,
 };
