@@ -93,3 +93,24 @@ commit;
 END$$
 DELIMITER ;
 
+-- Procedure for get job spplications
+drop procedure  if exists getApplications;
+DELIMITER $$
+CREATE PROCEDURE `getApplications` (IN _JobID bigint, IN _limit int, IN _offset int)
+BEGIN
+declare exit handler for sqlexception rollback;
+start transaction;
+SELECT JobID, StudentID, StudentName, ResumeURL, CoverLetterURL, Status 
+FROM APPLICATION_RECEIVED 
+WHERE Withdrawn = 0 AND JObID = _JobID
+LIMIT _limit OFFSET _offset;
+
+SELECT COUNT(*) As TotalCount
+FROM APPLICATION_RECEIVED 
+WHERE Withdrawn = 0 AND JObID = _JobID;
+commit;
+END$$
+DELIMITER ;
+
+
+

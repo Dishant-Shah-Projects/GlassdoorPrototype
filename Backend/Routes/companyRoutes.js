@@ -12,6 +12,7 @@ const {
   reviewResponse,
   featuredReview,
   getJobs,
+  jobsApplications,
 } = require('../Company/companyFunctionality');
 const { auth, checkAuth } = require('../SharedFuntionalities/passport');
 
@@ -55,6 +56,12 @@ Router.post('/postJob', checkAuth, async (req, res) => {
 // get Job
 Router.get('/jobs', async (req, res) => {
   const value = await getJobs(req, res);
+  return value;
+});
+
+// Fetch applications
+Router.get('/jobsApplications', checkAuth, async (req, res) => {
+  const value = await jobsApplications(req, res);
   return value;
 });
 

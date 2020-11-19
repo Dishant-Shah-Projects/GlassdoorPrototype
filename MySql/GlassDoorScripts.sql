@@ -96,6 +96,3 @@ CREATE TABLE `INTERVIEW_REVIEW` (
   `InterviewQuestions` varchar(350),
   `Answers` varchar(400)
 );
-
-ALTER TABLE APPLICATION_RECEIVED
-ADD COLUMN ApplicationID bigint unique;

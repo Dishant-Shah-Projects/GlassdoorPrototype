@@ -311,6 +311,39 @@ const getJobs = async (req, res) => {
   }
   return res;
 };
+
+// get the applications received for a job
+const jobsApplications = async (req, res) => {
+  const { JobID, applicationPageNo } = req.query;
+  let con = null;
+  const limit = 10;
+  const offset = applicationPageNo * 10;
+  try {
+    const fetchApplicationsQuery = 'CALL getApplications(?,?,?)';
+    con = await mysqlConnection();
+    const [results, fields] = await con.query(fetchApplicationsQuery, [JobID, limit, offset]);
+    con.end();
+    if (results[1][0].TotalCount === 0) {
+      res.writeHead(200, { 'content-type': 'text/json' });
+      res.end(JSON.stringify('No Applications found'));
+    } else {
+      const resultdata = [];
+      resultdata.push(results[0]);
+      resultdata.push(results[1]);
+      res.writeHead(200, { 'content-type': 'text/json' });
+      res.end(JSON.stringify(resultdata));
+    }
+  } catch (error) {
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  } finally {
+    if (con) {
+      con.end();
+    }
+  }
+  return res;
+};
+
 module.exports = {
   getCompanyProfile,
   companyProfileUpdate,
@@ -320,4 +353,5 @@ module.exports = {
   reviewResponse,
   featuredReview,
   getJobs,
+  jobsApplications,
 };
