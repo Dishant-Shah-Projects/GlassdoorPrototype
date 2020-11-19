@@ -4,7 +4,7 @@ const Router = express.Router();
 
 const kafka = require('../kafka/client');
 
-const { uploadFile } = require('../S3Bucket/s3BucketUpload');
+const { uploadFile, uploadmultiFile } = require('../S3Bucket/s3BucketUpload');
 const {
   navbar,
   searchCompany,
@@ -23,6 +23,9 @@ const {
   addCompanyReview,
   salaryAddReview,
   featureReview,
+  getInterviewReivew,
+  interviewAddReview,
+  interviewData,
   // getAllReview,
 } = require('../Student/studentFunctionality');
 
@@ -106,6 +109,12 @@ Router.post('/upload', checkAuth, async (req, res) => {
   return value;
 });
 
+// upload multiple files to e3 bucket and return the URL of file. USE multfiles as the field name
+Router.post('/uploadMultiple', checkAuth, async (req, res) => {
+  const value = await uploadmultiFile(req, res);
+  return value;
+});
+
 // get the company profile
 Router.get('/companyProfile', checkAuth, async (req, res) => {
   const value = await companyProfile(req, res);
@@ -117,6 +126,7 @@ Router.get('/companyReview', checkAuth, async (req, res) => {
   const value = await companyReview(req, res);
   return value;
 });
+
 // get all company reviews
 Router.get('/getAllReview', checkAuth, async (req, res) => {
   const data = {
@@ -135,6 +145,25 @@ Router.get('/getAllReview', checkAuth, async (req, res) => {
     }
   });
 });
+
+// get the interview reviews
+Router.get('/interviewReview', checkAuth, async (req, res) => {
+  const value = await getInterviewReivew(req, res);
+  return value;
+});
+
+// get the interview data
+Router.get('/interviewData', checkAuth, async (req, res) => {
+  const value = await interviewData(req, res);
+  return value;
+});
+
+// post the post interview reviews
+Router.post('/interviewAddReview', checkAuth, async (req, res) => {
+  const value = await interviewAddReview(req, res);
+  return value;
+});
+
 // get the featured reviews
 Router.get('/featureReview', checkAuth, async (req, res) => {
   const value = await featureReview(req, res);
