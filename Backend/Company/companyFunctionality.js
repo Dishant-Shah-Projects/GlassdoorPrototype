@@ -140,8 +140,8 @@ const postJob = async (req, res) => {
 
     con = await mysqlConnection();
     const [results, fields] = await con.query(userInsertProcedure, [
-      CompanyID,
       CompanyName,
+      CompanyID,
       StreetAddress,
       City,
       State,
@@ -182,6 +182,7 @@ const postJob = async (req, res) => {
     });
   } catch (error) {
     // eslint-disable-next-line no-console
+    console.log(error);
     res.writeHead(500, { 'content-type': 'text/json' });
     res.end(JSON.stringify('Network Error'));
   } finally {
