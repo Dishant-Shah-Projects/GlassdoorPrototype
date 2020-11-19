@@ -36,7 +36,9 @@ class CommonNavBar extends Component {
         selectedNavBar = <Navbar />;
         if (
           this.props.location.pathname === '/InterviewForm' ||
-          this.props.location.pathname === '/ReviewForm'
+          this.props.location.pathname === '/ReviewForm' ||
+          this.props.location.pathname === '/PhotoUploadForm' ||
+          this.props.location.pathname === '/SalaryForm'
         ) {
           selectedNavBar = null;
         }

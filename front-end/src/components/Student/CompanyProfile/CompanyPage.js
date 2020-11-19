@@ -10,6 +10,7 @@ import CompanyJobs from './CompanyJobs/CompanyJobs';
 import CompanyInterviews from './CompanyInterviews/CompanyInterviews';
 import CompanyPhotos from './CompanyPhotos/CompanyPhotos';
 import { history } from '../../../App';
+import CompanySalaries from './CompanySalaries/CompanySalaries';
 
 class CompanyPage extends Component {
   constructor(props) {
@@ -81,6 +82,11 @@ class CompanyPage extends Component {
 
                       {this.props.companyNavbarStore.selectedTab === 'CompanyPhotos' ? (
                         <CompanyPhotos />
+                      ) : (
+                        ''
+                      )}
+                      {this.props.companyNavbarStore.selectedTab === 'CompanySalaries' ? (
+                        <CompanySalaries />
                       ) : (
                         ''
                       )}
