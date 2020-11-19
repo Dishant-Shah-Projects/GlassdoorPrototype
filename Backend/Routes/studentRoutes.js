@@ -26,6 +26,8 @@ const {
   getInterviewReivew,
   interviewAddReview,
   interviewData,
+  companyHelpfulReview,
+  companyJobs,
   // getAllReview,
 } = require('../Student/studentFunctionality');
 
@@ -181,4 +183,17 @@ Router.post('/salaryAddreview', checkAuth, async (req, res) => {
   const value = await salaryAddReview(req, res);
   return value;
 });
+
+// post helpful review count
+Router.post('/companyHelpfulReview', checkAuth, async (req, res) => {
+  const value = await companyHelpfulReview(req, res);
+  return value;
+});
+
+// get search job result
+Router.get('/companyJobs', checkAuth, async (req, res) => {
+  const value = await companyJobs(req, res);
+  return value;
+});
+
 module.exports = Router;

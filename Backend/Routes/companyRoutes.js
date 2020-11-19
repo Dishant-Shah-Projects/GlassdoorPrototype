@@ -12,6 +12,9 @@ const {
   reviewResponse,
   featuredReview,
   getJobs,
+  jobsApplications,
+  jobsApplicantUpdate,
+  jobsApplicantProfile,
 } = require('../Company/companyFunctionality');
 const { auth, checkAuth } = require('../SharedFuntionalities/passport');
 
@@ -55,6 +58,24 @@ Router.post('/postJob', checkAuth, async (req, res) => {
 // get Job
 Router.get('/jobs', async (req, res) => {
   const value = await getJobs(req, res);
+  return value;
+});
+
+// Fetch applications
+Router.get('/jobsApplications', checkAuth, async (req, res) => {
+  const value = await jobsApplications(req, res);
+  return value;
+});
+// Update application status
+Router.post('/jobsApplicantUpdate', checkAuth, async (req, res) => {
+  const value = await jobsApplicantUpdate(req, res);
+  return value;
+});
+
+// Fetch applicant profile
+
+Router.get('/jobsApplicantProfile', checkAuth, async (req, res) => {
+  const value = await jobsApplicantProfile(req, res);
   return value;
 });
 

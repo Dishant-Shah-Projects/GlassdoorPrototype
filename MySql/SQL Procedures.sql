@@ -42,7 +42,7 @@ DELIMITER ;
 -- Procedure to add jobs in the APPILCATION_JOB table
 drop procedure  if exists jobInsert;
 DELIMITER $$
-CREATE PROCEDURE `jobInsert` (IN _CompanyName varchar(60), IN _CompanyID varchar(150) , IN _PostedDate date,IN _StreetAddress varchar(45),IN _City varchar(45),IN _State varchar(45))
+CREATE PROCEDURE `jobInsert` (IN _CompanyName varchar(60), IN _CompanyID bigint , IN _PostedDate date,IN _StreetAddress varchar(45),IN _City varchar(45),IN _State varchar(45))
 BEGIN
 declare exit handler for sqlexception rollback;
 start transaction;
@@ -89,6 +89,38 @@ start transaction;
 INSERT INTO GENERAL_REVIEW (CompanyID, StudentID, CompanyName,Pros,Cons,Descriptions,Rating,EmployeeStatus,Status,Helpful,CEOApproval,JobType,Recommended,JobTitle,Headline,DatePosted,Response,Favorite)
 VALUES (_CompanyID, _StudentID, _CompanyName,_Pros,_Cons,_Descriptions,_Rating,_EmployeeStatus,_Status,_Helpful,_CEOApproval,_JobType,_Recommended,_JobTitle,_Headline,_DatePosted,_Response,_Favorite);
 SELECT LAST_INSERT_ID() AS ID;
+commit;
+END$$
+DELIMITER ;
+
+-- Procedure for get job spplications
+drop procedure  if exists getApplications;
+DELIMITER $$
+CREATE PROCEDURE `getApplications` (IN _JobID bigint, IN _limit int, IN _offset int)
+BEGIN
+declare exit handler for sqlexception rollback;
+start transaction;
+SELECT JobID, StudentID, StudentName, ResumeURL, CoverLetterURL, Status 
+FROM APPLICATION_RECEIVED 
+WHERE Withdrawn = 0 AND JObID = _JobID
+LIMIT _limit OFFSET _offset;
+
+SELECT COUNT(*) As TotalCount
+FROM APPLICATION_RECEIVED 
+WHERE Withdrawn = 0 AND JObID = _JobID;
+commit;
+END$$
+DELIMITER ;
+
+-- Procedure to update the application status
+drop procedure  if exists updateApplicationsStatus;
+DELIMITER $$
+CREATE PROCEDURE `updateApplicationsStatus` (IN _JobID bigint, IN _StudentID bigint, IN _Status varchar(30))
+BEGIN
+declare exit handler for sqlexception rollback;
+start transaction;
+UPDATE APPLICATION_RECEIVED SET Status = _Status
+WHERE JobID = _JobID AND  StudentID = _StudentID;
 commit;
 END$$
 DELIMITER ;

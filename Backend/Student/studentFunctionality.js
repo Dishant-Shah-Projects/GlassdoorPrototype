@@ -11,6 +11,7 @@ const Student = require('../model/Student');
 const Job = require('../model/Job');
 const Static = require('../model/Static');
 const redisClient = require('../redisClient');
+const { ok } = require('assert');
 
 // get the details required for the student navigation bar
 const navbar = async (req, res) => {
@@ -894,6 +895,62 @@ const interviewData = async (req, res) => {
   return res;
 };
 
+// update company helpful review
+const companyHelpfulReview = async (req, res) => {
+  const { CompanyID, ID } = req.body;
+  let con = null;
+  try {
+    con = await mysqlConnection();
+    const posquery = 'UPDATE GENERAL_REVIEW SET Helpful = Helpful+1 WHERE CompanyID=? AND ID=?;';
+    const [results] = await con.query(posquery, [CompanyID, ID]);
+    con.end();
+    res.writeHead(200, { 'content-type': 'text/json' });
+    res.end(JSON.stringify({ message: 'ok' }));
+  } catch (error) {
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  } finally {
+    if (con) {
+      con.end();
+    }
+  }
+  return res;
+};
+
+// search company jobs
+const companyJobs = async (req, res) => {
+  try {
+    // eslint-disable-next-line object-curly-newline
+    const { CompanyID, Title, City, PageNo } = url.parse(req.url, true).query;
+    const filterArray = [];
+    if (Title.length !== 0) {
+      filterArray.push({ Title: { $regex: `${Title}`, $options: 'i' } });
+    }
+    if (City.length !== 0) {
+      filterArray.push({ City: { $regex: `${City}`, $options: 'i' } });
+    }
+    filterArray.push({ CompanyID: { $eq: `${CompanyID}` } });
+    let companyResults = null;
+    let count = 0;
+    companyResults = await Job.find({ $and: filterArray })
+      .limit(10)
+      .skip(PageNo * 10)
+      .exec();
+    count = await Job.find({ $and: filterArray }).countDocuments();
+    const noOfPages = Math.ceil(count / 10);
+    const resultData = [companyResults, count, noOfPages];
+    res.writeHead(200, {
+      'Content-Type': 'application/json',
+    });
+    res.end(JSON.stringify(resultData));
+  } catch (error) {
+    res.writeHead(500, {
+      'Content-Type': 'application/json',
+    });
+    res.end('Network Error');
+  }
+};
+
 module.exports = {
   navbar,
   searchCompany,
@@ -915,5 +972,7 @@ module.exports = {
   getInterviewReivew,
   interviewAddReview,
   interviewData,
+  companyHelpfulReview,
+  companyJobs,
   // getAllReview,
 };
