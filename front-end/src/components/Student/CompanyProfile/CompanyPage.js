@@ -9,6 +9,7 @@ import CompanyReviews from './CompanyReviews/CompanyReviews';
 import CompanyJobs from './CompanyJobs/CompanyJobs';
 import CompanyInterviews from './CompanyInterviews/CompanyInterviews';
 import CompanyPhotos from './CompanyPhotos/CompanyPhotos';
+import { history } from '../../../App';
 
 class CompanyPage extends Component {
   constructor(props) {
@@ -30,6 +31,9 @@ class CompanyPage extends Component {
         this.props.updateCompanyOverview(payload);
       });
   }
+  openForm = (form) => {
+    history.push('/' + form);
+  };
   render() {
     this.props.LowerNavBarOther();
 
@@ -52,7 +56,7 @@ class CompanyPage extends Component {
                     data-brandviews="PAGE:n=hub-overview:eid=6036"
                   >
                     <div class="flex-aside">
-                      <CompanyNavbar />
+                      <CompanyNavbar openForm={(form) => this.openForm(form)} />
                       {this.props.companyNavbarStore.selectedTab === 'Overview' ? (
                         <CompanyOverView />
                       ) : (

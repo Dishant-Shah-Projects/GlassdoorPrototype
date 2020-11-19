@@ -23,6 +23,8 @@ import CommonNavBar from './CommonNavBar';
 import ContributionPage from './Student/Contributions/ContributionPage';
 import CommonContribute from './Student/Contributions/CommonContribute';
 import CompanyPage from './Student/CompanyProfile/CompanyPage';
+import ReviewForm from './Student/CompanyProfile/CompanyReviews/ReviewForm';
+import InterviewForm from './Student/CompanyProfile/CompanyInterviews/InterviewForm';
 class Main extends Component {
   // constructor(props) {
   //     super(props);
@@ -80,6 +82,8 @@ class Main extends Component {
       <div>
         {/* <Switch>*/}
         <Route path="/" component={CommonNavBar} />
+        <Route path="/ReviewForm" component={ReviewForm} />
+        <Route path="/InterviewForm" component={InterviewForm} />
         <Route path="/Login" component={Login} />
         <Route path="/CompanySearchResults" component={CompanySearchResults} />
         <Route path="/Employer" component={EmployerHome} />

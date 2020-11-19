@@ -21,3 +21,4 @@ export const switchTab = 'switch-tab';
 export const updateCompanyOverview = 'update-company-overview';
 export const updatespecialReviews = 'update-special-reviews';
 export const updateCompanyReviewsStore = 'update-company-reviewsStore';
+export const updateCompanyJobStore = 'update-company-jobStore';

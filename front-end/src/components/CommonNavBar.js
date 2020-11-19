@@ -34,7 +34,10 @@ class CommonNavBar extends Component {
           redirectVar = <Redirect to="/Home" />;
         }
         selectedNavBar = <Navbar />;
-        if (this.props.location.pathname === '/CommonContribute') {
+        if (
+          this.props.location.pathname === '/InterviewForm' ||
+          this.props.location.pathname === '/ReviewForm'
+        ) {
           selectedNavBar = null;
         }
       } else if (localStorage.getItem('userrole') === 'company') {

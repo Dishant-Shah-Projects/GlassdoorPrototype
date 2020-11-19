@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './CompanyNavbar.css';
 import { switchTab } from '../../../../constants/action-types';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 
 class CompanyNavbar extends Component {
   constructor(props) {
@@ -16,6 +17,54 @@ class CompanyNavbar extends Component {
     this.props.switchTab(payload);
   };
   render() {
+    let button = (
+      <a
+        onClick={() => this.props.openForm('ReviewForm')}
+        href="#"
+        class="gd-btn gd-btn-link gradient gd-btn-1 gd-btn-med gd-btn-icon padHorz addReview"
+      >
+        <i class="btn-plus margRtSm"></i>
+        <span>Add a Review</span>
+        <i class="hlpr"></i>
+      </a>
+    );
+    if (this.props.companyNavbarStore.selectedTab === 'CompanyInterviews') {
+      button = (
+        <a
+          onClick={() => this.props.openForm('InterviewForm')}
+          href="#"
+          class="gd-btn gd-btn-link gradient gd-btn-1 gd-btn-med gd-btn-icon padHorz addReview"
+        >
+          <i class="btn-plus margRtSm"></i>
+          <span>Add an Interview</span>
+          <i class="hlpr"></i>
+        </a>
+      );
+    } else if (this.props.companyNavbarStore.selectedTab === 'CompanyPhotos') {
+      button = (
+        <a
+          onClick={() => this.props.openForm('PhotoUploadForm')}
+          href="#"
+          class="gd-btn gd-btn-link gradient gd-btn-1 gd-btn-med gd-btn-icon padHorz addReview"
+        >
+          <i class="btn-plus margRtSm"></i>
+          <span>Add Photos</span>
+          <i class="hlpr"></i>
+        </a>
+      );
+    } else if (this.props.companyNavbarStore.selectedTab === 'CompanySalaries') {
+      button = (
+        <a
+          onClick={() => this.props.openForm('SalaryForm')}
+          href="#"
+          class="gd-btn gd-btn-link gradient gd-btn-1 gd-btn-med gd-btn-icon padHorz addReview"
+        >
+          <i class="btn-plus margRtSm"></i>
+          <span>Add a Salary</span>
+          <i class="hlpr"></i>
+        </a>
+      );
+    }
     return (
       <article id="WideCol">
         <div
@@ -169,8 +218,14 @@ class CompanyNavbar extends Component {
                         <i></i>
                       </div>
                       <a
-                        class="eiCell cell salaries "
-                        href="/Salary/Amazon-Salaries-E6036.htm"
+                        onClick={(event) => this.switchTab(event, 'CompanySalaries')}
+                        class={
+                          this.props.companyNavbarStore.selectedTab === 'CompanySalaries'
+                            ? 'eiCell cell salaries active'
+                            : 'eiCell cell salaries '
+                        }
+                        // class="eiCell cell salaries "
+                        href="#"
                         data-label="Salaries"
                       >
                         <span class="num h2">
@@ -203,13 +258,14 @@ class CompanyNavbar extends Component {
                         <i></i>
                       </div>
                       <a
+                        onClick={(event) => this.switchTab(event, 'CompanyPhotos')}
                         class={
                           this.props.companyNavbarStore.selectedTab === 'CompanyPhotos'
                             ? 'eiCell cell photos active'
                             : 'eiCell cell photos '
                         }
                         // class="eiCell cell photos "
-                        href="/Photos/Amazon-Office-Photos-E6036.htm"
+                        href="#"
                         data-label="Photos"
                       >
                         <span class="num h2">
@@ -220,29 +276,7 @@ class CompanyNavbar extends Component {
                       </a>
                     </div>
                   </div>
-                  <div class="buttons cell showDesk padRt alignRt">
-                    <div
-                      id="EIHeaderFollowButton"
-                      style={{ display: 'inline-block', marginRight: '12px' }}
-                    >
-                      <div class="d-inline-block">
-                        <button
-                          class="gd-ui-button  d-flex align-items-center justify-content-center css-1vkuk21"
-                          data-test="headerFollowButton"
-                        >
-                          Follow
-                        </button>
-                      </div>
-                    </div>
-                    <a
-                      href="/mz-survey/employer/collectReview_input.htm?i=6036&amp;j=true&amp;y=&amp;c=PAGE_INFOSITE_TOP"
-                      class="gd-btn gd-btn-link gradient gd-btn-1 gd-btn-med gd-btn-icon padHorz addReview"
-                    >
-                      <i class="btn-plus margRtSm"></i>
-                      <span>Add a Review</span>
-                      <i class="hlpr"></i>
-                    </a>
-                  </div>
+                  <div class="buttons cell showDesk padRt alignRt">{button}</div>
                 </div>
               </div>
             </div>

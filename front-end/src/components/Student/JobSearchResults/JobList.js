@@ -63,7 +63,7 @@ class JobList extends Component {
     axios
       .get(serverUrl + 'student/searchJob', {
         params: {
-          // SearchString: localStorage.getItem('SearchString'),
+          SearchString: localStorage.getItem('SearchString'),
           JobType,
           State: localStorage.getItem('Location'),
           SalStart,
@@ -73,7 +73,7 @@ class JobList extends Component {
         withCredentials: true,
       })
       .then((response) => {
-        console.log(response.data);
+        console.log('Jobs:', response.data);
         let payload = {
           jobList: response.data.jobs,
           PageNo,

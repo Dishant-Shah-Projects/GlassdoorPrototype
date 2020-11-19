@@ -2,6 +2,7 @@ import {
   updateCompanyOverview,
   updatespecialReviews,
   updateCompanyReviewsStore,
+  updateCompanyJobStore,
 } from '../constants/action-types';
 
 const defaultState = {
@@ -13,6 +14,12 @@ const defaultState = {
   },
   companyReviewsStore: {
     ReviewList: [],
+    PageNo: 0,
+    Totalcount: 0,
+    PageCount: 0,
+  },
+  companyJobStore: {
+    JobList: [],
     PageNo: 0,
     Totalcount: 0,
     PageCount: 0,
@@ -44,6 +51,15 @@ const CompanyPageReducer = (state = defaultState, action) => {
       return {
         ...state,
         companyReviewsStore: { ...state.companyReviewsStore, ...action.payload },
+
+        //   return Object.assign(state, action.payload);
+      };
+    }
+    case updateCompanyJobStore: {
+      console.log('inside company review store');
+      return {
+        ...state,
+        companyJobStore: { ...state.companyJobStore, ...action.payload },
 
         //   return Object.assign(state, action.payload);
       };

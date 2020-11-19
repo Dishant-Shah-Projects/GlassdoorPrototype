@@ -12,6 +12,39 @@ class CompanyJobs extends Component {
     super(props);
     this.state = {};
   }
+  commonFetch = (PageNo = 0) => {
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    axios
+      .get(serverUrl + 'student/companyReview', {
+        params: {
+          CompanyID: localStorage.getItem('companyID'),
+          PageNo,
+        },
+        withCredentials: true,
+      })
+      .then(
+        (response) => {
+          console.log('companyReviews', response.data);
+          let payload = {
+            ReviewList: response.data[2],
+            PageNo,
+            Totalcount: response.data[0].count,
+            PageCount: Math.ceil(response.data[0].count / 10),
+
+            // PageCount: Math.ceil(response.data.Totalcount / 3),
+          };
+          this.props.updateCompanyReviewsStore(payload);
+        },
+        (error) => {
+          console.log('error', error);
+        }
+      );
+  };
+
+  onPageClick = (e) => {
+    // console.log('Page Clicked:', e.selected);
+    this.commonFetch(e.selected);
+  };
   saveJob = (event, JobID) => {
     axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
     const data = {
