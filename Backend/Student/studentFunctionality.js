@@ -392,7 +392,7 @@ const salaryReview = async (req, res) => {
     const { PageNo, CompanyID } = req.query;
     const offset = PageNo * 10;
     const searchQuery =
-      'SELECT DatePosted, BaseSalary, Bonuses, JobTitle, Years, StreetAddress, City, State, Zip FROM SALARY_REVIEW WHERE CompanyID=? AND Status = ? LIMIT 10 OFFSET ?;';
+      'SELECT JobTitle, AVG(BaseSalary + Bonuses) As AverageSalary, MIN(BaseSalary + Bonuses) AS MinSalary, MAX(BaseSalary + Bonuses) As MaxSalary FROM SALARY_REVIEW WHERE CompanyID=? AND Status = ? GROUP BY JobTitle LIMIT 10 OFFSET ?;';
     con = await mysqlConnection();
     const [results] = await con.query(searchQuery, [CompanyID, 'Approved', offset]);
     const company = await Company.find({ CompanyID });
@@ -401,7 +401,7 @@ const salaryReview = async (req, res) => {
       ProfileImg = company[0].ProfileImg;
     }
     const countQuery =
-      'SELECT COUNT(*) FROM SALARY_REVIEW WHERE CompanyID=? AND Status = ? LIMIT 10 OFFSET ?;';
+      'SELECT COUNT(distinct(JobTitle)) AS TOTALCOUNT FROM SALARY_REVIEW WHERE CompanyID=? AND Status = ?;';
     const [count] = await con.query(countQuery, [CompanyID, 'Approved', offset]);
     const resultData = { results, ProfileImg, count };
     con.end();
