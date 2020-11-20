@@ -18,6 +18,8 @@ const CompanySchema = new mongoose.Schema(
     CompanyMission: { type: String },
     CEO: { type: String },
     ViewCount: { type: Number, default: 0 },
+    approveCEOcount: { type: Number, default: 0 },
+    recommendedcount: { type: Number, default: 0 },
     SalaryReviewCount: { type: Number, default: 0 },
     GeneralReviewCount: { type: Number, default: 0 },
     InterviewReviewCount: { type: Number, default: 0 },
