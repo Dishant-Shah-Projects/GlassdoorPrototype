@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import moment from 'moment';
 import { connect } from 'react-redux';
+import defaultplaceholder from '../CompanyNavbar/default-placeholder.png';
 
 class AllReview extends Component {
   constructor(props) {
@@ -32,7 +33,11 @@ class AllReview extends Component {
                   //data-original="https://media.glassdoor.com/sql/6036/amazon-squarelogo-1552847650117.png"
                   //data-original-2x="https://media.glassdoor.com/sqll/6036/amazon-squarelogo-1552847650117.png"
                   data-retina-ok="true"
-                  src={this.props.companyOverviewStore.companyOverview.ProfileImg}
+                  src={
+                    this.props.companyOverviewStore.companyOverview.ProfileImg
+                      ? this.props.companyOverviewStore.companyOverview.ProfileImg
+                      : defaultplaceholder
+                  }
                   style={{ opacity: '1' }}
                   title=""
                 />
@@ -185,7 +190,9 @@ class AllReview extends Component {
                   </div>
                   <div class="d-flex">
                     <div class="mr-md">
-                      <button class="gd-ui-button  css-glrvaa">Helpful ({review.Helpful})</button>
+                      <button onClick={this.props.helpfulClicked} class="gd-ui-button  css-glrvaa">
+                        Helpful ({review.Helpful})
+                      </button>
                     </div>
                   </div>
                 </div>

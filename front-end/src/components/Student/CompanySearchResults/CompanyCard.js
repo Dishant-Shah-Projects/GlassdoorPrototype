@@ -7,9 +7,19 @@ class CompanyCard extends Component {
     this.state = {};
   }
   render() {
+    const company = this.props.company;
+    let AvgRating = 0;
+    if (
+      company.GeneralReviewCount &&
+      company.GeneralReviewCount > 0 &&
+      company.TotalGeneralReviewRating &&
+      company.TotalGeneralReviewRating > 0
+    ) {
+      AvgRating = (company.TotalGeneralReviewRating / company.GeneralReviewCount).toFixed(1);
+    }
     const defaultImage =
       'https://s3-media0.fl.yelpcdn.com/assets/public/user_60_square.yji-514f6997a3184af475d5adc800b6d0b1.png';
-    const company = this.props.company;
+
     return (
       <div
         id="companycard"
@@ -37,7 +47,7 @@ class CompanyCard extends Component {
                 </a>
                 <div className="ratingsSummary cf">
                   <span>
-                    <span className="bigRating strong margRtSm h2">{company.AvgRating}</span>
+                    <span className="bigRating strong margRtSm h2">{AvgRating}</span>
                     <span className="gdStars gdRatings sm ">
                       <i>
                         <i></i>
@@ -108,8 +118,9 @@ class CompanyCard extends Component {
               <div className="row justify-content-center justify-content-lg-end">
                 <div className="col-11 col-lg-auto cta-wrap">
                   <a
+                    onClick={() => this.props.openAddReview()}
                     style={{ marginLeft: '62%' }}
-                    href="/mz-survey/employer/collectReview_input.htm?c=PAGE_SRCH_COMPANIES&amp;i=6036"
+                    href="#"
                     className="gd-btn gd-btn-link gradient gd-btn-1 gd-btn-med gd-btn-icon pr-md"
                   >
                     <i className="btn-plus margRtSm"></i>

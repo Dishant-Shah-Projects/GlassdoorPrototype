@@ -31,8 +31,15 @@ class CompanyPage extends Component {
         };
         this.props.updateCompanyOverview(payload);
       });
+    localStorage.setItem('form_company_name', '');
+    localStorage.setItem('form_ceo_name', '');
   }
   openForm = (form) => {
+    localStorage.setItem(
+      'form_company_name',
+      this.props.companyOverviewStore.companyOverview.CompanyName
+    );
+    localStorage.setItem('form_ceo_name', this.props.companyOverviewStore.companyOverview.CEO);
     history.push('/' + form);
   };
   render() {

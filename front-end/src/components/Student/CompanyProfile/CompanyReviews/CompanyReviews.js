@@ -69,7 +69,54 @@ class CompanyReviews extends Component {
     // console.log('Page Clicked:', e.selected);
     this.commonFetch(e.selected);
   };
+  helpfulClicked = (e, ID) => {
+    e.preventDefault();
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    const data = {
+      CompanyID: localStorage.getItem('companyID'),
+      ID,
+    };
+    axios.post(serverUrl + 'student/companyHelpfulReview', data).then(
+      (response) => {
+        console.log('Status Code : ', response.status);
+        if (response.status === 200) {
+          console.log('Helpful success id:', ID);
+          let ReviewList = [...this.props.companyReviewsStore.ReviewList];
+          const index = ReviewList.findIndex((x) => x.ID === ID);
+          let review = { ...ReviewList[index] };
+          review.Helpful = review.Helpful + 1;
+          ReviewList[index] = review;
+          let payload = {
+            ReviewList,
+
+            // PageCount: Math.ceil(response.data.Totalcount / 3),
+          };
+          this.props.updateCompanyReviewsStore(payload);
+        }
+      },
+      (error) => {
+        console.log('error:', error.response);
+      }
+    );
+  };
   render() {
+    let recomendPercentage = 0;
+    if (this.props.companyOverviewStore.companyOverview.recommendedcount > 0) {
+      recomendPercentage = Math.round(
+        (this.props.companyOverviewStore.companyOverview.recommendedcount /
+          this.props.companyOverviewStore.companyOverview.GeneralReviewCount) *
+          100
+      );
+    }
+
+    let approvCEOPercentage = 0;
+    if (this.props.companyOverviewStore.companyOverview.approveCEOcount > 0) {
+      approvCEOPercentage = Math.round(
+        (this.props.companyOverviewStore.companyOverview.approveCEOcount /
+          this.props.companyOverviewStore.companyOverview.GeneralReviewCount) *
+          100
+      );
+    }
     let rating = 0;
     if (this.props.companyOverviewStore.companyOverview.GeneralReviewCount > 0) {
       rating = Math.round(
@@ -147,7 +194,9 @@ class CompanyReviews extends Component {
                                     transform="rotate(-90 33,33)"
                                     style={{
                                       stroke: '#0CAA41',
-                                      strokeDasharray: '138.48140417023808 182.212373908208',
+                                      strokeDasharray: `${
+                                        182 * recomendPercentage * 0.01
+                                      }, 182.212`,
                                       strokeWidth: '8',
                                     }}
                                     class="donut__DonutStyle__donutchart_indicator"
@@ -164,7 +213,7 @@ class CompanyReviews extends Component {
                                       alignment-baseline="middle"
                                       style={{ fontSize: '18px' }}
                                     >
-                                      76
+                                      {recomendPercentage}
                                     </tspan>
                                     <tspan
                                       class="donut__DonutStyle__donutchart_text_percent"
@@ -208,7 +257,9 @@ class CompanyReviews extends Component {
                                     transform="rotate(-90 33,33)"
                                     style={{
                                       stroke: '#0CAA41',
-                                      strokeDasharray: '151.23627034381263 182.212373908208',
+                                      strokeDasharray: `${
+                                        182 * approvCEOPercentage * 0.01
+                                      }, 182.212`,
                                       strokeWidth: '8',
                                     }}
                                     class="donut__DonutStyle__donutchart_indicator"
@@ -225,7 +276,7 @@ class CompanyReviews extends Component {
                                       alignment-baseline="middle"
                                       style={{ fontSize: '18px' }}
                                     >
-                                      83
+                                      {approvCEOPercentage}
                                     </tspan>
                                     <tspan
                                       class="donut__DonutStyle__donutchart_text_percent"
@@ -248,7 +299,7 @@ class CompanyReviews extends Component {
                         <div class="d-table-cell ">
                           <div class="donut-wrap d-table">
                             <div class="donut-text d-lg-table-cell pt-sm pt-lg-0 pl-lg-sm">
-                              <div> {this.props.companyOverviewStore.companyOverview.CEO}</div>
+                              CEO: <div> {this.props.companyOverviewStore.companyOverview.CEO}</div>
                               <div class="numCEORatings">{/*26,648 Ratings*/}</div>
                             </div>
                           </div>
@@ -257,23 +308,38 @@ class CompanyReviews extends Component {
                     </div>
                   </div>
                 </div>
-                <SpecialReview
-                  review={this.props.companyOverviewStore.featuredReview}
-                  reviewType={'Featured Review'}
-                />
-                <SpecialReview
-                  review={this.props.companyOverviewStore.positiveReview}
-                  reviewType={'Most Helpufl Positive Review'}
-                />
-                <SpecialReview
-                  review={this.props.companyOverviewStore.negatieReview}
-                  reviewType={'Most Helpufl Negative Review'}
-                />
+                {this.props.companyOverviewStore.featuredReview ? (
+                  <SpecialReview
+                    review={this.props.companyOverviewStore.featuredReview}
+                    reviewType={'Featured Review'}
+                  />
+                ) : (
+                  ''
+                )}
+                {this.props.companyOverviewStore.positiveReview ? (
+                  <SpecialReview
+                    review={this.props.companyOverviewStore.positiveReview}
+                    reviewType={'Most Helpufl Positive Review'}
+                  />
+                ) : (
+                  ''
+                )}
+                {this.props.companyOverviewStore.negatieReview ? (
+                  <SpecialReview
+                    review={this.props.companyOverviewStore.negatieReview}
+                    reviewType={'Most Helpufl Negative Review'}
+                  />
+                ) : (
+                  ''
+                )}
                 <div id="ReviewsRef">
                   <div id="ReviewsFeed" class=" mt">
                     <ol class=" empReviews emp-reviews-feed pl-0">
                       {this.props.companyReviewsStore.ReviewList.map((review) => (
-                        <AllReview review={review} />
+                        <AllReview
+                          helpfulClicked={(event) => this.helpfulClicked(event, review.ID)}
+                          review={review}
+                        />
                       ))}
                     </ol>
                   </div>

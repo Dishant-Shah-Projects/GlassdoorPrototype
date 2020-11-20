@@ -66,6 +66,13 @@ class CompanySearchResults extends Component {
     // });
   };
 
+  openAddReview = (CompanyID, ceo, name) => {
+    localStorage.setItem('companyID', CompanyID);
+    localStorage.setItem('form_company_name', name);
+    localStorage.setItem('form_ceo_name', ceo);
+    history.push('/ReviewForm');
+  };
+
   render() {
     // let redirectVar = null;
     // if (this.state.redirect) {
@@ -129,6 +136,13 @@ class CompanySearchResults extends Component {
                               data-brandviews="MODULE:n=hub-companySearchResult:eid=6036"
                             >
                               <CompanyCard
+                                openAddReview={() =>
+                                  this.openAddReview(
+                                    company.CompanyID,
+                                    company.CEO,
+                                    company.CompanyName
+                                  )
+                                }
                                 openCompanyProfile={(event) =>
                                   this.openCompanyProfile(event, company.CompanyID)
                                 }

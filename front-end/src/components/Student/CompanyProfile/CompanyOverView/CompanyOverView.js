@@ -30,6 +30,23 @@ class CompanyOverView extends Component {
       });
   }
   render() {
+    let recomendPercentage = 0;
+    if (this.props.companyOverviewStore.companyOverview.recommendedcount > 0) {
+      recomendPercentage = Math.round(
+        (this.props.companyOverviewStore.companyOverview.recommendedcount /
+          this.props.companyOverviewStore.companyOverview.GeneralReviewCount) *
+          100
+      );
+    }
+
+    let approvCEOPercentage = 0;
+    if (this.props.companyOverviewStore.companyOverview.approveCEOcount > 0) {
+      approvCEOPercentage = Math.round(
+        (this.props.companyOverviewStore.companyOverview.approveCEOcount /
+          this.props.companyOverviewStore.companyOverview.GeneralReviewCount) *
+          100
+      );
+    }
     let rating = 0;
     if (this.props.companyOverviewStore.companyOverview.GeneralReviewCount > 0) {
       rating = Math.round(
@@ -178,7 +195,7 @@ class CompanyOverView extends Component {
                             class="indicator"
                             style={{
                               stroke: 'rgb(12, 170, 65)',
-                              strokeDasharray: '138.481, 182.212',
+                              strokeDasharray: `${182 * recomendPercentage * 0.01}, 182.212`,
                               strokeWidth: '8',
                             }}
                           ></circle>
@@ -194,7 +211,7 @@ class CompanyOverView extends Component {
                               class="textVal"
                               style={{ fontSize: '18px' }}
                             >
-                              76
+                              {recomendPercentage}
                             </tspan>
                             <tspan
                               alignment-baseline="middle"
@@ -241,7 +258,7 @@ class CompanyOverView extends Component {
                               class="indicator"
                               style={{
                                 stroke: 'rgb(12, 170, 65)',
-                                strokeDasharray: '151.236, 182.212',
+                                strokeDasharray: `${182 * approvCEOPercentage * 0.01}, 182.212`,
                                 strokeWidth: '8',
                               }}
                             ></circle>
@@ -257,7 +274,7 @@ class CompanyOverView extends Component {
                                 class="textVal"
                                 style={{ fontSize: '18px' }}
                               >
-                                83
+                                {approvCEOPercentage}
                               </tspan>
                               <tspan
                                 alignment-baseline="middle"
@@ -278,23 +295,35 @@ class CompanyOverView extends Component {
                   </div>
                   <div class="col-4 d-flex flex-column flex-lg-row align-items-center d-table css-qr6okv e1khaexh0">
                     <div class="d-lg-table-cell ceoName pt-sm pt-lg-0 px-lg-sm">
-                      {this.props.companyOverviewStore.companyOverview.CEO}
+                      CEO: {this.props.companyOverviewStore.companyOverview.CEO}
                       <div class="numCeoRatings">{/*26,648 Ratings*/}</div>
                     </div>
                   </div>
                 </div>
-                <SpecialReview
-                  review={this.props.companyOverviewStore.featuredReview}
-                  reviewType={'Featured Review'}
-                />
-                <SpecialReview
-                  review={this.props.companyOverviewStore.positiveReview}
-                  reviewType={'Most Helpufl Positive Review'}
-                />
-                <SpecialReview
-                  review={this.props.companyOverviewStore.negatieReview}
-                  reviewType={'Most Helpufl Negative Review'}
-                />
+                {this.props.companyOverviewStore.featuredReview ? (
+                  <SpecialReview
+                    review={this.props.companyOverviewStore.featuredReview}
+                    reviewType={'Featured Review'}
+                  />
+                ) : (
+                  ''
+                )}
+                {this.props.companyOverviewStore.positiveReview ? (
+                  <SpecialReview
+                    review={this.props.companyOverviewStore.positiveReview}
+                    reviewType={'Most Helpufl Positive Review'}
+                  />
+                ) : (
+                  ''
+                )}
+                {this.props.companyOverviewStore.negatieReview ? (
+                  <SpecialReview
+                    review={this.props.companyOverviewStore.negatieReview}
+                    reviewType={'Most Helpufl Negative Review'}
+                  />
+                ) : (
+                  ''
+                )}
               </div>
             </div>
           </div>

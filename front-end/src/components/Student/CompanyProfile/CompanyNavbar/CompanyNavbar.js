@@ -3,6 +3,7 @@ import './CompanyNavbar.css';
 import { switchTab } from '../../../../constants/action-types';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import defaultplaceholder from './default-placeholder.png';
 
 class CompanyNavbar extends Component {
   constructor(props) {
@@ -17,6 +18,8 @@ class CompanyNavbar extends Component {
     this.props.switchTab(payload);
   };
   render() {
+    const defaultCoverPic =
+      'https://s3-media0.fl.yelpcdn.com/assets/public/defaultBusinessHeaderImage.yji-a94634351a246719545b17b9bddc388f.png';
     let button = (
       <a
         onClick={() => this.props.openForm('ReviewForm')}
@@ -106,13 +109,17 @@ class CompanyNavbar extends Component {
             >
               <img
                 class="lazy hero lazy-loaded"
-                alt="Cover Image for Amazon"
-                src="https://media.glassdoor.com/banner/bh/6036/amazon-banner-1578695809222.jpg"
-                data-original="https://media.glassdoor.com/banner/bh/6036/amazon-banner-1578695809222.jpg"
+                alt="Cover Image"
+                src={
+                  this.props.companyOverviewStore.companyOverview.CoverPhoto
+                    ? this.props.companyOverviewStore.companyOverview.CoverPhoto
+                    : defaultCoverPic
+                }
               />
               <div class="overlay">
                 <a
-                  href="/Photos/Amazon-Office-Photos-E6036.htm"
+                  onClick={(event) => this.switchTab(event, 'CompanyPhotos')}
+                  href="#"
                   class="noMargVert"
                   id="EmpHeroPhotoLink"
                 >
@@ -132,7 +139,11 @@ class CompanyNavbar extends Component {
                 >
                   <span class="sqLogo tighten lgSqLogo logoOverlay">
                     <img
-                      src={this.props.companyOverviewStore.companyOverview.ProfileImg}
+                      src={
+                        this.props.companyOverviewStore.companyOverview.ProfileImg
+                          ? this.props.companyOverviewStore.companyOverview.ProfileImg
+                          : defaultplaceholder
+                      }
                       class=""
                       alt=" Logo"
                       title=""

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import defaultplaceholder from '../CompanyNavbar/default-placeholder.png';
 
 class SpecialReview extends Component {
   constructor(props) {
@@ -24,7 +25,14 @@ class SpecialReview extends Component {
         <div id="companyOverView" class="row mt-std">
           <div class="d-none d-md-block col-md-1">
             <span class="css-1p55m0f css-1gxqx4q e160gew40">
-              <img src={this.props.companyOverviewStore.companyOverview.ProfileImg} alt=" icon" />
+              <img
+                src={
+                  this.props.companyOverviewStore.companyOverview.ProfileImg
+                    ? this.props.companyOverviewStore.companyOverview.ProfileImg
+                    : defaultplaceholder
+                }
+                alt=" icon"
+              />
             </span>
           </div>
           <div class="col-12 col-md-11 pl-md-lg">

@@ -26,7 +26,7 @@ import CompanyPage from './Student/CompanyProfile/CompanyPage';
 import ReviewForm from './Student/CompanyProfile/CompanyReviews/ReviewForm';
 import InterviewForm from './Student/CompanyProfile/CompanyInterviews/InterviewForm';
 import PhotoUploadForm from './Student/CompanyProfile/CompanyPhotos/PhotoUploadForm';
-import JobApplicationPage from './Student/CompanyProfile/CompanyNavbar/JobApplicationPage';
+import JobApplicationPage from './Student/CompanyProfile/CompanyJobs/JobApplicationPage';
 import SalaryForm from './Student/CompanyProfile/CompanySalaries/SalaryForm';
 class Main extends Component {
   // constructor(props) {
@@ -88,7 +88,7 @@ class Main extends Component {
         <Route path="/ReviewForm" component={ReviewForm} />
         <Route path="/InterviewForm" component={InterviewForm} />
         <Route path="/PhotoUploadForm" component={PhotoUploadForm} />
-        <Route path="/PhotoUploadForm" component={PhotoUploadForm} />
+        <Route path="/JobApplicationPage" component={JobApplicationPage} />
         <Route path="/SalaryForm" component={SalaryForm} />
         <Route path="/Login" component={Login} />
         <Route path="/CompanySearchResults" component={CompanySearchResults} />
