@@ -1,9 +1,10 @@
-/* eslint-disable func-names */
 /* eslint-disable no-unused-vars */
+/* eslint-disable func-names */
 /* eslint-disable no-underscore-dangle */
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const url = require('url');
+const { ok } = require('assert');
 const mysqlConnection = require('../mysqlConnection');
 const { secret } = require('../config');
 const Company = require('../model/Company');
@@ -11,7 +12,6 @@ const Student = require('../model/Student');
 const Job = require('../model/Job');
 const Static = require('../model/Static');
 const redisClient = require('../redisClient');
-const { ok } = require('assert');
 
 // get the details required for the student navigation bar
 const navbar = async (req, res) => {
@@ -385,6 +385,38 @@ const searchInterview = async (req, res) => {
   return res;
 };
 
+// To get the salary reviews
+const salaryReview = async (req, res) => {
+  let con = null;
+  try {
+    const { PageNo, CompanyID } = req.query;
+    const offset = PageNo * 10;
+    const searchQuery =
+      'SELECT DatePosted, BaseSalary, Bonuses, JobTitle, Years, StreetAddress, City, State, Zip FROM SALARY_REVIEW WHERE CompanyID=? AND Status = ? LIMIT 10 OFFSET ?;';
+    con = await mysqlConnection();
+    const [results] = await con.query(searchQuery, [CompanyID, 'Approved', offset]);
+    const company = await Company.find({ CompanyID });
+    let ProfileImg = null;
+    if (company[0].ProfileImg) {
+      ProfileImg = company[0].ProfileImg;
+    }
+    const countQuery =
+      'SELECT COUNT(*) FROM SALARY_REVIEW WHERE CompanyID=? AND Status = ? LIMIT 10 OFFSET ?;';
+    const [count] = await con.query(countQuery, [CompanyID, 'Approved', offset]);
+    const resultData = { results, ProfileImg, count };
+    con.end();
+    res.writeHead(200, { 'content-type': 'text/json' });
+    res.end(JSON.stringify(resultData));
+  } catch (error) {
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  } finally {
+    if (con) {
+      con.end();
+    }
+  }
+  return res;
+};
 // post resume of student
 const resumesAdd = async (req, res) => {
   const { StudentID, ResumeURL } = req.body;
@@ -902,6 +934,7 @@ const companyHelpfulReview = async (req, res) => {
   try {
     con = await mysqlConnection();
     const posquery = 'UPDATE GENERAL_REVIEW SET Helpful = Helpful+1 WHERE CompanyID=? AND ID=?;';
+    // eslint-disable-next-line no-unused-vars
     const [results] = await con.query(posquery, [CompanyID, ID]);
     con.end();
     res.writeHead(200, { 'content-type': 'text/json' });
@@ -974,5 +1007,6 @@ module.exports = {
   interviewData,
   companyHelpfulReview,
   companyJobs,
+  salaryReview,
   // getAllReview,
 };
