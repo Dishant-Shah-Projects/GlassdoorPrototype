@@ -124,7 +124,7 @@
   -webkit-box-direction: normal !important;
   -webkit-flex-direction: column !important;
   -ms-flex-direction: column !important;
-  flex-direction: column !important;
+  flex-direction: row !important;
 }
 
 .CompletionBadgeStyles__badge___18L6x {
@@ -256,7 +256,7 @@ constructed stylesheet .css-1h7a53u.active {
   -webkit-box-direction: normal !important;
   -webkit-flex-direction: column !important;
   -ms-flex-direction: column !important;
-  flex-direction: column !important;
+  flex-direction: row !important;
 }
 
 .gdGrid .mb-md {
@@ -672,4 +672,18 @@ ol, ul {
 
 .css-1hg9omi {
   word-break: break-all;
+}
+
+.gdGrid .col-sm-6 {
+  flex: 0 0 100%; 
+  max-width: 100%;
+}
+
+.gdGrid .col-lg-4 {
+  flex: 0 0 50%; 
+  max-width: 50%; 
+}
+
+.flex-md-row {
+  flex-direction: row !important;
 }

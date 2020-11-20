@@ -104,6 +104,14 @@ const companyReviews = async (req, res) => {
     con.end();
     res.writeHead(200, { 'content-type': 'text/json' });
     res.end(JSON.stringify(resultData));
+    if (results) {
+      // eslint-disable-next-line no-console
+      res.writeHead(200, { 'content-type': 'text/json' });
+      res.end(JSON.stringify(results));
+    } else {
+      res.writeHead(403, { 'content-type': 'text/json' });
+      res.end(JSON.stringify('No Reviews Found'));
+    }
   } catch (error) {
     // eslint-disable-next-line no-console
     res.writeHead(500, { 'content-type': 'text/json' });
@@ -148,6 +156,7 @@ const postJob = async (req, res) => {
       State,
     ]);
     con.end();
+    // eslint-disable-next-line no-console
     const job = new Job({
       JobID: results[0][0].JobID,
       Title,
@@ -254,7 +263,7 @@ const reviewResponse = async (req, res) => {
 };
 const featuredReview = async (req, res) => {
   // eslint-disable-next-line no-console
-  const { CompanyID, ID, Response } = req.body;
+  const { CompanyID, ID } = req.body;
   let con = null;
   // eslint-disable-next-line no-console
   try {
@@ -332,6 +341,7 @@ const jobsApplications = async (req, res) => {
       const resultdata = [];
       resultdata.push(results[0]);
       resultdata.push(results[1]);
+      // eslint-disable-next-line no-console
       res.writeHead(200, { 'content-type': 'text/json' });
       res.end(JSON.stringify(resultdata));
     }

@@ -12,6 +12,8 @@ import interviewList from './Student/InterviewSearchResults/interviewList';
 import EmployerHome from './Employer/LandingPage/EmployerHome';
 import ProfileUpdate from './Employer/ProfileUpdate/ProfileUpdate';
 import EmployerReviews from './Employer/Reviews/ReviewsHome';
+import EmployerJobs from './Employer/Jobs/JobsHome';
+import EmployerReport from './Employer/Report/ReportHome';
 import salaryList from './Student/SalarySearchResults/salaryList';
 import Home from './Student/LandingPage/Home';
 import Profile from './Student/PersonalInformation/Profile/Profile';
@@ -95,6 +97,8 @@ class Main extends Component {
         <Route path="/Employer" component={EmployerHome} />
         <Route path="/EmployerProfile" component={ProfileUpdate} />
         <Route path="/EmployerReviews" component={EmployerReviews} />
+        <Route path="/EmployerJobs" component={EmployerJobs} />
+        <Route path="/EmployerReport" component={EmployerReport} />
         <Route path="/Home" component={Home} />
         <Route path="/JobList" component={JobList} />
         <Route path="/salaryList" component={salaryList} />

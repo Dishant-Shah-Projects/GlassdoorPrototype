@@ -1,4 +1,4 @@
-import { updateSearcFilter, updateLowerNavBar } from '../constants/action-types';
+import { updateSearcFilter, updateLowerNavBar, updateApplicantStatus } from '../constants/action-types';
 
 const defaultState = {
   searchDropDownStore: {
@@ -7,8 +7,9 @@ const defaultState = {
     selectedMenuoption: '',
     LowerNavBarDropdown: '',
     Location: '',
-    SearchString: '',
+    SearchString: '',    
   },
+ 
 };
 
 const searchDropDownReducer = (state = defaultState, action) => {

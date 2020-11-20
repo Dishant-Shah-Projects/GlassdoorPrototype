@@ -28,9 +28,7 @@
   white-space: nowrap;
 }
 
-.css-1hg9omi {
-  word-break: break-all;
-}
+
 
 .PreferencesStyles__preferencesModule___1FDO2 {
   position: relative;
@@ -343,4 +341,8 @@
 
 .ml-std {
   margin-left: 10px !important;
+}
+
+.css-1hg9omi {
+  word-break: normal;
 }

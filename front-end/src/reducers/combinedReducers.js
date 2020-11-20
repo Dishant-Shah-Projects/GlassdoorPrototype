@@ -11,9 +11,12 @@ import StudentCompleteInfoReducer from './StudentCompleteInfoReducer';
 import CompaniesProfileReducer from './CompaniesProfileReducer';
 import studentProfileLeftPanelReducer from './studentProfileLeftPanelReducer';
 import ContributionPageReducer from './ContributionPageReducer';
-import ReplyModalViewReducer from './ReplyModalViewReducer';
+import ReviewReplyReducer from './ReviewReplyReducer';
 import CompanyResultPageReducer from './CompanyResultPageReducer';
 import CompanyPageReducer from './CompanyPageReducer';
+import ApplicantsListModalReducer from './ApplicantsListModalReducer';
+import JobsListReducer from './JobsListReducer';
+import PostJobModalReducer from './PostJobModalReducer';
 
 const finalReducers = combineReducers({
   SignupModalViewReducer: SignupModalViewReducer,
@@ -28,9 +31,12 @@ const finalReducers = combineReducers({
   CompaniesProfileReducer: CompaniesProfileReducer,
   studentProfileLeftPanelReducer: studentProfileLeftPanelReducer,
   ContributionPageReducer: ContributionPageReducer,
-  ReplyModalViewReducer: ReplyModalViewReducer,
+  ReviewReplyReducer: ReviewReplyReducer,
   CompanyResultPageReducer: CompanyResultPageReducer,
   CompanyPageReducer: CompanyPageReducer,
+  ApplicantsListModalReducer: ApplicantsListModalReducer,
+  JobsListReducer: JobsListReducer,
+  PostJobModalReducer: PostJobModalReducer
 });
 
 export default finalReducers;

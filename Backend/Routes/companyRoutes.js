@@ -27,7 +27,7 @@ Router.get('/profile', async (req, res) => {
   return value;
 });
 // Update the company profile API 25
-Router.post('/profileupdate', checkAuth, async (req, res) => {
+Router.post('/profileupdate', async (req, res) => {
   const value = await companyProfileUpdate(req, res);
   return value;
 });
@@ -52,7 +52,7 @@ Router.post('/reviewFeatured', checkAuth, async (req, res) => {
   return value;
 });
 // Post Job
-Router.post('/postJob', checkAuth, async (req, res) => {
+Router.post('/postJob', async (req, res) => {
   const value = await postJob(req, res);
   return value;
 });

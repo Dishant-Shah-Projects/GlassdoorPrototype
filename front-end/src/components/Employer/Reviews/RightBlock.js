@@ -6,6 +6,7 @@ import './RightBlock.css';
 import ReplyModal from './ReplyModal';
 import StarRatings from 'react-star-ratings';
 import { connect } from 'react-redux';
+import PaginationComponent from '../../Student/Common/PaginationComponent';
 
 class RightBlock extends Component {
   constructor(props) {
@@ -36,8 +37,8 @@ class RightBlock extends Component {
         },
       ],
       authFlag: false,
-      cancelUpdate: false, 
-      feature: 0     
+      cancelUpdate: false,
+      feature: 0,
     };
   }
 
@@ -51,30 +52,11 @@ class RightBlock extends Component {
   };
 
   componentDidMount() {
-    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
-    axios
-      .get(serverUrl + 'company/review', {
-        params: { CompanyID: localStorage.getItem('userId') },
-        withCredentials: true,
-      })
-      .then((response) => {
-        if (response.status == 200) {
-          console.log(response.data[0]);
-          this.setReviews(response.data[0]);
-        }
-      })
-      .catch((error) => {
-        this.setState({
-          errorMessage: 'No Reviews Found',
-        });
-      });
+    this.props.fetchReviews();
   }
 
-  setReviews = (reviews) => {
-    this.setState({
-      reviewsList: reviews,
-      authFlag: true,
-    });
+  onPageClick = (e) => {
+    this.props.fetchReviews(e.selected);
   };
 
   handleFeatured(Id, CompanyId) {
@@ -133,12 +115,16 @@ class RightBlock extends Component {
   render() {
     return (
       <div className="col-12 col-md-8">
+        <header class="row justify-content-between align-items-center mb-std">
+          <h1 class="eiReviews__EIReviewsPageStyles__pageHeader col-12 col-md-auto m-0">
+            {localStorage.getItem('companyName')} Reviews
+          </h1>          
+        </header>
         <div class="ReviewsRef">
           <div id="ReviewsFeed" class="mt">
             <ol class=" empReviews emp-reviews-feed pl-0">
-              {this.state.reviewsList.map((listitem) => (
+              {this.props.reviewListStore.reviewList.map((listitem) => (
                 <li class="empReview cf  " id="empReview_35973660" key={listitem.ID}>
-                  {listitem.Status == 'Approved' ? 
                   <div class="gdReview">
                     <div class="d-flex justify-content-between">
                       <div class="d-flex align-items-center">
@@ -282,11 +268,23 @@ class RightBlock extends Component {
                       </div>
                     </div>
                   </div>
-                  : 
-                            <p>No Reviews to Show!</p> }
                 </li>
               ))}
             </ol>
+          </div>
+          <div className="tbl fill padHorz margVert" id="ResultsFooter">
+            <div className="cell middle hideMob padVertSm" data-test="page-x-of-y">
+              Page {this.props.reviewListStore.PageNo + 1} of {this.props.reviewListStore.PageCount}
+            </div>
+            <div className="module pt-xxsm">
+              <PaginationComponent
+                PageCount={this.props.reviewListStore.PageCount}
+                PageNo={this.props.reviewListStore.PageNo}
+                onPageClick={(e) => {
+                  this.onPageClick(e);
+                }}
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -295,9 +293,10 @@ class RightBlock extends Component {
 }
 
 const mapStateToProps = (state) => {
-  const { replyModalStore } = state.ReplyModalViewReducer;
+  const { replyModalStore, reviewListStore } = state.ReviewReplyReducer;
   return {
     replyModalStore: replyModalStore,
+    reviewListStore: reviewListStore,
   };
 };
 const mapDispatchToProps = (dispatch) => {
