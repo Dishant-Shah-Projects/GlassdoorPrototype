@@ -85,6 +85,7 @@ CREATE TABLE `INTERVIEW_REVIEW` (
   `InterviewReviewID` bigint auto_increment primary key,
   `CompanyID` bigint not null,
   `StudentID` bigint not null,
+  `CompanyName` varchar(60) NOT NULL,
   `Status` enum('Not Approved', 'Approved', 'Disapproved') DEFAULT 'Not Approved',
   `Helpful` bigint default 0,
   `DatePosted` date NOT NULL,

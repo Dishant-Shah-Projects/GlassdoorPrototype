@@ -362,25 +362,29 @@ const getInterviews = async (objects) => {
 
 // API Calls for returning the interviews NEED TO ADD PROFILE IMAGES
 const searchInterview = async (req, res) => {
+  // eslint-disable-next-line no-unused-vars
   const { SearchString, State, PageNo } = req.body;
+  let con = null;
   try {
-    const reviews = await Company.find({
-      CompanyName: { $regex: `.*${SearchString}.*` },
-      State,
-    }).select('InterviewReview');
-    let review2 = null;
-    review2 = await getInterviews(reviews);
-    const count = review2.length;
-    const noOfPages = Math.ceil(count / 10);
-    const resultObj = {};
-    resultObj.interviews = review2.slice(PageNo * 10, PageNo * 10 + 10);
-    resultObj.count = count;
-    resultObj.noOfPages = noOfPages;
+    const offset = PageNo * 10;
+    const searchQuery =
+      'SELECT * FROM INTERVIEW_REVIEW WHERE INSTR(CompanyName, ?) > 0 AND Status = "Approved" LIMIT 10 OFFSET ?;';
+    con = await mysqlConnection();
+    const [results] = await con.query(searchQuery, [SearchString, offset]);
+    const countQuery =
+      'SELECT COUNT(*) AS TOTALCOUNT FROM INTERVIEW_REVIEW WHERE INSTR(CompanyName, ?) > 0 AND Status = "Approved";';
+    const [count] = await con.query(countQuery, [SearchString]);
+    const resultData = { results, count };
+    con.end();
     res.writeHead(200, { 'content-type': 'text/json' });
-    res.end(JSON.stringify(resultObj));
+    res.end(JSON.stringify(resultData));
   } catch (error) {
     res.writeHead(500, { 'content-type': 'text/json' });
     res.end(JSON.stringify('Network Error'));
+  } finally {
+    if (con) {
+      con.end();
+    }
   }
   return res;
 };
@@ -724,7 +728,7 @@ const salaryAddReview = async (req, res) => {
   let con = null;
   try {
     const interviewReviewInsert =
-      'CALL salaryReviewInsert (?,? ,"Not Approved", curdate(), ?, ?,?,?, ?, ?,?,?);';
+      'CALL salaryReviewInsert (?,?,"Not Approved", curdate(), ?, ?,?,?, ?, ?,?,?);';
     con = await mysqlConnection();
     await con.query(interviewReviewInsert, [
       CompanyID,
@@ -837,6 +841,7 @@ const interviewAddReview = async (req, res) => {
   const {
     CompanyID,
     StudentID,
+    CompanyName,
     OverallExperience,
     JobTitle,
     Description,
@@ -848,11 +853,12 @@ const interviewAddReview = async (req, res) => {
   let con = null;
   try {
     const interviewReviewInsert =
-      'CALL interviewReviewInsert (?,? ,"NotApproved",0, curdate(), ?,?,?,?, ?, ?,?);';
+      'CALL interviewReviewInsert (?,?,?,"Not Approved",0, curdate(), ?,?,?,?, ?, ?,?);';
     con = await mysqlConnection();
     await con.query(interviewReviewInsert, [
       CompanyID,
       StudentID,
+      CompanyName,
       OverallExperience,
       JobTitle,
       Description,
@@ -980,7 +986,8 @@ const companyInterviewHelpfulReview = async (req, res) => {
   let con = null;
   try {
     con = await mysqlConnection();
-    const posquery = 'UPDATE INTERVIEW_REVIEW SET Helpful = Helpful+1 WHERE CompanyID=? AND InterviewReviewID=?;';
+    const posquery =
+      'UPDATE INTERVIEW_REVIEW SET Helpful = Helpful+1 WHERE CompanyID=? AND InterviewReviewID=?;';
     // eslint-disable-next-line no-unused-vars
     const [results] = await con.query(posquery, [CompanyID, ID]);
     con.end();

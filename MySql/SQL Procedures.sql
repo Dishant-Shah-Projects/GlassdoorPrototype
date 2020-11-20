@@ -96,12 +96,12 @@ DELIMITER ;
 -- Procedure to add jobs in the INTERVIEW_REVIEW table
 drop procedure  if exists interviewReviewInsert;
 DELIMITER $$
-CREATE PROCEDURE `interviewReviewInsert` (IN _CompanyID bigint,IN _StudentID bigint,IN _Status enum('Not Approved','Approved','Disapproved'),IN _Helpful bigint, IN _DatePosted date, IN _OverallExperience enum('Positive', 'Negative', 'Neutral'), IN _JobTitle varchar(50), IN _Description varchar(350), IN _Difficulty int, IN _OfferStatus enum('No', 'Yes, but I declined','Yes, and I accepted'), IN _InterviewQuestions varchar(350), In _Answers varchar(400))
+CREATE PROCEDURE `interviewReviewInsert` (IN _CompanyID bigint,IN _StudentID bigint,IN _CompanyName varchar(60),IN _Status enum('Not Approved','Approved','Disapproved'),IN _Helpful bigint, IN _DatePosted date, IN _OverallExperience enum('Positive', 'Negative', 'Neutral'), IN _JobTitle varchar(50), IN _Description varchar(350), IN _Difficulty int, IN _OfferStatus enum('No', 'Yes, but I declined','Yes, and I accepted'), IN _InterviewQuestions varchar(350), In _Answers varchar(400))
 BEGIN
 declare exit handler for sqlexception rollback;
 start transaction;
-INSERT INTO INTERVIEW_REVIEW (CompanyID, StudentID, Status,Helpful,DatePosted,OverallExperience,JobTitle,Description,Difficulty,OfferStatus,InterviewQuestions,Answers)
-VALUES (_CompanyID, _StudentID, _Status,_Helpful,_DatePosted,_OverallExperience,_JobTitle,_Description,_Difficulty,_OfferStatus,_InterviewQuestions,_Answers);
+INSERT INTO INTERVIEW_REVIEW (CompanyID, StudentID,CompanyName, Status,Helpful,DatePosted,OverallExperience,JobTitle,Description,Difficulty,OfferStatus,InterviewQuestions,Answers)
+VALUES (_CompanyID, _StudentID,_CompanyName, _Status,_Helpful,_DatePosted,_OverallExperience,_JobTitle,_Description,_Difficulty,_OfferStatus,_InterviewQuestions,_Answers);
 SELECT LAST_INSERT_ID() AS InterviewReviewID;
 commit;
 END$$
