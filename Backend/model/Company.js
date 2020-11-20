@@ -28,6 +28,7 @@ const CompanySchema = new mongoose.Schema(
     CoverPhoto: { type: String },
     PhotoCount: { type: Number, default: 0 },
     FeaturedReview: {
+      ID: { type: Number },
       Status: {
         type: String,
         enum: ['NotApproved', 'Approved', 'Disapproved'],

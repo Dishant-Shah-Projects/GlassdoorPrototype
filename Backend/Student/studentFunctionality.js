@@ -518,9 +518,7 @@ const profileUpdate = async (req, res) => {
 const companyProfile = async (req, res) => {
   const { CompanyID } = req.query;
   try {
-    const company = await Company.findOne({ CompanyID }).select(
-      '-InterviewReview -SalaryReview -Photos'
-    );
+    const company = await Company.findOne({ CompanyID });
     Company.findOneAndUpdate(
       { CompanyID },
       { $inc: { ViewCount: 1 } },
@@ -713,44 +711,34 @@ const salaryAddReview = async (req, res) => {
   // eslint-disable-next-line no-unused-vars
   const {
     CompanyID,
+    StudentID,
     BaseSalary,
     Bonuses,
     JobTitle,
     Years,
     StreetAddress,
+    City,
     State,
-    Country,
     Zip,
   } = req.body;
+  let con = null;
   try {
-    const review = {
-      Status: 'Not Approved',
-      DatePosted: Date.now(),
+    const interviewReviewInsert =
+      'CALL salaryReviewInsert (?,? ,"Not Approved", curdate(), ?, ?,?,?, ?, ?,?,?);';
+    con = await mysqlConnection();
+    await con.query(interviewReviewInsert, [
+      CompanyID,
+      StudentID,
       BaseSalary,
       Bonuses,
       JobTitle,
       Years,
       StreetAddress,
+      City,
       State,
-      Country,
       Zip,
-    };
-    await Company.findOneAndUpdate(
-      { CompanyID },
-      {
-        $push: {
-          SalaryReview: review,
-        },
-      },
-      { safe: true, upsert: true, new: true },
-      // eslint-disable-next-line no-unused-vars
-      (err) => {
-        if (err) {
-          res.writeHead(500, { 'content-type': 'text/json' });
-          res.end(JSON.stringify('Network'));
-        }
-      }
-    );
+    ]);
+    con.end();
     Company.findOneAndUpdate(
       { CompanyID },
       { $inc: { SalaryReviewCount: 1 } },
@@ -769,8 +757,11 @@ const salaryAddReview = async (req, res) => {
   } catch (error) {
     res.writeHead(500, { 'content-type': 'text/json' });
     res.end(JSON.stringify('Network Error'));
+  } finally {
+    if (con) {
+      con.end();
+    }
   }
-
   return res;
 };
 // get the feature Reviews for the company
@@ -808,21 +799,34 @@ const featureReview = async (req, res) => {
 
 // get the interview Review for the company
 const getInterviewReivew = async (req, res) => {
-  const { CompanyID, PageNo } = req.query;
+  let con = null;
   try {
-    const company = await Company.findOne({ CompanyID }).select('InterviewReview');
-    const count = company.InterviewReview.length;
-    const noOfPages = Math.ceil(count / 10);
-    const resultObj = {};
-    resultObj.interviews = company.InterviewReview.slice(PageNo * 10, PageNo * 10 + 10);
-    resultObj.count = count;
-    resultObj.noOfPages = noOfPages;
+    const { PageNo, CompanyID } = req.query;
+    const offset = PageNo * 10;
+    const searchQuery =
+      'SELECT * FROM INTERVIEW_REVIEW WHERE CompanyID=? AND Status = "Approved" LIMIT 10 OFFSET ?;';
+    con = await mysqlConnection();
+    const [results] = await con.query(searchQuery, [CompanyID, offset]);
+    const company = await Company.find({ CompanyID });
+    let ProfileImg = null;
+    if (company[0].ProfileImg) {
+      ProfileImg = company[0].ProfileImg;
+    }
+    const countQuery =
+      'SELECT COUNT(*) AS TOTALCOUNT FROM INTERVIEW_REVIEW WHERE CompanyID=? AND Status = "Approved";';
+    const [count] = await con.query(countQuery, [CompanyID]);
+    const resultData = { results, ProfileImg, count };
+    con.end();
     res.writeHead(200, { 'content-type': 'text/json' });
-    res.end(JSON.stringify(resultObj));
+    res.end(JSON.stringify(resultData));
   } catch (error) {
     // eslint-disable-next-line no-console
     res.writeHead(500, { 'content-type': 'text/json' });
     res.end(JSON.stringify('Network Error'));
+  } finally {
+    if (con) {
+      con.end();
+    }
   }
   return res;
 };
@@ -832,6 +836,7 @@ const interviewAddReview = async (req, res) => {
   // eslint-disable-next-line no-unused-vars
   const {
     CompanyID,
+    StudentID,
     OverallExperience,
     JobTitle,
     Description,
@@ -840,11 +845,14 @@ const interviewAddReview = async (req, res) => {
     InterviewQuestions,
     Answers,
   } = req.body;
+  let con = null;
   try {
-    const review = {
-      Status: 'Not Approved',
-      DatePosted: Date.now(),
-      Helpful: 0,
+    const interviewReviewInsert =
+      'CALL interviewReviewInsert (?,? ,"NotApproved",0, curdate(), ?,?,?,?, ?, ?,?);';
+    con = await mysqlConnection();
+    await con.query(interviewReviewInsert, [
+      CompanyID,
+      StudentID,
       OverallExperience,
       JobTitle,
       Description,
@@ -852,42 +860,31 @@ const interviewAddReview = async (req, res) => {
       OfferStatus,
       InterviewQuestions,
       Answers,
-    };
+    ]);
+    con.end();
+
     Company.findOneAndUpdate(
       { CompanyID },
-      {
-        $push: {
-          InterviewReview: review,
-        },
-      },
-      { safe: true, upsert: true, new: true },
-      // eslint-disable-next-line no-unused-vars
-      (err) => {
-        if (err) {
+      { $inc: { InterviewReviewCount: 1 } },
+
+      (error, results) => {
+        if (error) {
           res.writeHead(500, { 'content-type': 'text/json' });
           res.end(JSON.stringify('Network'));
-        } else {
-          Company.findOneAndUpdate(
-            { CompanyID },
-            { $inc: { InterviewReviewCount: 1 } },
-
-            (error, results) => {
-              if (error) {
-                res.writeHead(500, { 'content-type': 'text/json' });
-                res.end(JSON.stringify('Network'));
-              }
-              if (results) {
-                res.writeHead(200, { 'content-type': 'text/json' });
-                res.end(JSON.stringify('Interview Review Added'));
-              }
-            }
-          );
+        }
+        if (results) {
+          res.writeHead(200, { 'content-type': 'text/json' });
+          res.end(JSON.stringify('Interview Review Added'));
         }
       }
     );
   } catch (error) {
     res.writeHead(500, { 'content-type': 'text/json' });
     res.end(JSON.stringify('Network Error'));
+  } finally {
+    if (con) {
+      con.end();
+    }
   }
 
   return res;
@@ -933,9 +930,9 @@ const interviewData = async (req, res) => {
   return res;
 };
 
-// update company helpful review
+// update company helpful  for the general review
 const companyHelpfulReview = async (req, res) => {
-  const { CompanyID, ID } = req.body;
+  const { CompanyID, ID, StudentID } = req.body;
   let con = null;
   try {
     con = await mysqlConnection();
@@ -943,6 +940,51 @@ const companyHelpfulReview = async (req, res) => {
     // eslint-disable-next-line no-unused-vars
     const [results] = await con.query(posquery, [CompanyID, ID]);
     con.end();
+    await Student.update({ StudentID }, { $push: { HelpfullGeneralReviews: ID } });
+    const company = await Company.findOne({ CompanyID }).select('FeaturedReview');
+    if (company.FeaturedReview.ID === ID) {
+      company.FeaturedReview.Helpful += 1;
+      Company.findOneAndUpdate(
+        { CompanyID },
+        { FeaturedReview: company.FeaturedReview },
+
+        (err, response) => {
+          if (err) {
+            res.writeHead(500, { 'content-type': 'text/json' });
+            res.end(JSON.stringify('Network'));
+          }
+          if (response) {
+            res.writeHead(200, { 'content-type': 'text/json' });
+            res.end(JSON.stringify({ message: 'ok' }));
+          }
+        }
+      );
+    } else {
+      res.writeHead(200, { 'content-type': 'text/json' });
+      res.end(JSON.stringify({ message: 'ok' }));
+    }
+  } catch (error) {
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  } finally {
+    if (con) {
+      con.end();
+    }
+  }
+  return res;
+};
+
+// update company helpful  for the interview review
+const companyInterviewHelpfulReview = async (req, res) => {
+  const { CompanyID, ID, StudentID } = req.body;
+  let con = null;
+  try {
+    con = await mysqlConnection();
+    const posquery = 'UPDATE INTERVIEW_REVIEW SET Helpful = Helpful+1 WHERE CompanyID=? AND InterviewReviewID=?;';
+    // eslint-disable-next-line no-unused-vars
+    const [results] = await con.query(posquery, [CompanyID, ID]);
+    con.end();
+    await Student.update({ StudentID }, { $push: { HelpfullInterviewReviews: ID } });
     res.writeHead(200, { 'content-type': 'text/json' });
     res.end(JSON.stringify({ message: 'ok' }));
   } catch (error) {
@@ -1014,5 +1056,6 @@ module.exports = {
   companyHelpfulReview,
   companyJobs,
   salaryReview,
+  companyInterviewHelpfulReview,
   // getAllReview,
 };

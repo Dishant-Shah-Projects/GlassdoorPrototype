@@ -18,6 +18,8 @@ const StudentSchema = new mongoose.Schema({
   ResumePrimary: { type: String },
   Resumes: [{ type: String }],
   FavouriteJobs: [{ type: String }],
+  HelpfullGeneralReviews: [Number],
+  HelpfullInterviewReviews: [Number],
   JobStatus: {
     type: String,
     enum: [
