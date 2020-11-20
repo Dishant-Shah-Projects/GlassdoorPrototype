@@ -88,22 +88,22 @@ const companyProfileUpdate = async (req, res) => {
 // get the Company Review for the company
 const companyReviews = async (req, res) => {
   // eslint-disable-next-line no-console
-  const { CompanyID } = req.query;
+  const { CompanyID, PageNo } = req.query;
   let con = null;
   // eslint-disable-next-line no-console
   try {
-    const userInsertProcedure = 'CALL fetchReview(?)';
-
+    const offset = PageNo * 10;
+    const searchQuery =
+      'SELECT * FROM GENERAL_REVIEW WHERE CompanyID=? AND Status = "Approved" LIMIT 10 OFFSET ?;';
     con = await mysqlConnection();
-    const [results, fields] = await con.query(userInsertProcedure, CompanyID);
+    const [results] = await con.query(searchQuery, [CompanyID, offset]);
+    const countQuery =
+      'SELECT COUNT(*) AS TOTALCOUNT FROM GENERAL_REVIEW WHERE CompanyID=? AND Status = "Approved";';
+    const [count] = await con.query(countQuery, [CompanyID]);
+    const resultData = { results, count };
     con.end();
-    if (results) {
-      res.writeHead(200, { 'content-type': 'text/json' });
-      res.end(JSON.stringify(results));
-    } else {
-      res.writeHead(403, { 'content-type': 'text/json' });
-      res.end(JSON.stringify('No Reviews Found'));
-    }
+    res.writeHead(200, { 'content-type': 'text/json' });
+    res.end(JSON.stringify(resultData));
   } catch (error) {
     // eslint-disable-next-line no-console
     res.writeHead(500, { 'content-type': 'text/json' });
