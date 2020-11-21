@@ -186,8 +186,6 @@ class ReviewForm extends Component {
   };
 
   render() {
-    console.log('this.props.location', this.props.location);
-    console.log('history', history);
     return (
       <main id="mount">
         <div>

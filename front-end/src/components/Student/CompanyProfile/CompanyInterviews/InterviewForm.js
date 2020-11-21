@@ -1,10 +1,147 @@
 import React, { Component } from 'react';
 import './InterviewForm.css';
+import axios from 'axios';
+import serverUrl from '../../../../config';
+import { history } from '../../../../App';
+
 class InterviewForm extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      JobTitle: '',
+      Description: '',
+      OverallExperience: '',
+      Difficulty: 'SELECT',
+      OfferStatus: 'SELECT',
+      InterviewQuestions: '',
+      Answers: '',
+      openDifficultyDropDown: false,
+      openOfferStatusDropDown: false,
+      invalidData: true,
+    };
   }
+
+  validationCheck = () => {
+    let invalidData = false;
+    if (this.state.OverallExperience === '') {
+      invalidData = true;
+    }
+    if (this.state.JobTitle.length === 0) {
+      invalidData = true;
+    }
+    if (this.state.Description.length < 20) {
+      invalidData = true;
+    }
+    if (this.state.Difficulty === 'SELECT') {
+      invalidData = true;
+    }
+    if (this.state.OfferStatus === 'SELECT') {
+      invalidData = true;
+    }
+    if (this.state.InterviewQuestions.length < 20) {
+      invalidData = true;
+    }
+    if (this.state.Answers.length < 20) {
+      invalidData = true;
+    }
+
+    this.setState({
+      invalidData,
+    });
+  };
+
+  commonOnChangeHandler = (event) => {
+    // event.preventDefault();
+    this.setState(
+      {
+        [event.target.name]: event.target.value,
+        openStatusDropDown: false,
+      },
+      this.validationCheck()
+    );
+  };
+
+  submitOverallEcperience = (event, OverallExperience) => {
+    event.preventDefault();
+    this.setState(
+      {
+        OverallExperience,
+      },
+      this.validationCheck()
+    );
+  };
+
+  toggleDifficultyDropDown = () => {
+    this.setState({
+      openDifficultyDropDown: !this.state.openDifficultyDropDown,
+    });
+  };
+
+  selectDifficultyLevel = (event, Difficulty) => {
+    this.setState(
+      {
+        Difficulty,
+      },
+      this.validationCheck()
+    );
+  };
+
+  toggleOfferStatusDropDown = () => {
+    this.setState({
+      openOfferStatusDropDown: !this.state.openOfferStatusDropDown,
+    });
+  };
+
+  selectOfferStatus = (event, OfferStatus) => {
+    this.setState(
+      {
+        OfferStatus,
+      },
+      this.validationCheck()
+    );
+  };
+
+  submitReview = (event) => {
+    // event.preventDefault();
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    const data = {
+      CompanyID: localStorage.getItem('companyID'),
+      StudentID: localStorage.getItem('userId'),
+      CompanyName: localStorage.getItem('form_company_name'),
+      OverallExperience: this.state.OverallExperience,
+      JobTitle: this.state.JobTitle,
+      Description: this.state.Description,
+      Difficulty: this.state.Difficulty,
+      OfferStatus: this.state.OfferStatus,
+      InterviewQuestions: this.state.InterviewQuestions,
+      Answers: this.state.Answers,
+    };
+    axios.post(serverUrl + 'student/interviewAddReview', data).then(
+      (response) => {
+        console.log('Status Code : ', response.status);
+        if (response.status === 200) {
+          console.log('Review Submitted');
+          this.props.history.goBack();
+          this.props.history.goBack();
+          this.setState({
+            JobTitle: '',
+            Description: '',
+            OverallExperience: '',
+            Difficulty: 'SELECT',
+            OfferStatus: 'SELECT',
+            InterviewQuestions: '',
+            Answers: '',
+            openDifficultyDropDown: false,
+            openOfferStatusDropDown: false,
+            invalidData: true,
+          });
+        }
+      },
+      (error) => {
+        console.log('error:', error.response);
+      }
+    );
+  };
   render() {
     return (
       <div class="pageContentWrapper ">
@@ -48,6 +185,11 @@ class InterviewForm extends Component {
                             <div class="">
                               <div class=" mb css-1ohf0ui">
                                 <label
+                                  style={{
+                                    fontSize: '15px',
+                                    lineHeight: '24px',
+                                    whiteSpace: 'normal',
+                                  }}
                                   for="employer-7b886f2-cacc-5dd8-3b51-70bedd4bec6d"
                                   class="css-xwfp7p"
                                 >
@@ -70,7 +212,7 @@ class InterviewForm extends Component {
                                         data-test=""
                                         aria-label="Employer *"
                                         class="css-1etjok6"
-                                        value="Amazon"
+                                        value={localStorage.getItem('form_company_name')}
                                       />
                                     </div>
                                   </div>
@@ -83,7 +225,15 @@ class InterviewForm extends Component {
                             </div>
                           </div>
                           <div class="mb css-1ohf0ui">
-                            <label for="" class="css-xwfp7p">
+                            <label
+                              style={{
+                                fontSize: '15px',
+                                lineHeight: '24px',
+                                whiteSpace: 'normal',
+                              }}
+                              for=""
+                              class="css-xwfp7p"
+                            >
                               <span>Rate Overall Experience *</span>
                             </label>
                             <div class="pt-xxsm">
@@ -93,6 +243,9 @@ class InterviewForm extends Component {
                               >
                                 <div>
                                   <label
+                                    onClick={(event) =>
+                                      this.submitOverallEcperience(event, 'Positive')
+                                    }
                                     for="processExperience-3"
                                     class="mr-xxl"
                                     data-test="survey-thumbsUp-processExperience"
@@ -106,9 +259,19 @@ class InterviewForm extends Component {
                                       type="radio"
                                       value="3"
                                     />
-                                    <span class="SVGInline css-1d14wk0 e50qfp90">
+                                    <span
+                                      class={`SVGInline ${
+                                        this.state.OverallExperience === 'Positive'
+                                          ? 'css-s64uao'
+                                          : 'css-1d14wk0'
+                                      } e50qfp90`}
+                                    >
                                       <svg
-                                        class="SVGInline-svg css-1d14wk0-svg e50qfp90-svg"
+                                        class={`SVGInline-svg css-${
+                                          this.state.OverallExperience === 'Positive'
+                                            ? 'css-s64uao'
+                                            : 'css-1d14wk0'
+                                        }-svg e50qfp90-svg`}
                                         width="48"
                                         height="48"
                                         viewBox="0 0 48 48"
@@ -129,6 +292,9 @@ class InterviewForm extends Component {
                                     </span>
                                   </label>
                                   <label
+                                    onClick={(event) =>
+                                      this.submitOverallEcperience(event, 'Neutral')
+                                    }
                                     alt="Neutral"
                                     class="mr-xxl"
                                     data-test="survey-neutral-processExperience"
@@ -142,9 +308,20 @@ class InterviewForm extends Component {
                                       type="radio"
                                       value="2"
                                     />
-                                    <span class="SVGInline css-14gq6xj epxovg70">
+                                    <span
+                                      class={`SVGInline ${
+                                        this.state.OverallExperience === 'Neutral'
+                                          ? 'css-1u663h5'
+                                          : 'css-14gq6xj'
+                                      } epxovg70`}
+                                    >
                                       <svg
-                                        class="SVGInline-svg css-14gq6xj-svg epxovg70-svg"
+                                        class={`SVGInline-svg css-${
+                                          this.state.OverallExperience === 'Neutral'
+                                            ? 'css-1u663h5'
+                                            : 'css-14gq6xj'
+                                        }-svg epxovg70-svg`}
+                                        // class="SVGInline-svg css-14gq6xj-svg epxovg70-svg"
                                         width="48"
                                         height="48"
                                         viewBox="0 0 48 48"
@@ -164,6 +341,9 @@ class InterviewForm extends Component {
                                     </span>
                                   </label>
                                   <label
+                                    onClick={(event) =>
+                                      this.submitOverallEcperience(event, 'Negative')
+                                    }
                                     alt="Negative"
                                     data-test="survey-thumbsDown-processExperience"
                                     for="processExperience-1"
@@ -177,9 +357,20 @@ class InterviewForm extends Component {
                                       value="1"
                                       checked=""
                                     />
-                                    <span class="SVGInline css-1haghtx e19o1x900">
+                                    <span
+                                      class={`SVGInline ${
+                                        this.state.OverallExperience === 'Negative'
+                                          ? 'css-1haghtx'
+                                          : 'css-jzoj2g'
+                                      } e19o1x900`}
+                                      // class="SVGInline css-1haghtx e19o1x900"
+                                    >
                                       <svg
-                                        class="SVGInline-svg css-1haghtx-svg e19o1x900-svg"
+                                        class={`SVGInline-svg  ${
+                                          this.state.OverallExperience === 'Negative'
+                                            ? 'css-1haghtx'
+                                            : 'css-jzoj2g'
+                                        }-svg e19o1x900-svg`}
                                         width="48"
                                         height="48"
                                         viewBox="0 0 48 48"
@@ -200,12 +391,19 @@ class InterviewForm extends Component {
                                     </span>
                                   </label>
                                 </div>
-                                <p class="css-xi606m mb-0 mt-sm css-1nuuv7y edbo4km0">Negative</p>
+                                <p class="css-xi606m mb-0 mt-sm css-1nuuv7y edbo4km0">
+                                  {this.state.OverallExperience}
+                                </p>
                               </div>
                             </div>
                           </div>
                           <div class="mb css-1ohf0ui">
                             <label
+                              style={{
+                                fontSize: '15px',
+                                lineHeight: '24px',
+                                whiteSpace: 'normal',
+                              }}
                               for="jobTitle-03315a-e358-b0e4-5e8c-457607f14126"
                               class="css-xwfp7p"
                             >
@@ -221,14 +419,15 @@ class InterviewForm extends Component {
                               <div class=" css-1ohf0ui">
                                 <div class="input-wrapper css-q444d9">
                                   <input
+                                    onChange={this.commonOnChangeHandler}
                                     placeholder=""
                                     autocomplete="off"
-                                    name="jobTitle"
+                                    name="JobTitle"
                                     id="jobTitle-03315a-e358-b0e4-5e8c-457607f14126"
                                     data-test=""
                                     aria-label="Job Title *"
                                     class="css-1etjok6"
-                                    value="Software Intern"
+                                    value={this.state.JobTitle}
                                   />
                                 </div>
                               </div>
@@ -239,25 +438,42 @@ class InterviewForm extends Component {
                             </div>
                           </div>
                           <div class="mb ejrs1qi0 css-139nzpu">
-                            <label for="" class="css-xwfp7p">
+                            <label
+                              style={{
+                                fontSize: '15px',
+                                lineHeight: '24px',
+                                whiteSpace: 'normal',
+                              }}
+                              for=""
+                              class="css-xwfp7p"
+                            >
                               <span>Describe the Interview Process *</span>
                             </label>
                             <div class="input-wrapper css-q444d9">
                               <textarea
+                                onChange={this.commonOnChangeHandler}
+                                name="Description"
                                 data-test="interview-survey-interview-process-description"
                                 maxlength="5000"
                                 aria-label=""
                                 class="css-1vvn7az"
-                              >
-                                fkfn cv v v v v v v v v v v v vv v v v v v v v v v v v v v v v v v v
-                              </textarea>
+                                value={this.state.Description}
+                              ></textarea>
                             </div>
                             <div data-test="helper" class="css-1pakod1">
-                              30 word minimum
+                              20 characters minimum
                             </div>
                           </div>
                           <div class="mb css-1ohf0ui">
-                            <label for="" class="css-xwfp7p">
+                            <label
+                              style={{
+                                fontSize: '15px',
+                                lineHeight: '24px',
+                                whiteSpace: 'normal',
+                              }}
+                              for=""
+                              class="css-xwfp7p"
+                            >
                               <span>Interview Difficulty *</span>
                             </label>
                             <select
@@ -273,6 +489,7 @@ class InterviewForm extends Component {
                               <option value="5"></option>
                             </select>
                             <div
+                              onClick={this.toggleDifficultyDropDown}
                               tabindex="0"
                               direction="down"
                               aria-expanded="false"
@@ -282,7 +499,17 @@ class InterviewForm extends Component {
                               class="css-1vjdsnn"
                             >
                               <div class="selectedLabel">
-                                Average
+                                {this.state.Difficulty === 1
+                                  ? 'Very Easy'
+                                  : this.state.Difficulty === 2
+                                  ? 'Easy'
+                                  : this.state.Difficulty === 3
+                                  ? 'Average'
+                                  : this.state.Difficulty === 4
+                                  ? 'Difficult'
+                                  : this.state.Difficulty === 5
+                                  ? 'Very Difficult'
+                                  : this.state.Difficulty}
                                 <span alt="" class="SVGInline arrowDown">
                                   <svg
                                     class="SVGInline-svg arrowDown-svg"
@@ -299,11 +526,21 @@ class InterviewForm extends Component {
                                   </svg>
                                 </span>
                               </div>
-                              <div class="dropdownOptions dropdownCollapsed animated ">
+                              <div
+                                class={
+                                  this.state.openDifficultyDropDown
+                                    ? 'dropdownOptions dropdownExpanded animated  '
+                                    : 'dropdownOptions dropdownCollapsed animated  '
+                                }
+                              >
                                 <div class="dropDownOptionsContainer">
                                   <ul>
                                     <li
-                                      class="dropdownOption   "
+                                      onClick={(event) => this.selectDifficultyLevel(event, 1)}
+                                      class={`dropdownOption  ${
+                                        this.state.Difficulty === 1 ? 'checked' : ''
+                                      } `}
+                                      // class="dropdownOption   "
                                       role="option"
                                       aria-selected="false"
                                       id="option_1"
@@ -328,7 +565,11 @@ class InterviewForm extends Component {
                                       <span class="dropdownOptionLabel">Very Easy</span>
                                     </li>
                                     <li
-                                      class="dropdownOption   "
+                                      onClick={(event) => this.selectDifficultyLevel(event, 2)}
+                                      class={`dropdownOption  ${
+                                        this.state.Difficulty === 2 ? 'checked' : ''
+                                      } `}
+                                      // class="dropdownOption   "
                                       role="option"
                                       aria-selected="false"
                                       id="option_2"
@@ -353,7 +594,10 @@ class InterviewForm extends Component {
                                       <span class="dropdownOptionLabel">Easy</span>
                                     </li>
                                     <li
-                                      class="dropdownOption  checked "
+                                      onClick={(event) => this.selectDifficultyLevel(event, 3)}
+                                      class={`dropdownOption  ${
+                                        this.state.Difficulty === 3 ? 'checked' : ''
+                                      } `}
                                       role="option"
                                       aria-selected="true"
                                       id="option_3"
@@ -378,7 +622,10 @@ class InterviewForm extends Component {
                                       <span class="dropdownOptionLabel">Average</span>
                                     </li>
                                     <li
-                                      class="dropdownOption   "
+                                      onClick={(event) => this.selectDifficultyLevel(event, 4)}
+                                      class={`dropdownOption  ${
+                                        this.state.Difficulty === 4 ? 'checked' : ''
+                                      } `}
                                       role="option"
                                       aria-selected="false"
                                       id="option_4"
@@ -403,7 +650,10 @@ class InterviewForm extends Component {
                                       <span class="dropdownOptionLabel">Difficult</span>
                                     </li>
                                     <li
-                                      class="dropdownOption   "
+                                      onClick={(event) => this.selectDifficultyLevel(event, 5)}
+                                      class={`dropdownOption  ${
+                                        this.state.Difficulty === 5 ? 'checked' : ''
+                                      } `}
                                       role="option"
                                       aria-selected="false"
                                       id="option_5"
@@ -433,7 +683,15 @@ class InterviewForm extends Component {
                             </div>
                           </div>
                           <div class="mb css-1ohf0ui">
-                            <label for="" class="css-xwfp7p">
+                            <label
+                              style={{
+                                fontSize: '15px',
+                                lineHeight: '24px',
+                                whiteSpace: 'normal',
+                              }}
+                              for=""
+                              class="css-xwfp7p"
+                            >
                               <span>Did you get an offer? *</span>
                             </label>
                             <select
@@ -447,6 +705,7 @@ class InterviewForm extends Component {
                               <option value="3"></option>
                             </select>
                             <div
+                              onClick={this.toggleOfferStatusDropDown}
                               tabindex="0"
                               direction="down"
                               aria-expanded="false"
@@ -456,7 +715,7 @@ class InterviewForm extends Component {
                               class="css-1vjdsnn"
                             >
                               <div class="selectedLabel">
-                                Yes, but I declined
+                                {this.state.OfferStatus}
                                 <span alt="" class="SVGInline arrowDown">
                                   <svg
                                     class="SVGInline-svg arrowDown-svg"
@@ -473,11 +732,20 @@ class InterviewForm extends Component {
                                   </svg>
                                 </span>
                               </div>
-                              <div class="dropdownOptions dropdownCollapsed animated  ">
+                              <div
+                                class={
+                                  this.state.openOfferStatusDropDown
+                                    ? 'dropdownOptions dropdownExpanded animated  '
+                                    : 'dropdownOptions dropdownCollapsed animated  '
+                                }
+                              >
                                 <div class="dropDownOptionsContainer">
                                   <ul>
                                     <li
-                                      class="dropdownOption   "
+                                      onClick={(event) => this.selectOfferStatus(event, 'No')}
+                                      class={`dropdownOption  ${
+                                        this.state.OfferStatus === 'No' ? 'checked' : ''
+                                      } `}
                                       role="option"
                                       aria-selected="false"
                                       id="option_1"
@@ -502,7 +770,14 @@ class InterviewForm extends Component {
                                       <span class="dropdownOptionLabel">No</span>
                                     </li>
                                     <li
-                                      class="dropdownOption  checked "
+                                      onClick={(event) =>
+                                        this.selectOfferStatus(event, 'Yes, but I declined')
+                                      }
+                                      class={`dropdownOption  ${
+                                        this.state.OfferStatus === 'Yes, but I declined'
+                                          ? 'checked'
+                                          : ''
+                                      } `}
                                       role="option"
                                       aria-selected="true"
                                       id="option_2"
@@ -527,7 +802,14 @@ class InterviewForm extends Component {
                                       <span class="dropdownOptionLabel">Yes, but I declined</span>
                                     </li>
                                     <li
-                                      class="dropdownOption   "
+                                      onClick={(event) =>
+                                        this.selectOfferStatus(event, 'Yes, and I accepted')
+                                      }
+                                      class={`dropdownOption  ${
+                                        this.state.OfferStatus === 'Yes, and I accepted'
+                                          ? 'checked'
+                                          : ''
+                                      } `}
                                       role="option"
                                       aria-selected="false"
                                       id="option_3"
@@ -557,53 +839,78 @@ class InterviewForm extends Component {
                             </div>
                           </div>
                           <div class="mb-xxl">
-                            <label class="mb-xxsm" for="question-0">
+                            <label
+                              style={{
+                                fontSize: '15px',
+                                lineHeight: '24px',
+                                whiteSpace: 'normal',
+                              }}
+                              class="mb-xxsm"
+                              for="InterviewQuestions"
+                            >
                               Interview Questions *
                             </label>
                             <div>
                               <div class="mb em99lwr0 css-139nzpu">
                                 <div class="input-wrapper css-q444d9">
                                   <textarea
-                                    id="question-0"
-                                    name="question-0"
+                                    onChange={this.commonOnChangeHandler}
+                                    id="InterviewQuestions"
+                                    name="InterviewQuestions"
                                     placeholder="Q: What was the one thing that they asked you?"
                                     data-test="interview-survey-interview-question-0"
                                     maxlength="5000"
                                     aria-label=""
                                     class="css-1vvn7az"
-                                  >
-                                    Q 1 dr s a f e
-                                  </textarea>
+                                    value={this.state.InterviewQuestions}
+                                  ></textarea>
                                 </div>
                                 <div data-test="helper" class="css-1pakod1">
-                                  5 word minimum
+                                  20 characters minimum
                                 </div>
                               </div>
                               <div class="mb em99lwr0 css-139nzpu">
                                 <div class="input-wrapper css-q444d9">
                                   <textarea
-                                    id="answer-0"
-                                    name="answer-0"
-                                    placeholder="How did you answer this question? (Optional)"
+                                    onChange={this.commonOnChangeHandler}
+                                    id="Answers"
+                                    name="Answers"
+                                    placeholder="How did you answer this question?"
                                     data-test="interview-survey-interview-answer-0"
                                     maxlength="5000"
                                     aria-label=""
                                     class="css-1vvn7az"
-                                  >
-                                    s s s s s s s s s s s s s s s s s ss
-                                  </textarea>
+                                    value={this.state.Answers}
+                                  ></textarea>
+                                </div>
+                                <div data-test="helper" class="css-1pakod1">
+                                  20 characters minimum
                                 </div>
                               </div>
                             </div>
                           </div>
                           <div class="d-flex justify-content-end">
                             <button
+                              onClick={this.submitReview}
+                              type="button"
+                              disabled={this.state.invalidData}
                               class="gd-ui-button css-1dach6o css-8i7bc2"
                               data-test="interview-survey-interview-submit"
                             >
                               Sumbit
                             </button>
                           </div>
+                          {this.state.invalidData ? (
+                            <div
+                              style={{ textAlign: 'right' }}
+                              data-test="helper"
+                              class="css-1pakod1"
+                            >
+                              Fill all fields before submission
+                            </div>
+                          ) : (
+                            ''
+                          )}
                         </div>
                       </form>
                     </div>

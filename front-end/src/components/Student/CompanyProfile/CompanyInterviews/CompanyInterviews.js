@@ -3,6 +3,10 @@ import './CompanyInterviews.css';
 import { Pie } from 'react-chartjs-2';
 import { PieChart } from 'react-minimal-pie-chart';
 import PaginationComponent from '../../Common/PaginationComponent';
+import { updateCompanyInterviewStore } from '../../../../constants/action-types';
+import { connect } from 'react-redux';
+import axios from 'axios';
+import serverUrl from '../../../../config';
 
 class CompanyInterviews extends Component {
   constructor(props) {
@@ -17,6 +21,39 @@ class CompanyInterviews extends Component {
       ],
     };
   }
+
+  componentDidMount() {
+    this.commonFetch();
+  }
+
+  commonFetch = (PageNo = 0) => {
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    axios
+      .get(serverUrl + 'student/interviewReview', {
+        params: {
+          CompanyID: localStorage.getItem('companyID'),
+          PageNo,
+        },
+        withCredentials: true,
+      })
+      .then(
+        (response) => {
+          console.log('companyReviews', response.data);
+          let payload = {
+            RevieInterViewListwList: response.data.interviews,
+            PageNo,
+            Totalcount: response.data.count,
+            PageCount: Math.ceil(response.data.count / 10),
+
+            // PageCount: Math.ceil(response.data.Totalcount / 3),
+          };
+          this.props.updateCompanyInterviewStore(payload);
+        },
+        (error) => {
+          console.log('error', error);
+        }
+      );
+  };
   render() {
     return (
       <article id="MainCol">
@@ -402,4 +439,25 @@ class CompanyInterviews extends Component {
   }
 }
 
-export default CompanyInterviews;
+// export default CompanyInterviews;
+
+const mapStateToProps = (state) => {
+  const { companyOverviewStore, companyReviewsStore } = state.CompanyPageReducer;
+
+  return {
+    companyOverviewStore,
+    companyReviewsStore,
+  };
+};
+const mapDispatchToProps = (dispatch) => {
+  return {
+    updateCompanyInterviewStore: (payload) => {
+      dispatch({
+        type: updateCompanyInterviewStore,
+        payload,
+      });
+    },
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(CompanyInterviews);

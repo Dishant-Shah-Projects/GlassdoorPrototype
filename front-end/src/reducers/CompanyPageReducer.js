@@ -3,6 +3,7 @@ import {
   updatespecialReviews,
   updateCompanyReviewsStore,
   updateCompanyJobStore,
+  updateCompanyInterviewStore,
 } from '../constants/action-types';
 
 const defaultState = {
@@ -20,6 +21,12 @@ const defaultState = {
   },
   companyJobStore: {
     JobList: [],
+    PageNo: 0,
+    Totalcount: 0,
+    PageCount: 0,
+  },
+  companyInterviewStore: {
+    InterViewList: [],
     PageNo: 0,
     Totalcount: 0,
     PageCount: 0,
@@ -60,6 +67,15 @@ const CompanyPageReducer = (state = defaultState, action) => {
       return {
         ...state,
         companyJobStore: { ...state.companyJobStore, ...action.payload },
+
+        //   return Object.assign(state, action.payload);
+      };
+    }
+    case updateCompanyInterviewStore: {
+      console.log('inside company interview store');
+      return {
+        ...state,
+        companyInterviewStore: { ...state.companyInterviewStore, ...action.payload },
 
         //   return Object.assign(state, action.payload);
       };
