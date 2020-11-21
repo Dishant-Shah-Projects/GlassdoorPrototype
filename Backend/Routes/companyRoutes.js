@@ -16,6 +16,7 @@ const {
   jobsApplicantUpdate,
   jobsApplicantProfile,
   report,
+  demographicsJob,
 } = require('../Company/companyFunctionality');
 const { auth, checkAuth } = require('../SharedFuntionalities/passport');
 
@@ -82,6 +83,12 @@ Router.get('/jobsApplicantProfile', checkAuth, async (req, res) => {
 // To view statistics of Jobs
 Router.get('/report', checkAuth, async (req, res) => {
   const value = await report(req, res);
+  return value;
+});
+
+// To get the demographics of applicants
+Router.get('/demographicsJob', checkAuth, async (req, res) => {
+  const value = await demographicsJob(req, res);
   return value;
 });
 
