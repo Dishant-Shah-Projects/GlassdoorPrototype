@@ -24,6 +24,7 @@
     "react-chartjs-2": "^2.11.1",
     "react-cookies": "^0.1.1",
     "react-dom": "^16.13.1",
+    "react-donut-chart": "^1.1.8",
     "react-js-pagination": "^3.0.3",
     "react-minimal-pie-chart": "^8.1.0",
     "react-notifications-component": "^2.4.1",

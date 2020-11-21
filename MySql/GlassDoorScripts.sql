@@ -43,7 +43,7 @@ CREATE TABLE `GENERAL_REVIEW` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `APPLICATION_JOB` (
-  `JobID` bigint NOT NULL,
+  `JobID` bigint NOT NULL auto_increment,
   `CompanyName` varchar(60) NOT NULL,
   `CompanyID` bigint NOT NULL,
   `PostedDate` date NOT NULL,
@@ -54,7 +54,7 @@ CREATE TABLE `APPLICATION_JOB` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `APPLICATION_RECEIVED` (
-  `JobID` bigint NOT NULL,
+  `JobID` bigint NOT NULL ,
   `StudentID` bigint NOT NULL,
   `StudentName` varchar(45) NOT NULL,
   `ResumeURL` varchar(150) DEFAULT NULL,
@@ -85,6 +85,7 @@ CREATE TABLE `INTERVIEW_REVIEW` (
   `InterviewReviewID` bigint auto_increment primary key,
   `CompanyID` bigint not null,
   `StudentID` bigint not null,
+  `CompanyName` varchar(60) NOT NULL,
   `Status` enum('Not Approved', 'Approved', 'Disapproved') DEFAULT 'Not Approved',
   `Helpful` bigint default 0,
   `DatePosted` date NOT NULL,
@@ -92,7 +93,7 @@ CREATE TABLE `INTERVIEW_REVIEW` (
   `JobTitle` varchar(50),
   `Description` varchar(350),
   `Difficulty` int,
-  `OfferStatus` enum('Rejected', 'Accepted'),
+  `OfferStatus` enum('No', 'Yes, but I declined','Yes, and I accepted'),
   `InterviewQuestions` varchar(350),
   `Answers` varchar(400)
 );

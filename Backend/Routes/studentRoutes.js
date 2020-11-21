@@ -29,6 +29,7 @@ const {
   companyHelpfulReview,
   companyJobs,
   salaryReview,
+  companyInterviewHelpfulReview,
   // getAllReview,
 } = require('../Student/studentFunctionality');
 
@@ -188,6 +189,12 @@ Router.post('/salaryAddreview', checkAuth, async (req, res) => {
 // post helpful review count
 Router.post('/companyHelpfulReview', checkAuth, async (req, res) => {
   const value = await companyHelpfulReview(req, res);
+  return value;
+});
+
+// post helpful review count for interview review
+Router.post('/companyInterviewHelpfulReview', checkAuth, async (req, res) => {
+  const value = await companyInterviewHelpfulReview(req, res);
   return value;
 });
 

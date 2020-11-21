@@ -8,7 +8,7 @@ const CompanySchema = new mongoose.Schema(
     Size: { type: Number },
     ProfileImg: { type: String },
     Type: { type: String },
-    Revenue: { type: Number },
+    Revenue: { type: String },
     Headquarter: { type: String },
     Industry: { type: String },
     Founded: { type: Date },
@@ -28,6 +28,7 @@ const CompanySchema = new mongoose.Schema(
     CoverPhoto: { type: String },
     PhotoCount: { type: Number, default: 0 },
     FeaturedReview: {
+      ID: { type: Number },
       Status: {
         type: String,
         enum: ['NotApproved', 'Approved', 'Disapproved'],

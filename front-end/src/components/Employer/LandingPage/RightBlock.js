@@ -9,22 +9,7 @@ import './Body.css';
 class RightBlock extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      //   errorMessage: '',
-      //   CompanyName: '',
-      //   Website: '',
-      //   Size: '',
-      //   ProfileImg: '',
-      //   Type: '',
-      //   Revenue: '',
-      //   Headquarter: '',
-      //   Industry: '',
-      //   Founded: '',
-      //   CompanyDescription: '',
-      //   CompanyMission: '',
-      //   CEO: '',
-      //   City: '',
-      //   State: '',
+    this.state = {     
       authFlag: false,
       updateProfile: false,
     };
@@ -45,6 +30,7 @@ class RightBlock extends Component {
         (response) => {
           if (response.status === 200) {
             console.log(response);
+            localStorage.setItem('companyName',response.data.CompanyName);
             let payload = {
               CompanyName: response.data.CompanyName,
               Website: response.data.Website,
@@ -54,7 +40,7 @@ class RightBlock extends Component {
               Revenue: response.data.Revenue,
               Headquarter: response.data.Headquarter,
               Industry: response.data.Industry,
-              Founded: response.data.Founded.substring(0, 10),
+              Founded: response.data.Founded,
               CompanyDescription: response.data.CompanyDescription,
               CompanyMission: response.data.CompanyMission,
               CEO: response.data.CEO,
@@ -160,7 +146,7 @@ class RightBlock extends Component {
                     </div>
                   </div>
                   <div class="row mb-lg profileInfoStyle__profileInfoMain___Y8O5Z profileInfoStyle__visible___1bdIC">
-                    <div class="col-12 col-sm-6 col-lg-4 p-0">
+                    <div class="col-12 col-sm-6 col-lg-4 p-0" style={{flex: "0 0 100%", maxWidth: "100%"}}>
                       <ul class="css-155za0w row px-0 m-0">
                         <li class="d-flex align-items-center col-12 col-sm-6 p-0 m-0 pb-sm pr-xxsm">
                           <label class="css-1f0lhlt ecl3kjh0">Website:</label>
@@ -169,6 +155,7 @@ class RightBlock extends Component {
                             target="_blank"
                             rel="noopener noreferrer"
                             class="css-1hg9omi"
+                            style={{fontSize: "small"}}
                             data-test="employer-website"
                           >
                             {this.props.companyInfo.Website}
@@ -183,7 +170,7 @@ class RightBlock extends Component {
                         <li class="d-flex align-items-center col-12 col-sm-6 p-0 m-0 pb-sm pr-sm-xxsm">
                           <label class="css-1f0lhlt ecl3kjh0">Size:</label>
                           <div data-test="employer-size">
-                            {this.props.companyInfo.Size} Employees
+                            {this.props.companyInfo.Size} 
                           </div>
                         </li>
                         <li class="d-flex align-items-center col-12 col-sm-6 p-0 m-0 pb-sm pr-sm-xxsm">
@@ -194,7 +181,7 @@ class RightBlock extends Component {
                         </li>
                         <li class="d-flex align-items-center col-12 col-sm-6 p-0 m-0 pb-sm pl-sm-xxsm">
                           <label class="css-1f0lhlt ecl3kjh0">Founded:</label>
-                          <div data-test="employer-founded">{this.props.companyInfo.Founded} </div>
+                          <div data-test="employer-founded">{this.props.companyInfo.Founded.substring(0,4)} </div>
                         </li>
                         <li class="d-flex align-items-center col-12 col-sm-6 p-0 m-0 pb-sm pr-sm-xxsm">
                           <label class="css-1f0lhlt ecl3kjh0">Type:</label>
@@ -219,34 +206,7 @@ class RightBlock extends Component {
                           <div data-test="employer-revenue">{this.props.companyInfo.CEO}</div>
                         </li>
                       </ul>
-                    </div>
-                    <div class="col-12 col-sm-6 col-lg-4 p-0">
-                      <div class="d-sm-block d-none">
-                        <div class="no-gutters mb-md-xxsm d-flex justify-content-start align-items-start profileInfoStyle__entryItem___1hOfs">
-                          <div class="d-flex justify-content-center align-items-center mr-xsm profileInfoStyle__default___3mWZn profileInfoStyle__entryIcon___2D6u_">
-                            <span class="SVGInline">
-                              <svg
-                                class="SVGInline-svg"
-                                xmlns="http://www.w3.org/2000/svg"
-                                height="24"
-                                width="24"
-                                viewBox="0 0 24 24"
-                              >
-                                <g fill="currentColor" fill-rule="evenodd">
-                                  <path
-                                    id="prefix__icon-phone"
-                                    d="M7 4a3.13 3.13 0 01.6.06l.27.07 1 5.07-1.51.85a1 1 0 00-.43 1.26 10.94 10.94 0 005.81 5.81 1.09 1.09 0 00.39.08 1 1 0 00.87-.51l.86-1.51 5.06.95a2.5 2.5 0 01.07.26A3.31 3.31 0 0120 17a3 3 0 01-3 3A13 13 0 014 7a3 3 0 013-3m0-1a4 4 0 00-4 4 14 14 0 0014 14 4 4 0 004-4 4.17 4.17 0 00-.08-.8 3.82 3.82 0 00-.33-.95l-6.3-1.19-1.21 2.14a10 10 0 01-5.28-5.28l2.13-1.2-1.18-6.31a3.82 3.82 0 00-1-.33A4.17 4.17 0 007 3z"
-                                  ></path>
-                                </g>
-                              </svg>
-                            </span>
-                          </div>
-                          <div class="profileInfoStyle__default___3mWZn profileInfoStyle__wrap___102WU">
-                            669-294-6359
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                    </div>                 
                   </div>
                 </div>
                 <div class="d-flex no-gutters justify-content-center align-items-start profileInfoStyle__actions___3-CvK">
@@ -280,34 +240,7 @@ class RightBlock extends Component {
                     <div class="d-flex justify-content-center align-items-start">
                       <div class="profileInfoStyle__caption___7rzry">Update Profile</div>
                     </div>
-                  </div>
-                  <div class="col-4 px-xxsm d-flex flex-column justify-content-center align-items-center">
-                    <button class="gd-ui-button m-0 mb-xsm p-0 d-flex justify-content-center align-items-center profileInfoStyle__actionBtn___2ectR css-1c2vj07">
-                      <div class="d-flex mt-xsm justify-content-center align-items-center profileInfoStyle__actionIcon___iWiGy">
-                        <div class="d-block d-md-none profileInfoStyle__actionIcon___iWiGy">
-                          <span class="SVGInline">
-                            <svg
-                              class="SVGInline-svg"
-                              style={{ width: '24px', height: '24px' }}
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="24"
-                              height="24"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                d="M13.29 3L14 4.88l.16.43.42.16.29.12.42.19.41-.2 1.8-.86 1.83 1.83-.86 1.8-.2.41.19.42c0 .09.08.19.11.28l.17.43.43.15 1.83.66v2.59l-1.88.71-.43.15-.17.43c0 .09-.07.18-.11.27l-.19.42.2.42.86 1.8-1.83 1.83-1.8-.86-.41-.2-.42.18c-.09.05-.19.08-.28.12l-.43.17-.15.43-.67 1.84H10.7l-.7-1.88-.15-.43-.43-.17-.28-.11-.42-.19-.41.2-1.8.86-1.79-1.83.86-1.8.19-.41-.18-.42-.12-.29-.16-.42-.44-.11L3 13.29V10.7l1.87-.7.44-.15.16-.43.12-.28.18-.42-.19-.42-.86-1.75 1.83-1.83 1.8.86.41.19.42-.18.28-.12.43-.16.11-.44.7-1.87h2.59M12 16a4 4 0 10-4-4 4 4 0 004 4m1.29-14H10.7a1 1 0 00-.94.67L9.1 4.54l-.32.13L7 3.82a.94.94 0 00-.43-.1 1 1 0 00-.73.28L4 5.84A1 1 0 003.82 7l.85 1.79-.13.33-1.88.66a1 1 0 00-.66.92v2.59a1 1 0 00.66.94l1.88.67c0 .11.09.21.13.32L3.82 17A1 1 0 004 18.15L5.84 20a1 1 0 00.71.3 1.08 1.08 0 00.43-.1l1.8-.86.32.13.66 1.88a1 1 0 00.94.67h2.59a1 1 0 00.94-.67l.67-1.88.32-.13 1.8.86a1.12 1.12 0 00.43.1 1 1 0 00.71-.3L20 18.15a1 1 0 00.18-1.15l-.86-1.8.14-.32 1.88-.67a1 1 0 00.66-.94V10.7a1 1 0 00-.66-.94l-1.88-.66c-.05-.11-.09-.22-.14-.32L20.18 7A1 1 0 0020 5.84L18.16 4a1 1 0 00-.71-.29 1 1 0 00-.43.1l-1.8.86-.32-.14-.67-1.87a1 1 0 00-.94-.66M12 15a3 3 0 113-3 3 3 0 01-3 3"
-                                fill="currentColor"
-                                fill-rule="evenodd"
-                              ></path>
-                            </svg>
-                          </span>
-                        </div>
-                      </div>
-                    </button>
-                    <div class="d-flex justify-content-center align-items-start">
-                      <div class="profileInfoStyle__caption___7rzry">Manage Privacy</div>
-                    </div>
-                  </div>
+                  </div>               
                 </div>
               </div>
             </section>
