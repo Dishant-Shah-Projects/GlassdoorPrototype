@@ -382,6 +382,7 @@ const jobsApplicantProfile = async (req, res) => {
         _id: 0,
         Name: 1,
         ProfilePicURL: 1,
+        AboutMe: 1,
         Gender: 1,
         Disability: 1,
         VeteranStatus: 1,
@@ -392,6 +393,7 @@ const jobsApplicantProfile = async (req, res) => {
         CurrentJobTitle: 1,
         TargetSalary: 1,
         OpentoRelocation: 1,
+        Skills: 1,
       },
       (err, data) => {
         if (err) {
@@ -457,6 +459,23 @@ const report = async (req, res) => {
     }
   }
 };
+
+const demographicsJob = async (req, res) => {
+  // let con = null;
+  // try {
+  //   const { CompanyID, JobID, PageNo } = req.query;
+  //   con = await mysqlConnection();
+  //   const getQuery = 'SELECT StudentID FROM APPLICATION_RECEIVED WHERE JobID = ?';
+  //   const [results] = await con.query(getQuery, JobID);
+  // } catch (error) {
+  //   res.writeHead(500, { 'content-type': 'text/json' });
+  //   res.end(JSON.stringify('Network Error'));
+  // } finally {
+  //   if (con) {
+  //     con.end();
+  //   }
+  // }
+};
 module.exports = {
   getCompanyProfile,
   companyProfileUpdate,
@@ -470,4 +489,5 @@ module.exports = {
   jobsApplicantUpdate,
   jobsApplicantProfile,
   report,
+  demographicsJob,
 };
