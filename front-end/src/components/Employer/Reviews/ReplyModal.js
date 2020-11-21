@@ -111,7 +111,7 @@ class ReplyModal extends Component {
 }
 
 const mapStateToProps = (state) => {
-    const { replyModalStore } = state.ReplyModalViewReducer;
+    const { replyModalStore } = state.ReviewReplyReducer;
     return {
       replyModalStore: replyModalStore,
     };

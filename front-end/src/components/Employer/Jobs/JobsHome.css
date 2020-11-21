@@ -78,6 +78,7 @@ body.hasTwoPanes .pageContentWrapper {
 
 #PageContent {
   height: 100%;
+  width: 1280px;
 }
 body.wide #PageContent {
   max-width: 1280px none!important;
@@ -92,3 +93,4 @@ body.hasTwoPanes #PageBodyContents,
 body.hasTwoPanes #PageContent {
   height: 100%;
 }
+

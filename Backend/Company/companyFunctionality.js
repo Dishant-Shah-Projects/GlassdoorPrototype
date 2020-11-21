@@ -88,16 +88,24 @@ const companyProfileUpdate = async (req, res) => {
 // get the Company Review for the company
 const companyReviews = async (req, res) => {
   // eslint-disable-next-line no-console
-  const { CompanyID } = req.query;
+  const { CompanyID, PageNo } = req.query;
   let con = null;
   // eslint-disable-next-line no-console
   try {
-    const userInsertProcedure = 'CALL fetchReview(?)';
-
+    const offset = PageNo * 10;
+    const searchQuery =
+      'SELECT * FROM GENERAL_REVIEW WHERE CompanyID=? AND Status = "Approved" LIMIT 10 OFFSET ?;';
     con = await mysqlConnection();
-    const [results, fields] = await con.query(userInsertProcedure, CompanyID);
+    const [results] = await con.query(searchQuery, [CompanyID, offset]);
+    const countQuery =
+      'SELECT COUNT(*) AS TOTALCOUNT FROM GENERAL_REVIEW WHERE CompanyID=? AND Status = "Approved";';
+    const [count] = await con.query(countQuery, [CompanyID]);
+    const resultData = { results, count };
     con.end();
+    res.writeHead(200, { 'content-type': 'text/json' });
+    res.end(JSON.stringify(resultData));
     if (results) {
+      // eslint-disable-next-line no-console
       res.writeHead(200, { 'content-type': 'text/json' });
       res.end(JSON.stringify(results));
     } else {
@@ -148,6 +156,7 @@ const postJob = async (req, res) => {
       State,
     ]);
     con.end();
+    // eslint-disable-next-line no-console
     const job = new Job({
       JobID: results[0][0].JobID,
       Title,
@@ -254,7 +263,7 @@ const reviewResponse = async (req, res) => {
 };
 const featuredReview = async (req, res) => {
   // eslint-disable-next-line no-console
-  const { CompanyID, ID, Response } = req.body;
+  const { CompanyID, ID } = req.body;
   let con = null;
   // eslint-disable-next-line no-console
   try {
@@ -332,6 +341,7 @@ const jobsApplications = async (req, res) => {
       const resultdata = [];
       resultdata.push(results[0]);
       resultdata.push(results[1]);
+      // eslint-disable-next-line no-console
       res.writeHead(200, { 'content-type': 'text/json' });
       res.end(JSON.stringify(resultdata));
     }
@@ -382,6 +392,7 @@ const jobsApplicantProfile = async (req, res) => {
         _id: 0,
         Name: 1,
         ProfilePicURL: 1,
+        AboutMe: 1,
         Gender: 1,
         Disability: 1,
         VeteranStatus: 1,
@@ -392,6 +403,7 @@ const jobsApplicantProfile = async (req, res) => {
         CurrentJobTitle: 1,
         TargetSalary: 1,
         OpentoRelocation: 1,
+        Skills: 1,
       },
       (err, data) => {
         if (err) {
@@ -457,6 +469,23 @@ const report = async (req, res) => {
     }
   }
 };
+
+const demographicsJob = async (req, res) => {
+  // let con = null;
+  // try {
+  //   const { CompanyID, JobID, PageNo } = req.query;
+  //   con = await mysqlConnection();
+  //   const getQuery = 'SELECT StudentID FROM APPLICATION_RECEIVED WHERE JobID = ?';
+  //   const [results] = await con.query(getQuery, JobID);
+  // } catch (error) {
+  //   res.writeHead(500, { 'content-type': 'text/json' });
+  //   res.end(JSON.stringify('Network Error'));
+  // } finally {
+  //   if (con) {
+  //     con.end();
+  //   }
+  // }
+};
 module.exports = {
   getCompanyProfile,
   companyProfileUpdate,
@@ -470,4 +499,5 @@ module.exports = {
   jobsApplicantUpdate,
   jobsApplicantProfile,
   report,
+  demographicsJob,
 };

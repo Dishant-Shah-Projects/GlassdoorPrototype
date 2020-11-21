@@ -1,12 +1,18 @@
-import { showReplyModal, hideReplyModal } from '../constants/action-types';
+import { showReplyModal, hideReplyModal, updateReviewList } from '../constants/action-types';
 
 const defaultState = {
   replyModalStore: {
     popSeen: false,
   },
+  reviewListStore: {
+    reviewList:[],
+    PageNo: 0,
+    PageCount: 5,
+    Totalcount: 10, 
+  }
 };
 
-const ReplyModalViewReducer = (state = defaultState, action) => {
+const ReviewReplyReducer = (state = defaultState, action) => {
   switch (action.type) {
     case showReplyModal: {
       return {
@@ -22,6 +28,13 @@ const ReplyModalViewReducer = (state = defaultState, action) => {
         //   return Object.assign(state, action.payload);
       };
     }
+    case updateReviewList: {
+      return {
+        ...state,
+        reviewListStore: { ...state.reviewListStore, ...action.payload1 },
+        //   return Object.assign(state, action.payload);
+      };
+    }
 
     default: {
       return { ...state };
@@ -29,4 +42,4 @@ const ReplyModalViewReducer = (state = defaultState, action) => {
   }
 };
 
-export default ReplyModalViewReducer;
+export default ReviewReplyReducer;

@@ -16,6 +16,7 @@ const {
   jobsApplicantUpdate,
   jobsApplicantProfile,
   report,
+  demographicsJob,
 } = require('../Company/companyFunctionality');
 const { auth, checkAuth } = require('../SharedFuntionalities/passport');
 
@@ -27,7 +28,7 @@ Router.get('/profile', async (req, res) => {
   return value;
 });
 // Update the company profile API 25
-Router.post('/profileupdate', checkAuth, async (req, res) => {
+Router.post('/profileupdate', async (req, res) => {
   const value = await companyProfileUpdate(req, res);
   return value;
 });
@@ -52,7 +53,7 @@ Router.post('/reviewFeatured', checkAuth, async (req, res) => {
   return value;
 });
 // Post Job
-Router.post('/postJob', checkAuth, async (req, res) => {
+Router.post('/postJob', async (req, res) => {
   const value = await postJob(req, res);
   return value;
 });
@@ -82,6 +83,12 @@ Router.get('/jobsApplicantProfile', checkAuth, async (req, res) => {
 // To view statistics of Jobs
 Router.get('/report', checkAuth, async (req, res) => {
   const value = await report(req, res);
+  return value;
+});
+
+// To get the demographics of applicants
+Router.get('/demographicsJob', checkAuth, async (req, res) => {
+  const value = await demographicsJob(req, res);
   return value;
 });
 
