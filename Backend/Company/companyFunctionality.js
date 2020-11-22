@@ -431,7 +431,6 @@ const report = async (req, res) => {
   try {
     const resultApplication = {};
     const finalResult = [];
-    const jobID = [];
     const { CompanyID, PageNo } = req.query;
     const year = new Date().getFullYear();
     const date = new Date(year, 0, 1);
@@ -443,13 +442,15 @@ const report = async (req, res) => {
       // jobID.push(data[i].JobID);
       const jobData = jobDataFetched[i];
       resultApplication.jobDetails = { jobData };
-      let getQuery = 'SELECT * FROM APPLICATION_RECEIVED WHERE JobID = ?';
+      let getQuery = 'SELECT COUNT(*) As TotalApplicants FROM APPLICATION_RECEIVED WHERE JobID = ?';
       let [results] = await con.query(getQuery, jobData.JobID);
       resultApplication.Applied = { results };
-      getQuery = 'SELECT * FROM APPLICATION_RECEIVED WHERE JobID = ? AND STATUS = ?';
+      getQuery =
+        'SELECT COUNT(*) AS SelectedApplicants FROM APPLICATION_RECEIVED WHERE JobID = ? AND STATUS = ?';
       [results] = await con.query(getQuery, [jobData.JobID, 'Hired']);
       resultApplication.Selected = { results };
-      getQuery = 'SELECT * FROM APPLICATION_RECEIVED WHERE JobID = ? AND STATUS = ?';
+      getQuery =
+        'SELECT COUNT(*) As RejectedApplicants FROM APPLICATION_RECEIVED WHERE JobID = ? AND STATUS = ?';
       [results] = await con.query(getQuery, [jobData.JobID, 'Rejected']);
       resultApplication.Rejected = { results };
       finalResult.push(resultApplication);
