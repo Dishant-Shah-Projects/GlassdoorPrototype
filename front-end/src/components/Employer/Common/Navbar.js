@@ -2,14 +2,20 @@ import React, { Component, PropTypes } from 'react';
 import './Navbar.css';
 import { Redirect } from 'react-router';
 import { history } from '../../../App';
+import axios from 'axios';
+import serverUrl from '../../../config';
+import { openProfileTabOnClick, updateSearcFilter } from '../../../constants/action-types';
+import { connect } from 'react-redux';
 
 class Navbar extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      loggedout: false,
+    };
   }
 
-  handleOnClick = (selectedOption) => {    
+  handleOnClick = (selectedOption) => {
     console.log('selected option', selectedOption);
     switch (selectedOption) {
       case 'Home': {
@@ -32,6 +38,82 @@ class Navbar extends Component {
       }
     }
   };
+
+  showMainMenu = (event) => {
+    event.preventDefault();
+    const payload = {
+      mainDropDown: !this.props.searchDropDownStore.mainDropDown,
+    };
+    this.props.updateSearcFilter(payload);
+  };
+
+  mainMenuClicked = (event, selectedMenuoption) => {
+    // event.preventDefault();
+    switch (selectedMenuoption) {
+      case 'Sign Out': {
+        localStorage.clear();
+        axios.post(serverUrl + 'glassdoor/logout').then((response) => {
+          if (response.status === 200) {
+            this.setState({
+              loggedout: true,
+            });
+          }
+        });
+        break;
+      }
+      case 'Profile': {
+        history.push('/Employer');
+        // this.setState({
+        //   redirect: '/Profile',
+        // });
+        localStorage.setItem('openTab', selectedMenuoption);
+        let payload = { openTab: selectedMenuoption };
+        this.props.openProfileTabOnClick(payload);
+        break;
+      }
+      case 'Reviews': {
+        history.push('/EmployerReviews');
+        // this.setState({
+        //   redirect: '/Profile',
+        // });
+        localStorage.setItem('openTab', selectedMenuoption);
+        let payload = { openTab: selectedMenuoption };
+        this.props.openProfileTabOnClick(payload);
+        break;
+      }
+      case 'Jobs': {
+        history.push('/EmployerJobs');
+        // this.setState({
+        //   redirect: '/Profile',
+        // });
+        localStorage.setItem('openTab', selectedMenuoption);
+        let payload = { openTab: selectedMenuoption };
+        this.props.openProfileTabOnClick(payload);
+        break;
+      }
+      case 'Report': {
+        history.push('/EmployerReport');
+        // this.setState({
+        //   redirect: '/Profile',
+        // });
+        localStorage.setItem('openTab', selectedMenuoption);
+        let payload = { openTab: selectedMenuoption };
+        this.props.openProfileTabOnClick(payload);
+        break;
+      }
+      default: {
+        break;
+      }
+    }
+    const payload = {
+      mainDropDown: false,
+    };
+    this.props.updateSearcFilter(payload);
+  };
+
+  goToHomePage = () => {
+    history.push('/Home');
+  };
   render() {
     let redirectVar = null;
     if (localStorage.getItem('token')) {
@@ -52,7 +134,11 @@ class Navbar extends Component {
                   <div className="d-flex order-0 order-md-6">
                     <div class="d-none d-md-flex">
                       <div>
-                        <div class="d-flex " data-test="user-profile-dropdown-trigger">
+                        <div
+                          onClick={this.showMainMenu}
+                          class="d-flex "
+                          data-test="user-profile-dropdown-trigger"
+                        >
                           <span class="SVGInline d-flex icon__IconStyles__colorDefault">
                             <svg
                               class="SVGInline-svg d-flex-svg icon__IconStyles__colorDefault-svg"
@@ -71,16 +157,28 @@ class Navbar extends Component {
                           </span>
                         </div>
                         <div class="popup__PopupStyles__popupContainer">
-                          <div class="pt-xxsm popup__PopupStyles__popupContent popup__PopupStyles__popupContentRight  ">
+                          <div
+                            className={`pt-xxsm popup__PopupStyles__popupContent popup__PopupStyles__popupContentRight ${
+                              this.props.searchDropDownStore.mainDropDown
+                                ? 'popup__PopupStyles__popupContentActive'
+                                : ''
+                            }`}
+                          >
                             <div class="popup__PopupStyles__popupBackground">
-                              <div class="d-flex flex-column col">
+                              <div class="d-flex flex-column col" style={{width: '100%'}}>
                                 <div class="accountPopup__AccountPopupStyles__menuContainer">
                                   <div class="accountPopup__AccountPopupStyles__accountMenu accountPopup__AccountPopupStyles__active">
                                     <ul class="p-0 m-0 memberHeader__HeaderStyles__list">
-                                      <li class="p-0 m-0">
+                                      <li
+                                        style={{ cursor: 'pointer'}}
+                                        onClick={(event) => {
+                                          this.mainMenuClicked(event, 'Profile');
+                                        }}
+                                        class="p-0 m-0"
+                                      >
                                         <a
                                           class="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
-                                          href="/member/profile/index.htm"
+                                          href="#"
                                           target="_top"
                                           rel="nofollow"
                                           data-ga-lbl="My Profile"
@@ -94,27 +192,16 @@ class Navbar extends Component {
                                           </div>
                                         </a>
                                       </li>
-                                      <li class="p-0 m-0">
+                                      <li
+                                        style={{ cursor: 'pointer' }}
+                                        onClick={(event) => {
+                                          this.mainMenuClicked(event, 'Jobs');
+                                        }}
+                                        class="p-0 m-0"
+                                      >
                                         <a
                                           class="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
-                                          href="/member/profile/reviews.htm"
-                                          target="_top"
-                                          rel="nofollow"
-                                          data-ga-lbl="My Reviews"
-                                        >
-                                          <div class="d-flex align-items-center py-std col header-menu-item-label">
-                                            <span class="col">
-                                              <span class="menuItem__MenuItemStyles__menuItemColor">
-                                                Reviews
-                                              </span>
-                                            </span>
-                                          </div>
-                                        </a>
-                                      </li>
-                                      <li class="p-0 m-0">
-                                        <a
-                                          class="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
-                                          href="/member/profile/postings.htm"
+                                          href="#"
                                           target="_top"
                                           rel="nofollow"
                                           data-ga-lbl="Job Postings"
@@ -128,13 +215,65 @@ class Navbar extends Component {
                                           </div>
                                         </a>
                                       </li>
+                                      <li
+                                        style={{ cursor: 'pointer' }}
+                                        onClick={(event) => {
+                                          this.mainMenuClicked(event, 'Reviews');
+                                        }}
+                                        class="p-0 m-0"
+                                      >
+                                        <a
+                                          class="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
+                                          href="#"
+                                          target="_top"
+                                          rel="nofollow"
+                                          data-ga-lbl="My Reviews"
+                                        >
+                                          <div class="d-flex align-items-center py-std col header-menu-item-label">
+                                            <span class="col">
+                                              <span class="menuItem__MenuItemStyles__menuItemColor">
+                                                Reviews
+                                              </span>
+                                            </span>
+                                          </div>
+                                        </a>
+                                      </li>
+                                      <li
+                                        style={{ cursor: 'pointer' }}
+                                        onClick={(event) => {
+                                          this.mainMenuClicked(event, 'Report');
+                                        }}
+                                        class="p-0 m-0"
+                                      >
+                                        <a
+                                          class="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
+                                          href="#"
+                                          target="_top"
+                                          rel="nofollow"
+                                          data-ga-lbl="Report"
+                                        >
+                                          <div class="d-flex align-items-center py-std col header-menu-item-label">
+                                            <span class="col">
+                                              <span class="menuItem__MenuItemStyles__menuItemColor">
+                                                Report
+                                              </span>
+                                            </span>
+                                          </div>
+                                        </a>
+                                      </li>
                                     </ul>
 
                                     <ul class="p-0 m-0 memberHeader__HeaderStyles__list">
-                                      <li class="p-0 m-0">
+                                      <li
+                                        style={{ cursor: 'pointer' }}
+                                        onClick={(event) => {
+                                          this.mainMenuClicked(event, 'Sign Out');
+                                        }}
+                                        class="p-0 m-0"
+                                      >
                                         <a
                                           class="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
-                                          href="/logout.htm"
+                                          href="#"
                                           target=""
                                           rel=""
                                           data-ga-lbl="Sign Out"
@@ -165,7 +304,8 @@ class Navbar extends Component {
 
                   <div className="d-flex order-2 memberHeader__HeaderStyles__brandLogoContainer">
                     <a
-                      href="/index.htm"
+                      onClick={this.goToHomePage}
+                      href="#"
                       alt=""
                       target="_top"
                       rel="nofollow"
@@ -390,4 +530,27 @@ class Navbar extends Component {
     );
   }
 }
-export default Navbar;
+const mapStateToProps = (state) => {
+  const { searchDropDownStore } = state.searchDropDownReducer;
+  return {
+    searchDropDownStore,
+  };
+};
+const mapDispatchToProps = (dispatch) => {
+  return {
+    openProfileTabOnClick: (payload) => {
+      dispatch({
+        type: openProfileTabOnClick,
+        payload,
+      });
+    },
+    updateSearcFilter: (payload) => {
+      dispatch({
+        type: updateSearcFilter,
+        payload,
+      });
+    },
+  }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(Navbar);
+//export default Navbar;

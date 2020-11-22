@@ -17,7 +17,15 @@ class JobsHome extends Component {
               <div id="JobSearch">
                 <div className="gdGrid noPad">
                   <div id="JobResults" className="module noPad">
-                    <section class="flexbox" id="PanesWrap">
+                    <section
+                      class="flexbox"
+                      id="PanesWrap"
+                      style={{
+                        height: '100%',
+                        width: '100%',
+                        position: 'absolute',
+                      }}
+                    >
                       {<JobsPage />}
                     </section>
                   </div>

@@ -22,6 +22,9 @@ class LeftBlock extends Component {
         history.push('/EmployerReport');
         break;
       }
+      default: {
+        break;
+      }
     }
   }
   render() {
