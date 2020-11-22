@@ -5,6 +5,7 @@ import './ApplicantsList.css';
 import PaginationComponent from '../../Student/Common/PaginationComponent';
 import { hideApplicantsModal, updateApplicantStatus } from '../../../constants/action-types';
 import { connect } from 'react-redux';
+import { history } from '../../../App';
 
 class ApplicantsList extends Component {
   constructor(props) {
@@ -73,6 +74,10 @@ class ApplicantsList extends Component {
       });
   };
 
+  handleStudentName = (e, studentId) => {
+    localStorage.setItem('StudentId', studentId);
+    history.push('/ApplicantProfile');
+  }
   render() {
     return (
       <article class="mr-0 mr-md-std css-8atqhb ep6ayhb0">
@@ -99,7 +104,7 @@ class ApplicantsList extends Component {
                   <div class="row mx-0 py-std css-l8rlna e8dz1vs0" data-test="employer-salary-tile">
                     <div class="col d-flex justify-content-between pl-std">
                       <div>
-                        <a href="">
+                        <a href="" onClick={(event) => {this.handleStudentName(event, listitem.StudentID)}}>
                           <h3 class="link m-0 css-1v81xpy e8dz1vs2">{listitem.StudentName}</h3>
                         </a>
                       </div>

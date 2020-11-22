@@ -347,19 +347,6 @@ const removeFavouriteJobs = async (req, res) => {
   return res;
 };
 
-// harvest interviews
-const getInterviews = async (objects) => {
-  const interviews = [];
-  try {
-    for (let i = 0; i < objects.length; i += 1) {
-      interviews.push(...objects[i].InterviewReview);
-    }
-  } catch (error) {
-    return interviews;
-  }
-  return interviews;
-};
-
 // API Calls for returning the interviews NEED TO ADD PROFILE IMAGES
 const searchInterview = async (req, res) => {
   // eslint-disable-next-line no-unused-vars
@@ -371,6 +358,7 @@ const searchInterview = async (req, res) => {
       'SELECT * FROM INTERVIEW_REVIEW WHERE INSTR(CompanyName, ?) > 0 AND Status = "Approved" LIMIT 10 OFFSET ?;';
     con = await mysqlConnection();
     const [results] = await con.query(searchQuery, [SearchString, offset]);
+    // const company = await Company.find({ CompanyID });
     const countQuery =
       'SELECT COUNT(*) AS TOTALCOUNT FROM INTERVIEW_REVIEW WHERE INSTR(CompanyName, ?) > 0 AND Status = "Approved";';
     const [count] = await con.query(countQuery, [SearchString]);
@@ -899,39 +887,30 @@ const interviewAddReview = async (req, res) => {
 // get the interview Data for the company
 const interviewData = async (req, res) => {
   const { CompanyID } = req.query;
+  let con = null;
   try {
-    const company = await Company.findOne({ CompanyID }).select('InterviewReview');
-    const count = company.InterviewReview.length;
+    const query =
+      'SELECT  sum(case when OverallExperience = "Positive" then 1 else 0 end) as positive,sum(case when OverallExperience = "Negative" then 1 else 0 end) as negative,sum(case when OverallExperience = "Neutral" then 1 else 0 end) as neutral,count(OverallExperience) as total, AVG(Difficulty) as difficulty FROM INTERVIEW_REVIEW WHERE CompanyID=?;';
+    con = await mysqlConnection();
+    const [results] = await con.query(query, CompanyID);
+    con.end();
     const resultObj = {};
     // eslint-disable-next-line func-names
-    resultObj.negative = company.InterviewReview.filter(function (item) {
-      if (item.OverallExperience === 'Negative') {
-        return true;
-      }
-      return false;
-    }).length;
-    resultObj.positive = company.InterviewReview.filter(function (item) {
-      if (item.OverallExperience === 'Positive') {
-        return true;
-      }
-      return false;
-    }).length;
-    resultObj.neutral = company.InterviewReview.filter(function (item) {
-      if (item.OverallExperience === 'Neutral') {
-        return true;
-      }
-      return false;
-    }).length;
-    resultObj.totalInterviews = count;
-    resultObj.avgDifficulty =
-      company.InterviewReview.reduce((total, next) => total + next.Difficulty, 0) /
-      company.InterviewReview.length;
+    resultObj.negative = results[0].negative;
+    resultObj.positive = results[0].positive;
+    resultObj.neutral = results[0].neutral;
+    resultObj.totalInterviews = results[0].total;
+    resultObj.avgDifficulty = results[0].difficulty;
     res.writeHead(200, { 'content-type': 'text/json' });
     res.end(JSON.stringify(resultObj));
   } catch (error) {
     // eslint-disable-next-line no-console
     res.writeHead(500, { 'content-type': 'text/json' });
     res.end(JSON.stringify('Network Error'));
+  } finally {
+    if (con) {
+      con.end();
+    }
   }
   return res;
 };

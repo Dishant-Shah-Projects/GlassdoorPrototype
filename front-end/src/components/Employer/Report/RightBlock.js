@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 import './RightBlock.css';
+import DonutChart from 'react-donut-chart';
+import axios from 'axios';
+import serverUrl from '../../../config.js';
 
 class RightBlock extends Component {
   constructor(props) {
@@ -7,55 +10,46 @@ class RightBlock extends Component {
     this.state = {};
   }
 
+componentDidMount() {
+  axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    axios
+      .get(serverUrl + 'company/report', {
+        params: { CompanyID: localStorage.getItem('userId'), PageNo: 0 },
+        withCredentials: true,
+      })
+      .then((response) => {
+        if (response.status == 200) {
+          console.log('response', response.data.results);
+          
+        }
+      })
+      .catch((error) => {
+        this.setState({
+          errorMessage: 'No Reviews Found',
+        });
+      });
+}
   render() {
     return (
       <div>
         <div class="d-flex justify-content-between flex-wrap">
           <div class="d-flex flex-column">
-            <span class="mb-sm">Experience</span>
+            <span class="mb-sm">Jobs Statistics</span>
             <div class="d-flex">
-              <div>
-                <svg width="59.68310365946075" height="59.68310365946075">
-                  <circle
-                    cx="50%"
-                    cy="50%"
-                    r="23.8732414637843"
-                    fill="transparent"
-                    stroke="#ccc"
-                    stroke-width="10"
-                  ></circle>
-                  <circle
-                    cx="50%"
-                    cy="50%"
-                    r="23.8732414637843"
-                    fill="transparent"
-                    stroke="#0c4085"
-                    stroke-width="10"
-                    stroke-dasharray="104 46"
-                    stroke-dashoffset="37.5"
-                  ></circle>
-                  <circle
-                    cx="50%"
-                    cy="50%"
-                    r="23.8732414637843"
-                    fill="transparent"
-                    stroke="#25a1a1"
-                    stroke-width="10"
-                    stroke-dasharray="17 133"
-                    stroke-dashoffset="83.5"
-                  ></circle>
-                  <circle
-                    cx="50%"
-                    cy="50%"
-                    r="23.8732414637843"
-                    fill="transparent"
-                    stroke="#a068e8"
-                    stroke-width="10"
-                    stroke-dasharray="29 121"
-                    stroke-dashoffset="66.5"
-                  ></circle>
-                </svg>
-              </div>
+              <DonutChart
+                data={[
+                  {
+                    label: 'Give you up',
+                    value: 25,
+                  },
+                  {
+                    label: '',
+                    value: 75,
+                    isEmpty: true,
+                  },                  
+                ]}
+                width={200}
+              />
               <div class="ml-xsm css-1dach6o ee3ubnb0">
                 <div class="d-flex pb-sm c0 css-1adfoly ee3ubnb1">
                   <span class="mr-xsm">Positive</span>
