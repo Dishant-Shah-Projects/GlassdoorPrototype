@@ -302,7 +302,7 @@ const companyApplyJob = async (req, res) => {
   const { JobID, StudentID, StudentName, ResumeURL, CoverLetterURL } = req.body;
   let con = null;
   try {
-    const jobApplicationProcedure = 'CALL applicationSubmit(?,?,?,?,?)';
+    const jobApplicationProcedure = 'CALL applicationSubmit(?,?,?,?,?,"Submitted")';
     con = await mysqlConnection();
     // eslint-disable-next-line no-unused-vars
     const [results, fields] = await con.query(jobApplicationProcedure, [
