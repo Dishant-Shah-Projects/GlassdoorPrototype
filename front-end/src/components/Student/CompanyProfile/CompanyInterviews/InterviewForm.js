@@ -57,7 +57,9 @@ class InterviewForm extends Component {
         [event.target.name]: event.target.value,
         openStatusDropDown: false,
       },
-      this.validationCheck()
+      function () {
+        this.validationCheck();
+      }
     );
   };
 
@@ -67,7 +69,9 @@ class InterviewForm extends Component {
       {
         OverallExperience,
       },
-      this.validationCheck()
+      function () {
+        this.validationCheck();
+      }
     );
   };
 
@@ -82,7 +86,9 @@ class InterviewForm extends Component {
       {
         Difficulty,
       },
-      this.validationCheck()
+      function () {
+        this.validationCheck();
+      }
     );
   };
 
@@ -97,7 +103,9 @@ class InterviewForm extends Component {
       {
         OfferStatus,
       },
-      this.validationCheck()
+      function () {
+        this.validationCheck();
+      }
     );
   };
 

@@ -1,11 +1,129 @@
 import React, { Component } from 'react';
 import './SalaryForm.css';
+import axios from 'axios';
+import serverUrl from '../../../../config';
 
 class SalaryForm extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      BaseSalary: '',
+      Bonuses: '',
+      JobTitle: '',
+      Years: '',
+      StreetAddress: '',
+      City: '',
+      State: '',
+      Zip: '',
+      invalidData: true,
+    };
   }
+
+  commonOnChangeHandler = (event) => {
+    // event.preventDefault();
+    console.log('something');
+    if (event.target.name === 'Zip') {
+      if (/^\d+$/.test(event.target.value)) {
+        this.setState(
+          {
+            [event.target.name]: event.target.value,
+            openStatusDropDown: false,
+          },
+          function () {
+            this.validationCheck();
+          }
+        );
+      }
+    } else {
+      this.setState(
+        {
+          [event.target.name]: event.target.value,
+          openStatusDropDown: false,
+        },
+        function () {
+          this.validationCheck();
+        }
+      );
+    }
+  };
+
+  validationCheck = () => {
+    let invalidData = false;
+    if (this.state.BaseSalary === '') {
+      invalidData = true;
+    }
+    if (this.state.Bonuses === '') {
+      invalidData = true;
+    }
+    if (this.state.JobTitle === '') {
+      invalidData = true;
+    }
+    if (this.state.Years === '') {
+      invalidData = true;
+    }
+    if (this.state.City === '') {
+      invalidData = true;
+    }
+    if (this.state.State === '') {
+      invalidData = true;
+    }
+    if (this.state.Zip === '' || this.state.Zip < 10000) {
+      invalidData = true;
+    }
+
+    this.setState({
+      invalidData,
+    });
+  };
+
+  submitReview = (event) => {
+    // event.preventDefault();
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    const data = {
+      CompanyID: localStorage.getItem('companyID'),
+      StudentID: localStorage.getItem('userId'),
+      CompanyName: localStorage.getItem('form_company_name'),
+      BaseSalary: this.state.BaseSalary,
+      Bonuses: this.state.Bonuses,
+      JobTitle: this.state.JobTitle,
+      Years: this.state.Years,
+      StreetAddress: this.state.StreetAddress,
+      City: this.state.City,
+      State: this.state.State,
+      Zip: this.state.Zip,
+    };
+    axios.post(serverUrl + 'student/salaryAddreview', data).then(
+      (response) => {
+        console.log('Status Code : ', response.status);
+        if (response.status === 200) {
+          console.log('Review Submitted');
+          console.log('Review Submitted');
+          this.props.history.goBack();
+          this.props.history.goBack();
+          // this.setState({
+          //   rating: 0,
+          //   employeeStatus: 'Current',
+          //   year: '',
+          //   jobTitle: '',
+          //   headline: '',
+          //   pros: '',
+          //   cons: '',
+          //   approveOfCEO: '',
+          //   recommendAFriend: '',
+          //   openStatusDropDown: false,
+          //   employmentType: 'Select',
+          //   invalidData: true,
+          //   description: '',
+          //   formSubmiited: true,
+          // });
+        }
+      },
+      (error) => {
+        console.log('error:', error.response);
+      }
+    );
+  };
+
   render() {
     return (
       <main id="mount">
@@ -37,14 +155,15 @@ class SalaryForm extends Component {
                       <div class="mb-std css-1ohf0ui">
                         <div class="input-wrapper css-q444d9">
                           <input
+                            onChange={this.commonOnChangeHandler}
+                            name="BaseSalary"
+                            value={this.state.BaseSalary}
                             id="basePayAmount"
-                            name="form.basePayAmount"
                             placeholder="Enter Base Pay"
                             type="number"
                             data-test=""
                             aria-label=""
                             class="css-1sk6eli"
-                            value=""
                           />
                         </div>
                       </div>
@@ -67,24 +186,33 @@ class SalaryForm extends Component {
                     </div>
                   </div>
                   <div class="button-set ">
-                    <label>Do you get bonuses, tips, or sales commission?*</label>
+                    <label>Do you get bonuses, tips, or sales commission?</label>
                   </div>
                   <div class="">
                     <div class="additional-comp">
-                      <div class="d-flex flex-column flex-md-row align-items-center mb-std">
-                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mr-md-std bonusInputContainer">
+                      <div
+                        id="salaryForm"
+                        class="d-flex flex-column flex-md-row align-items-center mb-std"
+                      >
+                        <div
+                          id="salaryForm"
+                          class="d-flex flex-column flex-md-row justify-content-between align-items-center mr-md-std bonusInputContainer"
+                        >
                           <label for="cashBonusAmount">Cash Bonus</label>
                           <div class="bonusNumberInput css-1ohf0ui">
                             <div class="input-wrapper css-q444d9">
                               <input
+                                onChange={this.commonOnChangeHandler}
+                                name="Bonuses"
+                                value={this.state.Bonuses}
                                 id="cashBonusAmount"
-                                name="form.cashBonusAmount"
+                                // name="form.cashBonusAmount"
                                 placeholder="#"
                                 type="number"
                                 data-test=""
                                 aria-label=""
                                 class="css-1sk6eli"
-                                value=""
+                                // value=""
                               />
                             </div>
                           </div>
@@ -122,14 +250,17 @@ class SalaryForm extends Component {
                       <div class=" css-1ohf0ui">
                         <div class="input-wrapper css-q444d9">
                           <input
+                            onChange={this.commonOnChangeHandler}
+                            name="JobTitle"
+                            value={this.state.JobTitle}
                             placeholder="Title"
                             autocomplete="off"
-                            name="salaryUIData.state.salaryReview.userEnteredOccupation"
+                            // name="salaryUIData.state.salaryReview.userEnteredOccupation"
                             id="salaryUIData.state.salaryReview.userEnteredOccupation-ed3f62f-0130-8627-ab63-258c7681fc6c"
                             data-test=""
                             aria-label="Title*"
                             class="css-1sk6eli"
-                            value=""
+                            // value=""
                           />
                         </div>
                       </div>
@@ -144,7 +275,7 @@ class SalaryForm extends Component {
                       for="salaryUIData.state.salaryReview.userEnteredOccupation-ed3f62f-0130-8627-ab63-258c7681fc6c"
                       class="css-1opum1l"
                     >
-                      <span>Title*</span>
+                      <span>Years at Job*</span>
                     </label>
                     <div
                       aria-expanded="false"
@@ -155,14 +286,18 @@ class SalaryForm extends Component {
                       <div class=" css-1ohf0ui">
                         <div class="input-wrapper css-q444d9">
                           <input
-                            placeholder="Title"
+                            onChange={this.commonOnChangeHandler}
+                            name="Years"
+                            value={this.state.Years}
+                            placeholder="Years at Job"
                             autocomplete="off"
-                            name="salaryUIData.state.salaryReview.userEnteredOccupation"
+                            type="number"
+                            // name="salaryUIData.state.salaryReview.userEnteredOccupation"
                             id="salaryUIData.state.salaryReview.userEnteredOccupation-ed3f62f-0130-8627-ab63-258c7681fc6c"
                             data-test=""
-                            aria-label="Title*"
+                            aria-label="Years at Job*"
                             class="css-1sk6eli"
-                            value=""
+                            // value=""
                           />
                         </div>
                       </div>
@@ -177,7 +312,7 @@ class SalaryForm extends Component {
                       for="salaryUIData.state.salaryReview.userEnteredOccupation-ed3f62f-0130-8627-ab63-258c7681fc6c"
                       class="css-1opum1l"
                     >
-                      <span>Title*</span>
+                      <span>StreetAddress*</span>
                     </label>
                     <div
                       aria-expanded="false"
@@ -188,14 +323,17 @@ class SalaryForm extends Component {
                       <div class=" css-1ohf0ui">
                         <div class="input-wrapper css-q444d9">
                           <input
-                            placeholder="Title"
+                            onChange={this.commonOnChangeHandler}
+                            name="StreetAddress"
+                            value={this.state.StreetAddress}
+                            placeholder="StreetAddress"
                             autocomplete="off"
-                            name="salaryUIData.state.salaryReview.userEnteredOccupation"
+                            // name="salaryUIData.state.salaryReview.userEnteredOccupation"
                             id="salaryUIData.state.salaryReview.userEnteredOccupation-ed3f62f-0130-8627-ab63-258c7681fc6c"
                             data-test=""
-                            aria-label="Title*"
+                            aria-label="StreetAddress*"
                             class="css-1sk6eli"
-                            value=""
+                            // value=""
                           />
                         </div>
                       </div>
@@ -210,7 +348,7 @@ class SalaryForm extends Component {
                       for="salaryUIData.state.salaryReview.userEnteredOccupation-ed3f62f-0130-8627-ab63-258c7681fc6c"
                       class="css-1opum1l"
                     >
-                      <span>Title*</span>
+                      <span>City*</span>
                     </label>
                     <div
                       aria-expanded="false"
@@ -221,14 +359,17 @@ class SalaryForm extends Component {
                       <div class=" css-1ohf0ui">
                         <div class="input-wrapper css-q444d9">
                           <input
-                            placeholder="Title"
+                            onChange={this.commonOnChangeHandler}
+                            name="City"
+                            value={this.state.City}
+                            placeholder="City"
                             autocomplete="off"
-                            name="salaryUIData.state.salaryReview.userEnteredOccupation"
+                            // name="salaryUIData.state.salaryReview.userEnteredOccupation"
                             id="salaryUIData.state.salaryReview.userEnteredOccupation-ed3f62f-0130-8627-ab63-258c7681fc6c"
                             data-test=""
-                            aria-label="Title*"
+                            aria-label="City*"
                             class="css-1sk6eli"
-                            value=""
+                            // value=""
                           />
                         </div>
                       </div>
@@ -243,7 +384,7 @@ class SalaryForm extends Component {
                       for="salaryUIData.state.salaryReview.userEnteredOccupation-ed3f62f-0130-8627-ab63-258c7681fc6c"
                       class="css-1opum1l"
                     >
-                      <span>Title*</span>
+                      <span>State*</span>
                     </label>
                     <div
                       aria-expanded="false"
@@ -254,14 +395,17 @@ class SalaryForm extends Component {
                       <div class=" css-1ohf0ui">
                         <div class="input-wrapper css-q444d9">
                           <input
-                            placeholder="Title"
+                            onChange={this.commonOnChangeHandler}
+                            name="State"
+                            value={this.state.State}
+                            placeholder="State"
                             autocomplete="off"
-                            name="salaryUIData.state.salaryReview.userEnteredOccupation"
+                            // name="salaryUIData.state.salaryReview.userEnteredOccupation"
                             id="salaryUIData.state.salaryReview.userEnteredOccupation-ed3f62f-0130-8627-ab63-258c7681fc6c"
                             data-test=""
-                            aria-label="Title*"
+                            aria-label="State*"
                             class="css-1sk6eli"
-                            value=""
+                            // value=""
                           />
                         </div>
                       </div>
@@ -276,7 +420,7 @@ class SalaryForm extends Component {
                       for="salaryUIData.state.salaryReview.userEnteredOccupation-ed3f62f-0130-8627-ab63-258c7681fc6c"
                       class="css-1opum1l"
                     >
-                      <span>Title*</span>
+                      <span>Zip*</span>
                     </label>
                     <div
                       aria-expanded="false"
@@ -287,14 +431,19 @@ class SalaryForm extends Component {
                       <div class=" css-1ohf0ui">
                         <div class="input-wrapper css-q444d9">
                           <input
-                            placeholder="Title"
+                            onChange={this.commonOnChangeHandler}
+                            name="Zip"
+                            value={this.state.Zip}
+                            placeholder="Zip"
                             autocomplete="off"
-                            name="salaryUIData.state.salaryReview.userEnteredOccupation"
+                            type="text"
+                            maxLength="5"
+                            // name="salaryUIData.state.salaryReview.userEnteredOccupation"
                             id="salaryUIData.state.salaryReview.userEnteredOccupation-ed3f62f-0130-8627-ab63-258c7681fc6c"
                             data-test=""
-                            aria-label="Title*"
+                            aria-label="Zip*"
                             class="css-1sk6eli"
-                            value=""
+                            // value=""
                           />
                         </div>
                       </div>
@@ -326,7 +475,7 @@ class SalaryForm extends Component {
                                   data-test=""
                                   aria-label=""
                                   class="css-1sk6eli"
-                                  value="Amazon"
+                                  value={localStorage.getItem('form_company_name')}
                                 />
                               </div>
                             </div>
@@ -347,7 +496,14 @@ class SalaryForm extends Component {
                   </div>
                   <input type="hidden" name="_dummy" />
                   <div class="submitBtn">
-                    <button type="submit">Submit Salary</button>
+                    <button
+                      onClick={this.submitReview}
+                      className="css-8i7bc2"
+                      disabled={this.state.invalidData}
+                      type="button"
+                    >
+                      Submit Salary
+                    </button>
                   </div>
                 </form>
               </div>

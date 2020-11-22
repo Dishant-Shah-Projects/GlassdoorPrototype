@@ -4,6 +4,8 @@ import {
   updateCompanyReviewsStore,
   updateCompanyJobStore,
   updateCompanyInterviewStore,
+  updateCompanySalariesStore,
+  updateCompanyPhotosStore,
 } from '../constants/action-types';
 
 const defaultState = {
@@ -27,6 +29,22 @@ const defaultState = {
   },
   companyInterviewStore: {
     InterViewList: [],
+    PageNo: 0,
+    Totalcount: 0,
+    PageCount: 0,
+    avgDifficulty: 0,
+    negative: 0,
+    neutral: 0,
+    positive: 0,
+  },
+  companySalariesStore: {
+    SalaryList: [],
+    PageNo: 0,
+    Totalcount: 0,
+    PageCount: 0,
+  },
+  companyPhotosStore: {
+    PhotoList: [],
     PageNo: 0,
     Totalcount: 0,
     PageCount: 0,
@@ -76,6 +94,25 @@ const CompanyPageReducer = (state = defaultState, action) => {
       return {
         ...state,
         companyInterviewStore: { ...state.companyInterviewStore, ...action.payload },
+
+        //   return Object.assign(state, action.payload);
+      };
+    }
+    case updateCompanySalariesStore: {
+      console.log('inside company interview store');
+      return {
+        ...state,
+        companySalariesStore: { ...state.companySalariesStore, ...action.payload },
+
+        //   return Object.assign(state, action.payload);
+      };
+    }
+
+    case updateCompanyPhotosStore: {
+      console.log('inside company interview store');
+      return {
+        ...state,
+        companySalariesStore: { ...state.companySalariesStore, ...action.payload },
 
         //   return Object.assign(state, action.payload);
       };

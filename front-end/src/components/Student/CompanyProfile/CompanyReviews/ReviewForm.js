@@ -68,7 +68,9 @@ class ReviewForm extends Component {
         rating: value,
         openStatusDropDown: false,
       },
-      this.validationCheck()
+      function () {
+        this.validationCheck();
+      }
     );
   };
 
@@ -79,7 +81,9 @@ class ReviewForm extends Component {
         [event.target.name]: event.target.value,
         openStatusDropDown: false,
       },
-      this.validationCheck()
+      function () {
+        this.validationCheck();
+      }
     );
   };
 
@@ -90,7 +94,9 @@ class ReviewForm extends Component {
         approveOfCEO: value,
         openStatusDropDown: false,
       },
-      this.validationCheck()
+      function () {
+        this.validationCheck();
+      }
     );
   };
 
@@ -112,7 +118,9 @@ class ReviewForm extends Component {
         employeeStatus: status,
         openStatusDropDown: false,
       },
-      this.validationCheck()
+      function () {
+        this.validationCheck();
+      }
     );
   };
 
@@ -128,7 +136,9 @@ class ReviewForm extends Component {
       {
         employmentType: status,
       },
-      this.validationCheck()
+      function () {
+        this.validationCheck();
+      }
     );
   };
 

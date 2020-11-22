@@ -1014,3 +1014,15 @@ a.css-1s7hc3h:visited {
   font-weight: 700;
   overflow: hidden;
 }
+.css-1o72mdj .dropdownExpanded {
+  display: block;
+  -webkit-animation-name: expandDropDown;
+  animation-name: expandDropDown;
+  -webkit-animation-duration: 150ms;
+  animation-duration: 150ms;
+  -webkit-animation-timing-function: cubic-bezier(0, 0, 0.38, 0.9);
+  animation-timing-function: cubic-bezier(0, 0, 0.38, 0.9);
+  overflow: hidden;
+  max-height: 201.6px;
+  box-shadow: 0 0 2px 0 #b6bbc2;
+}

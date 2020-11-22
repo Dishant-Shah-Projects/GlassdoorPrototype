@@ -84,7 +84,7 @@ class CompanySearchResults extends Component {
         {/*redirectVar*/}
         {/*<Navbar />*/}
         <div className="pageContentWrapperStudent ">
-          <div id="PageContent">
+          <div style={{ width: '1024px' }} id="PageContent">
             <div id="PageBodyContents" className="meat">
               <div className="pageInsideContent cf">
                 <div id="EI-Srch">

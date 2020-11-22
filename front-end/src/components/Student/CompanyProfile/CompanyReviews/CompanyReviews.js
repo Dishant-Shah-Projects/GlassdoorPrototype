@@ -36,6 +36,7 @@ class CompanyReviews extends Component {
       });
     this.commonFetch();
   }
+
   commonFetch = (PageNo = 0) => {
     axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
     axios

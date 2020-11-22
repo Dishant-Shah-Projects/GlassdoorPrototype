@@ -10,6 +10,7 @@ class CompanyNavbar extends Component {
     super(props);
     this.state = {};
   }
+
   switchTab = (event, tab) => {
     event.preventDefault();
     const payload = {
@@ -17,7 +18,54 @@ class CompanyNavbar extends Component {
     };
     this.props.switchTab(payload);
   };
+
+  abbrNum = (number, decPlaces = 2) => {
+    // 2 decimal places => 100, 3 => 1000, etc
+    decPlaces = Math.pow(10, decPlaces);
+    // Enumerate number abbreviations
+    var abbrev = ['k', 'm', 'b', 't'];
+    // Go through the array backwards, so we do the largest first
+    for (var i = abbrev.length - 1; i >= 0; i--) {
+      // Convert array index to "1000", "1000000", etc
+      var size = Math.pow(10, (i + 1) * 3);
+      // If the number is bigger or equal do the abbreviation
+      if (size <= number) {
+        // Here, we multiply by decPlaces, round, and then divide by decPlaces.
+        // This gives us nice rounding to a particular decimal place.
+        number = Math.round((number * decPlaces) / size) / decPlaces;
+
+        // Handle special case where we round up to the next abbreviation
+        if (number == 1000 && i < abbrev.length - 1) {
+          number = 1;
+          i++;
+        }
+
+        // Add the letter for the abbreviation
+        number += abbrev[i];
+
+        // We are done... stop
+        break;
+      }
+    }
+
+    return number;
+  };
+
   render() {
+    const JobCount = this.abbrNum(Number(this.props.companyOverviewStore.companyOverview.JobCount));
+    const GeneralReviewCount = this.abbrNum(
+      Number(this.props.companyOverviewStore.companyOverview.GeneralReviewCount)
+    );
+    const SalaryReviewCount = this.abbrNum(
+      Number(this.props.companyOverviewStore.companyOverview.SalaryReviewCount)
+    );
+    const InterviewReviewCount = this.abbrNum(
+      Number(this.props.companyOverviewStore.companyOverview.InterviewReviewCount)
+    );
+    const PhotoCount = this.abbrNum(
+      Number(this.props.companyOverviewStore.companyOverview.PhotoCount)
+    );
+
     const defaultCoverPic =
       'https://s3-media0.fl.yelpcdn.com/assets/public/defaultBusinessHeaderImage.yji-a94634351a246719545b17b9bddc388f.png';
     let button = (
@@ -199,10 +247,7 @@ class CompanyNavbar extends Component {
                         href="#"
                         data-label="Reviews"
                       >
-                        <span class="num h2">
-                          {' '}
-                          {this.props.companyOverviewStore.companyOverview.GeneralReviewCount}
-                        </span>
+                        <span class="num h2"> {GeneralReviewCount}</span>
                         <span class="subtle"> Reviews</span>
                       </a>
                       <div class="vline cell">
@@ -219,10 +264,7 @@ class CompanyNavbar extends Component {
                         href="#"
                         data-label="Jobs"
                       >
-                        <span class="num h2">
-                          {' '}
-                          {this.props.companyOverviewStore.companyOverview.JobCount}
-                        </span>
+                        <span class="num h2"> {JobCount}</span>
                         <span class="subtle"> Jobs</span>
                       </a>
                       <div class="vline cell">
@@ -239,10 +281,7 @@ class CompanyNavbar extends Component {
                         href="#"
                         data-label="Salaries"
                       >
-                        <span class="num h2">
-                          {' '}
-                          {this.props.companyOverviewStore.companyOverview.SalaryReviewCount}
-                        </span>
+                        <span class="num h2"> {SalaryReviewCount}</span>
                         <span class="subtle"> Salaries</span>
                       </a>
                       <div class="vline cell">
@@ -259,10 +298,7 @@ class CompanyNavbar extends Component {
                         href="/Interview/Amazon-Interview-Questions-E6036.htm"
                         data-label="Inter­views"
                       >
-                        <span class="num h2">
-                          {' '}
-                          {this.props.companyOverviewStore.companyOverview.InterviewReviewCount}
-                        </span>
+                        <span class="num h2"> {InterviewReviewCount}</span>
                         <span class="subtle"> Inter­views</span>
                       </a>
                       <div class="vline cell">
@@ -279,10 +315,7 @@ class CompanyNavbar extends Component {
                         href="#"
                         data-label="Photos"
                       >
-                        <span class="num h2">
-                          {' '}
-                          {this.props.companyOverviewStore.companyOverview.PhotoCount}
-                        </span>
+                        <span class="num h2"> {PhotoCount}</span>
                         <span class="subtle"> Photos</span>
                       </a>
                     </div>

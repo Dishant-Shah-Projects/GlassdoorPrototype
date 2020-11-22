@@ -1,11 +1,49 @@
 import React, { Component } from 'react';
 import './PhotoUploadForm.css';
+import axios from 'axios';
+import serverUrl from '../../../../config';
 
 class PhotoUploadForm extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = { photos: [] };
   }
+
+  onChangeFileHandler = (event) => {
+    if (event.target.files.length === 1) {
+      axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+      event.preventDefault();
+      let formData = new FormData();
+      formData.append('file', event.target.files[0], event.target.files[0].name);
+      const imageName = event.target.files[0].name;
+      axios({
+        method: 'post',
+        url: serverUrl + 'student/upload',
+        data: formData,
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
+        .then((response) => {
+          // console.log('Status Code : ', response.status);
+          if (response.status === 200) {
+            // console.log('Product Saved');
+            let photos = this.state.photos;
+            photos.push({ imageurl: response.data, name: imageName });
+            this.setState({
+              photos,
+            });
+          } else if (parseInt(response.status) === 400) {
+            // console.log(response.data);
+          }
+        })
+        .catch((error) => {
+          this.setState({
+            errorMsg: error.message,
+            authFlag: false,
+          });
+        });
+    }
+  };
+
   render() {
     return (
       <main id="mount">
@@ -24,15 +62,7 @@ class PhotoUploadForm extends Component {
             <article class="module">
               <div class="survey-two-column">
                 <div>
-                  <img
-                    src="https://media.glassdoor.com/sqlm/6036/amazon-squarelogo-1552847650117.png"
-                    alt="Amazon Logo"
-                    class="square-logo sm "
-                    data-original="https://media.glassdoor.com/sqlm/6036/amazon-squarelogo-1552847650117.png"
-                  />
-                </div>
-                <div>
-                  <h1>Post Amazon Workplace Photos</h1>
+                  <h1>Post {localStorage.getItem('form_company_name')} Workplace Photos</h1>
                 </div>
               </div>
               <p>
@@ -42,19 +72,38 @@ class PhotoUploadForm extends Component {
               </p>
               <div class="photo-survey">
                 <form autocomplete="off">
-                  <div class="photo-add-caption">
-                    <div>
-                      <img src="" alt="darthVader.jpg" />
+                  {this.state.photos.map((image) => (
+                    <div class="photo-add-caption">
+                      <div>
+                        <img src={image.imageurl} alt="darthVader.jpg" />
+                      </div>
+                      <div>
+                        <p>{image.name}</p>
+                      </div>
                     </div>
-                  </div>
-                  <div class="photo-add-caption">
+                  ))}
+
+                  {/* <div class="photo-add-caption">
                     <div>
                       <img src="" alt="caesarSalad.jpg" />
                     </div>
-                  </div>
+                  </div>*/}
                   <div>
-                    <p class="link center">Or Browse Files</p>
-                    <input type="file" aria-labelledby="submit" class="hidden" accept="image/*" />
+                    <label style={{ width: '100%' }} for="imageupload">
+                      <p style={{ cursor: 'pointer' }} class="link center">
+                        Or Browse Files
+                      </p>
+
+                      <input
+                        onChange={this.onChangeFileHandler}
+                        id="imageupload"
+                        name="imageupload"
+                        type="file"
+                        aria-labelledby="submit"
+                        class="hidden"
+                        accept="image/*"
+                      />
+                    </label>
                   </div>
                   <button class="gd-ui-button submitButton css-8i7bc2" type="submit" id="submit">
                     Upload Photos

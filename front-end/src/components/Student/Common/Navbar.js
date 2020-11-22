@@ -773,7 +773,7 @@ class Navbar extends Component {
                                   </span>*/}
                               </div>
                               {this.state.filterDropDownOpen ? (
-                                <div className="dropdownOptions dropdownCollapsed animated  ">
+                                <div className="dropdownOptions dropdownExpanded animated  ">
                                   <div className="dropDownOptionsContainer">
                                     <ul>
                                       <li

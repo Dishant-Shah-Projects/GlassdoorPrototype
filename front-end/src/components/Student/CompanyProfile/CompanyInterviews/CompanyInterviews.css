@@ -239,3 +239,6 @@ ul.undecorated li {
 .ib {
   display: inline-block;
 }
+i.sqLed.yellow {
+  background-color: #f6b500;
+}

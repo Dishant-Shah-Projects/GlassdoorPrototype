@@ -1,18 +1,219 @@
 import React, { Component } from 'react';
-import { LowerNavBarOther, updateCompanyOverview } from '../../../../constants/action-types';
+import {
+  LowerNavBarOther,
+  updateCompanyOverview,
+  updateStudentProfile,
+} from '../../../../constants/action-types';
 import { connect } from 'react-redux';
 import './JobApplicationPage.css';
+import defaultplaceholder from '../CompanyNavbar/default-placeholder.png';
+import axios from 'axios';
+import serverUrl from '../../../../config';
 
 class JobApplicationPage extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      resume: { url: '', name: '' },
+      coverLetter: { url: '', name: '' },
+      errormsg: false,
+    };
   }
+
+  onChangeResumeHandler = (event) => {
+    if (event.target.files.length === 1) {
+      axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+      event.preventDefault();
+      let formData = new FormData();
+      formData.append('file', event.target.files[0], event.target.files[0].name);
+      const resumeName = event.target.files[0].name;
+      axios({
+        method: 'post',
+        url: serverUrl + 'student/upload',
+        data: formData,
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
+        .then((response) => {
+          // console.log('Status Code : ', response.status);
+          if (response.status === 200) {
+            // console.log('Product Saved');
+            const resume = { url: response.data, name: resumeName };
+
+            this.setState({
+              resume,
+              errormsg: false,
+            });
+          } else if (parseInt(response.status) === 400) {
+            // console.log(response.data);
+          }
+        })
+        .catch((error) => {
+          this.setState({
+            errorMsg: error.message,
+            authFlag: false,
+          });
+        });
+    }
+  };
+
+  onChangeCoverLetterHandler = (event) => {
+    if (event.target.files.length === 1) {
+      axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+      event.preventDefault();
+      let formData = new FormData();
+      formData.append('file', event.target.files[0], event.target.files[0].name);
+      const coverLetterName = event.target.files[0].name;
+      axios({
+        method: 'post',
+        url: serverUrl + 'student/upload',
+        data: formData,
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
+        .then((response) => {
+          // console.log('Status Code : ', response.status);
+          if (response.status === 200) {
+            // console.log('Product Saved');
+            const coverLetter = { url: response.data, name: coverLetterName };
+
+            this.setState({
+              coverLetter,
+              errormsg: false,
+            });
+          } else if (parseInt(response.status) === 400) {
+            // console.log(response.data);
+          }
+        })
+        .catch((error) => {
+          this.setState({
+            errorMsg: error.message,
+            authFlag: false,
+          });
+        });
+    }
+  };
+
+  applyJob = (event) => {
+    event.preventDefault();
+    if (this.state.resume.name === '' || this.state.coverLetter.name === '') {
+      this.setState({
+        errormsg: true,
+      });
+    } else {
+      // event.preventDefault();
+      axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+      const data = {
+        StudentID: localStorage.getItem('userId'),
+        JobID: localStorage.getItem('application_job_id'),
+        StudentName: this.props.studentInfoStore.studentProfile.Name,
+        ResumeURL: this.state.resume.url,
+        CoverLetterURL: this.state.coverLetter.url,
+      };
+      axios.post(serverUrl + 'student/companyApplyJob', data).then(
+        (response) => {
+          console.log('Status Code : ', response.status);
+          if (response.status === 200) {
+            this.setState({
+              resume: { url: '', name: '' },
+              coverLetter: { url: '', name: '' },
+              errormsg: false,
+            });
+          }
+        },
+        (error) => {
+          console.log('error:', error.response);
+        }
+      );
+    }
+  };
+
+  saveJob = (event) => {
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    const data = {
+      JobID: localStorage.getItem('application_job_id'),
+      StudentID: localStorage.getItem('userId'),
+    };
+    axios.post(serverUrl + 'student/companyFavouriteJobs', data).then(
+      (response) => {
+        console.log('Status Code : ', response.status);
+        if (response.status === 200) {
+          console.log(response.data);
+
+          let studentProfile = { ...this.props.studentInfoStore.studentProfile };
+          studentProfile.FavouriteJobs.push(localStorage.getItem('application_job_id'));
+          const payload = {
+            studentProfile,
+          };
+          this.props.updateStudentProfile(payload);
+        }
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  };
+
+  unsaveJob = (event) => {
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    const data = {
+      JobID: localStorage.getItem('application_job_id'),
+      StudentID: localStorage.getItem('userId'),
+    };
+    axios.post(serverUrl + 'student/companyFavouriteJobs', data).then(
+      (response) => {
+        console.log('Status Code : ', response.status);
+        if (response.status === 200) {
+          console.log(response.data);
+
+          let studentProfile = { ...this.props.studentInfoStore.studentProfile };
+          var index = studentProfile.FavouriteJobs.indexOf(
+            localStorage.getItem('application_job_id')
+          );
+          if (index !== -1) {
+            studentProfile.FavouriteJobs.splice(index, 1);
+          }
+          // studentProfile.FavouriteJobs.push(JobID);
+          const payload = {
+            studentProfile,
+          };
+          this.props.updateStudentProfile(payload);
+        }
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  };
+
   render() {
+    let alreadyFav = false;
+    let heartIcon = (
+      <path
+        d="M12 5.11l.66-.65a5.56 5.56 0 017.71.19 5.63 5.63 0 010 7.92L12 21l-8.37-8.43a5.63 5.63 0 010-7.92 5.56 5.56 0 017.71-.19zm7.66 6.75a4.6 4.6 0 00-6.49-6.51L12 6.53l-1.17-1.18a4.6 4.6 0 10-6.49 6.51L12 19.58z"
+        fill="currentColor"
+        fill-rule="evenodd"
+      ></path>
+    );
+    if (
+      this.props.studentInfoStore.studentProfile.FavouriteJobs.includes(
+        localStorage.getItem('application_job_id')
+      )
+    ) {
+      alreadyFav = true;
+      heartIcon = (
+        <path
+          d="M20.37 4.65a5.57 5.57 0 00-7.91 0l-.46.46-.46-.46a5.57 5.57 0 00-7.91 0 5.63 5.63 0 000 7.92L12 21l8.37-8.43a5.63 5.63 0 000-7.92z"
+          fill="currentColor"
+          fill-rule="evenodd"
+        ></path>
+      );
+    }
     this.props.LowerNavBarOther();
+    const defaultCoverPic =
+      'https://s3-media0.fl.yelpcdn.com/assets/public/defaultBusinessHeaderImage.yji-a94634351a246719545b17b9bddc388f.png';
+
     return (
       <div class="gdGrid pageContentWrapperStudent ">
-        <div id="PageContent" class="">
+        <div style={{ width: '1024px' }} id="PageContent" class="">
           <div id="PageBodyContents" class="meat">
             <div id="JobView">
               <div class="css-1snhjc9 ejc001y0">
@@ -25,9 +226,11 @@ class JobApplicationPage extends Component {
                     <img
                       alt="Cover for Amazon"
                       class="lazy"
-                      data-original="https://media.glassdoor.com/banner/bh/6036/amazon-banner-1578695809222.jpg"
-                      data-original-2x="https://media.glassdoor.com/banner/bh/6036/amazon-banner-1578695809222.jpg"
-                      src="https://media.glassdoor.com/banner/bh/6036/amazon-banner-1578695809222.jpg"
+                      src={
+                        localStorage.getItem('CoverPhoto')
+                          ? localStorage.getItem('CoverPhoto')
+                          : defaultCoverPic
+                      }
                     />
                   </div>
                 </div>
@@ -47,9 +250,11 @@ class JobApplicationPage extends Component {
                                   <img
                                     alt="Amazon Logo"
                                     class="lazy"
-                                    data-original="https://media.glassdoor.com/sql/6036/amazon-squarelogo-1552847650117.png"
-                                    data-original-2x="https://media.glassdoor.com/sql/6036/amazon-squarelogo-1552847650117.png"
-                                    src="https://media.glassdoor.com/sql/6036/amazon-squarelogo-1552847650117.png"
+                                    src={
+                                      localStorage.getItem('ProfileImg')
+                                        ? localStorage.getItem('ProfileImg')
+                                        : defaultplaceholder
+                                    }
                                   />
                                 </span>
                               </a>
@@ -75,16 +280,8 @@ class JobApplicationPage extends Component {
                                 <div class="css-0 e1h54cx80">
                                   <a
                                     class="gd-ui-button applyButton e1ulk49s0 css-1m0gkmt"
-                                    data-adv-type="EMPLOYER"
-                                    data-apply-type="NONE"
-                                    data-easy-apply="false"
-                                    data-is-organic-job="false"
-                                    data-is-sponsored-job="true"
-                                    data-job-id="3738626687"
-                                    data-job-url="/partner/jobListing.htm?pos=101&amp;ao=883174&amp;s=21&amp;guid=00000175de9de72992f1f98567b48765&amp;src=GD_JOB_VIEW&amp;t=ESR&amp;extid=2&amp;exst=E&amp;ist=L&amp;ast=EL&amp;vt=w&amp;uido=5B485F458EBD641B&amp;slr=true&amp;cs=1_9c704393&amp;cb=1605757706915&amp;jobListingId=3738626687"
-                                    data-test="apply-button"
-                                    href="/partner/jobListing.htm?pos=101&amp;ao=883174&amp;s=21&amp;guid=00000175de9de72992f1f98567b48765&amp;src=GD_JOB_VIEW&amp;t=ESR&amp;extid=2&amp;exst=E&amp;ist=L&amp;ast=EL&amp;vt=w&amp;uido=5B485F458EBD641B&amp;slr=true&amp;cs=1_9c704393&amp;cb=1605757706915&amp;jobListingId=3738626687"
-                                    target="_blank"
+                                    onClick={this.applyJob}
+                                    href="#"
                                     rel="nofollow"
                                   >
                                     <i class="icon-offsite-white mr-sm"></i>
@@ -92,24 +289,67 @@ class JobApplicationPage extends Component {
                                     <i class="hlpr"></i>
                                   </a>
                                 </div>
+                                <div style={{ paddingLeft: '16px' }} class="css-0 e1h54cx80">
+                                  <a
+                                    class="gd-ui-button applyButton e1ulk49s0 css-1m0gkmt"
+                                    href="#"
+                                    rel="nofollow"
+                                  >
+                                    <label style={{ width: '100%' }} for="resumeUpload">
+                                      <span>Upload Resume</span>
+
+                                      <input
+                                        onChange={this.onChangeResumeHandler}
+                                        id="resumeUpload"
+                                        name="resumeUpload"
+                                        type="file"
+                                        aria-labelledby="submit"
+                                        class="hidden"
+                                        accept=".doc, .docx,.pdf"
+                                      />
+                                    </label>
+                                  </a>
+                                </div>
+                                <div style={{ paddingLeft: '16px' }} class="css-0 e1h54cx80">
+                                  <a
+                                    class="gd-ui-button applyButton e1ulk49s0 css-1m0gkmt"
+                                    href="#"
+                                    rel="nofollow"
+                                  >
+                                    <label style={{ width: '100%' }} for="coverLetterUpload">
+                                      <span>Upload Cover Letter</span>
+
+                                      <input
+                                        onChange={this.onChangeCoverLetterHandler}
+                                        id="coverLetterUpload"
+                                        name="coverLetterUpload"
+                                        type="file"
+                                        aria-labelledby="submit"
+                                        class="hidden"
+                                        accept=".doc, .docx,.pdf"
+                                      />
+                                    </label>
+                                  </a>
+                                </div>
                                 <div class="css-3nnrip et4swdz0">
                                   <button
+                                    onClick={
+                                      alreadyFav
+                                        ? (event) => this.unsaveJob(event)
+                                        : (event) => this.saveJob(event)
+                                    }
+                                    // onClick={(event) => this.props.saveJob(event)}
                                     class="gd-ui-button save-job-button gradient fillMob hideHH css-3ybntp"
                                     data-test="desktop-btn"
                                   >
                                     <span class="SVGInline heart unsave mr-xsm">
                                       <svg
                                         xmlns="http://www.w3.org/2000/svg"
-                                        width="17"
-                                        height="16"
-                                        viewBox="0 0 17 16"
+                                        width="24"
+                                        height="24"
+                                        viewBox="0 0 24 24"
                                       >
-                                        <path
-                                          fill="#1861BF"
-                                          fill-rule="evenodd"
-                                          stroke="#1861BF"
-                                          d="M8.583 15S1.6 10.725 1.018 5.55c-.35-4.162 4.54-6.412 7.565-2.587 3.027-3.825 7.915-1.575 7.566 2.588C15.567 10.838 8.583 15 8.583 15z"
-                                        ></path>
+                                        {heartIcon}
                                       </svg>
                                     </span>
                                     <span>Saved</span>
@@ -125,6 +365,32 @@ class JobApplicationPage extends Component {
                   </div>
                 </div>
               </div>
+              <div class="css-15asexb e18tf5om0">
+                <div class="css-u9c4ai e18tf5om1">
+                  <span class="css-fdajvm e18tf5om5">Job Application Files </span>
+                  {this.state.errormsg ? (
+                    <span style={{ color: 'red' }} class="css-fdajvm e18tf5om5">
+                      Missing files
+                    </span>
+                  ) : (
+                    ''
+                  )}
+                  <div class="css-qiuq2n e18tf5om3"></div>
+                  <div class="css-1hb8zec e18tf5om2">
+                    <div>
+                      <div class="css-1ieo3ql e18tf5om7">
+                        <span class="css-1vg6q84 e18tf5om6">Resume:&nbsp;</span>
+                        <span class="css-sr4ps0 e18tf5om4">{this.state.resume.name}</span>
+                      </div>
+                      <div class="css-1ieo3ql e18tf5om7">
+                        <span class="css-1vg6q84 e18tf5om6">Cover Letter:&nbsp;</span>
+                        <span class="css-o4d739 e18tf5om4">{this.state.coverLetter.name}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <div class="css-15asexb e18tf5om0">
                 <div class="css-u9c4ai e18tf5om1">
                   <span class="css-fdajvm e18tf5om5">Job &amp; Company Insights</span>
@@ -226,9 +492,11 @@ class JobApplicationPage extends Component {
 const mapStateToProps = (state) => {
   const { companyNavbarStore } = state.CompanyResultPageReducer;
   const { companyOverviewStore } = state.CompanyPageReducer;
+  const { studentInfoStore } = state.StudentCompleteInfoReducer;
   return {
     companyNavbarStore,
     companyOverviewStore,
+    studentInfoStore,
   };
 };
 
@@ -242,6 +510,12 @@ const mapDispatchToProps = (dispatch) => {
       });
     },
     updateCompanyOverview: (payload) => {
+      dispatch({
+        type: updateCompanyOverview,
+        payload,
+      });
+    },
+    updateStudentProfile: (payload) => {
       dispatch({
         type: updateCompanyOverview,
         payload,
