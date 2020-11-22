@@ -890,9 +890,9 @@ const interviewData = async (req, res) => {
   let con = null;
   try {
     const query =
-      'SELECT  sum(case when OverallExperience = "Positive" then 1 else 0 end) as positive,sum(case when OverallExperience = "Negative" then 1 else 0 end) as negative,sum(case when OverallExperience = "Neutral" then 1 else 0 end) as neutral,count(OverallExperience) as total, AVG(Difficulty) as difficulty FROM INTERVIEW_REVIEW WHERE CompanyID=?;';
+      'SELECT  sum(case when OverallExperience = "Positive" then 1 else 0 end) as positive,sum(case when OverallExperience = "Negative" then 1 else 0 end) as negative,sum(case when OverallExperience = "Neutral" then 1 else 0 end) as neutral,count(OverallExperience) as total, AVG(Difficulty) as difficulty FROM INTERVIEW_REVIEW WHERE CompanyID=? and Status=?;';
     con = await mysqlConnection();
-    const [results] = await con.query(query, CompanyID);
+    const [results] = await con.query(query, [CompanyID, 'Approved']);
     con.end();
     const resultObj = {};
     // eslint-disable-next-line func-names

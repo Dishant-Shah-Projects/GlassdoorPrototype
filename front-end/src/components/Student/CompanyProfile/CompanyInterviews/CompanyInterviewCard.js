@@ -10,6 +10,7 @@ class CompanyInterviewCard extends Component {
   }
   render() {
     const interview = this.props.interview;
+    console.log(' interview.Difficulty ', interview.Difficulty);
     return (
       <li class=" empReview cf " id="InterviewReview_24701674">
         <div class="cf">
@@ -126,18 +127,18 @@ class CompanyInterviewCard extends Component {
                           class={`sqLed middle sm ${
                             interview.Difficulty < 3
                               ? 'green'
-                              : interview.OverallExperience > 3
+                              : interview.Difficulty > 3
                               ? 'red'
                               : 'yellow'
                           } margRtXs `}
                         ></i>
                       </div>
 
-                      {interview.OverallExperience < 3 ? (
+                      {interview.Difficulty < 3 ? (
                         <div class="cell">
                           <span class="middle">Easy Interview</span>
                         </div>
-                      ) : interview.OverallExperience > 3 ? (
+                      ) : interview.Difficulty > 3 ? (
                         <div class="cell">
                           <span class="middle">Difficult Interview</span>
                         </div>

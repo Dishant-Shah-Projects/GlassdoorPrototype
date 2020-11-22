@@ -10,8 +10,8 @@ class RightBlock extends Component {
     this.state = {};
   }
 
-componentDidMount() {
-  axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+  componentDidMount() {
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
     axios
       .get(serverUrl + 'company/report', {
         params: { CompanyID: localStorage.getItem('userId'), PageNo: 0 },
@@ -20,7 +20,6 @@ componentDidMount() {
       .then((response) => {
         if (response.status == 200) {
           console.log('response', response.data.results);
-          
         }
       })
       .catch((error) => {
@@ -28,7 +27,7 @@ componentDidMount() {
           errorMessage: 'No Reviews Found',
         });
       });
-}
+  }
   render() {
     return (
       <div>
@@ -46,7 +45,7 @@ componentDidMount() {
                     label: '',
                     value: 75,
                     isEmpty: true,
-                  },                  
+                  },
                 ]}
                 width={200}
               />

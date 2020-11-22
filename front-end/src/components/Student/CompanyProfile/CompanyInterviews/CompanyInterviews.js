@@ -137,7 +137,7 @@ class CompanyInterviews extends Component {
     }
     let avg = this.props.companyInterviewStore.avgDifficulty;
     let avgRatingGreenColor = avg % 1;
-
+    avg = Number(avg).toFixed(1);
     let styledifficulty = { height: avgRatingGreenColor * 10 };
     return (
       <article id="MainCol">

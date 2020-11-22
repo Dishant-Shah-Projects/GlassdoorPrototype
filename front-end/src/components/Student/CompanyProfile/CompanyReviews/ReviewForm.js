@@ -164,6 +164,8 @@ class ReviewForm extends Component {
       (response) => {
         console.log('Status Code : ', response.status);
         if (response.status === 200) {
+          this.props.history.goBack();
+          this.props.history.goBack();
           console.log('Review Submitted');
           this.setState({
             rating: 0,
@@ -219,33 +221,6 @@ class ReviewForm extends Component {
                 </span>
               </p>
               <div class="survey-two-column">
-                <div style={{ width: '15%' }} class="d-none d-md-block col-md-4">
-                  <a href="#" onClick={this.companyPage}>
-                    <button
-                      class="gd-ui-button m-0 p-0 d-flex justify-content-start align-items-center resumeImportStyle__backBtn___3NR7k css-1c2vj07"
-                      data-test="backBtn"
-                    >
-                      <span class="SVGInline mr-xsm backIcon">
-                        <svg
-                          class="SVGInline-svg mr-xsm-svg backIcon-svg"
-                          style={{ width: '10px', height: '12px' }}
-                          xmlns="http://www.w3.org/2000/svg"
-                          height="24"
-                          viewBox="0 0 10 13"
-                          width="24"
-                        >
-                          <path
-                            stroke-width="2"
-                            d="M9 1L2 6.5 9 12"
-                            fill="none"
-                            stroke="currentColor"
-                          ></path>
-                        </svg>
-                      </span>
-                      <span>Back</span>
-                    </button>
-                  </a>
-                </div>
                 <div>
                   <form
                     //onSubmit={this.submitReview}
@@ -953,7 +928,7 @@ class ReviewForm extends Component {
                         <div>
                           <div class="items">
                             <div
-                              onClick={(event) => this.recommend(event, 11)}
+                              onClick={(event) => this.recommend(event, 1)}
                               class={this.state.recommendAFriend === 1 ? 'selected' : ''}
                             >
                               <input
