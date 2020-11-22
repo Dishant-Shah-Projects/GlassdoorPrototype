@@ -29,7 +29,8 @@ class RightBlock extends Component {
       })
       .then(
         (response) => {
-          console.log('getapplicants', response.data[0]);          
+          console.log('getapplicants', response.data[0]);
+                    
           let payload1 = {
             applicantsList: response.data[0],
             PageNo,
