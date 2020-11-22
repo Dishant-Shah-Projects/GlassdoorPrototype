@@ -56,6 +56,51 @@ const CompanySchema = new mongoose.Schema(
       Response: { type: String },
       Favorite: { type: Boolean },
     },
+    SalaryReview: [
+      {
+        SalaryReviewID: { type: Number },
+        Status: {
+          type: String,
+          enum: ['Not Approved', 'Approved', 'Disapproved'],
+        },
+        DatePosted: { type: Date },
+        BaseSalary: { type: Number },
+        Bonuses: { type: Number },
+        JobTitle: { type: String },
+        Years: { type: Number },
+        StreetAddress: { type: String },
+        State: { type: String },
+        Country: { type: String },
+        Zip: { type: Number, min: 10000, max: 99999 },
+      },
+    ],
+    InterviewReview: [
+      {
+        InterviewReviewID: { type: Number },
+        Status: {
+          type: String,
+          enum: ['Not Approved', 'Approved', 'Disapproved'],
+        },
+        Helpful: { type: Number },
+        DatePosted: { type: Date },
+        OverallExperience: {
+          type: String,
+          enum: ['Positive', 'Negative', 'Neutral'],
+        },
+        JobTitle: { type: String },
+        Description: { type: String },
+        Difficulty: {
+          type: String,
+          enum: ['Easy', 'Average', 'Difficult'],
+        },
+        OfferStatus: {
+          type: String,
+          enum: ['Rejected', 'Accepted'],
+        },
+        InterviewQuestions: { type: String },
+        Answers: { type: String },
+      },
+    ],
     Photos: [String],
     JobType: {
       type: String,
