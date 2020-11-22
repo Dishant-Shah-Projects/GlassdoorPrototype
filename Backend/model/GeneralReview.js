@@ -19,7 +19,7 @@ const ReviewSchema = new mongoose.Schema({
     enum: ['Not Approved', 'Approved', 'Disapproved'],
     required: true,
   },
-  Helpful: { type: Number, required: true },
+  Helpful: { type: Number, required: true, default: 0 },
   CEOApproval: { type: Boolean, required: true },
   JobType: {
     type: String,
