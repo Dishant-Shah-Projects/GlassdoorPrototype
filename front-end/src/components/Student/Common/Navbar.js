@@ -682,6 +682,7 @@ class Navbar extends Component {
                             <div className="col headerSearchInput css-1ohf0ui">
                               <div className="input-wrapper css-q444d9">
                                 <input
+                                  style={{ padding: '0 0 0 40px' }}
                                   // onFocus={() => this.showSuggestion(true)}
                                   // onBlur={() => this.showSuggestion(false)}
                                   onChange={this.onChangeCommonHandler}

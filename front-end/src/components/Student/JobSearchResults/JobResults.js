@@ -20,7 +20,7 @@ class JobResults extends Component {
   render() {
     return (
       <div id="JobResults" className="module noPad">
-        <section className="flexbox" id="PanesWrap">
+        <section style={{ height: '428px' }} className="flexbox" id="PanesWrap">
           {this.state.popSeen ? <JobApplyModal toggle={(event) => this.toggle(event)} /> : ''}
           <JobLeftResultsBlock
             filterChangeCall={(JobType, State, SalStart, SalEnd, PageNo) =>

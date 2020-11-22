@@ -10,6 +10,14 @@ class CompanyInterviewCard extends Component {
   }
   render() {
     const interview = this.props.interview;
+    let alreadyHelpful = false;
+    if (
+      this.props.studentInfoStore.studentProfile.HelpfullInterviewReviews.includes(
+        interview.InterviewReviewID
+      )
+    ) {
+      alreadyHelpful = true;
+    }
     console.log(' interview.Difficulty ', interview.Difficulty);
     return (
       <li class=" empReview cf " id="InterviewReview_24701674">
@@ -211,7 +219,9 @@ class CompanyInterviewCard extends Component {
                 <button
                   onClick={this.props.helpfulClicked}
                   type="button"
-                  class="tight gd-btn gd-btn-button gd-btn-2 gd-btn-sm gradient"
+                  class={`tight gd-btn gd-btn-button gd-btn-2 gd-btn-sm gradient ${
+                    alreadyHelpful ? 'gd-btn-3' : ''
+                  }`}
                 >
                   <span>
                     Helpful
@@ -234,9 +244,11 @@ class CompanyInterviewCard extends Component {
 // export default CompanyInterviewCard;
 const mapStateToProps = (state) => {
   const { companyOverviewStore } = state.CompanyPageReducer;
+  const { studentInfoStore } = state.StudentCompleteInfoReducer;
 
   return {
     companyOverviewStore,
+    studentInfoStore,
   };
 };
 

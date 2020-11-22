@@ -2,7 +2,10 @@ import React, { Component } from 'react';
 import './CompanyInterviews.css';
 import { PieChart } from 'react-minimal-pie-chart';
 import PaginationComponent from '../../Common/PaginationComponent';
-import { updateCompanyInterviewStore } from '../../../../constants/action-types';
+import {
+  updateCompanyInterviewStore,
+  updateStudentProfile,
+} from '../../../../constants/action-types';
 import { connect } from 'react-redux';
 import axios from 'axios';
 import serverUrl from '../../../../config';
@@ -110,6 +113,12 @@ class CompanyInterviews extends Component {
             // PageCount: Math.ceil(response.data.Totalcount / 3),
           };
           this.props.updateCompanyInterviewStore(payload);
+          let studentProfile = { ...this.props.studentInfoStore.studentProfile };
+          studentProfile.HelpfullInterviewReviews.push(ID);
+          const payload2 = {
+            studentProfile,
+          };
+          this.props.updateStudentProfile(payload2);
         }
       },
       (error) => {
@@ -374,10 +383,12 @@ class CompanyInterviews extends Component {
 
 const mapStateToProps = (state) => {
   const { companyInterviewStore, companyOverviewStore } = state.CompanyPageReducer;
+  const { studentInfoStore } = state.StudentCompleteInfoReducer;
 
   return {
     companyOverviewStore,
     companyInterviewStore,
+    studentInfoStore,
   };
 };
 const mapDispatchToProps = (dispatch) => {
@@ -385,6 +396,12 @@ const mapDispatchToProps = (dispatch) => {
     updateCompanyInterviewStore: (payload) => {
       dispatch({
         type: updateCompanyInterviewStore,
+        payload,
+      });
+    },
+    updateStudentProfile: (payload) => {
+      dispatch({
+        type: updateStudentProfile,
         payload,
       });
     },

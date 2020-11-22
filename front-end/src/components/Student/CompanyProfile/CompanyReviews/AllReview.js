@@ -10,6 +10,10 @@ class AllReview extends Component {
   }
   render() {
     const review = this.props.review;
+    let alreadyHelpful = false;
+    if (this.props.studentInfoStore.studentProfile.HelpfullGeneralReviews.includes(review.ID)) {
+      alreadyHelpful = true;
+    }
     return (
       <li class="empReview cf  " id="empReview_9642081">
         <div class="gdReview">
@@ -190,7 +194,17 @@ class AllReview extends Component {
                   </div>
                   <div class="d-flex">
                     <div class="mr-md">
-                      <button onClick={this.props.helpfulClicked} class="gd-ui-button  css-glrvaa">
+                      <button
+                        onClick={this.props.helpfulClicked}
+                        // class="gd-ui-button  css-glrvaa"
+                        class={`gd-ui-button ${
+                          this.props.studentInfoStore.studentProfile.HelpfullGeneralReviews.includes(
+                            review.ID
+                          )
+                            ? 'css-1s91m8l'
+                            : 'css-glrvaa'
+                        }`}
+                      >
                         Helpful ({review.Helpful})
                       </button>
                     </div>
@@ -208,9 +222,11 @@ class AllReview extends Component {
 // export default AllReview;
 const mapStateToProps = (state) => {
   const { companyOverviewStore } = state.CompanyPageReducer;
+  const { studentInfoStore } = state.StudentCompleteInfoReducer;
 
   return {
     companyOverviewStore,
+    studentInfoStore,
   };
 };
 

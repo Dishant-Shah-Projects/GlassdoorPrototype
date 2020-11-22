@@ -101,37 +101,33 @@ class JobList extends Component {
   render() {
     this.props.LowerNavBarOther();
     return (
-      <body className="main flex loggedIn lang-en en-US hollywood wide hasTwoPanes _initOk serpControl">
-        {' '}
-        {/*<Navbar />*/}
-        <div className="gdGrid pageContentWrapperStudent ">
-          <div id="PageContent">
-            <div id="PageBodyContents" className="meat">
-              <span id="NodePageData"></span>
-              <div id="JobSearch">
-                <div className="gdGrid noPad">
-                  {
-                    <JobNavBar
-                      filterChangeCall={(JobType, State, SalStart, SalEnd, PageNo) =>
-                        this.filterChangeCall(JobType, State, SalStart, SalEnd, PageNo)
-                      }
-                      toggleFilter={(filter) => this.toggleFilter(filter)}
-                    />
-                  }
-                  {
-                    <JobResults
-                      filterChangeCall={(JobType, State, SalStart, SalEnd, PageNo) =>
-                        this.filterChangeCall(JobType, State, SalStart, SalEnd, PageNo)
-                      }
-                      saveJob={(event, JobID) => this.saveJob(event, JobID)}
-                    />
-                  }
-                </div>
+      <div className="gdGrid pageContentWrapperStudent ">
+        <div id="PageContent">
+          <div id="PageBodyContents" className="meat">
+            <span id="NodePageData"></span>
+            <div id="JobSearch">
+              <div className="gdGrid noPad">
+                {
+                  <JobNavBar
+                    filterChangeCall={(JobType, State, SalStart, SalEnd, PageNo) =>
+                      this.filterChangeCall(JobType, State, SalStart, SalEnd, PageNo)
+                    }
+                    toggleFilter={(filter) => this.toggleFilter(filter)}
+                  />
+                }
+                {
+                  <JobResults
+                    filterChangeCall={(JobType, State, SalStart, SalEnd, PageNo) =>
+                      this.filterChangeCall(JobType, State, SalStart, SalEnd, PageNo)
+                    }
+                    saveJob={(event, JobID) => this.saveJob(event, JobID)}
+                  />
+                }
               </div>
             </div>
           </div>
         </div>
-      </body>
+      </div>
     );
   }
 }

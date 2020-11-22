@@ -1026,3 +1026,6 @@ a.css-1s7hc3h:visited {
   max-height: 201.6px;
   box-shadow: 0 0 2px 0 #b6bbc2;
 }
+#lowerNavBarHome {
+  flex-direction: row !important;
+}

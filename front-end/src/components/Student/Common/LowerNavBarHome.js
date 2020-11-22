@@ -56,7 +56,10 @@ class LowerNavBarHome extends Component {
                       target="_top"
                       data-ga-lbl="null"
                     >
-                      <div className="d-flex flex-column align-items-center justify-content-center flex-md-row justify-content-md-start">
+                      <div
+                        id="lowerNavBarHome"
+                        className="d-flex flex-column align-items-center justify-content-center flex-md-row justify-content-md-start"
+                      >
                         <span className="SVGInline d-flex">
                           <svg
                             className="SVGInline-svg d-flex-svg"
@@ -182,7 +185,10 @@ class LowerNavBarHome extends Component {
                       target="_top"
                       data-ga-lbl="null"
                     >
-                      <div className="d-flex flex-column align-items-center justify-content-center flex-md-row justify-content-md-start">
+                      <div
+                        id="lowerNavBarHome"
+                        className="d-flex flex-column align-items-center justify-content-center flex-md-row justify-content-md-start"
+                      >
                         <span className="SVGInline d-flex">
                           <svg
                             className="SVGInline-svg d-flex-svg"
@@ -353,7 +359,10 @@ class LowerNavBarHome extends Component {
                       target="_top"
                       data-ga-lbl="null"
                     >
-                      <div className="d-flex flex-column align-items-center justify-content-center flex-md-row justify-content-md-start">
+                      <div
+                        id="lowerNavBarHome"
+                        className="d-flex flex-column align-items-center justify-content-center flex-md-row justify-content-md-start"
+                      >
                         <span className="SVGInline d-flex">
                           <svg
                             className="SVGInline-svg d-flex-svg"
@@ -462,7 +471,10 @@ class LowerNavBarHome extends Component {
                       target="_top"
                       data-ga-lbl="null"
                     >
-                      <div className="d-flex flex-column align-items-center justify-content-center flex-md-row justify-content-md-start">
+                      <div
+                        id="lowerNavBarHome"
+                        className="d-flex flex-column align-items-center justify-content-center flex-md-row justify-content-md-start"
+                      >
                         <span className="SVGInline d-flex">
                           <svg
                             className="SVGInline-svg d-flex-svg"

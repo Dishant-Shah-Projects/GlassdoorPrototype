@@ -9,6 +9,7 @@ import serverUrl from '../../../../config';
 import {
   updatespecialReviews,
   updateCompanyReviewsStore,
+  updateStudentProfile,
 } from '../../../../constants/action-types';
 import { connect } from 'react-redux';
 import moment from 'moment';
@@ -76,6 +77,7 @@ class CompanyReviews extends Component {
     const data = {
       CompanyID: localStorage.getItem('companyID'),
       ID,
+      StudentID: localStorage.getItem('userId'),
     };
     axios.post(serverUrl + 'student/companyHelpfulReview', data).then(
       (response) => {
@@ -92,7 +94,15 @@ class CompanyReviews extends Component {
 
             // PageCount: Math.ceil(response.data.Totalcount / 3),
           };
+
+          // this.commonFetch(this.props.companyReviewsStore.PageNo);
           this.props.updateCompanyReviewsStore(payload);
+          let studentProfile = { ...this.props.studentInfoStore.studentProfile };
+          studentProfile.HelpfullGeneralReviews.push(ID);
+          const payload2 = {
+            studentProfile,
+          };
+          this.props.updateStudentProfile(payload2);
         }
       },
       (error) => {
@@ -367,10 +377,12 @@ class CompanyReviews extends Component {
 
 const mapStateToProps = (state) => {
   const { companyOverviewStore, companyReviewsStore } = state.CompanyPageReducer;
+  const { studentInfoStore } = state.StudentCompleteInfoReducer;
 
   return {
     companyOverviewStore,
     companyReviewsStore,
+    studentInfoStore,
   };
 };
 const mapDispatchToProps = (dispatch) => {
@@ -384,6 +396,12 @@ const mapDispatchToProps = (dispatch) => {
     updateCompanyReviewsStore: (payload) => {
       dispatch({
         type: updateCompanyReviewsStore,
+        payload,
+      });
+    },
+    updateStudentProfile: (payload) => {
+      dispatch({
+        type: updateStudentProfile,
         payload,
       });
     },
