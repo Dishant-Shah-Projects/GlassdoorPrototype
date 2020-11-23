@@ -1032,6 +1032,27 @@ const companyJobs = async (req, res) => {
   }
 };
 
+const fillJobApplication = async (req, res) => {
+  try {
+    const { JobID, CompanyID } = req.query;
+    const jobData = await Job.find({ JobID });
+    const CompanyData = await Company.find(
+      { CompanyID },
+      { GeneralReviewCount: 1, TotalGeneralReviewRating: 1, CoverPhoto: 1, ProfileImg: 1, Size: 1 }
+    );
+    const result = { Job: jobData, Company: CompanyData };
+    res.writeHead(200, {
+      'Content-Type': 'application/json',
+    });
+    res.end(JSON.stringify(result));
+  } catch (error) {
+    res.writeHead(500, {
+      'Content-Type': 'application/json',
+    });
+    res.end('Network Error');
+  }
+};
+
 module.exports = {
   navbar,
   searchCompany,
@@ -1057,5 +1078,6 @@ module.exports = {
   companyJobs,
   salaryReview,
   companyInterviewHelpfulReview,
+  fillJobApplication,
   // getAllReview,
 };

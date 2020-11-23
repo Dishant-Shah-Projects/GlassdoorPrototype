@@ -30,6 +30,7 @@ const {
   companyJobs,
   salaryReview,
   companyInterviewHelpfulReview,
+  fillJobApplication,
   // getAllReview,
 } = require('../Student/studentFunctionality');
 
@@ -207,6 +208,12 @@ Router.get('/companyJobs', checkAuth, async (req, res) => {
 // get search job result
 Router.get('/salaryReview', checkAuth, async (req, res) => {
   const value = await salaryReview(req, res);
+  return value;
+});
+
+// Get job and compay details when apply form is being opened
+Router.get('/fillJobApplication', checkAuth, async (req, res) => {
+  const value = await fillJobApplication(req, res);
   return value;
 });
 module.exports = Router;
