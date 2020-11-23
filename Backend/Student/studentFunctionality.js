@@ -299,10 +299,20 @@ const companyFavouriteJobs = async (req, res) => {
 
 // To submit an application for a job
 const companyApplyJob = async (req, res) => {
-  const { JobID, StudentID, StudentName, ResumeURL, CoverLetterURL } = req.body;
+  const {
+    JobID,
+    StudentID,
+    StudentName,
+    ResumeURL,
+    CoverLetterURL,
+    Ethnicity,
+    Gender,
+    Disability,
+    VeteranStatus,
+  } = req.body;
   let con = null;
   try {
-    const jobApplicationProcedure = 'CALL applicationSubmit(?,?,?,?,?,"Submitted")';
+    const jobApplicationProcedure = 'CALL applicationSubmit(?,?,?,?,?,?,?,?,?,"Submitted")';
     con = await mysqlConnection();
     // eslint-disable-next-line no-unused-vars
     const [results, fields] = await con.query(jobApplicationProcedure, [
@@ -311,6 +321,10 @@ const companyApplyJob = async (req, res) => {
       StudentName,
       ResumeURL,
       CoverLetterURL,
+      Ethnicity,
+      Gender,
+      Disability,
+      VeteranStatus,
     ]);
     con.end();
     res.writeHead(200, { 'content-type': 'text/json' });

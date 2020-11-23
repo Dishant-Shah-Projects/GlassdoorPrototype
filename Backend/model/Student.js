@@ -31,7 +31,7 @@ const StudentSchema = new mongoose.Schema({
     ],
     default: 'Select',
   },
-  Ethicity: {
+  Ethnicity: {
     type: String,
     enum: [
       'Indigenous American or Alaska Native',
@@ -46,7 +46,7 @@ const StudentSchema = new mongoose.Schema({
       'Prefer to Self Describe',
       'Prefer Not to Say',
     ],
-    default: 'Select',
+    default: 'Prefer Not to Say',
   },
   JobType: [
     {
@@ -66,15 +66,18 @@ const StudentSchema = new mongoose.Schema({
   Gender: {
     type: String,
     enum: ['Male', 'Female', 'Prefer not to share'],
+    default: 'Prefer not to share',
   },
   AcceptedReviewCount: { type: Number },
   Disability: {
     type: String,
     enum: ['Yes', 'No', 'Prefer Not to Say'],
+    default: 'Prefer Not to Say',
   },
   VeteranStatus: {
     type: String,
     enum: ['Yes', 'No', 'Prefer Not to Say'],
+    default: 'Prefer Not to Say',
   },
 });
 
