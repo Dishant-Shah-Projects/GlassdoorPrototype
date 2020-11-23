@@ -494,6 +494,12 @@ const jobWithdraw = async (req, res) => {
     // eslint-disable-next-line no-unused-vars
     const [results, fields] = await con.query(applicationWithdrawProcedure, [JobID, StudentID]);
     con.end();
+    await Student.update({ StudentID }, { $pull: { AppliedJobs: JobID } }, (err) => {
+      if (err) {
+        res.writeHead(500, { 'content-type': 'text/json' });
+        res.end(JSON.stringify('Network Error'));
+      }
+    });
     res.writeHead(200, { 'content-type': 'text/json' });
     res.end(JSON.stringify('Withdrawn Successfully'));
   } catch (error) {
