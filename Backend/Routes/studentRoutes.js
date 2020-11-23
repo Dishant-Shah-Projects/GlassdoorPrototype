@@ -4,7 +4,7 @@ const Router = express.Router();
 
 const kafka = require('../kafka/client');
 
-const { uploadFile, uploadmultiFile } = require('../S3Bucket/s3BucketUpload');
+const { uploadFile, uploadmultiFile, imageUpload } = require('../S3Bucket/s3BucketUpload');
 const {
   navbar,
   searchCompany,
@@ -81,7 +81,7 @@ Router.get('/searchInterview', checkAuth, async (req, res) => {
 });
 
 // To add resume of student
-Router.post('/resumesAdd', async (req, res) => {
+Router.post('/resumesAdd', checkAuth, imageUpload, async (req, res) => {
   const value = await resumesAdd(req, res);
   return value;
 });

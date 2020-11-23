@@ -435,8 +435,9 @@ const salaryReview = async (req, res) => {
 };
 // post resume of student
 const resumesAdd = async (req, res) => {
-  const { StudentID, ResumeURL } = req.body;
   try {
+    const { StudentID } = req.body;
+    const { ResumeURL } = req.file.location;
     Student.update({ StudentID }, { $push: { Resumes: ResumeURL } }, (err) => {
       if (err) {
         res.writeHead(500, { 'content-type': 'text/json' });
