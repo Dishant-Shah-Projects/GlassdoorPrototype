@@ -79,6 +79,8 @@ const StudentSchema = new mongoose.Schema({
     enum: ['Yes', 'No', 'Prefer Not to Say'],
     default: 'Prefer Not to Say',
   },
+
+  AppliedJobs: [String],
 });
 
 module.exports = mongoose.model('student', StudentSchema);

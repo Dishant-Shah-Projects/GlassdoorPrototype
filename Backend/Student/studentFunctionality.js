@@ -327,6 +327,20 @@ const companyApplyJob = async (req, res) => {
       VeteranStatus,
     ]);
     con.end();
+    Student.update(
+      { StudentID },
+      {
+        $push: { AppliedJobs: JobID },
+      },
+      (err, data) => {
+        if (err) {
+          // console.log(err);
+        }
+        if (data) {
+          // console.log(data);
+        }
+      }
+    );
     res.writeHead(200, { 'content-type': 'text/json' });
     res.end(JSON.stringify('Applied Successfully'));
   } catch (error) {
