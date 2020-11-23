@@ -19,13 +19,12 @@ const Interviewschema = new mongoose.Schema({
   JobTitle: { type: String, required: true },
   Description: { type: String, required: true },
   Difficulty: {
-    type: String,
-    enum: ['Easy', 'Average', 'Difficult'],
+    type: Number,
     required: true,
   },
   OfferStatus: {
     type: String,
-    enum: ['Rejected', 'Accepted'],
+    enum: ['No', 'Yes, but I declined', 'Yes, and I accepted'],
     required: true,
   },
   InterviewQuestions: { type: String, required: true },

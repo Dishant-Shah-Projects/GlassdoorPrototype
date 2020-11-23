@@ -31,6 +31,8 @@ const {
   salaryReview,
   companyInterviewHelpfulReview,
   fillJobApplication,
+  getFavoriteJobs,
+  getAppliedJobs,
   // getAllReview,
 } = require('../Student/studentFunctionality');
 
@@ -73,7 +75,7 @@ Router.post('/removeFavouriteJobs', checkAuth, async (req, res) => {
 });
 
 // To fetch the results of the interview search
-Router.get('/searchInterview', async (req, res) => {
+Router.get('/searchInterview', checkAuth, async (req, res) => {
   const value = await searchInterview(req, res);
   return value;
 });
@@ -152,7 +154,7 @@ Router.get('/getAllReview', checkAuth, async (req, res) => {
 });
 
 // get the interview reviews
-Router.get('/interviewReview', checkAuth, async (req, res) => {
+Router.get('/interviewReview', async (req, res) => {
   const value = await getInterviewReivew(req, res);
   return value;
 });
@@ -194,7 +196,7 @@ Router.post('/companyHelpfulReview', checkAuth, async (req, res) => {
 });
 
 // post helpful review count for interview review
-Router.post('/companyInterviewHelpfulReview', checkAuth, async (req, res) => {
+Router.post('/companyInterviewHelpfulReview', async (req, res) => {
   const value = await companyInterviewHelpfulReview(req, res);
   return value;
 });
@@ -206,7 +208,7 @@ Router.get('/companyJobs', checkAuth, async (req, res) => {
 });
 
 // get search job result
-Router.get('/salaryReview', checkAuth, async (req, res) => {
+Router.get('/salaryReview', async (req, res) => {
   const value = await salaryReview(req, res);
   return value;
 });
@@ -214,6 +216,18 @@ Router.get('/salaryReview', checkAuth, async (req, res) => {
 // Get job and compay details when apply form is being opened
 Router.get('/fillJobApplication', checkAuth, async (req, res) => {
   const value = await fillJobApplication(req, res);
+  return value;
+});
+
+// Get the information about the saved job
+Router.get('/getFavoriteJobs', checkAuth, async (req, res) => {
+  const value = await getFavoriteJobs(req, res);
+  return value;
+});
+
+// Get the details about the applied job
+Router.get('/getAppliedJobs', checkAuth, async (req, res) => {
+  const value = await getAppliedJobs(req, res);
   return value;
 });
 module.exports = Router;

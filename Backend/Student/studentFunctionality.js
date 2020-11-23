@@ -10,6 +10,9 @@ const { secret } = require('../config');
 const Company = require('../model/Company');
 const Student = require('../model/Student');
 const Job = require('../model/Job');
+const Interview = require('../model/InterviewReview');
+const Salary = require('../model/SalaryReview');
+const General = require('../model/GeneralReview');
 const Static = require('../model/Static');
 const redisClient = require('../redisClient');
 
@@ -378,62 +381,55 @@ const removeFavouriteJobs = async (req, res) => {
 // API Calls for returning the interviews NEED TO ADD PROFILE IMAGES
 const searchInterview = async (req, res) => {
   // eslint-disable-next-line no-unused-vars
-  const { SearchString, State, PageNo } = req.body;
-  let con = null;
+  const { SearchString, State, PageNo } = req.query;
   try {
-    const offset = PageNo * 10;
-    const searchQuery =
-      'SELECT * FROM INTERVIEW_REVIEW WHERE INSTR(CompanyName, ?) > 0 AND Status = "Approved" LIMIT 10 OFFSET ?;';
-    con = await mysqlConnection();
-    const [results] = await con.query(searchQuery, [SearchString, offset]);
-    // const company = await Company.find({ CompanyID });
-    const countQuery =
-      'SELECT COUNT(*) AS TOTALCOUNT FROM INTERVIEW_REVIEW WHERE INSTR(CompanyName, ?) > 0 AND Status = "Approved";';
-    const [count] = await con.query(countQuery, [SearchString]);
+    const results = await Interview.find({
+      CompanyName: { $regex: `.*${SearchString}.*` },
+    })
+      .limit(10)
+      .skip(PageNo * 10);
+    // console.log(results);
+    const temp = await Interview.find({
+      CompanyName: { $regex: `.*${SearchString}.*` },
+    });
+    let count = null;
+    if (temp) {
+      // console.log(temp);
+      count = temp.length;
+    } else {
+      count = 0;
+    }
     const resultData = { results, count };
-    con.end();
     res.writeHead(200, { 'content-type': 'text/json' });
     res.end(JSON.stringify(resultData));
   } catch (error) {
     res.writeHead(500, { 'content-type': 'text/json' });
     res.end(JSON.stringify('Network Error'));
-  } finally {
-    if (con) {
-      con.end();
-    }
   }
   return res;
 };
 
 // To get the salary reviews
 const salaryReview = async (req, res) => {
-  let con = null;
   try {
     const { PageNo, CompanyID } = req.query;
-    const offset = PageNo * 10;
-    const searchQuery =
-      'SELECT JobTitle, AVG(BaseSalary + Bonuses) As AverageSalary, MIN(BaseSalary + Bonuses) AS MinSalary, MAX(BaseSalary + Bonuses) As MaxSalary FROM SALARY_REVIEW WHERE CompanyID=? AND Status = ? GROUP BY JobTitle LIMIT 10 OFFSET ?;';
-    con = await mysqlConnection();
-    const [results] = await con.query(searchQuery, [CompanyID, 'Approved', offset]);
+    const results = await Salary.find({ CompanyID })
+      .limit(10)
+      .skip(PageNo * 10);
     const company = await Company.find({ CompanyID });
     let ProfileImg = null;
     if (company[0].ProfileImg) {
       ProfileImg = company[0].ProfileImg;
     }
-    const countQuery =
-      'SELECT COUNT(distinct(JobTitle)) AS TOTALCOUNT FROM SALARY_REVIEW WHERE CompanyID=? AND Status = ?;';
-    const [count] = await con.query(countQuery, [CompanyID, 'Approved', offset]);
+
+    const count2 = await Salary.find({ CompanyID });
+    const count = count2.length;
     const resultData = { results, ProfileImg, count };
-    con.end();
     res.writeHead(200, { 'content-type': 'text/json' });
     res.end(JSON.stringify(resultData));
   } catch (error) {
     res.writeHead(500, { 'content-type': 'text/json' });
     res.end(JSON.stringify('Network Error'));
-  } finally {
-    if (con) {
-      con.end();
-    }
   }
   return res;
 };
@@ -494,6 +490,12 @@ const jobWithdraw = async (req, res) => {
     // eslint-disable-next-line no-unused-vars
     const [results, fields] = await con.query(applicationWithdrawProcedure, [JobID, StudentID]);
     con.end();
+    await Student.update({ StudentID }, { $pull: { AppliedJobs: JobID } }, (err) => {
+      if (err) {
+        res.writeHead(500, { 'content-type': 'text/json' });
+        res.end(JSON.stringify('Network Error'));
+      }
+    });
     res.writeHead(200, { 'content-type': 'text/json' });
     res.end(JSON.stringify('Withdrawn Successfully'));
   } catch (error) {
@@ -564,32 +566,33 @@ const companyProfile = async (req, res) => {
 const companyReview = async (req, res) => {
   // eslint-disable-next-line no-unused-vars
   const { CompanyID, PageNo } = req.query;
-  let con = null;
   try {
+    const results = await Interview.find({
+      CompanyID,
+    })
+      .limit(10)
+      .skip(PageNo * 10);
+    // console.log(results);
+    const temp = await Interview.find({
+      CompanyID,
+    });
+    let count23 = null;
+    if (temp) {
+      // console.log(temp);
+      count23 = temp.length;
+    } else {
+      count23 = 0;
+    }
     const resultData = [];
-    const count =
-      'SELECT count(*) as reviewcount FROM GENERAL_REVIEW WHERE CompanyID=? AND Status = ?;';
-
-    const offset = PageNo * 10;
-    const searchQuery =
-      'SELECT * FROM GENERAL_REVIEW WHERE CompanyID=? AND Status = ? LIMIT 10 OFFSET ?;';
-    con = await mysqlConnection();
-    const [results] = await con.query(count, [CompanyID, 'Approved']);
-    resultData.push({ count: results[0].reviewcount });
-    const no = Math.ceil(results[0].reviewcount / 10);
+    resultData.push({ count: count23 });
+    const no = Math.ceil(count23 / 10);
     resultData.push({ noOfPages: no });
-    const [results2] = await con.query(searchQuery, [CompanyID, 'Approved', offset]);
-    resultData.push(results2);
-    con.end();
+    resultData.push(results);
     res.writeHead(200, { 'content-type': 'text/json' });
     res.end(JSON.stringify(resultData));
   } catch (error) {
     res.writeHead(500, { 'content-type': 'text/json' });
     res.end(JSON.stringify('Network Error'));
-  } finally {
-    if (con) {
-      con.end();
-    }
   }
   return res;
 };
@@ -612,11 +615,18 @@ const addCompanyReview = async (req, res) => {
     JobTitle,
     Headline,
   } = req.body;
-  let con = null;
   try {
-    const count = 'CALL reviewInsert(?,?,?,?,?,?,?,?,"NotApproved",0,?,?,?,?,?,CURDATE(),NULL,0);';
-    con = await mysqlConnection();
-    await con.query(count, [
+    const rev = await General.findOne({}).sort({ ID: -1 }).select('ID');
+    let ID = null;
+    if (rev) {
+      ID = rev.ID + 1;
+    } else {
+      ID = 1;
+    }
+    const review = new General({
+      ID,
+      Status: 'Not Approved',
+      DatePosted: Date.now(),
       CompanyID,
       StudentID,
       CompanyName,
@@ -630,8 +640,9 @@ const addCompanyReview = async (req, res) => {
       Recommended,
       JobTitle,
       Headline,
-    ]);
-    con.end();
+      Favorite: 0,
+    });
+    await review.save();
     const reviewday = await Static.findOne({}).select('reviews');
     const today = new Date().toISOString().slice(0, 10);
     if (reviewday.reviews[0].Date.toISOString().slice(0, 10) === today) {
@@ -679,10 +690,6 @@ const addCompanyReview = async (req, res) => {
   } catch (error) {
     res.writeHead(500, { 'content-type': 'text/json' });
     res.end(JSON.stringify('Network Error'));
-  } finally {
-    if (con) {
-      con.end();
-    }
   }
   return res;
 };
@@ -741,12 +748,18 @@ const salaryAddReview = async (req, res) => {
     State,
     Zip,
   } = req.body;
-  let con = null;
   try {
-    const interviewReviewInsert =
-      'CALL salaryReviewInsert (?,?,"Not Approved", curdate(), ?, ?,?,?, ?, ?,?,?);';
-    con = await mysqlConnection();
-    await con.query(interviewReviewInsert, [
+    const rev = await Salary.findOne({}).sort({ SalaryReviewID: -1 }).select('SalaryReviewID');
+    let SalaryReviewID = null;
+    if (rev) {
+      SalaryReviewID = rev.SalaryReviewID + 1;
+    } else {
+      SalaryReviewID = 1;
+    }
+    const review = new Salary({
+      SalaryReviewID,
+      Status: 'Not Approved',
+      DatePosted: Date.now(),
       CompanyID,
       StudentID,
       BaseSalary,
@@ -757,8 +770,8 @@ const salaryAddReview = async (req, res) => {
       City,
       State,
       Zip,
-    ]);
-    con.end();
+    });
+    await review.save();
     Company.findOneAndUpdate(
       { CompanyID },
       { $inc: { SalaryReviewCount: 1 } },
@@ -777,10 +790,6 @@ const salaryAddReview = async (req, res) => {
   } catch (error) {
     res.writeHead(500, { 'content-type': 'text/json' });
     res.end(JSON.stringify('Network Error'));
-  } finally {
-    if (con) {
-      con.end();
-    }
   }
   return res;
 };
@@ -819,34 +828,26 @@ const featureReview = async (req, res) => {
 
 // get the interview Review for the company
 const getInterviewReivew = async (req, res) => {
-  let con = null;
   try {
     const { PageNo, CompanyID } = req.query;
-    const offset = PageNo * 10;
-    const searchQuery =
-      'SELECT * FROM INTERVIEW_REVIEW WHERE CompanyID=? AND Status = "Approved" LIMIT 10 OFFSET ?;';
-    con = await mysqlConnection();
-    const [results] = await con.query(searchQuery, [CompanyID, offset]);
+    const results = await Interview.find({ CompanyID })
+      .limit(10)
+      .skip(PageNo * 10);
     const company = await Company.find({ CompanyID });
     let ProfileImg = null;
     if (company[0].ProfileImg) {
       ProfileImg = company[0].ProfileImg;
     }
-    const countQuery =
-      'SELECT COUNT(*) AS TOTALCOUNT FROM INTERVIEW_REVIEW WHERE CompanyID=? AND Status = "Approved";';
-    const [count] = await con.query(countQuery, [CompanyID]);
+
+    const count2 = await Interview.find({ CompanyID });
+    const count = count2.length;
     const resultData = { results, ProfileImg, count };
-    con.end();
     res.writeHead(200, { 'content-type': 'text/json' });
     res.end(JSON.stringify(resultData));
   } catch (error) {
     // eslint-disable-next-line no-console
     res.writeHead(500, { 'content-type': 'text/json' });
     res.end(JSON.stringify('Network Error'));
-  } finally {
-    if (con) {
-      con.end();
-    }
   }
   return res;
 };
@@ -866,12 +867,20 @@ const interviewAddReview = async (req, res) => {
     InterviewQuestions,
     Answers,
   } = req.body;
-  let con = null;
   try {
-    const interviewReviewInsert =
-      'CALL interviewReviewInsert (?,?,?,"Not Approved",0, curdate(), ?,?,?,?, ?, ?,?);';
-    con = await mysqlConnection();
-    await con.query(interviewReviewInsert, [
+    const rev = await Interview.findOne({})
+      .sort({ InterviewReviewID: -1 })
+      .select('InterviewReviewID');
+    let InterviewReviewID = null;
+    if (rev) {
+      InterviewReviewID = rev.InterviewReviewID + 1;
+    } else {
+      InterviewReviewID = 1;
+    }
+    const review = new Interview({
+      InterviewReviewID,
+      Status: 'Not Approved',
+      DatePosted: Date.now(),
       CompanyID,
       StudentID,
       CompanyName,
@@ -882,8 +891,8 @@ const interviewAddReview = async (req, res) => {
       OfferStatus,
       InterviewQuestions,
       Answers,
-    ]);
-    con.end();
+    });
+    await review.save();
 
     Company.findOneAndUpdate(
       { CompanyID },
@@ -903,10 +912,6 @@ const interviewAddReview = async (req, res) => {
   } catch (error) {
     res.writeHead(500, { 'content-type': 'text/json' });
     res.end(JSON.stringify('Network Error'));
-  } finally {
-    if (con) {
-      con.end();
-    }
   }
 
   return res;
@@ -946,68 +951,136 @@ const interviewData = async (req, res) => {
 // update company helpful  for the general review
 const companyHelpfulReview = async (req, res) => {
   const { CompanyID, ID, StudentID } = req.body;
-  let con = null;
   try {
-    con = await mysqlConnection();
-    const posquery = 'UPDATE GENERAL_REVIEW SET Helpful = Helpful+1 WHERE CompanyID=? AND ID=?;';
-    // eslint-disable-next-line no-unused-vars
-    const [results] = await con.query(posquery, [CompanyID, ID]);
-    con.end();
-    await Student.update({ StudentID }, { $push: { HelpfullGeneralReviews: ID } });
-    const company = await Company.findOne({ CompanyID }).select('FeaturedReview');
-    if (company.FeaturedReview.ID === ID) {
-      company.FeaturedReview.Helpful += 1;
-      Company.findOneAndUpdate(
-        { CompanyID },
-        { FeaturedReview: company.FeaturedReview },
+    const stud = await Student.findOne({ StudentID }).select('HelpfullGeneralReviews');
+    if (stud.HelpfullGeneralReviews.includes(ID)) {
+      const index = stud.HelpfullGeneralReviews.indexOf(ID);
+      stud.HelpfullGeneralReviews.splice(index, 1);
+      await General.findOneAndUpdate(
+        { ID },
+        { $inc: { Helpful: -1 } },
 
-        (err, response) => {
-          if (err) {
+        (error) => {
+          if (error) {
             res.writeHead(500, { 'content-type': 'text/json' });
             res.end(JSON.stringify('Network'));
           }
-          if (response) {
-            res.writeHead(200, { 'content-type': 'text/json' });
-            res.end(JSON.stringify({ message: 'ok' }));
+        }
+      );
+      await Student.update({ StudentID }, { HelpfullGeneralReviews: stud.HelpfullGeneralReviews });
+      const company = await Company.findOne({ CompanyID }).select('FeaturedReview');
+      if (company.FeaturedReview.ID === ID) {
+        company.FeaturedReview.Helpful -= 1;
+        Company.findOneAndUpdate(
+          { CompanyID },
+          { FeaturedReview: company.FeaturedReview },
+
+          (err, response) => {
+            if (err) {
+              res.writeHead(500, { 'content-type': 'text/json' });
+              res.end(JSON.stringify('Network'));
+            }
+            if (response) {
+              res.writeHead(200, { 'content-type': 'text/json' });
+              res.end(JSON.stringify({ message: 'helpfull removed' }));
+            }
+          }
+        );
+      } else {
+        res.writeHead(200, { 'content-type': 'text/json' });
+        res.end(JSON.stringify({ message: 'helpfull removed' }));
+      }
+    } else {
+      await General.findOneAndUpdate(
+        { ID },
+        { $inc: { Helpful: 1 } },
+
+        (error) => {
+          if (error) {
+            res.writeHead(500, { 'content-type': 'text/json' });
+            res.end(JSON.stringify('Network'));
           }
         }
       );
-    } else {
-      res.writeHead(200, { 'content-type': 'text/json' });
-      res.end(JSON.stringify({ message: 'ok' }));
+      await Student.update({ StudentID }, { $push: { HelpfullGeneralReviews: ID } });
+      const company = await Company.findOne({ CompanyID }).select('FeaturedReview');
+      if (company.FeaturedReview.ID === ID) {
+        company.FeaturedReview.Helpful += 1;
+        Company.findOneAndUpdate(
+          { CompanyID },
+          { FeaturedReview: company.FeaturedReview },
+
+          (err, response) => {
+            if (err) {
+              res.writeHead(500, { 'content-type': 'text/json' });
+              res.end(JSON.stringify('Network'));
+            }
+            if (response) {
+              res.writeHead(200, { 'content-type': 'text/json' });
+              res.end(JSON.stringify({ message: 'helpfull added' }));
+            }
+          }
+        );
+      } else {
+        res.writeHead(200, { 'content-type': 'text/json' });
+        res.end(JSON.stringify({ message: 'helpfull added' }));
+      }
     }
   } catch (error) {
     res.writeHead(500, { 'content-type': 'text/json' });
     res.end(JSON.stringify('Network Error'));
-  } finally {
-    if (con) {
-      con.end();
-    }
   }
   return res;
 };
 
 // update company helpful  for the interview review
 const companyInterviewHelpfulReview = async (req, res) => {
-  const { CompanyID, ID, StudentID } = req.body;
-  let con = null;
+  const { ID, StudentID } = req.body;
   try {
-    con = await mysqlConnection();
-    const posquery =
-      'UPDATE INTERVIEW_REVIEW SET Helpful = Helpful+1 WHERE CompanyID=? AND InterviewReviewID=?;';
-    // eslint-disable-next-line no-unused-vars
-    const [results] = await con.query(posquery, [CompanyID, ID]);
-    con.end();
-    await Student.update({ StudentID }, { $push: { HelpfullInterviewReviews: ID } });
-    res.writeHead(200, { 'content-type': 'text/json' });
-    res.end(JSON.stringify({ message: 'ok' }));
+    const stud = await Student.findOne({ StudentID }).select('HelpfullInterviewReviews');
+    if (stud.HelpfullInterviewReviews.includes(ID)) {
+      const index = stud.HelpfullInterviewReviews.indexOf(ID);
+      stud.HelpfullInterviewReviews.splice(index, 1);
+      Interview.findOneAndUpdate(
+        { InterviewReviewID: ID },
+        { $inc: { Helpful: -1 } },
+
+        async (error) => {
+          if (error) {
+            res.writeHead(500, { 'content-type': 'text/json' });
+            res.end(JSON.stringify('Network'));
+          } else {
+            await Student.update(
+              { StudentID },
+              { HelpfullInterviewReviews: stud.HelpfullInterviewReviews }
+            );
+
+            res.writeHead(200, { 'content-type': 'text/json' });
+            res.end(JSON.stringify({ message: 'helpfull removed' }));
+          }
+        }
+      );
+    } else {
+      Interview.findOneAndUpdate(
+        { InterviewReviewID: ID },
+        { $inc: { Helpful: 1 } },
+
+        async (error) => {
+          if (error) {
+            res.writeHead(500, { 'content-type': 'text/json' });
+            res.end(JSON.stringify('Network'));
+          } else {
+            await Student.update({ StudentID }, { $push: { HelpfullInterviewReviews: ID } });
+
+            res.writeHead(200, { 'content-type': 'text/json' });
+            res.end(JSON.stringify({ message: 'helpfull added' }));
+          }
+        }
+      );
+    }
   } catch (error) {
     res.writeHead(500, { 'content-type': 'text/json' });
     res.end(JSON.stringify('Network Error'));
-  } finally {
-    if (con) {
-      con.end();
-    }
   }
   return res;
 };
@@ -1067,6 +1140,96 @@ const fillJobApplication = async (req, res) => {
   }
 };
 
+// Get the favorite jobs full details
+const getFavoriteJobs = async (req, res) => {
+  try {
+    const { StudentID, PageNo } = req.query;
+    const result = {};
+    await Student.find({ StudentID }, { FavouriteJobs: 1 }, (err, data) => {
+      if (err) {
+        res.writeHead(500, {
+          'Content-Type': 'application/json',
+        });
+        res.end('Network Error');
+      }
+      if (data) {
+        const dataArray = data[0].FavouriteJobs.slice(PageNo * 10, PageNo * 10 + 10);
+        const { length } = data[0].FavouriteJobs;
+        result.count = { length };
+        const filterArray = [];
+        for (let i = 0; i < dataArray.length; i += 1) {
+          filterArray.push({ _id: dataArray[i] });
+        }
+        Job.find({ $or: filterArray }, (err1, data1) => {
+          if (err1) {
+            res.writeHead(500, {
+              'Content-Type': 'application/json',
+            });
+            res.end('Network Error');
+          }
+          if (data1) {
+            result.jobs = data1;
+            res.writeHead(200, {
+              'Content-Type': 'application/json',
+            });
+            res.end(JSON.stringify(result));
+          }
+        });
+      }
+    });
+  } catch (error) {
+    res.writeHead(500, {
+      'Content-Type': 'application/json',
+    });
+    res.end('Network Error');
+  }
+};
+
+// Get the applied jobs full Details
+const getAppliedJobs = async (req, res) => {
+  try {
+    const { StudentID, PageNo } = req.query;
+    const result = {};
+    await Student.find({ StudentID }, { AppliedJobs: 1 }, (err, data) => {
+      if (err) {
+        res.writeHead(500, {
+          'Content-Type': 'application/json',
+        });
+        res.end('Network Error');
+      }
+      if (data) {
+        const dataArray = data[0].AppliedJobs.slice(PageNo * 10, PageNo * 10 + 10);
+        const { length } = data[0].AppliedJobs;
+        result.count = { length };
+        const filterArray = [];
+        for (let i = 0; i < dataArray.length; i += 1) {
+          filterArray.push({ _id: dataArray[i] });
+        }
+        Job.find({ $or: filterArray }, (err1, data1) => {
+          if (err1) {
+            res.writeHead(500, {
+              'Content-Type': 'application/json',
+            });
+            res.end('Network Error');
+          }
+          if (data1) {
+            result.jobs = data1;
+            res.writeHead(200, {
+              'Content-Type': 'application/json',
+            });
+            res.end(JSON.stringify(result));
+          }
+        });
+      }
+    });
+  } catch (error) {
+    res.writeHead(500, {
+      'Content-Type': 'application/json',
+    });
+    res.end('Network Error');
+  }
+};
+
 module.exports = {
   navbar,
   searchCompany,
@@ -1081,17 +1244,22 @@ module.exports = {
   jobWithdraw,
   profileUpdate,
   companyProfile,
-  companyReview,
-  addCompanyReview,
   salaryAddReview,
   featureReview,
   getInterviewReivew,
   interviewAddReview,
-  interviewData,
-  companyHelpfulReview,
   companyJobs,
   salaryReview,
   companyInterviewHelpfulReview,
   fillJobApplication,
+<<<<<<< Updated upstream
+  getFavoriteJobs,
+  getAppliedJobs,
+=======
+  companyReview,
+  addCompanyReview,
+  companyHelpfulReview,
+  interviewData,
+>>>>>>> Stashed changes
   // getAllReview,
 };
