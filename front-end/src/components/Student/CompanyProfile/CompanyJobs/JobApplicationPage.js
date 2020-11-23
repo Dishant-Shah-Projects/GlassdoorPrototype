@@ -14,10 +14,33 @@ class JobApplicationPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      Company: {},
+      Job: {},
       resume: { url: '', name: '' },
       coverLetter: { url: '', name: '' },
       errormsg: false,
+      name: '',
     };
+  }
+
+  componentDidMount() {
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    axios
+      .get(serverUrl + 'student/fillJobApplication', {
+        params: {
+          JobID: localStorage.getItem('application_job_id'),
+          CompanyID: localStorage.getItem('companyID'),
+        },
+        withCredentials: true,
+      })
+      .then((response) => {
+        console.log('fill aplication: ', response.data);
+        this.setState({
+          Company: response.data.Company[0],
+          Job: response.data.Job[0],
+          name: this.props.studentInfoStore.studentProfile.Name,
+        });
+      });
   }
 
   onChangeResumeHandler = (event) => {
@@ -94,7 +117,11 @@ class JobApplicationPage extends Component {
 
   applyJob = (event) => {
     event.preventDefault();
-    if (this.state.resume.name === '' || this.state.coverLetter.name === '') {
+    if (
+      this.state.resume.name === '' ||
+      this.state.coverLetter.name === '' ||
+      this.state.name === ''
+    ) {
       this.setState({
         errormsg: true,
       });
@@ -104,14 +131,24 @@ class JobApplicationPage extends Component {
       const data = {
         StudentID: localStorage.getItem('userId'),
         JobID: localStorage.getItem('application_job_id'),
-        StudentName: this.props.studentInfoStore.studentProfile.Name,
+        StudentName: this.state.name,
         ResumeURL: this.state.resume.url,
         CoverLetterURL: this.state.coverLetter.url,
+        Ethnicity: this.props.studentInfoStore.studentProfile.Ethnicity,
+        Gender: this.props.studentInfoStore.studentProfile.Gender,
+        Disability: this.props.studentInfoStore.studentProfile.Disability,
+        VeteranStatus: this.props.studentInfoStore.studentProfile.VeteranStatus,
       };
       axios.post(serverUrl + 'student/companyApplyJob', data).then(
         (response) => {
           console.log('Status Code : ', response.status);
           if (response.status === 200) {
+            let studentProfile = { ...this.props.studentInfoStore.studentProfile };
+            studentProfile.AppliedJobs.push(this.props.selectedJob._id);
+            const payload = {
+              studentProfile,
+            };
+            this.props.updateStudentProfile(payload);
             this.setState({
               resume: { url: '', name: '' },
               coverLetter: { url: '', name: '' },
@@ -184,7 +221,27 @@ class JobApplicationPage extends Component {
     );
   };
 
+  onNameChangeHandeler = (event) => {
+    this.setState({
+      name: event.target.value,
+    });
+  };
+
   render() {
+    let avgRating = 0;
+    if (this.state.Company.GeneralReviewCount > 0) {
+      avgRating = Number(
+        this.state.Company.TotalGeneralReviewRating / this.state.Company.GeneralReviewCount
+      ).toFixed(1);
+    }
+    let alreadyApplied = false;
+    if (
+      this.props.studentInfoStore.studentProfile.AppliedJobs.includes(
+        localStorage.getItem('application_job_id')
+      )
+    ) {
+      alreadyApplied = true;
+    }
     let alreadyFav = false;
     let heartIcon = (
       <path
@@ -211,6 +268,16 @@ class JobApplicationPage extends Component {
     const defaultCoverPic =
       'https://s3-media0.fl.yelpcdn.com/assets/public/defaultBusinessHeaderImage.yji-a94634351a246719545b17b9bddc388f.png';
 
+    const withdrawJob = (
+      <div style={{ paddingTop: '14px' }} class="applyCTA gdGrid">
+        <span style={{ fontSize: 'large' }} class="appliedOnMsg">
+          Already Applied! want to{' '}
+        </span>
+        <span style={{ fontSize: 'large' }}>
+          <a>withdraw?</a>
+        </span>
+      </div>
+    );
     return (
       <div class="gdGrid pageContentWrapperStudent ">
         <div style={{ width: '1024px' }} id="PageContent" class="">
@@ -227,8 +294,8 @@ class JobApplicationPage extends Component {
                       alt="Cover for Amazon"
                       class="lazy"
                       src={
-                        localStorage.getItem('CoverPhoto')
-                          ? localStorage.getItem('CoverPhoto')
+                        this.state.Company.CoverPhoto
+                          ? this.state.Company.CoverPhoto
                           : defaultCoverPic
                       }
                     />
@@ -251,8 +318,8 @@ class JobApplicationPage extends Component {
                                     alt="Amazon Logo"
                                     class="lazy"
                                     src={
-                                      localStorage.getItem('ProfileImg')
-                                        ? localStorage.getItem('ProfileImg')
+                                      this.state.Company.ProfileImg
+                                        ? this.state.Company.ProfileImg
                                         : defaultplaceholder
                                     }
                                   />
@@ -263,13 +330,16 @@ class JobApplicationPage extends Component {
                               <div class="d-flex flex-column">
                                 <div class="css-ur1szg e11nt52q0">
                                   <div class="css-16nw49e e11nt52q1">
-                                    Amazon
+                                    {this.state.Job.CompanyName}
                                     <span class="css-1pmc6te e11nt52q4">
-                                      4.3<span class="css-mfns2c e11nt52q5">★</span>
+                                      {avgRating}
+                                      <span class="css-mfns2c e11nt52q5">★</span>
                                     </span>
                                   </div>
-                                  <div class="css-17x2pwl e11nt52q6">Software Engineer II</div>
-                                  <div class="css-1v5elnn e11nt52q2">Hyderābād</div>
+                                  <div class="css-17x2pwl e11nt52q6">{this.state.Job.Title}</div>
+                                  <div class="css-1v5elnn e11nt52q2">
+                                    {this.state.Job.City}, {this.state.Job.State}
+                                  </div>
                                 </div>
                               </div>
                             </div>
@@ -277,60 +347,72 @@ class JobApplicationPage extends Component {
                           <div class="css-1yurns8 efy8art1">
                             <div class="css-radise een4i1m1">
                               <div class="css-1niemjw een4i1m0">
-                                <div class="css-0 e1h54cx80">
-                                  <a
-                                    class="gd-ui-button applyButton e1ulk49s0 css-1m0gkmt"
-                                    onClick={this.applyJob}
-                                    href="#"
-                                    rel="nofollow"
-                                  >
-                                    <i class="icon-offsite-white mr-sm"></i>
-                                    <span>Apply Now</span>
-                                    <i class="hlpr"></i>
-                                  </a>
-                                </div>
-                                <div style={{ paddingLeft: '16px' }} class="css-0 e1h54cx80">
-                                  <a
-                                    class="gd-ui-button applyButton e1ulk49s0 css-1m0gkmt"
-                                    href="#"
-                                    rel="nofollow"
-                                  >
-                                    <label style={{ width: '100%' }} for="resumeUpload">
-                                      <span>Upload Resume</span>
+                                {alreadyApplied ? (
+                                  withdrawJob
+                                ) : (
+                                  <div class="css-0 e1h54cx80">
+                                    <a
+                                      class="gd-ui-button applyButton e1ulk49s0 css-1m0gkmt"
+                                      onClick={this.applyJob}
+                                      href="#"
+                                      rel="nofollow"
+                                    >
+                                      <i class="icon-offsite-white mr-sm"></i>
+                                      <span>Apply Now</span>
+                                      <i class="hlpr"></i>
+                                    </a>
+                                  </div>
+                                )}
+                                {alreadyApplied ? (
+                                  ''
+                                ) : (
+                                  <div style={{ paddingLeft: '16px' }} class="css-0 e1h54cx80">
+                                    <a
+                                      class="gd-ui-button applyButton e1ulk49s0 css-1m0gkmt"
+                                      href="#"
+                                      rel="nofollow"
+                                    >
+                                      <label style={{ width: '100%' }} for="resumeUpload">
+                                        <span>Upload Resume</span>
 
-                                      <input
-                                        onChange={this.onChangeResumeHandler}
-                                        id="resumeUpload"
-                                        name="resumeUpload"
-                                        type="file"
-                                        aria-labelledby="submit"
-                                        class="hidden"
-                                        accept=".doc, .docx,.pdf"
-                                      />
-                                    </label>
-                                  </a>
-                                </div>
-                                <div style={{ paddingLeft: '16px' }} class="css-0 e1h54cx80">
-                                  <a
-                                    class="gd-ui-button applyButton e1ulk49s0 css-1m0gkmt"
-                                    href="#"
-                                    rel="nofollow"
-                                  >
-                                    <label style={{ width: '100%' }} for="coverLetterUpload">
-                                      <span>Upload Cover Letter</span>
+                                        <input
+                                          onChange={this.onChangeResumeHandler}
+                                          id="resumeUpload"
+                                          name="resumeUpload"
+                                          type="file"
+                                          aria-labelledby="submit"
+                                          class="hidden"
+                                          accept=".doc, .docx,.pdf"
+                                        />
+                                      </label>
+                                    </a>
+                                  </div>
+                                )}
+                                {alreadyApplied ? (
+                                  ''
+                                ) : (
+                                  <div style={{ paddingLeft: '16px' }} class="css-0 e1h54cx80">
+                                    <a
+                                      class="gd-ui-button applyButton e1ulk49s0 css-1m0gkmt"
+                                      href="#"
+                                      rel="nofollow"
+                                    >
+                                      <label style={{ width: '100%' }} for="coverLetterUpload">
+                                        <span>Upload Cover Letter</span>
 
-                                      <input
-                                        onChange={this.onChangeCoverLetterHandler}
-                                        id="coverLetterUpload"
-                                        name="coverLetterUpload"
-                                        type="file"
-                                        aria-labelledby="submit"
-                                        class="hidden"
-                                        accept=".doc, .docx,.pdf"
-                                      />
-                                    </label>
-                                  </a>
-                                </div>
+                                        <input
+                                          onChange={this.onChangeCoverLetterHandler}
+                                          id="coverLetterUpload"
+                                          name="coverLetterUpload"
+                                          type="file"
+                                          aria-labelledby="submit"
+                                          class="hidden"
+                                          accept=".doc, .docx,.pdf"
+                                        />
+                                      </label>
+                                    </a>
+                                  </div>
+                                )}
                                 <div class="css-3nnrip et4swdz0">
                                   <button
                                     onClick={
@@ -370,7 +452,7 @@ class JobApplicationPage extends Component {
                   <span class="css-fdajvm e18tf5om5">Job Application Files </span>
                   {this.state.errormsg ? (
                     <span style={{ color: 'red' }} class="css-fdajvm e18tf5om5">
-                      Missing files
+                      Missing fields
                     </span>
                   ) : (
                     ''
@@ -379,7 +461,25 @@ class JobApplicationPage extends Component {
                   <div class="css-1hb8zec e18tf5om2">
                     <div>
                       <div class="css-1ieo3ql e18tf5om7">
-                        <span class="css-1vg6q84 e18tf5om6">Resume:&nbsp;</span>
+                        <span class="css-1vg6q84 e18tf5om6">Name:&nbsp;</span>
+                        <span class="css-sr4ps0 e18tf5om4">
+                          <div style={{ width: '180px' }} className="icl-TextInput-wrapper">
+                            <input
+                              style={{ minWidth: '180px', height: '22px' }}
+                              onChange={this.onNameChangeHandeler}
+                              required="true"
+                              type="text"
+                              aria-labelledby="label-input-applicant.name"
+                              id="input-applicant.name"
+                              name="applicant.name"
+                              className="icl-TextInput-control icl-TextInput-control--sm"
+                              value={this.state.name}
+                            />
+                          </div>
+                        </span>
+                      </div>
+                      <div class="css-1ieo3ql e18tf5om7">
+                        <span class="css-1vg6q84 e18tf5om6">Resume: &nbsp;</span>
                         <span class="css-sr4ps0 e18tf5om4">{this.state.resume.name}</span>
                       </div>
                       <div class="css-1ieo3ql e18tf5om7">
@@ -399,21 +499,23 @@ class JobApplicationPage extends Component {
                     <div>
                       <div class="css-1ieo3ql e18tf5om7">
                         <span class="css-1vg6q84 e18tf5om6">Job Type:&nbsp;</span>
-                        <span class="css-sr4ps0 e18tf5om4">Full-time</span>
+                        <span class="css-sr4ps0 e18tf5om4">{this.state.Job.JobType}</span>
                       </div>
                       <div class="css-1ieo3ql e18tf5om7">
                         <span class="css-1vg6q84 e18tf5om6">Job Function:&nbsp;</span>
-                        <span class="css-o4d739 e18tf5om4">software engineer</span>
+                        <span class="css-o4d739 e18tf5om4">{this.state.Job.Title}</span>
                       </div>
                     </div>
                     <div>
                       <div class="css-1ieo3ql e18tf5om7">
                         <span class="css-1vg6q84 e18tf5om6">Industry:&nbsp;</span>
-                        <span class="css-sr4ps0 e18tf5om4">Information Technology</span>
+                        <span class="css-sr4ps0 e18tf5om4">{this.state.Job.Industry}</span>
                       </div>
                       <div class="css-1ieo3ql e18tf5om7">
                         <span class="css-1vg6q84 e18tf5om6">Size:&nbsp;</span>
-                        <span class="css-sr4ps0 e18tf5om4">10000+ Employees</span>
+                        <span class="css-sr4ps0 e18tf5om4">
+                          {this.state.Company.Size}+ Employees
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -424,56 +526,22 @@ class JobApplicationPage extends Component {
                   <div id="JobDescriptionContainer" class="tabSection p-std mt-0">
                     <div id="JobDesc3738626687" class="css-ndcerj ecgq1xb3">
                       <div class="desc css-58vpdc ecgq1xb4">
-                        Do you want to work on cutting edge technology, solve new problems that
-                        didnt exist before, and have the ability to see the impact of your
-                        contributions?
+                        <b>Job Description</b>
                         <br />
                         <br />
-                        Amazon is growing, and so is our team, looking for SDE who moves fast, is
-                        capable of cracking and solving complex problems, and has a strong will to
-                        get things done. SDEs at Amazon work on real world problems on a global
-                        scale, own their systems end to end and influence the direction of our
-                        technology that impacts hundreds of millions customers around the world.
+                        {this.state.Job.JobDescription}
                         <br />
                         <br />
-                        As an SDE you are expected to design flexible and scalable solutions, and
-                        work on some of the most complex challenges in large-scale computing by
-                        utilizing your skills in data structures, algorithms, and object oriented
-                        programming..
+                        <b>Job Responsilities</b>
                         <br />
                         <br />
-                        Value Added Services team in Hyderabad, India is developing a services
-                        platform which will make it possible to sell services with the same degree
-                        of convenience and flexibility we sell products. We are looking to hire
-                        smart and highly motivated Engineers who will work towards launching this
-                        next wave of disruptive services platform for Amazon. As a member of this
-                        team your mission will be to design, develop, deploy, document and support
-                        scalable and distributed real time systems.
+                        {this.state.Job.Respobsibilities}
                         <br />
                         <br />
                         <b>Basic Qualifications</b>
                         <br />
-                        <br />· 2+ years of non-internship professional software development
-                        experience
-                        <br />· Programming experience with at least one modern language such as
-                        Java, C++, or C# including object-oriented design
-                        <br />· 1+ years of experience contributing to the architecture and design
-                        (architecture, design patterns, reliability and scaling) of new and current
-                        systems.
-                        <br />· Bachelors or Masters Degree in Computer Science or related field
-                        <br />· Strong in data structures and problem solving
-                        <br />· Solid experience in Java, C++, or C# (expert in at least one)
-                        <br />· 1+ years industry experience in developing and launching production
-                        grade software
-                        <br />· Great understanding of database theory and solid experience in at
-                        least one relational of non-relational DBMS
-                        <br />· Outstanding interpersonal and communication skills
                         <br />
-                        <br />
-                        <b>Preferred Qualifications</b>
-                        <br />
-                        <br />· Experience in ecommerce domain
-                        <br />· Exposure to full stack development and web technologies
+                        {this.state.Job.Qualifications}
                       </div>
                     </div>
                   </div>
@@ -517,7 +585,7 @@ const mapDispatchToProps = (dispatch) => {
     },
     updateStudentProfile: (payload) => {
       dispatch({
-        type: updateCompanyOverview,
+        type: updateStudentProfile,
         payload,
       });
     },

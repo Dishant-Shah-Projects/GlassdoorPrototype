@@ -21,9 +21,6 @@ class JobInfo extends Component {
                   <li>{selectedJob.JobType}</li>
                 </ul>{' '}
               </div>
-              <br />
-
-              <div>Email Me This Job</div>
             </div>
             <br />
 

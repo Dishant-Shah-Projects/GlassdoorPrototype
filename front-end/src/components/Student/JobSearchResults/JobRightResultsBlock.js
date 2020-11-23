@@ -43,7 +43,6 @@ class JobRightResultsBlock extends Component {
     }
 
     let avgRating = 0;
-    console.log('selectedJob:', selectedJob);
     if (
       selectedJob.jobdetails.length > 0 &&
       selectedJob.jobdetails[0].GeneralReviewCount &&
@@ -63,6 +62,25 @@ class JobRightResultsBlock extends Component {
     } else if (this.state.tabOpened === 'Reviews') {
       showBlock = <JobFeaturedReview selectedJob={selectedJob} />;
     }
+    let alreadyApplied = false;
+    console.log(
+      'this.props.studentInfoStore.studentProfile.AppliedJobs',
+      this.props.studentInfoStore.studentProfile.AppliedJobs[0]
+    );
+    console.log('selectedJob._id:', selectedJob._id);
+    if (this.props.studentInfoStore.studentProfile.AppliedJobs.includes(selectedJob._id)) {
+      alreadyApplied = true;
+    }
+    const withdrawJob = (
+      <div style={{ paddingTop: '5px' }} class="applyCTA gdGrid">
+        <span style={{ fontSize: 'large' }} class="appliedOnMsg">
+          Already Applied! want to{' '}
+        </span>
+        <span style={{ fontSize: 'large' }}>
+          <a>withdraw?</a>
+        </span>
+      </div>
+    );
     return (
       <div id="JDCol" className="noPad opened">
         <div id="JDWrapper">
@@ -132,28 +150,32 @@ class JobRightResultsBlock extends Component {
                     <div className="actionSection">
                       <div className="ctasWrap">
                         <div className="ctas2 withHideJob">
-                          <div
-                            onClick={(event) => this.props.toggle(event)}
-                            className="applyCTA gdGrid"
-                          >
-                            <a
-                              className="gd-ui-button noMargRt fillMob d-flex align-items-center justify-content-center applyButton e113dz0m0 css-1c58wfr"
-                              href="#"
-                              target=""
-                              // data-adv-type="EMPLOYER"
-                              // data-apply-type=""
-                              // data-easy-apply="false"
-                              // data-is-organic-job="false"
-                              // data-is-sponsored-job="true"
-                              // data-job-id="3360350142"
-                              // data-job-url="#"
-                              rel="nofollow"
+                          {alreadyApplied ? (
+                            withdrawJob
+                          ) : (
+                            <div
+                              onClick={(event) => this.props.toggle(event)}
+                              className="applyCTA gdGrid"
                             >
-                              <i className="icon-offsite-white margRtSm"></i>
-                              <span>Apply Now</span>
-                              <i className="hlpr"></i>
-                            </a>
-                          </div>
+                              <a
+                                className="gd-ui-button noMargRt fillMob d-flex align-items-center justify-content-center applyButton e113dz0m0 css-1c58wfr"
+                                href="#"
+                                target=""
+                                // data-adv-type="EMPLOYER"
+                                // data-apply-type=""
+                                // data-easy-apply="false"
+                                // data-is-organic-job="false"
+                                // data-is-sponsored-job="true"
+                                // data-job-id="3360350142"
+                                // data-job-url="#"
+                                rel="nofollow"
+                              >
+                                <i className="icon-offsite-white margRtSm"></i>
+                                <span>Apply Now</span>
+                                <i className="hlpr"></i>
+                              </a>
+                            </div>
+                          )}
                           <div className="saveCTA">
                             <button
                               // onClick={(event) =>

@@ -3,6 +3,11 @@ import './JobApplyModal.css';
 import { connect } from 'react-redux';
 import axios from 'axios';
 import serverUrl from '../../../config';
+import {
+  LowerNavBarOther,
+  updateCompanyOverview,
+  updateStudentProfile,
+} from '../../../constants/action-types';
 
 class JobApplyModal extends Component {
   constructor(props) {
@@ -135,17 +140,22 @@ class JobApplyModal extends Component {
           ? this.state.uploadedResume
           : this.state.selectedResume,
         CoverLetterURL: this.state.uploadCoverLetter,
+        Ethnicity: this.props.studentInfoStore.studentProfile.Ethnicity,
+        Gender: this.props.studentInfoStore.studentProfile.Gender,
+        Disability: this.props.studentInfoStore.studentProfile.Disability,
+        VeteranStatus: this.props.studentInfoStore.studentProfile.VeteranStatus,
       };
       axios.post(serverUrl + 'student/companyApplyJob', data).then(
         (response) => {
           console.log('Status Code : ', response.status);
           if (response.status === 200) {
             this.props.toggle(event);
-            // this.setState({
-            //   resume: { url: '', name: '' },
-            //   coverLetter: { url: '', name: '' },
-            //   errormsg: false,
-            // });
+            let studentProfile = { ...this.props.studentInfoStore.studentProfile };
+            studentProfile.AppliedJobs.push(this.props.selectedJob._id);
+            const payload = {
+              studentProfile,
+            };
+            this.props.updateStudentProfile(payload);
           }
         },
         (error) => {
@@ -453,7 +463,14 @@ const mapStateToProps = (state) => {
 
 // export default CompanyPage;
 const mapDispatchToProps = (dispatch) => {
-  return {};
+  return {
+    updateStudentProfile: (payload) => {
+      dispatch({
+        type: updateStudentProfile,
+        payload,
+      });
+    },
+  };
 };
 
 // export default LoginBody;

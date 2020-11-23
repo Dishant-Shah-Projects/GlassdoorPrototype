@@ -1049,7 +1049,7 @@ const companyJobs = async (req, res) => {
 const fillJobApplication = async (req, res) => {
   try {
     const { JobID, CompanyID } = req.query;
-    const jobData = await Job.find({ JobID });
+    const jobData = await Job.find({ _id: JobID });
     const CompanyData = await Company.find(
       { CompanyID },
       { GeneralReviewCount: 1, TotalGeneralReviewRating: 1, CoverPhoto: 1, ProfileImg: 1, Size: 1 }
