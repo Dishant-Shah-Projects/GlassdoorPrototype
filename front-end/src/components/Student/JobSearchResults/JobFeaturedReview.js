@@ -1,13 +1,37 @@
 import React, { Component } from 'react';
 import './JobFeaturedReview.css';
 import moment from 'moment';
+import axios from 'axios';
+import serverUrl from '../../../config';
+import { updatespecialReviews } from '../../../constants/action-types';
+import { connect } from 'react-redux';
+import defaultplaceholder from '../CompanyProfile/CompanyNavbar/default-placeholder.png';
+
 class JobFeaturedReview extends Component {
   constructor(props) {
     super(props);
     this.state = {};
   }
+
   render() {
     const selectedJob = this.props.selectedJob;
+    // const Rating = 2.0;
+    let Rating = 0;
+    console.log('selectedJob:', selectedJob);
+    if (
+      selectedJob.jobdetails.length > 0 &&
+      selectedJob.jobdetails[0].GeneralReviewCount &&
+      selectedJob.jobdetails[0].GeneralReviewCount > 0 &&
+      selectedJob.jobdetails[0].TotalGeneralReviewRating &&
+      selectedJob.jobdetails[0].TotalGeneralReviewRating > 0
+    ) {
+      Rating = (
+        selectedJob.jobdetails[0].TotalGeneralReviewRating /
+        selectedJob.jobdetails[0].GeneralReviewCount
+      ).toFixed(1);
+    }
+    const green = { color: 'rgb(12, 170, 65)' };
+    const white = { color: 'rgb(222, 224, 227)' };
     return (
       <div className="tabSection pad" id="ReviewsContainer">
         <header className="margBot">
@@ -35,7 +59,13 @@ class JobFeaturedReview extends Component {
                                 <img
                                   alt="RoadRunner Recycling Logo"
                                   title="RoadRunner Recycling Logo"
-                                  src="https://media.glassdoor.com/sql/1277356/roadrunner-recycling-squarelogo-1534260402401.png"
+                                  src={
+                                    selectedJob.jobdetails.length > 0
+                                      ? selectedJob.jobdetails[0].ProfileImg
+                                        ? selectedJob.jobdetails[0].ProfileImg
+                                        : defaultplaceholder
+                                      : defaultplaceholder
+                                  }
                                 />
                               </span>
                             </span>
@@ -50,20 +80,24 @@ class JobFeaturedReview extends Component {
                               <div className="gdStarsWrapper"></div>
                               <div className="author">
                                 <span className="authorInfo">
-                                  <div font-size="sm" className="css-1gf6lcl">
-                                    <span style={{ color: 'rgb(12, 170, 65)' }} role="button">
+                                  <div
+                                    font-size="sm"
+                                    // className="css-1gf6lcl"
+                                    class={`css-1gf6lcl1s`}
+                                  >
+                                    <span style={Rating >= 1 ? green : white} role="button">
                                       ★
                                     </span>
-                                    <span style={{ color: 'rgb(12, 170, 65)' }} role="button">
+                                    <span style={Rating >= 2 ? green : white} role="button">
                                       ★
                                     </span>
-                                    <span style={{ color: 'rgb(12, 170, 65)' }} role="button">
+                                    <span style={Rating >= 3 ? green : white} role="button">
                                       ★
                                     </span>
-                                    <span style={{ color: 'rgb(12, 170, 65)' }} role="button">
+                                    <span style={Rating >= 4 ? green : white} role="button">
                                       ★
                                     </span>
-                                    <span style={{ color: 'rgb(12, 170, 65)' }} role="button">
+                                    <span style={Rating >= 5 ? green : white} role="button">
                                       ★
                                     </span>
                                   </div>
@@ -126,4 +160,26 @@ class JobFeaturedReview extends Component {
   }
 }
 
-export default JobFeaturedReview;
+// export default JobFeaturedReview;
+
+const mapStateToProps = (state) => {
+  const { companyOverviewStore } = state.CompanyPageReducer;
+
+  return {
+    companyOverviewStore,
+  };
+};
+// export default CompanySearchResults;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    updatespecialReviews: (payload) => {
+      dispatch({
+        type: updatespecialReviews,
+        payload,
+      });
+    },
+  };
+};
+
+// export default LoginBody;
+export default connect(mapStateToProps, mapDispatchToProps)(JobFeaturedReview);

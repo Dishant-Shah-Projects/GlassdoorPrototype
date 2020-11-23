@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './CompanySearchResults.css';
+import defaultplaceholder from '../CompanyProfile/CompanyNavbar/default-placeholder.png';
 
 class CompanyCard extends Component {
   constructor(props) {
@@ -32,7 +33,7 @@ class CompanyCard extends Component {
               <a href="#" data-ajax="true" className="sqLogoLink">
                 <span className="sqLogo tighten medSqLogo logoOverlay">
                   <img
-                    src={company.ProfileImg ? company.ProfileImg : defaultImage}
+                    src={company.ProfileImg ? company.ProfileImg : defaultplaceholder}
                     className=""
                     alt=" Logo"
                     title=""

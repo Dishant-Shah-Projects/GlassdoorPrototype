@@ -63,6 +63,7 @@ class Navbar extends Component {
               JobStatus: '',
               PreferredJobTitle: '',
               JobType: [],
+              Resumes: [],
               ...response.data[0],
             },
           };
@@ -192,6 +193,9 @@ class Navbar extends Component {
   };
 
   goToHomePage = () => {
+    this.setState({
+      filterDropDownOpen: false,
+    });
     history.push('/Home');
   };
   selectString = (event, string) => {
@@ -234,6 +238,10 @@ class Navbar extends Component {
       default:
         break;
     }
+
+    this.setState({
+      filterDropDownOpen: false,
+    });
   };
 
   filterStrings = () => {
@@ -943,7 +951,7 @@ class Navbar extends Component {
                           <a href="#" onClick={this.searchResult}>
                             <button
                               className="gd-ui-button ml-std col-auto css-iixdfr"
-                              // type="submit"
+                              // type="button"
                               data-test="search-bar-submit"
                             >
                               <span>Search</span>

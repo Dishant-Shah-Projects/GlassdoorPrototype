@@ -10,13 +10,14 @@ class CompanyJobCard extends Component {
   }
   render() {
     const job = this.props.job;
-    const postedDate = moment(job.PostedDate);
-    const currentDate = moment();
-    const diff = currentDate.diff(postedDate);
-    const diffDuration = moment.duration(diff);
-    const postedSince =
-      diffDuration.hours() < 24 ? diffDuration.hours() : Math.ceil(diffDuration.days());
-    const h_d = diffDuration.hours() < 24 ? 'h' : 'd';
+    const date1 = new Date(job.PostedDate);
+    const date2 = new Date();
+    const diffTime = Math.abs(date2 - date1);
+    const hours = Math.floor(diffTime / (1000 * 60 * 60));
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    const postedSince = hours < 24 ? hours : diffDays;
+    const h_d = hours < 24 ? 'h' : 'd';
 
     let alreadyFav = false;
     let heartIcon = (
@@ -134,7 +135,10 @@ class CompanyJobCard extends Component {
                   {heartIcon}
                 </button>
                 <span class="undefined undefined">
-                  <span class="d-block d-md-none">{postedSince}</span>
+                  <span class="d-block d-md-none">
+                    {postedSince}
+                    {h_d}
+                  </span>
                   <span class="d-none d-md-block">3 days ago</span>
                 </span>
               </div>

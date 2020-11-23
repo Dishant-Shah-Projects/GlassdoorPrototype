@@ -1,199 +1,63 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { Component } from 'react';
 import './JobApplyModal.css';
-import { connect } from 'react-redux';
-import axios from 'axios';
-import serverUrl from '../../../config';
 
 class JobApplyModal extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      Resumes: [],
-      name: '',
-      selectedResume: '',
-      uploadedResume: '',
-      uploadCoverLetter: '',
-      errormsg: false,
-    };
+    this.state = { Resumes: [{ name: '1resume' }] };
   }
-
-  componentDidMount() {
-    const name = this.props.studentInfoStore.studentProfile.Name;
-    const Resumes = this.props.studentInfoStore.studentProfile.Resumes;
-    const selectedResume = this.props.studentInfoStore.studentProfile.ResumePrimary
-      ? this.props.studentInfoStore.studentProfile.ResumePrimary
-      : '';
-    this.setState({
-      name,
-      Resumes,
-      selectedResume,
-    });
-  }
-
-  onNameChangeHandeler = (event) => {
-    this.setState({
-      name: event.target.value,
-      errormsg: false,
-    });
-  };
-
-  selectResume = (e) => {
-    this.setState({
-      selectedResume: e.target.value,
-      uploadedResume: '',
-      errormsg: false,
-    });
-  };
-
-  onChangeResumeHandler = (event) => {
-    if (event.target.files.length === 1) {
-      axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
-      event.preventDefault();
-      let formData = new FormData();
-      formData.append('file', event.target.files[0], event.target.files[0].name);
-      axios({
-        method: 'post',
-        url: serverUrl + 'student/upload',
-        data: formData,
-        headers: { 'Content-Type': 'multipart/form-data' },
-      })
-        .then((response) => {
-          // console.log('Status Code : ', response.status);
-          if (response.status === 200) {
-            // console.log('Product Saved');
-
-            this.setState({
-              uploadedResume: response.data,
-              selectedResume: '',
-              errormsg: false,
-            });
-          } else if (parseInt(response.status) === 400) {
-            // console.log(response.data);
-          }
-        })
-        .catch((error) => {
-          this.setState({
-            errorMsg: error.message,
-            authFlag: false,
-          });
-        });
-    }
-  };
-
-  onChangeCoverLetterHandler = (event) => {
-    if (event.target.files.length === 1) {
-      axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
-      event.preventDefault();
-      let formData = new FormData();
-      formData.append('file', event.target.files[0], event.target.files[0].name);
-      axios({
-        method: 'post',
-        url: serverUrl + 'student/upload',
-        data: formData,
-        headers: { 'Content-Type': 'multipart/form-data' },
-      })
-        .then((response) => {
-          // console.log('Status Code : ', response.status);
-          if (response.status === 200) {
-            // console.log('Product Saved');
-
-            this.setState({
-              uploadCoverLetter: response.data,
-              errormsg: false,
-            });
-          } else if (parseInt(response.status) === 400) {
-            // console.log(response.data);
-          }
-        })
-        .catch((error) => {
-          this.setState({
-            errorMsg: error.message,
-            authFlag: false,
-          });
-        });
-    }
-  };
-
-  applyJob = (event) => {
-    event.preventDefault();
-    if (
-      this.state.name === '' ||
-      this.state.uploadCoverLetter === '' ||
-      (this.state.selectedResume === '' && this.state.uploadedResume === '')
-    ) {
-      this.setState({
-        errormsg: true,
-      });
-    } else {
-      // event.preventDefault();
-      axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
-      const data = {
-        StudentID: localStorage.getItem('userId'),
-        JobID: this.props.selectedJob._id,
-        StudentName: this.state.name,
-        ResumeURL: this.state.uploadedResume
-          ? this.state.uploadedResume
-          : this.state.selectedResume,
-        CoverLetterURL: this.state.uploadCoverLetter,
-      };
-      axios.post(serverUrl + 'student/companyApplyJob', data).then(
-        (response) => {
-          console.log('Status Code : ', response.status);
-          if (response.status === 200) {
-            this.props.toggle(event);
-            // this.setState({
-            //   resume: { url: '', name: '' },
-            //   coverLetter: { url: '', name: '' },
-            //   errormsg: false,
-            // });
-          }
-        },
-        (error) => {
-          console.log('error:', error.response);
-        }
-      );
-    }
-  };
-
   render() {
-    const selectedJob = this.props.selectedJob;
     return (
-      <div id="LoginModal">
-        <div className="gdUserLogin gdGrid" data-test="authModalContainer">
-          <div className="gd-ui-modal css-mgpgck">
-            <div className="background-overlay" aria-label="Background Overlay"></div>
-            <div className="modal_main actionBarMt0">
-              <span alt="Close" className="SVGInline modal_closeIcon">
-                <svg
-                  onClick={(event) => this.props.toggle(event)}
-                  className="SVGInline-svg modal_closeIcon-svg"
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    d="M13.34 12l5.38-5.38a.95.95 0 00-1.34-1.34L12 10.66 6.62 5.28a.95.95 0 00-1.34 1.34L10.66 12l-5.38 5.38a.95.95 0 001.34 1.34L12 13.34l5.38 5.38a.95.95 0 001.34-1.34z"
-                    fill="currentColor"
-                    fill-rule="evenodd"
-                  ></path>
-                </svg>
-              </span>
-              <div className="topShadow"></div>
-              <div className="fullContent">
-                <div className="modal_title">
-                  {selectedJob.Title} - {selectedJob.CompanyName}
-                </div>
-                <div className="modal_content">
-                  <div className="signup  ">
-                    <div>
-                      <div
-                        id="signupmodal"
-                        style={{}}
-                        className="mt-xsm mt-sm-md d-flex flex-column flex-sm-row flex-sm-wrap"
-                      >
-                        <div className=" pr-xxsm  pl-sm-std mw-400">
-                          <div className="">
+      <div
+        className="indeed-apply-popup"
+        tabindex="0"
+        style={{ position: 'absolute', left: '369.5px', top: '43.5px' }}
+        id="indeed-ia-1603926871266-0-modal"
+      >
+        <div
+          className="indeed-apply-container"
+          id="indeedapply-modal-preload-1603926871267-container"
+          style={{ height: '566px', width: '540px' }}
+        >
+          <div
+            className="indeed-apply-branding"
+            id="indeedapply-modal-preload-1603926871267-branding"
+          ></div>
+          <div className="indeed-apply-bd" id="indeedapply-modal-preload-1603926871267-bd">
+            <html>
+              <head>
+                <title>Job application form container</title>
+
+                {/* <style>
+                            * {margin: 0; padding: 0; }
+        html {overflow: hidden; }
+        body {background: transparent; position: relative; }
+                       </style>*/}
+              </head>
+              <body data-new-gr-c-s-check-loaded="14.981.0" data-new-gr-c-s-loaded="14.981.0">
+                <html>
+                  <head>
+                    <title>Senior Software Engineer - Resonant Sciences LLC</title>
+                  </head>
+                  <body className="is-white" data-new-gr-c-s-check-loaded="14.981.0">
+                    <div id="ia-container">
+                      <div className="ia-FlexContainer" tabindex="-1">
+                        <div id="ia-ApplyFormScreen" className="ia-ApplyFormScreen">
+                          <div className="ia-JobInfoHeader" role="banner">
+                            <div>
+                              <div className="ia-JobInfoHeader-headerContainer">
+                                <h1 className="ia-JobInfoHeader-title">Senior Software Engineer</h1>
+                                <div className="ia-JobInfoHeader-subtitle">
+                                  <h2 className="ia-JobInfoHeader-multilineSubtitle">
+                                    <span>Resonant Sciences LLC</span> -{' '}
+                                    <span className="">Dayton, OH 45430</span>
+                                  </h2>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div role="main">
                             <form
                               name="application_form"
                               novalidate=""
@@ -238,14 +102,12 @@ class JobApplyModal extends Component {
                                                       </div>
                                                       <div className="icl-TextInput-wrapper">
                                                         <input
-                                                          onChange={this.onNameChangeHandeler}
                                                           required="true"
                                                           type="text"
                                                           aria-labelledby="label-input-applicant.name"
                                                           id="input-applicant.name"
                                                           name="applicant.name"
                                                           className="icl-TextInput-control icl-TextInput-control--sm"
-                                                          value={this.state.name}
                                                         />
                                                       </div>
                                                     </div>
@@ -276,8 +138,6 @@ class JobApplyModal extends Component {
                                                       </div>
                                                       <div className="icl-TextInput-wrapper">
                                                         <select
-                                                          onChange={this.selectResume}
-                                                          //   defaultValue={this.state.selectedResume}
                                                           required="true"
                                                           type="text"
                                                           aria-labelledby="label-input-applicant.name"
@@ -293,14 +153,11 @@ class JobApplyModal extends Component {
                                                           ></option>
                                                           {this.state.Resumes.map((resume) => (
                                                             <option
-                                                              selected={
-                                                                resume === this.state.selectedResume
-                                                              }
                                                               className="Dropdown-menu"
-                                                              key={resume}
-                                                              value={resume}
+                                                              key={resume.name}
+                                                              value={resume.name}
                                                             >
-                                                              {resume.split(/[/ ]+/).pop()}
+                                                              {resume.name}
                                                             </option>
                                                           ))}
                                                         </select>
@@ -329,7 +186,6 @@ class JobApplyModal extends Component {
                                               <div className="ia-NewResumeFilePicker">
                                                 <div className="ia-ControlledFilePicker ia-ControlledFilePicker--integrated">
                                                   <input
-                                                    onChange={this.onChangeResumeHandler}
                                                     className="ia-ControlledFilePicker-control icl-u-visuallyHidden"
                                                     type="file"
                                                     name="applicant.fileUpload"
@@ -345,11 +201,7 @@ class JobApplyModal extends Component {
                                                     Choose file
                                                   </label>
                                                   <span className="ia-ControlledFilePicker-info">
-                                                    {this.state.uploadedResume
-                                                      ? this.state.uploadedResume
-                                                          .split(/[/ ]+/)
-                                                          .pop()
-                                                      : 'No file chosen'}
+                                                    No file chosen
                                                   </span>
                                                 </div>
                                               </div>
@@ -367,26 +219,19 @@ class JobApplyModal extends Component {
                                             size="sm"
                                             type="button"
                                           >
-                                            <input
-                                              style={{ visibility: 'hidden' }}
-                                              onChange={this.onChangeCoverLetterHandler}
-                                              className="ia-ControlledFilePicker-control icl-u-visuallyHidden"
-                                              type="file"
-                                              name="coverLetterPicker"
-                                              id="coverLetterPicker"
-                                              tabindex="0"
-                                              required=""
-                                              accept=".rtf,.pdf,.txt,.docx,.doc"
-                                            />
-                                            <label className="" for="coverLetterPicker">
-                                              Add cover letter
-                                            </label>
+                                            <span className="icl-ButtonIcon">
+                                              <svg
+                                                role="img"
+                                                className="icl-Icon icl-Icon--inheritColor icl-Icon--sm"
+                                                aria-label="Add cover letter"
+                                              >
+                                                <g>
+                                                  <path d="M9.75,5.25H8.25v3h-3v1.5h3v3h1.5v-3h3V8.25h-3v-3ZM9,1.5A7.5,7.5,0,1,0,16.5,9,7.5,7.5,0,0,0,9,1.5ZM9,15a6,6,0,1,1,6-6A6,6,0,0,1,9,15Z"></path>
+                                                </g>
+                                              </svg>
+                                            </span>
+                                            Add cover letter
                                           </button>
-                                          <span class="ia-ControlledFilePicker-info">
-                                            {this.state.uploadCoverLetter
-                                              ? this.state.uploadCoverLetter.split(/[/ ]+/).pop()
-                                              : ' No file chosen'}
-                                          </span>
                                         </div>
                                       </div>
                                     </div>
@@ -394,6 +239,12 @@ class JobApplyModal extends Component {
                                 </div>
                               </div>
                               <div className="ia-ApplyFormScreen-nonApplicationFields">
+                                <div className="ia-QuestionsDisclaimer">
+                                  <div className="ia-Disclaimer">
+                                    By pressing continue, you will see questions from the employer
+                                    that are part of this application.
+                                  </div>
+                                </div>
                                 <div></div>
                                 <div
                                   style={{ paddingLeft: '5rem' }}
@@ -404,9 +255,8 @@ class JobApplyModal extends Component {
                                     id="form-action-continue"
                                     size="lg"
                                     type="button"
-                                    onClick={this.applyJob}
                                   >
-                                    Submit
+                                    Continue
                                   </button>
                                   <a
                                     onClick={(event) => this.props.toggle(event)}
@@ -418,23 +268,26 @@ class JobApplyModal extends Component {
                                   </a>
                                 </div>
                               </div>
-                            </form>{' '}
+                            </form>
+                          </div>
+                        </div>
+                        <div role="contentinfo">
+                          <div className="ia-CCPADisclaimerFooter">
+                            <div className="ia-CCPADisclaimerFooter-headMargin"></div>
+                            <div className="ia-CCPADisclaimerFooter-body">
+                              © 2020 Indeed -{' '}
+                              <a className="ia-CCPADisclaimerFooter-doNotSellLink" href="#">
+                                Do not sell my personal information
+                              </a>
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                </div>
-              </div>
-              <div className="bottomShadow"></div>
-              <div className="actionBar">
-                <div className="authFooter d-flex justify-content-center w-100pct mb-neg16 mt-lg">
-                  <div style={{ color: 'red' }} className="center description py-xsm ">
-                    {this.state.errormsg ? 'Please update all necessary fields to apply' : ''}
-                  </div>
-                </div>
-              </div>
-            </div>
+                  </body>
+                </html>
+              </body>
+            </html>
           </div>
         </div>
       </div>
@@ -442,19 +295,4 @@ class JobApplyModal extends Component {
   }
 }
 
-// export default JobApplyModal;
-
-const mapStateToProps = (state) => {
-  const { studentInfoStore } = state.StudentCompleteInfoReducer;
-  return {
-    studentInfoStore,
-  };
-};
-
-// export default CompanyPage;
-const mapDispatchToProps = (dispatch) => {
-  return {};
-};
-
-// export default LoginBody;
-export default connect(mapStateToProps, mapDispatchToProps)(JobApplyModal);
+export default JobApplyModal;

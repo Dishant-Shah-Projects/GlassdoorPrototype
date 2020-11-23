@@ -3,6 +3,7 @@ import moment from 'moment';
 import './JobResultCard.css';
 import { connect } from 'react-redux';
 import { updateOnFocusJob } from '../../../constants/action-types';
+import defaultplaceholder from '../CompanyProfile/CompanyNavbar/default-placeholder.png';
 
 class JobResultCard extends Component {
   constructor(props) {
@@ -24,13 +25,23 @@ class JobResultCard extends Component {
   }
   render() {
     const job = this.props.job;
-    const postedDate = moment(job.PostedDate);
-    const currentDate = moment();
-    const diff = currentDate.diff(postedDate);
-    const diffDuration = moment.duration(diff);
-    const postedSince =
-      diffDuration.hours() < 24 ? diffDuration.hours() : Math.ceil(diffDuration.days());
-    const h_d = diffDuration.hours() < 24 ? 'h' : 'd';
+    // const postedDate = moment(job.PostedDate);
+    // const currentDate = moment();
+    // const diff = currentDate.diff(postedDate);
+    // const diffDuration = moment.duration(diff);
+    const date1 = new Date(job.PostedDate);
+    const date2 = new Date();
+    console.log('date1:', date1);
+    console.log('date2:', date2);
+    const diffTime = Math.abs(date2 - date1);
+    const hours = Math.floor(diffTime / (1000 * 60 * 60));
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    console.log('diffDuration milliseconds:', diffTime);
+
+    console.log('hours:', hours);
+    console.log('diffDays:', diffDays);
+    const postedSince = hours < 24 ? hours : diffDays;
+    const h_d = hours < 24 ? 'h' : 'd';
 
     let avgRating = 0;
     if (
@@ -45,6 +56,7 @@ class JobResultCard extends Component {
         this.props.job.jobdetails[0].GeneralReviewCount
       ).toFixed(1);
     }
+    let alreadyFav = false;
     let heartIcon = (
       <path
         d="M12 5.11l.66-.65a5.56 5.56 0 017.71.19 5.63 5.63 0 010 7.92L12 21l-8.37-8.43a5.63 5.63 0 010-7.92 5.56 5.56 0 017.71-.19zm7.66 6.75a4.6 4.6 0 00-6.49-6.51L12 6.53l-1.17-1.18a4.6 4.6 0 10-6.49 6.51L12 19.58z"
@@ -61,7 +73,11 @@ class JobResultCard extends Component {
           fill-rule="evenodd"
         ></path>
       );
+      alreadyFav = true;
     }
+
+    const defaultImage =
+      'https://s3-media0.fl.yelpcdn.com/assets/public/user_60_square.yji-514f6997a3184af475d5adc800b6d0b1.png';
 
     return (
       <li
@@ -97,7 +113,9 @@ class JobResultCard extends Component {
                 src={
                   this.props.job.jobdetails.length > 0
                     ? this.props.job.jobdetails[0].ProfileImg
-                    : ''
+                      ? this.props.job.jobdetails[0].ProfileImg
+                      : defaultplaceholder
+                    : defaultplaceholder
                 }
                 alt="RoadRunner Recycling Logo"
                 title="RoadRunner Recycling Logo"
@@ -121,7 +139,12 @@ class JobResultCard extends Component {
               <span>{this.props.job.CompanyName}</span>
             </a>
             <div
-              onClick={(event) => this.props.saveJob(event)}
+              onClick={
+                alreadyFav
+                  ? (event) => this.props.unsaveJob(event)
+                  : (event) => this.props.saveJob(event)
+              }
+              // onClick={(event) => this.props.saveJob(event)}
               className="saveJobWrap align-self-end d-flex flex-nowrap align-items-start"
             >
               <span className="save-job-button-3360350142 nowrap" data-test="save-job">

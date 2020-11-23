@@ -18,7 +18,7 @@ const mult = multer({
     // eslint-disable-next-line object-shorthand
     key: function (req, file, cb) {
       const folderName = 'glassdoor-proj';
-      cb(null, `${folderName}/${Date.now().toString()}${file.originalname}`);
+      cb(null, `${folderName}/${Date.now().toString()}/${file.originalname}`);
     },
   }),
 });

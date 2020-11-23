@@ -22,6 +22,7 @@ const defaultState = {
       JobStatus: '',
       PreferredJobTitle: '',
       JobType: [],
+      Resumes: [],
     },
   },
 };

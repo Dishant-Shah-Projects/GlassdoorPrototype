@@ -87,6 +87,7 @@ class JobLeftResultsBlock extends Component {
               <JobResultCard
                 key={job._id}
                 job={job}
+                unsaveJob={(event) => this.props.unsaveJob(event, job._id)}
                 saveJob={(event) => this.props.saveJob(event, job._id /**JobID */)}
               />
             ))}

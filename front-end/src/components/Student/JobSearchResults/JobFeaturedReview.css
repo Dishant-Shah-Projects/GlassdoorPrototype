@@ -103,13 +103,53 @@ span.sqLogo img {
   -ms-flex-align: center;
   align-items: center;
 }
-.css-1gf6lcl {
+.css-1gf6lcl0s {
   display: inline-block;
   line-height: 1;
   font-size: 14px;
   letter-spacing: 3px;
   cursor: pointer;
-  background: linear-gradient(90deg, rgb(12, 170, 65) 100%, rgb(222, 224, 227) 100%) text;
+  background: linear-gradient(90deg, rgb(12, 170, 65) 80%, rgb(222, 224, 227) 80%) text;
+}
+.css-1gf6lcl1s {
+  display: inline-block;
+  line-height: 1;
+  font-size: 14px;
+  letter-spacing: 3px;
+  cursor: pointer;
+  background: linear-gradient(90deg, rgb(12, 170, 65) 80%, rgb(222, 224, 227) 80%) text;
+}
+.css-1gf6lcl2s {
+  display: inline-block;
+  line-height: 1;
+  font-size: 14px;
+  letter-spacing: 3px;
+  cursor: pointer;
+  background: linear-gradient(90deg, rgb(12, 170, 65) 40%, rgb(222, 224, 227) 0%) text;
+}
+.css-1gf6lcl3s {
+  display: inline-block;
+  line-height: 1;
+  font-size: 14px;
+  letter-spacing: 3px;
+  cursor: pointer;
+  background: linear-gradient(90deg, rgb(12, 170, 65) 60%, rgb(222, 224, 227) 0%) text;
+}
+.css-1gf6lcl4s {
+  display: inline-block;
+  line-height: 1;
+  font-size: 14px;
+  letter-spacing: 3px;
+  cursor: pointer;
+  background: linear-gradient(90deg, rgb(12, 170, 65) 80%, rgb(222, 224, 227) 0%) text;
+}
+.css-1gf6lcl5s {
+  display: inline-block;
+  line-height: 1;
+  font-size: 14px;
+  letter-spacing: 3px;
+  cursor: pointer;
+  background: linear-gradient(90deg, rgb(12, 170, 65) 100%, rgb(222, 224, 227) 0%) text;
 }
 #ReviewsContainer .reviews-container .reviewTop .reviewMeta .reviewerStatus {
   color: #7f7f7f;

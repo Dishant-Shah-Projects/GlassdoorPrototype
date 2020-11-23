@@ -85,7 +85,7 @@ class CompanyJobs extends Component {
       JobID,
       StudentID: localStorage.getItem('userId'),
     };
-    axios.post(serverUrl + 'student/companyFavouriteJobs', data).then(
+    axios.post(serverUrl + 'student/removeFavouriteJobs', data).then(
       (response) => {
         console.log('Status Code : ', response.status);
         if (response.status === 200) {

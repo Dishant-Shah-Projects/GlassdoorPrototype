@@ -19,8 +19,11 @@ class JobRightResultsBlock extends Component {
   };
 
   render() {
-    const selectedJob = { ...this.props.jobOonFocusStore.jobOonFocus };
+    const defaultCoverPic =
+      'https://s3-media0.fl.yelpcdn.com/assets/public/defaultBusinessHeaderImage.yji-a94634351a246719545b17b9bddc388f.png';
 
+    const selectedJob = { ...this.props.jobOonFocusStore.jobOonFocus };
+    let alreadyFav = false;
     let heartIcon = (
       <path
         d="M12 5.11l.66-.65a5.56 5.56 0 017.71.19 5.63 5.63 0 010 7.92L12 21l-8.37-8.43a5.63 5.63 0 010-7.92 5.56 5.56 0 017.71-.19zm7.66 6.75a4.6 4.6 0 00-6.49-6.51L12 6.53l-1.17-1.18a4.6 4.6 0 10-6.49 6.51L12 19.58z"
@@ -29,6 +32,7 @@ class JobRightResultsBlock extends Component {
       ></path>
     );
     if (this.props.studentInfoStore.studentProfile.FavouriteJobs.includes(selectedJob._id)) {
+      alreadyFav = true;
       heartIcon = (
         <path
           d="M20.37 4.65a5.57 5.57 0 00-7.91 0l-.46.46-.46-.46a5.57 5.57 0 00-7.91 0 5.63 5.63 0 000 7.92L12 21l8.37-8.43a5.63 5.63 0 000-7.92z"
@@ -74,10 +78,17 @@ class JobRightResultsBlock extends Component {
                     <div id="CompanyBanner" className="content">
                       <img
                         alt="Cover for RoadRunner Recycling"
+                        // src={
+                        //   selectedJob.jobdetails.length > 0
+                        //     ? selectedJob.jobdetails[0].ProfileImg
+                        //     : ''
+                        // }
                         src={
                           selectedJob.jobdetails.length > 0
-                            ? selectedJob.jobdetails[0].ProfileImg
-                            : ''
+                            ? selectedJob.jobdetails[0].CoverPhoto
+                              ? selectedJob.jobdetails[0].CoverPhoto
+                              : defaultCoverPic
+                            : defaultCoverPic
                         }
                       />
                     </div>
@@ -145,8 +156,13 @@ class JobRightResultsBlock extends Component {
                           </div>
                           <div className="saveCTA">
                             <button
-                              onClick={(event) =>
-                                this.props.saveJob(event, selectedJob._id /**JobID */)
+                              // onClick={(event) =>
+                              //   this.props.saveJob(event, selectedJob._id /**JobID */)
+                              // }
+                              onClick={
+                                alreadyFav
+                                  ? (event) => this.props.unsaveJob(event, selectedJob._id)
+                                  : (event) => this.props.saveJob(event, selectedJob._id)
                               }
                               className="gd-btn gd-btn-2 gd-btn-icon fillMob save-job-button-3360350142"
                               data-ao-id="1131672"

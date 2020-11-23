@@ -58,6 +58,37 @@ class JobList extends Component {
       }
     );
   };
+
+  unsaveJob = (event, JobID) => {
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    const data = {
+      JobID,
+      StudentID: localStorage.getItem('userId'),
+    };
+    axios.post(serverUrl + 'student/removeFavouriteJobs', data).then(
+      (response) => {
+        console.log('Status Code : ', response.status);
+        if (response.status === 200) {
+          console.log(response.data);
+
+          let studentProfile = { ...this.props.studentInfoStore.studentProfile };
+          var index = studentProfile.FavouriteJobs.indexOf(JobID);
+          if (index !== -1) {
+            studentProfile.FavouriteJobs.splice(index, 1);
+          }
+          // studentProfile.FavouriteJobs.push(JobID);
+          const payload = {
+            studentProfile,
+          };
+          this.props.updateStudentProfile(payload);
+        }
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  };
+
   filterChangeCall = (JobType, State, SalStart, SalEnd, PageNo = 0) => {
     axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
     axios
@@ -121,6 +152,7 @@ class JobList extends Component {
                       this.filterChangeCall(JobType, State, SalStart, SalEnd, PageNo)
                     }
                     saveJob={(event, JobID) => this.saveJob(event, JobID)}
+                    unsaveJob={(event, JobID) => this.unsaveJob(event, JobID)}
                   />
                 }
               </div>

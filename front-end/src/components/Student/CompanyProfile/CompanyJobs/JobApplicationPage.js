@@ -158,7 +158,7 @@ class JobApplicationPage extends Component {
       JobID: localStorage.getItem('application_job_id'),
       StudentID: localStorage.getItem('userId'),
     };
-    axios.post(serverUrl + 'student/companyFavouriteJobs', data).then(
+    axios.post(serverUrl + 'student/removeFavouriteJobs', data).then(
       (response) => {
         console.log('Status Code : ', response.status);
         if (response.status === 200) {

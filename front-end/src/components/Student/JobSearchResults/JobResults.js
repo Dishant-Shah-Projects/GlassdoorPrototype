@@ -18,20 +18,27 @@ class JobResults extends Component {
   };
 
   render() {
+    const selectedJob = { ...this.props.jobOonFocusStore.jobOonFocus };
     return (
       <div id="JobResults" className="module noPad">
         <section style={{ height: '428px' }} className="flexbox" id="PanesWrap">
-          {this.state.popSeen ? <JobApplyModal toggle={(event) => this.toggle(event)} /> : ''}
+          {this.state.popSeen ? (
+            <JobApplyModal selectedJob={selectedJob} toggle={(event) => this.toggle(event)} />
+          ) : (
+            ''
+          )}
           <JobLeftResultsBlock
             filterChangeCall={(JobType, State, SalStart, SalEnd, PageNo) =>
               this.props.filterChangeCall(JobType, State, SalStart, SalEnd, PageNo)
             }
+            unsaveJob={(event, JobID) => this.props.unsaveJob(event, JobID)}
             saveJob={(event, JobID) => this.props.saveJob(event, JobID)}
           />
           {this.props.jobListStore.jobList.length > 0 ? (
             <JobRightResultsBlock
               toggle={(event) => this.toggle(event)}
               saveJob={(event, JobID) => this.props.saveJob(event, JobID)}
+              unsaveJob={(event, JobID) => this.props.unsaveJob(event, JobID)}
             />
           ) : (
             ''
@@ -43,9 +50,11 @@ class JobResults extends Component {
 }
 
 const mapStateToProps = (state) => {
-  const { jobListStore } = state.JobSearchPageReducer;
+  const { jobListStore, jobOonFocusStore } = state.JobSearchPageReducer;
+
   return {
     jobListStore,
+    jobOonFocusStore,
   };
 };
 export default connect(mapStateToProps, null)(JobResults);
