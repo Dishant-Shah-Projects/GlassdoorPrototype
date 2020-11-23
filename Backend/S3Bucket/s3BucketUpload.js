@@ -79,4 +79,5 @@ const uploadmultiFile = async (req, res) => {
 module.exports = {
   uploadFile,
   uploadmultiFile,
+  imageUpload,
 };
