@@ -335,7 +335,7 @@ const jobsApplications = async (req, res) => {
     const [results, fields] = await con.query(fetchApplicationsQuery, [JobID, limit, offset]);
     con.end();
     if (results[1][0].TotalCount === 0) {
-      res.writeHead(200, { 'content-type': 'text/json' });
+      res.writeHead(404, { 'content-type': 'text/json' });
       res.end(JSON.stringify('No Applications found'));
     } else {
       const resultdata = [];
