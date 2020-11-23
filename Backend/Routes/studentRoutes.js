@@ -31,6 +31,7 @@ const {
   salaryReview,
   companyInterviewHelpfulReview,
   fillJobApplication,
+  getFavoriteJobs,
   // getAllReview,
 } = require('../Student/studentFunctionality');
 
@@ -214,6 +215,12 @@ Router.get('/salaryReview', checkAuth, async (req, res) => {
 // Get job and compay details when apply form is being opened
 Router.get('/fillJobApplication', checkAuth, async (req, res) => {
   const value = await fillJobApplication(req, res);
+  return value;
+});
+
+// Get the information about the saved job
+Router.get('/getFavoriteJobs', checkAuth, async (req, res) => {
+  const value = await getFavoriteJobs(req, res);
   return value;
 });
 module.exports = Router;
