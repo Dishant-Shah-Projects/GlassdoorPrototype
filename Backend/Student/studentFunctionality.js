@@ -1252,14 +1252,11 @@ module.exports = {
   salaryReview,
   companyInterviewHelpfulReview,
   fillJobApplication,
-<<<<<<< Updated upstream
   getFavoriteJobs,
   getAppliedJobs,
-=======
   companyReview,
   addCompanyReview,
   companyHelpfulReview,
   interviewData,
->>>>>>> Stashed changes
   // getAllReview,
 };
