@@ -1073,12 +1073,12 @@ const fillJobApplication = async (req, res) => {
   }
 };
 
-// Get the favorite jobs sTduentID and pageNo
+// Get the favorite jobs full details
 const getFavoriteJobs = async (req, res) => {
   try {
     const { StudentID, PageNo } = req.query;
     const result = {};
-    await Student.find({ StudentID }, { AppliedJobs: 1 }, (err, data) => {
+    await Student.find({ StudentID }, { FavouriteJobs: 1 }, (err, data) => {
       if (err) {
         res.writeHead(500, {
           'Content-Type': 'application/json',
@@ -1086,14 +1086,13 @@ const getFavoriteJobs = async (req, res) => {
         res.end('Network Error');
       }
       if (data) {
-        const dataArray = data[0].AppliedJobs.slice(PageNo * 10, PageNo * 10 + 10);
-        const { length } = data[0].AppliedJobs;
+        const dataArray = data[0].FavouriteJobs.slice(PageNo * 10, PageNo * 10 + 10);
+        const { length } = data[0].FavouriteJobs;
         result.count = { length };
         const filterArray = [];
         for (let i = 0; i < dataArray.length; i += 1) {
           filterArray.push({ _id: dataArray[i] });
         }
-        console.log(filterArray);
         Job.find({ $or: filterArray }, (err1, data1) => {
           if (err1) {
             res.writeHead(500, {
@@ -1118,7 +1117,51 @@ const getFavoriteJobs = async (req, res) => {
     res.end('Network Error');
   }
 };
-// Get the applied jobs studentID and pageNo
+
+// Get the applied jobs full Details
+const getAppliedJobs = async (req, res) => {
+  try {
+    const { StudentID, PageNo } = req.query;
+    const result = {};
+    await Student.find({ StudentID }, { AppliedJobs: 1 }, (err, data) => {
+      if (err) {
+        res.writeHead(500, {
+          'Content-Type': 'application/json',
+        });
+        res.end('Network Error');
+      }
+      if (data) {
+        const dataArray = data[0].AppliedJobs.slice(PageNo * 10, PageNo * 10 + 10);
+        const { length } = data[0].AppliedJobs;
+        result.count = { length };
+        const filterArray = [];
+        for (let i = 0; i < dataArray.length; i += 1) {
+          filterArray.push({ _id: dataArray[i] });
+        }
+        Job.find({ $or: filterArray }, (err1, data1) => {
+          if (err1) {
+            res.writeHead(500, {
+              'Content-Type': 'application/json',
+            });
+            res.end('Network Error');
+          }
+          if (data1) {
+            result.jobs = data1;
+            res.writeHead(200, {
+              'Content-Type': 'application/json',
+            });
+            res.end(JSON.stringify(result));
+          }
+        });
+      }
+    });
+  } catch (error) {
+    res.writeHead(500, {
+      'Content-Type': 'application/json',
+    });
+    res.end('Network Error');
+  }
+};
 
 module.exports = {
   navbar,
@@ -1147,5 +1190,6 @@ module.exports = {
   companyInterviewHelpfulReview,
   fillJobApplication,
   getFavoriteJobs,
+  getAppliedJobs,
   // getAllReview,
 };

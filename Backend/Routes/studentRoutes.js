@@ -32,6 +32,7 @@ const {
   companyInterviewHelpfulReview,
   fillJobApplication,
   getFavoriteJobs,
+  getAppliedJobs,
   // getAllReview,
 } = require('../Student/studentFunctionality');
 
@@ -221,6 +222,12 @@ Router.get('/fillJobApplication', checkAuth, async (req, res) => {
 // Get the information about the saved job
 Router.get('/getFavoriteJobs', checkAuth, async (req, res) => {
   const value = await getFavoriteJobs(req, res);
+  return value;
+});
+
+// Get the details about the applied job
+Router.get('/getAppliedJobs', checkAuth, async (req, res) => {
+  const value = await getAppliedJobs(req, res);
   return value;
 });
 module.exports = Router;
