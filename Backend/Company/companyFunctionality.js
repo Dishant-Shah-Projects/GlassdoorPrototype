@@ -472,20 +472,37 @@ const report = async (req, res) => {
 };
 
 const demographicsJob = async (req, res) => {
-  // let con = null;
-  // try {
-  //   const { CompanyID, JobID, PageNo } = req.query;
-  //   con = await mysqlConnection();
-  //   const getQuery = 'SELECT StudentID FROM APPLICATION_RECEIVED WHERE JobID = ?';
-  //   const [results] = await con.query(getQuery, JobID);
-  // } catch (error) {
-  //   res.writeHead(500, { 'content-type': 'text/json' });
-  //   res.end(JSON.stringify('Network Error'));
-  // } finally {
-  //   if (con) {
-  //     con.end();
-  //   }
-  // }
+  let con = null;
+  const resultObject = {};
+  try {
+    const { JobID } = req.query;
+    con = await mysqlConnection();
+    let getQuery =
+      'SELECT Ethnicity, COUNT(Ethnicity) As Count FROM APPLICATION_RECEIVED WHERE JobID = ? GROUP BY Ethnicity';
+    let [results] = await con.query(getQuery, JobID);
+    resultObject.Ethnicity = results;
+    getQuery =
+      'SELECT Gender, COUNT(Gender) As Count FROM APPLICATION_RECEIVED WHERE JobID = ? GROUP BY Gender';
+    [results] = await con.query(getQuery, JobID);
+    resultObject.Gender = results;
+    getQuery =
+      'SELECT Disability, COUNT(Disability) As Count FROM APPLICATION_RECEIVED WHERE JobID = ? GROUP BY Disability';
+    [results] = await con.query(getQuery, JobID);
+    resultObject.Disability = results;
+    getQuery =
+      'SELECT VeteranStatus, COUNT(VeteranStatus) As Count FROM APPLICATION_RECEIVED WHERE JobID = ? GROUP BY VeteranStatus';
+    [results] = await con.query(getQuery, JobID);
+    resultObject.VeteranStatus = results;
+    res.writeHead(200, { 'content-type': 'text/json' });
+    res.end(JSON.stringify(resultObject));
+  } catch (error) {
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  } finally {
+    if (con) {
+      con.end();
+    }
+  }
 };
 module.exports = {
   getCompanyProfile,
