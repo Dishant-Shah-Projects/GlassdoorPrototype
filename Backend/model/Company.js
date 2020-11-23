@@ -47,7 +47,7 @@ const CompanySchema = new mongoose.Schema(
       CEOApproval: { type: Boolean },
       JobType: {
         type: String,
-        enum: ['FullTime', 'PartTime', 'Contract', 'Intern', 'Freelance'],
+        enum: ['Full-time', 'Part-time', 'Contract', 'Internship', 'Temporary', 'Entry Level'],
       },
       Recommended: { type: Boolean },
       JobTitle: { type: String },
@@ -57,10 +57,6 @@ const CompanySchema = new mongoose.Schema(
       Favorite: { type: Boolean },
     },
     Photos: [String],
-    JobType: {
-      type: String,
-      enum: ['Full-time', 'Part-time', 'Contract', 'Internship', 'Temporary', 'Entry Level'],
-    },
   },
   {
     versionKey: false,

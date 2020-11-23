@@ -299,10 +299,20 @@ const companyFavouriteJobs = async (req, res) => {
 
 // To submit an application for a job
 const companyApplyJob = async (req, res) => {
-  const { JobID, StudentID, StudentName, ResumeURL, CoverLetterURL } = req.body;
+  const {
+    JobID,
+    StudentID,
+    StudentName,
+    ResumeURL,
+    CoverLetterURL,
+    Ethnicity,
+    Gender,
+    Disability,
+    VeteranStatus,
+  } = req.body;
   let con = null;
   try {
-    const jobApplicationProcedure = 'CALL applicationSubmit(?,?,?,?,?,"Submitted")';
+    const jobApplicationProcedure = 'CALL applicationSubmit(?,?,?,?,?,?,?,?,?,"Submitted")';
     con = await mysqlConnection();
     // eslint-disable-next-line no-unused-vars
     const [results, fields] = await con.query(jobApplicationProcedure, [
@@ -311,6 +321,10 @@ const companyApplyJob = async (req, res) => {
       StudentName,
       ResumeURL,
       CoverLetterURL,
+      Ethnicity,
+      Gender,
+      Disability,
+      VeteranStatus,
     ]);
     con.end();
     res.writeHead(200, { 'content-type': 'text/json' });
@@ -1018,6 +1032,27 @@ const companyJobs = async (req, res) => {
   }
 };
 
+const fillJobApplication = async (req, res) => {
+  try {
+    const { JobID, CompanyID } = req.query;
+    const jobData = await Job.find({ JobID });
+    const CompanyData = await Company.find(
+      { CompanyID },
+      { GeneralReviewCount: 1, TotalGeneralReviewRating: 1, CoverPhoto: 1, ProfileImg: 1, Size: 1 }
+    );
+    const result = { Job: jobData, Company: CompanyData };
+    res.writeHead(200, {
+      'Content-Type': 'application/json',
+    });
+    res.end(JSON.stringify(result));
+  } catch (error) {
+    res.writeHead(500, {
+      'Content-Type': 'application/json',
+    });
+    res.end('Network Error');
+  }
+};
+
 module.exports = {
   navbar,
   searchCompany,
@@ -1043,5 +1078,6 @@ module.exports = {
   companyJobs,
   salaryReview,
   companyInterviewHelpfulReview,
+  fillJobApplication,
   // getAllReview,
 };

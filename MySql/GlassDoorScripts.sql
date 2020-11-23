@@ -97,3 +97,15 @@ CREATE TABLE `INTERVIEW_REVIEW` (
   `InterviewQuestions` varchar(350),
   `Answers` varchar(400)
 );
+
+ALTER TABLE APPLICATION_RECEIVED
+ADD  Ethnicity enum('Indigenous American or Alaska Native','East Asian','South Asian','Southeast Asian','Native Hawaiian or Other Pacific Islander','Middle Eastern','Black or African American','Hispanic or Latinx','White','Prefer to Self Describe','Prefer Not to Say');
+
+ALTER TABLE APPLICATION_RECEIVED
+ADD Gender enum('Male', 'Female', 'Prefer not to share');
+
+ALTER TABLE APPLICATION_RECEIVED
+ADD Disability enum('Yes', 'No', 'Prefer Not to Say');
+
+ALTER TABLE APPLICATION_RECEIVED
+ADD VeteranStatus enum('Yes', 'No', 'Prefer Not to Say');

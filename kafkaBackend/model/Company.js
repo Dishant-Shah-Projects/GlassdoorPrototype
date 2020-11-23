@@ -8,7 +8,7 @@ const CompanySchema = new mongoose.Schema(
     Size: { type: Number },
     ProfileImg: { type: String },
     Type: { type: String },
-    Revenue: { type: Number },
+    Revenue: { type: String },
     Headquarter: { type: String },
     Industry: { type: String },
     Founded: { type: Date },
@@ -18,13 +18,17 @@ const CompanySchema = new mongoose.Schema(
     CompanyMission: { type: String },
     CEO: { type: String },
     ViewCount: { type: Number, default: 0 },
+    approveCEOcount: { type: Number, default: 0 },
+    recommendedcount: { type: Number, default: 0 },
     SalaryReviewCount: { type: Number, default: 0 },
     GeneralReviewCount: { type: Number, default: 0 },
     InterviewReviewCount: { type: Number, default: 0 },
     TotalGeneralReviewRating: { type: Number, default: 0 },
     JobCount: { type: Number, default: 0 },
+    CoverPhoto: { type: String },
     PhotoCount: { type: Number, default: 0 },
     FeaturedReview: {
+      ID: { type: Number },
       Status: {
         type: String,
         enum: ['NotApproved', 'Approved', 'Disapproved'],
@@ -52,9 +56,9 @@ const CompanySchema = new mongoose.Schema(
       Response: { type: String },
       Favorite: { type: Boolean },
     },
-
     SalaryReview: [
       {
+        SalaryReviewID: { type: Number },
         Status: {
           type: String,
           enum: ['Not Approved', 'Approved', 'Disapproved'],
@@ -72,6 +76,7 @@ const CompanySchema = new mongoose.Schema(
     ],
     InterviewReview: [
       {
+        InterviewReviewID: { type: Number },
         Status: {
           type: String,
           enum: ['Not Approved', 'Approved', 'Disapproved'],

@@ -29,12 +29,16 @@ DELIMITER ;
 drop procedure  if exists applicationSubmit;
 DELIMITER $$
 CREATE PROCEDURE `applicationSubmit` (IN _JobID bigint, IN _StudentID bigint , IN _StudentName varchar(45),
-IN _ResumeURL varchar(150), _CoverLetterURL varchar(150), _Status enum('Submitted','Reviewed','Initial Screening','Interviewing','Hired','Rejected'))
+IN _ResumeURL varchar(150), _CoverLetterURL varchar(150), _Status enum('Submitted','Reviewed','Initial Screening','Interviewing','Hired','Rejected'),
+IN _Ethnicity enum('Indigenous American or Alaska Native','East Asian','South Asian','Southeast Asian','Native Hawaiian or Other Pacific Islander','Middle Eastern','Black or African American','Hispanic or Latinx','White','Prefer to Self Describe','Prefer Not to Say'),
+IN _Gender enum('Male', 'Female', 'Prefer not to share'),
+IN _Disability enum('Yes', 'No', 'Prefer Not to Say'),
+IN _VeteranStatus enum('Yes', 'No', 'Prefer Not to Say'))
 BEGIN
 declare exit handler for sqlexception rollback;
 start transaction;
-INSERT INTO APPLICATION_RECEIVED (JobID, StudentID, StudentName, ResumeURL, CoverLetterURL, Status, Withdrawn) 
-VALUES (_JobID, _StudentID, _StudentName, _ResumeURL, _CoverLetterURL, _Status, 0);
+INSERT INTO APPLICATION_RECEIVED (JobID, StudentID, StudentName, ResumeURL, CoverLetterURL, Status, Withdrawn, Ethnicity, Gender, Disability, VeteranStatus) 
+VALUES (_JobID, _StudentID, _StudentName, _ResumeURL, _CoverLetterURL, _Status, 0, _Ethnicity, _Gender, _Disability, _VeteranStatus );
 commit;
 END$$
 DELIMITER ;
