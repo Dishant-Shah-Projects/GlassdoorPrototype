@@ -33,6 +33,12 @@ const {
   fillJobApplication,
   getFavoriteJobs,
   getAppliedJobs,
+  getInterviewReivewStudent,
+  studentSalaryReview,
+  studentCompanyReview,
+  companyPhotos,
+  studentCompanyPhotos,
+  addCompanyPhotos,
   // getAllReview,
 } = require('../Student/studentFunctionality');
 
@@ -228,6 +234,40 @@ Router.get('/getFavoriteJobs', checkAuth, async (req, res) => {
 // Get the details about the applied job
 Router.get('/getAppliedJobs', checkAuth, async (req, res) => {
   const value = await getAppliedJobs(req, res);
+  return value;
+});
+// get the interview reviews for students
+Router.get('/studentInterviewReview', checkAuth, async (req, res) => {
+  const value = await getInterviewReivewStudent(req, res);
+  return value;
+});
+
+// get the salary reviews for students
+Router.get('/studentSalaryReview', checkAuth, async (req, res) => {
+  const value = await studentSalaryReview(req, res);
+  return value;
+});
+// get the general reviews for students
+Router.get('/studentCompanyReview', checkAuth, async (req, res) => {
+  const value = await studentCompanyReview(req, res);
+  return value;
+});
+
+// get the photos for company
+Router.get('/companyPhotos', checkAuth, async (req, res) => {
+  const value = await companyPhotos(req, res);
+  return value;
+});
+
+// get the photos reviews for students
+Router.get('/studentCompanyPhotos', checkAuth, async (req, res) => {
+  const value = await studentCompanyPhotos(req, res);
+  return value;
+});
+
+// post the photos reviews for students
+Router.post('/addCompanyPhotos', checkAuth, async (req, res) => {
+  const value = await addCompanyPhotos(req, res);
   return value;
 });
 module.exports = Router;

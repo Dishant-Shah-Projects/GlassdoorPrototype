@@ -6,7 +6,6 @@ const Photoschema = new mongoose.Schema({
   StudentID: { type: String, required: true },
   PhotoURL: { type: String, required: true },
   DateUploaded: { type: Date, required: true },
-  StudentName: { type: String, required: true },
   CompanyName: { type: String, required: true },
   Status: {
     type: String,

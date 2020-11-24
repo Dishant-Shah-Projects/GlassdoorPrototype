@@ -16,6 +16,7 @@ const Interview = require('../model/InterviewReview');
 const Salary = require('../model/SalaryReview');
 const General = require('../model/GeneralReview');
 const Static = require('../model/Static');
+const Photo = require('../model/Photos');
 const redisClient = require('../redisClient');
 
 // get the details required for the student navigation bar
@@ -435,6 +436,25 @@ const salaryReview = async (req, res) => {
   }
   return res;
 };
+
+// To get the salary reviews
+const studentSalaryReview = async (req, res) => {
+  try {
+    const { PageNo, StudentID } = req.query;
+    const results = await Salary.find({ StudentID })
+      .limit(10)
+      .skip(PageNo * 10);
+
+    const count = await Salary.countDocuments({ StudentID });
+    const resultData = { results, count };
+    res.writeHead(200, { 'content-type': 'text/json' });
+    res.end(JSON.stringify(resultData));
+  } catch (error) {
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  }
+  return res;
+};
 // post resume of student
 const resumesAdd = async (req, res) => {
   try {
@@ -570,19 +590,54 @@ const companyReview = async (req, res) => {
   // eslint-disable-next-line no-unused-vars
   const { CompanyID, PageNo } = req.query;
   try {
-    const results = await Interview.find({
+    const results = await General.find({
       CompanyID,
     })
       .limit(10)
       .skip(PageNo * 10);
     // console.log(results);
-    const temp = await Interview.find({
+    const temp = await General.countDocuments({
       CompanyID,
     });
     let count23 = null;
     if (temp) {
       // console.log(temp);
-      count23 = temp.length;
+      count23 = temp;
+    } else {
+      count23 = 0;
+    }
+    const resultData = [];
+    resultData.push({ count: count23 });
+    const no = Math.ceil(count23 / 10);
+    resultData.push({ noOfPages: no });
+    resultData.push(results);
+    res.writeHead(200, { 'content-type': 'text/json' });
+    res.end(JSON.stringify(resultData));
+  } catch (error) {
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  }
+  return res;
+};
+
+// get the company reviews
+const studentCompanyReview = async (req, res) => {
+  // eslint-disable-next-line no-unused-vars
+  const { StudentID, PageNo } = req.query;
+  try {
+    const results = await General.find({
+      StudentID,
+    })
+      .limit(10)
+      .skip(PageNo * 10);
+    // console.log(results);
+    const temp = await General.countDocuments({
+      StudentID,
+    });
+    let count23 = null;
+    if (temp) {
+      // console.log(temp);
+      count23 = temp;
     } else {
       count23 = 0;
     }
@@ -845,6 +900,24 @@ const getInterviewReivew = async (req, res) => {
     const count2 = await Interview.find({ CompanyID });
     const count = count2.length;
     const resultData = { results, ProfileImg, count };
+    res.writeHead(200, { 'content-type': 'text/json' });
+    res.end(JSON.stringify(resultData));
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  }
+  return res;
+};
+// get the interview Review for the company
+const getInterviewReivewStudent = async (req, res) => {
+  try {
+    const { PageNo, StudentID } = req.query;
+    const results = await Interview.find({ StudentID })
+      .limit(10)
+      .skip(PageNo * 10);
+    const count = await Interview.countDocuments({ StudentID });
+    const resultData = { results, count };
     res.writeHead(200, { 'content-type': 'text/json' });
     res.end(JSON.stringify(resultData));
   } catch (error) {
@@ -1247,6 +1320,88 @@ const getAppliedJobs = async (req, res) => {
   }
 };
 
+// To get the salary reviews
+const companyPhotos = async (req, res) => {
+  try {
+    const { PageNo, CompanyID } = req.query;
+    const results = await Photo.find({ CompanyID })
+      .limit(10)
+      .skip(PageNo * 10);
+    const count2 = await Photo.countDocuments({ CompanyID });
+    const count = count2;
+    const resultData = { results, count };
+    res.writeHead(200, { 'content-type': 'text/json' });
+    res.end(JSON.stringify(resultData));
+  } catch (error) {
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  }
+  return res;
+};
+
+// To get the salary reviews
+const studentCompanyPhotos = async (req, res) => {
+  try {
+    const { PageNo, StudentID } = req.query;
+    const results = await Photo.find({ StudentID })
+      .limit(10)
+      .skip(PageNo * 10);
+    const count2 = await Photo.countDocuments({ StudentID });
+    const count = count2;
+    const resultData = { results, count };
+    res.writeHead(200, { 'content-type': 'text/json' });
+    res.end(JSON.stringify(resultData));
+  } catch (error) {
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  }
+  return res;
+};
+// To get the salary reviews
+const addCompanyPhotos = async (req, res) => {
+  try {
+    const { StudentID, CompanyID, Photos, CompanyName } = req.body;
+    const count2 = await Photo.countDocuments({ StudentID });
+    let ID = count2 + 1;
+    let PhotoURL = null;
+    // eslint-disable-next-line no-restricted-syntax
+    for (PhotoURL of Photos) {
+      const photo = new Photo({
+        ID,
+        CompanyID,
+        StudentID,
+        // eslint-disable-next-line no-undef
+        PhotoURL,
+        DateUploaded: Date.now(),
+        CompanyName,
+        Status: 'Not Approved',
+      });
+      // eslint-disable-next-line no-await-in-loop
+      await photo.save();
+      ID += 1;
+    }
+    Company.findOneAndUpdate(
+      { CompanyID },
+      { $inc: { PhotoCount: Photos.length } },
+
+      (err, results) => {
+        if (err) {
+          res.writeHead(500, { 'content-type': 'text/json' });
+          res.end(JSON.stringify('Network'));
+        }
+        if (results) {
+          res.writeHead(200, { 'content-type': 'text/json' });
+          res.end(JSON.stringify('Photos Review Added'));
+        }
+      }
+    );
+  } catch (error) {
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  }
+  return res;
+};
+
 module.exports = {
   navbar,
   searchCompany,
@@ -1275,5 +1430,11 @@ module.exports = {
   addCompanyReview,
   companyHelpfulReview,
   interviewData,
+  getInterviewReivewStudent,
+  studentSalaryReview,
+  studentCompanyReview,
+  companyPhotos,
+  studentCompanyPhotos,
+  addCompanyPhotos,
   // getAllReview,
 };
