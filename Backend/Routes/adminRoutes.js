@@ -7,6 +7,9 @@ const {
   reviews,
   updateReviews,
   companyList,
+  companyReviewList,
+  pictures,
+  updatePictures,
 } = require('../Admin/adminFunctionality');
 
 Router.get('/reviews', checkAuth, async (req, res) => {
@@ -21,6 +24,21 @@ Router.post('/updateReviews', checkAuth, async (req, res) => {
 
 Router.get('/companyList', checkAuth, async (req, res) => {
   const value = await companyList(req, res);
+  return value;
+});
+
+Router.get('/companyReviewList', checkAuth, async (req, res) => {
+  const value = await companyReviewList(req, res);
+  return value;
+});
+
+Router.get('/pictures', checkAuth, async (req, res) => {
+  const value = await pictures(req, res);
+  return value;
+});
+
+Router.post('/updatePictures', checkAuth, async (req, res) => {
+  const value = await updatePictures(req, res);
   return value;
 });
 
