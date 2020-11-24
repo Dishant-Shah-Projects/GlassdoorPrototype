@@ -5,6 +5,7 @@ if (process.env.NODE_ENV !== 'production') {
 const express = require('express');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
+const cron = require('node-cron');
 
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
@@ -14,6 +15,7 @@ const commonPart = require('./Routes/headingRoutes');
 const companyRoute = require('./Routes/companyRoutes');
 const studentRoute = require('./Routes/studentRoutes');
 const adminRoute = require('./Routes/adminRoutes');
+const Company = require('./model/Company');
 
 const app = express();
 
@@ -60,6 +62,16 @@ mongoose.connect(mongoDB, options, (err, res) => {
   } else {
     // eslint-disable-next-line no-console
     console.log('MongoDB Connected');
+  }
+});
+
+cron.schedule('0 0 * * *', async () => {
+  try {
+    const ViewCount = 0;
+    await Company.updateOne({}, { ViewCount });
+    console.log('Updated');
+  } catch (error) {
+    console.log('did not update');
   }
 });
 
