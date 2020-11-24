@@ -39,6 +39,7 @@ const {
   companyPhotos,
   studentCompanyPhotos,
   addCompanyPhotos,
+  searchSalary,
   // getAllReview,
 } = require('../Student/studentFunctionality');
 
@@ -268,6 +269,12 @@ Router.get('/studentCompanyPhotos', checkAuth, async (req, res) => {
 // post the photos reviews for students
 Router.post('/addCompanyPhotos', checkAuth, async (req, res) => {
   const value = await addCompanyPhotos(req, res);
+  return value;
+});
+
+// To search company results o the basis of slary search
+Router.get('/searchSalary', checkAuth, async (req, res) => {
+  const value = await searchSalary(req, res);
   return value;
 });
 module.exports = Router;

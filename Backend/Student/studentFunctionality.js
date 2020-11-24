@@ -1402,6 +1402,41 @@ const addCompanyPhotos = async (req, res) => {
   return res;
 };
 
+const searchSalary = async (req, res) => {
+  try {
+    const { searchString, PageNo } = req.query;
+    const resultData = {};
+    await Company.find(
+      { CompanyName: { $regex: `${searchString}`, $options: 'i' } },
+      { CompanyID: 1, CompanyName: 1, ProfileImg: 1, Website: 1, SalaryReviewCount: 1 },
+      async (err, result) => {
+        if (err) {
+          res.writeHead(500, { 'content-type': 'text/json' });
+          res.end(JSON.stringify('Network Error'));
+        }
+        if (result) {
+          res.writeHead(200, { 'content-type': 'text/json' });
+          resultData.result = { result };
+        } else {
+          res.writeHead(404, { 'content-type': 'text/json' });
+          res.end(JSON.stringify('No data found'));
+        }
+      }
+    )
+      .limit(10)
+      .skip(PageNo * 10);
+    const count = await Company.find({
+      CompanyName: { $regex: `${searchString}`, $options: 'i' },
+    }).countDocuments();
+    resultData.count = { count };
+    res.end(JSON.stringify(resultData));
+  } catch (error) {
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  }
+  return res;
+};
+
 module.exports = {
   navbar,
   searchCompany,
@@ -1436,5 +1471,6 @@ module.exports = {
   companyPhotos,
   studentCompanyPhotos,
   addCompanyPhotos,
+  searchSalary,
   // getAllReview,
 };
