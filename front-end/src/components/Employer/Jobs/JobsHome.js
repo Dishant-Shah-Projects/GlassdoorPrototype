@@ -1,5 +1,10 @@
 import React, { Component } from 'react';
-import JobsPage from './JobsPage.js';
+import LeftBlock from './LeftBlock.js';
+import RightBlock from './RightBlock.js';
+import axios from 'axios';
+import serverUrl from '../../../config.js';
+import { connect } from 'react-redux';
+import { updateJobList, updateJobSelectList } from '../../../constants/action-types';
 import './JobsHome.css';
 
 class JobsHome extends Component {
@@ -7,27 +12,54 @@ class JobsHome extends Component {
     super(props);
     this.state = {};
   }
+
+  jobFetch = (PageNo = 0) => {
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    axios
+      .get(serverUrl + 'company/jobs', {
+        params: {
+          CompanyID: localStorage.getItem('userId'),
+          PageNo,
+        },
+        withCredentials: true,
+      })
+      .then(
+        (response) => {
+          console.log('getJobs', response.data);
+          let payload1 = {
+            jobsList: response.data.jobs,
+            PageNo,
+            PageCount: Math.ceil(response.data.count / 10),
+            Totalcount: response.data.count,
+            // PageCount: Math.ceil(response.data.Totalcount / 3),
+          };
+          console.log('payload', payload1);
+          this.props.updateJobList(payload1);
+
+          if (response.data.jobs.length > 0) {
+            let payload2 = {
+              jobsInfo: { ...response.data.jobs[0] },
+            };
+            this.props.updateJobSelectList(payload2);
+          }
+        },
+        (error) => {
+          console.log('error', error);
+        }
+      );
+  };
+
   render() {
     return (
       <div>
         <div className="gdGrid pageContentWrapper">
-          <div id="PageContent">
+          <div id="PageContent" className>
             <div id="PageBodyContents" class="meat">
               <span id="NodePageData"> </span>
               <div id="JobSearch">
                 <div className="gdGrid noPad">
-                  <div id="JobResults" className="module noPad">
-                    <section
-                      class="flexbox"
-                      id="PanesWrap"
-                      style={{
-                        height: '100%',
-                        width: '100%',
-                        position: 'absolute',
-                      }}
-                    >
-                      {<JobsPage />}
-                    </section>
+                  <div id="JobResults" className="module noPad">                    
+                      {<LeftBlock jobFetch={(PageNo) => this.jobFetch(PageNo)} />}                                         
                   </div>
                 </div>
               </div>
@@ -39,4 +71,29 @@ class JobsHome extends Component {
   }
 }
 
-export default JobsHome;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    updateJobList: (payload1) => {
+      dispatch({
+        type: updateJobList,
+        payload1,
+      });
+    },
+    updateJobSelectList: (payload2) => {
+      dispatch({
+        type: updateJobSelectList,
+        payload2,
+      });
+    },
+  };
+};
+
+//   const mapStateToProps = (state) => {
+//     const { jobListStore } = state.JobsListReducer;
+//     return {
+//       jobListStore: jobListStore,
+//     };
+//   };
+
+export default connect(null, mapDispatchToProps)(JobsHome);
+//export default JobsPage;

@@ -63,7 +63,7 @@ class ApplicantsList extends Component {
     axios
       .post(serverUrl + 'company/jobsApplicantUpdate', appllicantInfo)
       .then((response) => {
-        if (response.status == 201) {
+        if (response.status == 200) {
           this.props.hideApplicantsModal();
         }
       })
@@ -79,28 +79,18 @@ class ApplicantsList extends Component {
     history.push('/ApplicantProfile');
   }
   render() {
+    
+    const len = this.props.applicantsListStore.applicantsList.length;
+    console.log('len',len);
     return (
+      
       <article class="mr-0 mr-md-std css-8atqhb ep6ayhb0">
         <div data-test="employer-salaries">
-          {this.props.applicantsListStore.applicantsList.length > 0
-            ? this.props.applicantsListStore.applicantsList.map((listitem) => (
-                <div class=" gd-ui-module css-lcvd8h" key={listitem.StudentID}>
-                  <span alt="Close" class="SVGInline modal_closeIcon">
-                    <svg
-                      class="SVGInline-svg modal_closeIcon-svg"
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        d="M13.34 12l5.38-5.38a.95.95 0 00-1.34-1.34L12 10.66 6.62 5.28a.95.95 0 00-1.34 1.34L10.66 12l-5.38 5.38a.95.95 0 001.34 1.34L12 13.34l5.38 5.38a.95.95 0 001.34-1.34z"
-                        fill="currentColor"
-                        fill-rule="evenodd"
-                      ></path>
-                    </svg>
-                  </span>
-                  <h1>Applicants Applied</h1>
+        <h1>Applicants Applied</h1>
+        {len > 0 ? (
+             this.props.applicantsListStore.applicantsList.map((listitem) => (
+                <div class=" gd-ui-module css-lcvd8h" key={listitem.StudentID}>                
+                  
                   <div class="row mx-0 py-std css-l8rlna e8dz1vs0" data-test="employer-salary-tile">
                     <div class="col d-flex justify-content-between pl-std">
                       <div>
@@ -111,17 +101,18 @@ class ApplicantsList extends Component {
                       <div>
                       <div class="css-1uyte9r e8dz1vs1">Resume</div>
                         <a href="">
-                          <h3 class="link m-0 css-1v81xpy e8dz1vs2">{listitem.ResumeURL}</h3>
+                          <h3 class="link m-0 css-1v81xpy e8dz1vs2" style={{fontSize: "12px"}}>{listitem.ResumeURL}</h3>
                         </a>
                         
                       </div>
                       <div>
                       <div class="css-1uyte9r e8dz1vs1"> Cover Letter</div>
                         <a href="">
-                          <h3 class="link m-0 css-1v81xpy e8dz1vs2">{listitem.CoverLetterURL}</h3>
+                          <h3 class="link m-0 css-1v81xpy e8dz1vs2" style={{fontSize: "12px"}}>{listitem.CoverLetterURL}</h3>
                         </a>
                         
-                      </div>                     
+                      </div>    
+                      <div>                 
                         <h3 class="m-0 css-1v81xpy e8dz1vs2">Application Status</h3>
                         <div
                           onClick={this.openFilterDropDown}
@@ -349,6 +340,7 @@ class ApplicantsList extends Component {
                               ''
                             )}
                           </div>
+                        </div>
                         </div>                      
                     </div>
                   </div>
@@ -361,9 +353,9 @@ class ApplicantsList extends Component {
               Save
             </h3>
                 </div>
-              ))
-            : ''}
+              ))) : ''}
         </div>
+        { len > 0 ? (
         <div className="tbl fill padHorz margVert" id="ResultsFooter">
           <div className="cell middle hideMob padVertSm" data-test="page-x-of-y">
             Page {this.props.applicantsListStore.PageNo + 1} of{' '}
@@ -379,7 +371,9 @@ class ApplicantsList extends Component {
             />
           </div>
         </div>
-        <div class="bottomShadow"></div>
+        ) : (   
+          <p>No Applicants applied yet!</p> )}
+        <div class="bottomShadow"></div>        
         <div class="actionBar">
           <div class="experienceStyle__actionBar___2lnIS">
             <button
@@ -390,7 +384,7 @@ class ApplicantsList extends Component {
               Close applicants
             </button>            
           </div>
-        </div>
+        </div>                    
       </article>
     );
   }

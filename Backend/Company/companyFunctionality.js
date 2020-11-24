@@ -8,7 +8,7 @@ const Company = require('../model/Company');
 const Student = require('../model/Student');
 const Static = require('../model/Static');
 const Job = require('../model/Job');
-
+const General = require('../model/GeneralReview');
 // get the profile for the company
 const getCompanyProfile = async (req, res) => {
   const ID = req.query.CompanyID;
@@ -89,19 +89,14 @@ const companyProfileUpdate = async (req, res) => {
 const companyReviews = async (req, res) => {
   // eslint-disable-next-line no-console
   const { CompanyID, PageNo } = req.query;
-  let con = null;
   // eslint-disable-next-line no-console
   try {
-    const offset = PageNo * 10;
-    const searchQuery =
-      'SELECT * FROM GENERAL_REVIEW WHERE CompanyID=? AND Status = "Approved" LIMIT 10 OFFSET ?;';
-    con = await mysqlConnection();
-    const [results] = await con.query(searchQuery, [CompanyID, offset]);
-    const countQuery =
-      'SELECT COUNT(*) AS TOTALCOUNT FROM GENERAL_REVIEW WHERE CompanyID=? AND Status = "Approved";';
-    const [count] = await con.query(countQuery, [CompanyID]);
+    const results = await General.find({ CompanyID })
+      .limit(10)
+      .skip(PageNo * 10);
+    const count2 = await General.find({ CompanyID });
+    const count = count2.length;
     const resultData = { results, count };
-    con.end();
     res.writeHead(200, { 'content-type': 'text/json' });
     res.end(JSON.stringify(resultData));
     if (results) {
@@ -116,10 +111,6 @@ const companyReviews = async (req, res) => {
     // eslint-disable-next-line no-console
     res.writeHead(500, { 'content-type': 'text/json' });
     res.end(JSON.stringify('Network Error'));
-  } finally {
-    if (con) {
-      con.end();
-    }
   }
   return res;
 };
@@ -206,14 +197,10 @@ const postJob = async (req, res) => {
 const favoriteReview = async (req, res) => {
   // eslint-disable-next-line no-console
   const { ID, Favorite } = req.body;
-  let con = null;
   // eslint-disable-next-line no-console
   try {
-    const query = 'UPDATE GENERAL_REVIEW SET Favorite = ? WHERE ID=?';
+    const results = await General.findOneAndUpdate({ ID }, Favorite);
 
-    con = await mysqlConnection();
-    const [results, fields] = await con.query(query, [Favorite, ID]);
-    con.end();
     if (results) {
       res.writeHead(201, { 'content-type': 'text/json' });
       res.end(JSON.stringify('response submitted'));
@@ -225,24 +212,15 @@ const favoriteReview = async (req, res) => {
     // eslint-disable-next-line no-console
     res.writeHead(500, { 'content-type': 'text/json' });
     res.end(JSON.stringify('Network Error'));
-  } finally {
-    if (con) {
-      con.end();
-    }
   }
   return res;
 };
 const reviewResponse = async (req, res) => {
   // eslint-disable-next-line no-console
   const { ID, Response } = req.body;
-  let con = null;
   // eslint-disable-next-line no-console
   try {
-    const query = 'UPDATE GENERAL_REVIEW SET Response = ? WHERE ID=?';
-
-    con = await mysqlConnection();
-    const [results, fields] = await con.query(query, [Response, ID]);
-    con.end();
+    const results = await General.findOneAndUpdate({ ID }, Response);
     if (results) {
       res.writeHead(201, { 'content-type': 'text/json' });
       res.end(JSON.stringify('response submitted'));
@@ -254,25 +232,17 @@ const reviewResponse = async (req, res) => {
     // eslint-disable-next-line no-console
     res.writeHead(500, { 'content-type': 'text/json' });
     res.end(JSON.stringify('Network Error'));
-  } finally {
-    if (con) {
-      con.end();
-    }
   }
   return res;
 };
 const featuredReview = async (req, res) => {
   // eslint-disable-next-line no-console
   const { CompanyID, ID } = req.body;
-  let con = null;
   // eslint-disable-next-line no-console
   try {
-    const query = 'SELECT * FROM GENERAL_REVIEW WHERE ID=?';
+    const results = await General.findOne({ ID });
 
-    con = await mysqlConnection();
-    const [results, fields] = await con.query(query, ID);
-    con.end();
-    Company.findOneAndUpdate({ CompanyID }, { FeaturedReview: results[0] }, (e, output) => {
+    Company.findOneAndUpdate({ CompanyID }, { FeaturedReview: results }, (e, output) => {
       if (e) {
         // eslint-disable-next-line no-console
         res.writeHead(404, {
@@ -288,12 +258,9 @@ const featuredReview = async (req, res) => {
     });
   } catch (error) {
     // eslint-disable-next-line no-console
+    console.log(error);
     res.writeHead(500, { 'content-type': 'text/json' });
     res.end(JSON.stringify('Network Error'));
-  } finally {
-    if (con) {
-      con.end();
-    }
   }
   return res;
 };
