@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 /* eslint-disable no-unused-vars */
 /* eslint-disable func-names */
 /* eslint-disable no-underscore-dangle */
@@ -5,6 +6,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const url = require('url');
 const { ok } = require('assert');
+const mongoose = require('mongoose');
 const mysqlConnection = require('../mysqlConnection');
 const { secret } = require('../config');
 const Company = require('../model/Company');
@@ -195,7 +197,7 @@ const searchJob = async (req, res) => {
       // },
     ]);
     const count = resultCount.length;
-    const noOfPages = Math.ceil(count / 4);
+    const noOfPages = Math.ceil(count / 10);
     const resultObj = {};
     resultObj.jobs = jobResults;
     resultObj.count = count;
@@ -1078,7 +1080,7 @@ const getFavoriteJobs = async (req, res) => {
   try {
     const { StudentID, PageNo } = req.query;
     const result = {};
-    await Student.find({ StudentID }, { FavouriteJobs: 1 }, (err, data) => {
+    await Student.find({ StudentID }, { FavouriteJobs: 1 }, async (err, data) => {
       if (err) {
         res.writeHead(500, {
           'Content-Type': 'application/json',
@@ -1087,27 +1089,32 @@ const getFavoriteJobs = async (req, res) => {
       }
       if (data) {
         const dataArray = data[0].FavouriteJobs.slice(PageNo * 10, PageNo * 10 + 10);
+        const ids = dataArray.map(function (el) {
+          return mongoose.Types.ObjectId(el);
+        });
         const { length } = data[0].FavouriteJobs;
         result.count = { length };
-        const filterArray = [];
-        for (let i = 0; i < dataArray.length; i += 1) {
-          filterArray.push({ _id: dataArray[i] });
-        }
-        Job.find({ $or: filterArray }, (err1, data1) => {
-          if (err1) {
-            res.writeHead(500, {
-              'Content-Type': 'application/json',
-            });
-            res.end('Network Error');
-          }
-          if (data1) {
-            result.jobs = data1;
-            res.writeHead(200, {
-              'Content-Type': 'application/json',
-            });
-            res.end(JSON.stringify(result));
-          }
+        const jobResults = await Job.aggregate([
+          {
+            $match: { _id: { $in: ids } },
+          },
+          {
+            $lookup: {
+              from: 'companies',
+              localField: 'CompanyID',
+              foreignField: 'CompanyID',
+              as: 'jobdetails',
+            },
+          },
+        ])
+          .limit(10)
+          .skip(PageNo * 10);
+        result.job = jobResults;
+
+        res.writeHead(200, {
+          'Content-Type': 'application/json',
         });
+        res.end(JSON.stringify(result));
       }
     });
   } catch (error) {
