@@ -1,15 +1,27 @@
-import { showReplyModal, hideReplyModal, updateReviewList } from '../constants/action-types';
+import {
+  showReplyModal,
+  hideReplyModal,
+  updateReviewList,
+  updateReviewFeature,
+  updateReviewFavorite,
+} from '../constants/action-types';
 
 const defaultState = {
   replyModalStore: {
     popSeen: false,
   },
   reviewListStore: {
-    reviewList:[],
+    reviewList: [],
     PageNo: 0,
     PageCount: 5,
-    Totalcount: 10, 
-  }
+    Totalcount: 10,
+  },
+  reviewFeatureStore: {
+    reviewFeature: 0,
+  },
+  reviewFavoriteStore: {
+    reviewFavorite: 0,
+  },
 };
 
 const ReviewReplyReducer = (state = defaultState, action) => {
@@ -32,6 +44,22 @@ const ReviewReplyReducer = (state = defaultState, action) => {
       return {
         ...state,
         reviewListStore: { ...state.reviewListStore, ...action.payload1 },
+        //   return Object.assign(state, action.payload);
+      };
+    }
+
+    case updateReviewFeature: {
+      return {
+        ...state,
+        reviewFeatureStore: { ...state.reviewFeatureStore, ...action.payload2 },
+        //   return Object.assign(state, action.payload);
+      };
+    }
+
+    case updateReviewFavorite: {
+      return {
+        ...state,
+        reviewFavoriteStore: { ...state.reviewFavoriteStore, ...action.payload3 },
         //   return Object.assign(state, action.payload);
       };
     }

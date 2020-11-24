@@ -43,3 +43,8 @@ div.bucket {
   -webkit-box-shadow: 0 1px 1px 1px rgba(127, 127, 127, 0.3);
   box-shadow: 0 1px 1px 1px rgba(127, 127, 127, 0.3);
 }
+
+.gdGrid .mr-md {
+  margin-right: 20px !important;
+  margin-left: 20px !important;
+}

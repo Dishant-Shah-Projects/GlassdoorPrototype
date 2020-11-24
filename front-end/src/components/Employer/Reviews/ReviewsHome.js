@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 //import LeftBlock from '../LandingPage/LeftBlock.js';
 import '../LandingPage/Body.css';
+import './RightBlock.css';
 import RightBlock from './RightBlock.js';
 import axios from 'axios';
 import serverUrl from '../../../config.js';
@@ -50,7 +51,7 @@ class ReviewsHome extends Component {
         <div id="UserProfilePageContent" class>
           <div id="UserProfile" class="gdGrid Container">
             <div class="css-1tgr9d eds5rs80">
-              <div class="applicationStyle__profileApplication___Jyu4n">
+              <div class="applicationStyle__profileApplication___Jyu4n" style={{maxWidth: "1280px"}}>
                 <div
                   class="row flex-column flex-md-row p-0 px-md-lg py-md-xxl"
                   style={{ display: 'flex' }}
