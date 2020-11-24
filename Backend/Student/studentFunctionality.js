@@ -1437,6 +1437,26 @@ const searchSalary = async (req, res) => {
   return res;
 };
 
+const companyViewCount = async (req, res) => {
+  try {
+    const { CompanyID } = req.body;
+    const companyModel = await Company.find({ CompanyID }, { ViewCount: 1 });
+    let ViewCount = null;
+    if (companyModel[0].ViewCount) {
+      ViewCount = companyModel[0].ViewCount + 1;
+    } else {
+      ViewCount = 1;
+    }
+    await Company.updateOne({ CompanyID }, { ViewCount });
+    res.writeHead(200, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Updated the view count of the company'));
+  } catch (error) {
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  }
+  return res;
+};
+
 module.exports = {
   navbar,
   searchCompany,
@@ -1472,5 +1492,6 @@ module.exports = {
   studentCompanyPhotos,
   addCompanyPhotos,
   searchSalary,
+  companyViewCount,
   // getAllReview,
 };
