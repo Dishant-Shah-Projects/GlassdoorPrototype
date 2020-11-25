@@ -1,24 +1,69 @@
 import React, { Component } from 'react';
+import PaginationComponent from '../../Common/PaginationComponent';
 import '../Salary/Salaries.css';
+import RevieCard from './RevieCard';
+import axios from 'axios';
+import serverUrl from '../../../../config';
+import { updateStudentReviewsStore } from '../../../../constants/action-types';
+import { connect } from 'react-redux';
 
 class Reviews extends Component {
   constructor(props) {
     super(props);
     this.state = {};
   }
+
+  componentDidMount() {
+    this.commonFetch();
+  }
+
+  commonFetch = (PageNo = 0) => {
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    axios
+      .get(serverUrl + 'student/studentSalaryReview', {
+        params: {
+          PageNo,
+          StudentID: localStorage.getItem('userId'),
+        },
+        withCredentials: true,
+      })
+      .then(
+        (response) => {
+          console.log('studentSalaryReview', response.data);
+          let payload = {
+            ReviewList: response.data.results,
+            PageNo,
+            Totalcount: response.data.count,
+            PageCount: Math.ceil(response.data.count / 10),
+
+            // PageCount: Math.ceil(response.data.Totalcount / 3),
+          };
+          this.props.updateStudentReviewsStore(payload);
+        },
+        (error) => {
+          console.log('error', error);
+        }
+      );
+  };
+
+  onPageClick = (e) => {
+    // console.log('Page Clicked:', e.selected);
+    this.commonFetch(e.selected);
+  };
+
   render() {
     return (
       <div id="MainCol" style={{ paddingBottom: '0px' }} class="col span-3-4 noPadLt padRt">
         <div class="module">
           <h1>Reviews</h1>
-          <a
+          {/*<a
             href="/mz-survey/start_input.htm?showSurvey=REVIEWS&amp;c=PAGE_MYACCOUNT_TOP"
             id="AddReviews"
             class="gd-btn gd-btn-link gradient gd-btn-1 gd-btn-med ctaButtons margBot"
           >
             <span>Write a Review</span>
             <i class="hlpr"></i>
-          </a>
+          </a>*/}
           <p>
             {' '}
             The Glassdoor team reviews every piece of content submitted by users, so please be
@@ -46,76 +91,43 @@ class Reviews extends Component {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td class="summary">
-                  <p>
-                    <a href="/Reviews/Employee-Review-Tata-Consultancy-Services-RVW37250114.htm">
-                      <span class="strong">Software Engineer</span>
-                      <br /> in Bhubaneswar (India), at Tata Consultancy Services
-                    </a>
-                  </p>
-                  <p class="rating">
-                    <span class="gdStars gdRatings med ">
-                      <i>
-                        <i></i>
-                        <i class="star">
-                          <span>Star</span>
-                        </i>
-                      </i>
-                      <i>
-                        <i></i>
-                        <i class="star">
-                          <span>Star</span>
-                        </i>
-                      </i>
-                      <i>
-                        <i></i>
-                        <i class="star">
-                          <span>Star</span>
-                        </i>
-                      </i>
-                      <i>
-                        <i></i>
-                        <i class="star">
-                          <span>Star</span>
-                        </i>
-                      </i>
-                      <i>
-                        <i style={{ width: '0.0%' }}></i>
-                        <i class="star">
-                          <span>Star</span>
-                        </i>
-                      </i>
-                    </span>
-                    <br />
-                    <span class="strong">
-                      <span class="gdRatingDesc "> Satisfied</span>
-                    </span>
-                  </p>
-                  <p class="strong"> “Good for starting a career, not recommend for long term”</p>
-                </td>
-                <td class="empStatus noWrap hideMob center"> Former</td>
-                <td class="submitted noWrap hideMob center"> Oct 17, 2020</td>
-                <td class="itemStatus noWrap hideMob center"> Approved</td>
-                <td class="actions noWrap center">
-                  <a href="/member/account/editReview_input.htm?editId=37250114&amp;gdToken=0mclOMbkvweHVLjLoX4Omg%3AA-JscUXxKVuQHMd6OgG0OWLhaVGPs6iVAAeT8zx3px9XCfPtfyTbFqqUsX5Iv4QmagDvC_XoFDqA2y5oHCe_yw%3A4wJ7Bwj8od-rGv-kYisFLMwukqQMBxUEgtw9-TPRjhQ">
-                    Edit
-                  </a>{' '}
-                  &nbsp;&nbsp;|&nbsp;&nbsp;{' '}
-                  <a
-                    href="/member/account/reviews_execute.htm?deleteId=37250114&amp;gdToken=0mclOMbkvweHVLjLoX4Omg%3AA-JscUXxKVuQHMd6OgG0OWLhaVGPs6iVAAeT8zx3px9XCfPtfyTbFqqUsX5Iv4QmagDvC_XoFDqA2y5oHCe_yw%3A4wJ7Bwj8od-rGv-kYisFLMwukqQMBxUEgtw9-TPRjhQ"
-                    onclick="return GD.account.showDeleteContentConfirm('/member/account/reviews_execute.htm?deleteId=37250114&amp;gdToken=0mclOMbkvweHVLjLoX4Omg%3AA-JscUXxKVuQHMd6OgG0OWLhaVGPs6iVAAeT8zx3px9XCfPtfyTbFqqUsX5Iv4QmagDvC_XoFDqA2y5oHCe_yw%3A4wJ7Bwj8od-rGv-kYisFLMwukqQMBxUEgtw9-TPRjhQ', 'Review');"
-                  >
-                    Delete
-                  </a>
-                </td>
-              </tr>
+              {this.props.studentReviewsStore.ReviewList.map((review) => (
+                <RevieCard review={review} />
+              ))}
             </tbody>
           </table>
+          <PaginationComponent
+            PageCount={this.props.studentReviewsStore.PageCount}
+            PageNo={this.props.studentReviewsStore.PageNo}
+            onPageClick={(e) => {
+              this.onPageClick(e);
+            }}
+          />
         </div>
       </div>
     );
   }
 }
 
-export default Reviews;
+// export default Reviews;
+const mapStateToProps = (state) => {
+  const { studentReviewsStore } = state.StudentContributionsReducer;
+  const { studentInfoStore } = state.StudentCompleteInfoReducer;
+
+  return {
+    studentReviewsStore,
+    studentInfoStore,
+  };
+};
+const mapDispatchToProps = (dispatch) => {
+  return {
+    updateStudentReviewsStore: (payload) => {
+      dispatch({
+        type: updateStudentReviewsStore,
+        payload,
+      });
+    },
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Reviews);

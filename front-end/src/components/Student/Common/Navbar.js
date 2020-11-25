@@ -180,7 +180,7 @@ class Navbar extends Component {
         break;
       }
       case 'Contributions': {
-        history.push('/Contributions');
+        history.push('/ContributionPage');
         break;
       }
       default: {

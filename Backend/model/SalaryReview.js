@@ -4,6 +4,7 @@ const Salaryschema = new mongoose.Schema({
   SalaryReviewID: { type: Number },
   CompanyID: { type: String, required: true },
   StudentID: { type: Number, required: true },
+  CompanyName: { type: String, required: true },
   Status: {
     type: String,
     enum: ['Not Approved', 'Approved', 'Disapproved'],

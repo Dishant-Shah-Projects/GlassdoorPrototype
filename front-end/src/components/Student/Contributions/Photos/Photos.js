@@ -1,24 +1,68 @@
 import React, { Component } from 'react';
 import '../Salary/Salaries.css';
+import PhotoCard from './PhotoCard';
+import PaginationComponent from '../../Common/PaginationComponent';
+import axios from 'axios';
+import serverUrl from '../../../../config';
+import { updateStudentPhotosStore } from '../../../../constants/action-types';
+import { connect } from 'react-redux';
 
 class Photos extends Component {
   constructor(props) {
     super(props);
     this.state = {};
   }
+  componentDidMount() {
+    this.commonFetch();
+  }
+
+  commonFetch = (PageNo = 0) => {
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    axios
+      .get(serverUrl + 'student/studentCompanyPhotos', {
+        params: {
+          PageNo,
+          StudentID: localStorage.getItem('userId'),
+        },
+        withCredentials: true,
+      })
+      .then(
+        (response) => {
+          console.log('studentCompanyPhotos', response.data);
+          let payload = {
+            PhotoList: response.data.results,
+            PageNo,
+            Totalcount: response.data.count,
+            PageCount: Math.ceil(response.data.count / 10),
+
+            // PageCount: Math.ceil(response.data.Totalcount / 3),
+          };
+          this.props.updateStudentPhotosStore(payload);
+        },
+        (error) => {
+          console.log('error', error);
+        }
+      );
+  };
+
+  onPageClick = (e) => {
+    // console.log('Page Clicked:', e.selected);
+    this.commonFetch(e.selected);
+  };
+
   render() {
     return (
       <div id="MainCol" class="col span-3-4 noPadLt padRt">
         <div class="module" id="MyAccountSalaries">
           <h1>Photos</h1>
-          <a
+          {/*<a
             href="/mz-survey/start_input.htm?showSurvey=PHOTOS&amp;c=PAGE_MYACCOUNT_TOP"
             id="AddPhoto"
             class="gd-btn gd-btn-link gradient gd-btn-1 gd-btn-med ctaButtons margBot"
           >
             <span>Add Photos</span>
             <i class="hlpr"></i>
-          </a>
+          </a>*/}
           <p>
             {' '}
             The Glassdoor team reviews every piece of content submitted by users, so please be
@@ -44,7 +88,7 @@ class Photos extends Component {
               </tr>
             </thead>
             <tbody>
-              <tr>
+              {/*<tr>
                 <td colspan="4">
                   <p>
                     {' '}
@@ -55,13 +99,45 @@ class Photos extends Component {
                     .{' '}
                   </p>
                 </td>
-              </tr>
+              </tr>*/}
+              {this.props.studentPhotosStore.PhotoList.map((photo) => (
+                <PhotoCard photo={photo} />
+              ))}
             </tbody>
           </table>
+          <PaginationComponent
+            PageCount={this.props.studentPhotosStore.PageCount}
+            PageNo={this.props.studentPhotosStore.PageNo}
+            onPageClick={(e) => {
+              this.onPageClick(e);
+            }}
+          />
         </div>
       </div>
     );
   }
 }
 
-export default Photos;
+// export default Photos;
+
+const mapStateToProps = (state) => {
+  const { studentPhotosStore } = state.StudentContributionsReducer;
+  const { studentInfoStore } = state.StudentCompleteInfoReducer;
+
+  return {
+    studentPhotosStore,
+    studentInfoStore,
+  };
+};
+const mapDispatchToProps = (dispatch) => {
+  return {
+    updateStudentPhotosStore: (payload) => {
+      dispatch({
+        type: updateStudentPhotosStore,
+        payload,
+      });
+    },
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Photos);

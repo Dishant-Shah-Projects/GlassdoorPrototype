@@ -100,7 +100,7 @@ class Main extends Component {
         <Route path="/EmployerReviews" component={EmployerReviews} />
         <Route path="/EmployerJobs" component={EmployerJobs} />
         <Route path="/EmployerReport" component={EmployerReport} />
-        <Route path='/ApplicantProfile' component={ApplicantProfile} />
+        <Route path="/ApplicantProfile" component={ApplicantProfile} />
         <Route path="/Home" component={Home} />
         <Route path="/JobList" component={JobList} />
         <Route path="/salaryList" component={salaryList} />

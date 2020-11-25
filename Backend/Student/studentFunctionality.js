@@ -804,6 +804,7 @@ const salaryAddReview = async (req, res) => {
     StreetAddress,
     City,
     State,
+    CompanyName,
     Zip,
   } = req.body;
   try {
@@ -827,6 +828,7 @@ const salaryAddReview = async (req, res) => {
       StreetAddress,
       City,
       State,
+      CompanyName,
       Zip,
     });
     await review.save();

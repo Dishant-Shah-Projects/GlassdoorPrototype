@@ -37,3 +37,7 @@ export const updateCompanyPhotosStore = 'update-company-photos-store';
 export const updateInterviewList = 'update-interview-list';
 export const updateReviewFeature = 'update-review-feature-store';
 export const updateReviewFavorite = 'update-review-favorite-store';
+export const updateStudentReviewsStore = 'update-student-reviews-store';
+export const updateStudentInterviewStore = 'update-student-interview-store';
+export const updateStudentSalariesStore = 'update-student-salaries-store';
+export const updateStudentPhotosStore = 'update-student-photos-store';
