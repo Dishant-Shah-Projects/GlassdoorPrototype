@@ -1,16 +1,22 @@
 import React, { Component } from 'react';
 import './RightBlock.css';
 import DonutChart from 'react-donut-chart';
+import { Chart } from "react-google-charts";
 import axios from 'axios';
 import serverUrl from '../../../config.js';
 
 class RightBlock extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      statsData: [],
+      chartEvents: []
+    };
   }
 
   componentDidMount() {
+    let eventrow = 0;
+    let JobId = 0;
     axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
     axios
       .get(serverUrl + 'company/report', {
@@ -19,12 +25,77 @@ class RightBlock extends Component {
       })
       .then((response) => {
         if (response.status == 200) {
-          console.log('response', response.data.results);
+          console.log('response', response.data.statsData);
+          let data1 = [];
+          let statsData1 = [];
+          data1.push('Jobs');
+          data1.push('Applicants Applied');
+          data1.push('Applicants Selected');
+          data1.push('Applicants Rejected');          
+          statsData1.push(data1);
+          console.log('statsData1', statsData1);
+          this.setState({
+            statsData: [...this.state.statsData, data1],               
+            chartEvents: [
+              {
+                eventName: "select",
+                callback({ chartWrapper }) {    
+                  const chartevent =   chartWrapper.getChart().getSelection();
+                  eventrow = chartevent[0].row;
+                  JobId = response.data.statsData[eventrow].jobDetails.jobData.JobID;                  
+                  console.log("Selected ", JobId);
+                }
+              }
+            ]            
+          })
+          if(JobId > 0) {
+            this.fetchDemographics(JobId);
+          }
+          console.log('statsData', this.state.statsData);
+          let data = [];
+          for (var i=0; i < response.data.statsData.length; i++) {
+            // data.push(response.data.statsData[i].jobDetails.jobData.Title);
+            // data.push(response.data.statsData[i].Applied.results[0].TotalApplicants);
+            // data.push(response.data.statsData[i].Selected.results[0].SelectedApplicants);
+            // data.push(response.data.statsData[i].Rejected.results[0].RejectedApplicants);
+            data.push(response.data.statsData[i].jobDetails.jobData.Title);
+            data.push(12);
+            data.push(6);
+            data.push(6);            
+            console.log('data', data);
+            statsData1.push(data);
+            this.setState({
+            statsData: [...this.state.statsData, data]            
+          })
+          data = [];
+        }
+        console.log('statsData1', statsData1);
+        console.log('statsData', this.state.statsData);
+        }
+        
+      })
+      .catch((error) => {
+        this.setState({
+          errorMessage: 'No Statistics Found',
+        });
+      });
+  }
+
+  fetchDemographics(ID) {
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    axios
+      .get(serverUrl + 'company/demographicsJob', {
+        params: { CompanyID: localStorage.getItem('userId'), PageNo: 0 },
+        withCredentials: true,
+      })
+      .then((response) => {
+        if (response.status == 200) {
+          console.log('response', response);         
         }
       })
       .catch((error) => {
         this.setState({
-          errorMessage: 'No Reviews Found',
+          errorMessage: 'No Demographics Found',
         });
       });
   }
@@ -35,19 +106,28 @@ class RightBlock extends Component {
           <div class="d-flex flex-column">
             <span class="mb-sm">Jobs Statistics</span>
             <div class="d-flex">
-              <DonutChart
-                data={[
-                  {
-                    label: 'Give you up',
-                    value: 25,
+              <Chart
+                width={'500px'}
+                height={'300px'}
+                chartType="BarChart"
+                loader={<div>Loading Chart</div>}
+                data={this.state.statsData}
+                options={{
+                  title: 'Statistics of the Jobs Posted',
+                  chartArea: { width: '50%' },
+                  isStacked: true,
+                  hAxis: {
+                    title: 'Total Applicants',
+                    minValue: 0,
                   },
-                  {
-                    label: '',
-                    value: 75,
-                    isEmpty: true,
+                  vAxis: {
+                    title: 'Jobs',
                   },
-                ]}
-                width={200}
+                }}
+                // For tests
+                rootProps={{ 'data-testid': '3' }}
+                chartEvents={this.state.chartEvents}
+
               />
               <div class="ml-xsm css-1dach6o ee3ubnb0">
                 <div class="d-flex pb-sm c0 css-1adfoly ee3ubnb1">

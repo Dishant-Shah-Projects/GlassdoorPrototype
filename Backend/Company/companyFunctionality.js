@@ -136,20 +136,16 @@ const postJob = async (req, res) => {
   // eslint-disable-next-line no-console
   let con = null;
   try {
-    const userInsertProcedure = 'CALL jobInsert(?,?,CURDATE(),?,?,?)';
+    const Jobs = await Job.countDocuments({});
+    let JobID = null;
+    if (Jobs) {
+      JobID = Jobs + 1;
+    } else {
+      JobID = 0;
+    }
 
-    con = await mysqlConnection();
-    const [results, fields] = await con.query(userInsertProcedure, [
-      CompanyName,
-      CompanyID,
-      StreetAddress,
-      City,
-      State,
-    ]);
-    con.end();
-    // eslint-disable-next-line no-console
     const job = new Job({
-      JobID: results[0][0].JobID,
+      JobID,
       Title,
       CompanyID,
       CompanyName,
@@ -168,19 +164,34 @@ const postJob = async (req, res) => {
       ExpectedSalary,
       Votes: 0,
     });
-    job.save((e, data) => {
+    await job.save((e, data) => {
       if (e) {
         res.writeHead(500, {
           'Content-Type': 'text/plain',
         });
         res.end('Network Error');
-      } else {
-        res.writeHead(201, {
-          'Content-Type': 'text/plain',
-        });
-        res.end(JSON.stringify('Job Created'));
       }
     });
+    const querynew =
+      'INSERT INTO APPLICATION_JOB (JobID,CompanyName, CompanyID, PostedDate,StreetAddress,City,State) VALUES (?,?,?,CURDATE(),?,?,?);';
+    const userInsertProcedure = 'CALL jobInsert(?,?,?,CURDATE(),?,?,?)';
+    // eslint-disable-next-line no-underscore-dangle
+    const ID = job._id.toString();
+    con = await mysqlConnection();
+    const [results, fields] = await con.query(querynew, [
+      ID,
+      CompanyName,
+      CompanyID,
+      StreetAddress,
+      City,
+      State,
+    ]);
+    con.end();
+    res.writeHead(201, {
+      'Content-Type': 'text/plain',
+    });
+    res.end(JSON.stringify('Job Created'));
+    // eslint-disable-next-line no-console
   } catch (error) {
     // eslint-disable-next-line no-console
     console.log(error);

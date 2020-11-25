@@ -1,24 +1,44 @@
 const express = require('express');
 
 const Router = express.Router();
+const { checkAuth } = require('../SharedFuntionalities/passport');
+
 const {
   reviews,
   updateReviews,
   companyList,
+  companyReviewList,
+  pictures,
+  updatePictures,
 } = require('../Admin/adminFunctionality');
 
-Router.get('/reviews', async (req, res) => {
+Router.get('/reviews', checkAuth, async (req, res) => {
   const value = await reviews(req, res);
   return value;
 });
 
-Router.post('/updateReviews', async (req, res) => {
+Router.post('/updateReviews', checkAuth, async (req, res) => {
   const value = await updateReviews(req, res);
   return value;
 });
 
-Router.get('/companyList', async (req, res) => {
+Router.get('/companyList', checkAuth, async (req, res) => {
   const value = await companyList(req, res);
+  return value;
+});
+
+Router.get('/companyReviewList', checkAuth, async (req, res) => {
+  const value = await companyReviewList(req, res);
+  return value;
+});
+
+Router.get('/pictures', checkAuth, async (req, res) => {
+  const value = await pictures(req, res);
+  return value;
+});
+
+Router.post('/updatePictures', checkAuth, async (req, res) => {
+  const value = await updatePictures(req, res);
   return value;
 });
 

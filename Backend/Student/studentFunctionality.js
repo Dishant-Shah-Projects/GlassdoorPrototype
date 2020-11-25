@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 /* eslint-disable no-unused-vars */
 /* eslint-disable func-names */
 /* eslint-disable no-underscore-dangle */
@@ -5,6 +6,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const url = require('url');
 const { ok } = require('assert');
+const mongoose = require('mongoose');
 const mysqlConnection = require('../mysqlConnection');
 const { secret } = require('../config');
 const Company = require('../model/Company');
@@ -14,6 +16,7 @@ const Interview = require('../model/InterviewReview');
 const Salary = require('../model/SalaryReview');
 const General = require('../model/GeneralReview');
 const Static = require('../model/Static');
+const Photo = require('../model/Photos');
 const redisClient = require('../redisClient');
 
 // get the details required for the student navigation bar
@@ -198,7 +201,7 @@ const searchJob = async (req, res) => {
       // },
     ]);
     const count = resultCount.length;
-    const noOfPages = Math.ceil(count / 4);
+    const noOfPages = Math.ceil(count / 10);
     const resultObj = {};
     resultObj.jobs = jobResults;
     resultObj.count = count;
@@ -433,6 +436,25 @@ const salaryReview = async (req, res) => {
   }
   return res;
 };
+
+// To get the salary reviews
+const studentSalaryReview = async (req, res) => {
+  try {
+    const { PageNo, StudentID } = req.query;
+    const results = await Salary.find({ StudentID })
+      .limit(10)
+      .skip(PageNo * 10);
+
+    const count = await Salary.countDocuments({ StudentID });
+    const resultData = { results, count };
+    res.writeHead(200, { 'content-type': 'text/json' });
+    res.end(JSON.stringify(resultData));
+  } catch (error) {
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  }
+  return res;
+};
 // post resume of student
 const resumesAdd = async (req, res) => {
   try {
@@ -568,19 +590,54 @@ const companyReview = async (req, res) => {
   // eslint-disable-next-line no-unused-vars
   const { CompanyID, PageNo } = req.query;
   try {
-    const results = await Interview.find({
+    const results = await General.find({
       CompanyID,
     })
       .limit(10)
       .skip(PageNo * 10);
     // console.log(results);
-    const temp = await Interview.find({
+    const temp = await General.countDocuments({
       CompanyID,
     });
     let count23 = null;
     if (temp) {
       // console.log(temp);
-      count23 = temp.length;
+      count23 = temp;
+    } else {
+      count23 = 0;
+    }
+    const resultData = [];
+    resultData.push({ count: count23 });
+    const no = Math.ceil(count23 / 10);
+    resultData.push({ noOfPages: no });
+    resultData.push(results);
+    res.writeHead(200, { 'content-type': 'text/json' });
+    res.end(JSON.stringify(resultData));
+  } catch (error) {
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  }
+  return res;
+};
+
+// get the company reviews
+const studentCompanyReview = async (req, res) => {
+  // eslint-disable-next-line no-unused-vars
+  const { StudentID, PageNo } = req.query;
+  try {
+    const results = await General.find({
+      StudentID,
+    })
+      .limit(10)
+      .skip(PageNo * 10);
+    // console.log(results);
+    const temp = await General.countDocuments({
+      StudentID,
+    });
+    let count23 = null;
+    if (temp) {
+      // console.log(temp);
+      count23 = temp;
     } else {
       count23 = 0;
     }
@@ -843,6 +900,24 @@ const getInterviewReivew = async (req, res) => {
     const count2 = await Interview.find({ CompanyID });
     const count = count2.length;
     const resultData = { results, ProfileImg, count };
+    res.writeHead(200, { 'content-type': 'text/json' });
+    res.end(JSON.stringify(resultData));
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  }
+  return res;
+};
+// get the interview Review for the company
+const getInterviewReivewStudent = async (req, res) => {
+  try {
+    const { PageNo, StudentID } = req.query;
+    const results = await Interview.find({ StudentID })
+      .limit(10)
+      .skip(PageNo * 10);
+    const count = await Interview.countDocuments({ StudentID });
+    const resultData = { results, count };
     res.writeHead(200, { 'content-type': 'text/json' });
     res.end(JSON.stringify(resultData));
   } catch (error) {
@@ -1146,7 +1221,7 @@ const getFavoriteJobs = async (req, res) => {
   try {
     const { StudentID, PageNo } = req.query;
     const result = {};
-    await Student.find({ StudentID }, { FavouriteJobs: 1 }, (err, data) => {
+    await Student.find({ StudentID }, { FavouriteJobs: 1 }, async (err, data) => {
       if (err) {
         res.writeHead(500, {
           'Content-Type': 'application/json',
@@ -1155,27 +1230,34 @@ const getFavoriteJobs = async (req, res) => {
       }
       if (data) {
         const dataArray = data[0].FavouriteJobs.slice(PageNo * 10, PageNo * 10 + 10);
-        const { length } = data[0].FavouriteJobs;
-        result.count = { length };
-        const filterArray = [];
-        for (let i = 0; i < dataArray.length; i += 1) {
-          filterArray.push({ _id: dataArray[i] });
-        }
-        Job.find({ $or: filterArray }, (err1, data1) => {
-          if (err1) {
-            res.writeHead(500, {
-              'Content-Type': 'application/json',
-            });
-            res.end('Network Error');
-          }
-          if (data1) {
-            result.jobs = data1;
-            res.writeHead(200, {
-              'Content-Type': 'application/json',
-            });
-            res.end(JSON.stringify(result));
-          }
+        const ids = dataArray.map(function (el) {
+          return mongoose.Types.ObjectId(el);
         });
+        if (data[0].FavouriteJobs) {
+          const { length } = data[0].FavouriteJobs;
+          result.count = { length };
+        }
+        const jobResults = await Job.aggregate([
+          {
+            $match: { _id: { $in: ids } },
+          },
+          {
+            $lookup: {
+              from: 'companies',
+              localField: 'CompanyID',
+              foreignField: 'CompanyID',
+              as: 'jobdetails',
+            },
+          },
+        ])
+          .limit(10)
+          .skip(PageNo * 10);
+        result.job = jobResults;
+
+        res.writeHead(200, {
+          'Content-Type': 'application/json',
+        });
+        res.end(JSON.stringify(result));
       }
     });
   } catch (error) {
@@ -1191,7 +1273,7 @@ const getAppliedJobs = async (req, res) => {
   try {
     const { StudentID, PageNo } = req.query;
     const result = {};
-    await Student.find({ StudentID }, { AppliedJobs: 1 }, (err, data) => {
+    await Student.find({ StudentID }, { AppliedJobs: 1 }, async (err, data) => {
       if (err) {
         res.writeHead(500, {
           'Content-Type': 'application/json',
@@ -1200,27 +1282,34 @@ const getAppliedJobs = async (req, res) => {
       }
       if (data) {
         const dataArray = data[0].AppliedJobs.slice(PageNo * 10, PageNo * 10 + 10);
-        const { length } = data[0].AppliedJobs;
-        result.count = { length };
-        const filterArray = [];
-        for (let i = 0; i < dataArray.length; i += 1) {
-          filterArray.push({ _id: dataArray[i] });
-        }
-        Job.find({ $or: filterArray }, (err1, data1) => {
-          if (err1) {
-            res.writeHead(500, {
-              'Content-Type': 'application/json',
-            });
-            res.end('Network Error');
-          }
-          if (data1) {
-            result.jobs = data1;
-            res.writeHead(200, {
-              'Content-Type': 'application/json',
-            });
-            res.end(JSON.stringify(result));
-          }
+        const ids = dataArray.map(function (el) {
+          return mongoose.Types.ObjectId(el);
         });
+        if (data[0].AppliedJobs) {
+          const { length } = data[0].AppliedJobs;
+          result.count = { length };
+        }
+        const jobResults = await Job.aggregate([
+          {
+            $match: { _id: { $in: ids } },
+          },
+          {
+            $lookup: {
+              from: 'companies',
+              localField: 'CompanyID',
+              foreignField: 'CompanyID',
+              as: 'jobdetails',
+            },
+          },
+        ])
+          .limit(10)
+          .skip(PageNo * 10);
+        result.job = jobResults;
+
+        res.writeHead(200, {
+          'Content-Type': 'application/json',
+        });
+        res.end(JSON.stringify(result));
       }
     });
   } catch (error) {
@@ -1229,6 +1318,143 @@ const getAppliedJobs = async (req, res) => {
     });
     res.end('Network Error');
   }
+};
+
+// To get the salary reviews
+const companyPhotos = async (req, res) => {
+  try {
+    const { PageNo, CompanyID } = req.query;
+    const results = await Photo.find({ CompanyID })
+      .limit(10)
+      .skip(PageNo * 10);
+    const count2 = await Photo.countDocuments({ CompanyID });
+    const count = count2;
+    const resultData = { results, count };
+    res.writeHead(200, { 'content-type': 'text/json' });
+    res.end(JSON.stringify(resultData));
+  } catch (error) {
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  }
+  return res;
+};
+
+// To get the salary reviews
+const studentCompanyPhotos = async (req, res) => {
+  try {
+    const { PageNo, StudentID } = req.query;
+    const results = await Photo.find({ StudentID })
+      .limit(10)
+      .skip(PageNo * 10);
+    const count2 = await Photo.countDocuments({ StudentID });
+    const count = count2;
+    const resultData = { results, count };
+    res.writeHead(200, { 'content-type': 'text/json' });
+    res.end(JSON.stringify(resultData));
+  } catch (error) {
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  }
+  return res;
+};
+// To get the salary reviews
+const addCompanyPhotos = async (req, res) => {
+  try {
+    const { StudentID, CompanyID, Photos, CompanyName } = req.body;
+    const count2 = await Photo.countDocuments({ StudentID });
+    let ID = count2 + 1;
+    let PhotoURL = null;
+    // eslint-disable-next-line no-restricted-syntax
+    for (PhotoURL of Photos) {
+      const photo = new Photo({
+        ID,
+        CompanyID,
+        StudentID,
+        // eslint-disable-next-line no-undef
+        PhotoURL,
+        DateUploaded: Date.now(),
+        CompanyName,
+        Status: 'Not Approved',
+      });
+      // eslint-disable-next-line no-await-in-loop
+      await photo.save();
+      ID += 1;
+    }
+    Company.findOneAndUpdate(
+      { CompanyID },
+      { $inc: { PhotoCount: Photos.length } },
+
+      (err, results) => {
+        if (err) {
+          res.writeHead(500, { 'content-type': 'text/json' });
+          res.end(JSON.stringify('Network'));
+        }
+        if (results) {
+          res.writeHead(200, { 'content-type': 'text/json' });
+          res.end(JSON.stringify('Photos Review Added'));
+        }
+      }
+    );
+  } catch (error) {
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  }
+  return res;
+};
+
+const searchSalary = async (req, res) => {
+  try {
+    const { searchString, PageNo } = req.query;
+    const resultData = {};
+    await Company.find(
+      { CompanyName: { $regex: `${searchString}`, $options: 'i' } },
+      { CompanyID: 1, CompanyName: 1, ProfileImg: 1, Website: 1, SalaryReviewCount: 1 },
+      async (err, result) => {
+        if (err) {
+          res.writeHead(500, { 'content-type': 'text/json' });
+          res.end(JSON.stringify('Network Error'));
+        }
+        if (result) {
+          res.writeHead(200, { 'content-type': 'text/json' });
+          resultData.result = { result };
+        } else {
+          res.writeHead(404, { 'content-type': 'text/json' });
+          res.end(JSON.stringify('No data found'));
+        }
+      }
+    )
+      .limit(10)
+      .skip(PageNo * 10);
+    const count = await Company.find({
+      CompanyName: { $regex: `${searchString}`, $options: 'i' },
+    }).countDocuments();
+    resultData.count = { count };
+    res.end(JSON.stringify(resultData));
+  } catch (error) {
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  }
+  return res;
+};
+
+const companyViewCount = async (req, res) => {
+  try {
+    const { CompanyID } = req.body;
+    const companyModel = await Company.find({ CompanyID }, { ViewCount: 1 });
+    let ViewCount = null;
+    if (companyModel[0].ViewCount) {
+      ViewCount = companyModel[0].ViewCount + 1;
+    } else {
+      ViewCount = 1;
+    }
+    await Company.updateOne({ CompanyID }, { ViewCount });
+    res.writeHead(200, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Updated the view count of the company'));
+  } catch (error) {
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  }
+  return res;
 };
 
 module.exports = {
@@ -1259,5 +1485,13 @@ module.exports = {
   addCompanyReview,
   companyHelpfulReview,
   interviewData,
+  getInterviewReivewStudent,
+  studentSalaryReview,
+  studentCompanyReview,
+  companyPhotos,
+  studentCompanyPhotos,
+  addCompanyPhotos,
+  searchSalary,
+  companyViewCount,
   // getAllReview,
 };
