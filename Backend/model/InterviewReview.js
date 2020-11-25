@@ -29,6 +29,10 @@ const Interviewschema = new mongoose.Schema({
   },
   InterviewQuestions: { type: String, required: true },
   Answers: { type: String, required: true },
+  StreetAddress: { type: String, required: true },
+  City: { type: String, required: true },
+  State: { type: String, required: true },
+  Zip: { type: Number, min: 10000, max: 99999, required: true },
 });
 mongoose.set('useCreateIndex', true);
 Interviewschema.index({ InterviewReviewID: 1 }, { unique: true });

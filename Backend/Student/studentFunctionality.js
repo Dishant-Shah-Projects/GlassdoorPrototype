@@ -1,4 +1,5 @@
 /* eslint-disable no-await-in-loop */
+/* eslint-disable no-await-in-loop */
 /* eslint-disable no-unused-vars */
 /* eslint-disable func-names */
 /* eslint-disable no-underscore-dangle */
@@ -65,19 +66,32 @@ const navbar = async (req, res) => {
   return res;
 };
 
-// To fetch the avgRating of a company
-const fetchAvgRating = async (ID) => {
-  try {
-    const fetchAvgRatingQuery = 'CALL avgRating(?)';
-    const con = await mysqlConnection();
-    const [results, fields] = await con.query(fetchAvgRatingQuery, ID);
-    con.end();
-    if (results[0][0].AvgRating === null) return 0;
-    return results[0][0].AvgRating;
-  } catch (error) {
-    return 0;
-  }
-};
+// // To fetch the avgRating of a company
+// const fetchAvgRating = async (ID) => {
+//   try {
+//     let pipeline = [
+//       { $match: { CompanyID: ID } },
+//       {
+//         $group: {
+//           _id: '$CompanyID',
+//           adAvg: { $avg: '$Rating' },
+//         },
+//       },
+//     ];
+
+//     let res = await General.aggregate(pipeline);
+//     console.log(res);
+
+//     const fetchAvgRatingQuery = 'CALL avgRating(?)';
+//     const con = await mysqlConnection();
+//     const [results, fields] = await con.query(fetchAvgRatingQuery, ID);
+//     con.end();
+//     if (results[0][0].AvgRating === null) return 0;
+//     return results[0][0].AvgRating;
+//   } catch (error) {
+//     return 0;
+//   }
+// };
 
 // fetch the results of the company search
 const searchCompany = async (req, res) => {
@@ -386,23 +400,38 @@ const searchInterview = async (req, res) => {
   // eslint-disable-next-line no-unused-vars
   const { SearchString, State, PageNo } = req.query;
   try {
-    const results = await Interview.find({
+    let results = await Interview.find({
       CompanyName: { $regex: `.*${SearchString}.*` },
+      State,
     })
       .limit(10)
       .skip(PageNo * 10);
     // console.log(results);
-    const temp = await Interview.find({
+    const ProfileImgs = [];
+    for (let i = 0; i < results.length; i += 1) {
+      // eslint-disable-next-line no-await-in-loop
+      const company = await Company.findOne({ CompanyID: results[i].CompanyID }).select(
+        'ProfileImg'
+      );
+      if (company.ProfileImg) {
+        ProfileImgs.push(company.ProfileImg);
+      } else {
+        console.log('apple)');
+        ProfileImgs.push(null);
+      }
+    }
+    const temp = await Interview.countDocuments({
       CompanyName: { $regex: `.*${SearchString}.*` },
+      State,
     });
     let count = null;
     if (temp) {
       // console.log(temp);
-      count = temp.length;
+      count = temp;
     } else {
       count = 0;
     }
-    const resultData = { results, count };
+    const resultData = { results, ProfileImgs, count };
     res.writeHead(200, { 'content-type': 'text/json' });
     res.end(JSON.stringify(resultData));
   } catch (error) {
@@ -899,8 +928,7 @@ const getInterviewReivew = async (req, res) => {
       ProfileImg = company[0].ProfileImg;
     }
 
-    const count2 = await Interview.find({ CompanyID });
-    const count = count2.length;
+    const count = await Interview.countDocuments({ CompanyID });
     const resultData = { results, ProfileImg, count };
     res.writeHead(200, { 'content-type': 'text/json' });
     res.end(JSON.stringify(resultData));
@@ -944,6 +972,10 @@ const interviewAddReview = async (req, res) => {
     OfferStatus,
     InterviewQuestions,
     Answers,
+    StreetAddress,
+    City,
+    State,
+    Zip,
   } = req.body;
   try {
     const rev = await Interview.findOne({})
@@ -969,6 +1001,10 @@ const interviewAddReview = async (req, res) => {
       OfferStatus,
       InterviewQuestions,
       Answers,
+      StreetAddress,
+      City,
+      State,
+      Zip,
     });
     await review.save();
 
@@ -998,30 +1034,34 @@ const interviewAddReview = async (req, res) => {
 // get the interview Data for the company
 const interviewData = async (req, res) => {
   const { CompanyID } = req.query;
-  let con = null;
   try {
-    const query =
-      'SELECT  sum(case when OverallExperience = "Positive" then 1 else 0 end) as positive,sum(case when OverallExperience = "Negative" then 1 else 0 end) as negative,sum(case when OverallExperience = "Neutral" then 1 else 0 end) as neutral,count(OverallExperience) as total, AVG(Difficulty) as difficulty FROM INTERVIEW_REVIEW WHERE CompanyID=? and Status=?;';
-    con = await mysqlConnection();
-    const [results] = await con.query(query, [CompanyID, 'Approved']);
-    con.end();
+    const pipeline = [
+      { $match: { CompanyID } },
+      {
+        $group: {
+          _id: '$CompanyID',
+          adAvg: { $avg: '$Difficulty' },
+        },
+      },
+    ];
+
+    const result = await Interview.aggregate(pipeline);
+    const pos = await Interview.countDocuments({ CompanyID, OverallExperience: 'Positive' });
+    const neg = await Interview.countDocuments({ CompanyID, OverallExperience: 'Negative' });
+    const neutral = await Interview.countDocuments({ CompanyID, OverallExperience: 'Neutral' });
     const resultObj = {};
     // eslint-disable-next-line func-names
-    resultObj.negative = results[0].negative;
-    resultObj.positive = results[0].positive;
-    resultObj.neutral = results[0].neutral;
-    resultObj.totalInterviews = results[0].total;
-    resultObj.avgDifficulty = results[0].difficulty;
+    resultObj.negative = neg;
+    resultObj.positive = pos;
+    resultObj.neutral = neutral;
+    resultObj.totalInterviews = neutral + pos + neg;
+    resultObj.avgDifficulty = result[0].adAvg;
     res.writeHead(200, { 'content-type': 'text/json' });
     res.end(JSON.stringify(resultObj));
   } catch (error) {
     // eslint-disable-next-line no-console
     res.writeHead(500, { 'content-type': 'text/json' });
     res.end(JSON.stringify('Network Error'));
-  } finally {
-    if (con) {
-      con.end();
-    }
   }
   return res;
 };
