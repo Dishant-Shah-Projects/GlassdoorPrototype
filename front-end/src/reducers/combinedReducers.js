@@ -17,6 +17,7 @@ import CompanyPageReducer from './CompanyPageReducer';
 import ApplicantsListModalReducer from './ApplicantsListModalReducer';
 import JobsListReducer from './JobsListReducer';
 import PostJobModalReducer from './PostJobModalReducer';
+import InterviewListReducer from './InterviewListReducer';
 
 const finalReducers = combineReducers({
   SignupModalViewReducer: SignupModalViewReducer,
@@ -36,7 +37,8 @@ const finalReducers = combineReducers({
   CompanyPageReducer: CompanyPageReducer,
   ApplicantsListModalReducer: ApplicantsListModalReducer,
   JobsListReducer: JobsListReducer,
-  PostJobModalReducer: PostJobModalReducer
+  PostJobModalReducer: PostJobModalReducer,
+  InterviewListReducer: InterviewListReducer,
 });
 
 export default finalReducers;

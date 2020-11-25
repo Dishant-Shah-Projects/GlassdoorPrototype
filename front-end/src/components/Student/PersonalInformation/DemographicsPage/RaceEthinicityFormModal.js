@@ -13,21 +13,26 @@ class RaceEthinicityFormModal extends Component {
 
   updateEthnicity = (event, ethn) => {
     event.preventDefault();
-    const ethinicity = this.state.ethinicity;
-    if (this.state.ethinicity.includes(ethn)) {
-      ethinicity.splice(ethinicity.indexOf(ethn), 1);
+    const studentProfile = this.state.studentProfile;
+    if (studentProfile.Race.includes(ethn)) {
+      // studentProfile = this.state.studentProfile;
+      studentProfile.Race.splice(studentProfile.Race.indexOf(ethn), 1);
     } else {
-      ethinicity.push(ethn);
+      studentProfile.Race.push(ethn);
     }
     this.setState({
-      ethinicity,
+      studentProfile,
     });
   };
 
   render() {
     return (
       <div class="gd-ui-modal css-tb9ljb">
-        <div class="background-overlay" aria-label="Background Overlay"></div>
+        <div
+          style={{ maxWidth: '100%' }}
+          class="background-overlay"
+          aria-label="Background Overlay"
+        ></div>
         <div class="modal_main ">
           <span onClick={this.props.openForm} alt="Close" class="SVGInline modal_closeIcon">
             <svg
@@ -58,7 +63,7 @@ class RaceEthinicityFormModal extends Component {
                   <div>
                     <div
                       class={
-                        this.state.ethinicity.includes(ethnicity)
+                        this.state.studentProfile.Race.includes(ethnicity)
                           ? ' gd-ui-checkbox css-1i7401q'
                           : ' gd-ui-checkbox css-13md0bs'
                       }
@@ -250,7 +255,11 @@ class RaceEthinicityFormModal extends Component {
           </div>
           <div class="bottomShadow"></div>
           <div class="actionBar">
-            <button class="gd-ui-button  css-uk8w9o" data-test="RACE_ETHNICITYSave">
+            <button
+              onClick={(event) => this.props.updateStudentProfile(event, this.state.studentProfile)}
+              class="gd-ui-button  css-uk8w9o"
+              data-test="RACE_ETHNICITYSave"
+            >
               Save
             </button>
           </div>

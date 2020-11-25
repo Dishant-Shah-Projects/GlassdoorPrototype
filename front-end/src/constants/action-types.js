@@ -34,5 +34,6 @@ export const updateApplicantStatus = 'update-applicant-status';
 export const updateReviewList = 'update-review-list';
 export const updateCompanySalariesStore = 'update-company-salaries-store';
 export const updateCompanyPhotosStore = 'update-company-photos-store';
+export const updateInterviewList = 'update-interview-list';
 export const updateReviewFeature = 'update-review-feature-store';
 export const updateReviewFavorite = 'update-review-favorite-store';

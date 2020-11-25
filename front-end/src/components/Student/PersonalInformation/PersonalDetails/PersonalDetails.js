@@ -4,6 +4,9 @@ import ProfileFormModal from './ProfileFormModal';
 import { connect } from 'react-redux';
 import AboutMeModal from './AboutMeModal';
 import SkillModal from './SkillModal';
+import axios from 'axios';
+import serverUrl from '../../../../config';
+import { updateStudentProfile } from '../../../../constants/action-types';
 
 class PersonalDetails extends Component {
   constructor(props) {
@@ -39,11 +42,31 @@ class PersonalDetails extends Component {
   updateStudentProfile = (event, student) => {
     event.preventDefault();
     console.log(student);
-    this.setState({
-      openProfileFormModal: false,
-      openopenAboutMeFormModal: false,
-      openSkillModalForm: false,
-    });
+
+    // event.preventDefault();
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+
+    axios.post(serverUrl + 'student/profileUpdate', student).then(
+      (response) => {
+        console.log('Status Code : ', response.status);
+        if (response.status === 200) {
+          // let studentProfile = { ...this.props.studentInfoStore.studentProfile };
+          // studentProfile.AppliedJobs.push(this.props.selectedJob._id);
+          const payload = {
+            studentProfile: student,
+          };
+          this.props.updateStudentProfile(payload);
+          this.setState({
+            openProfileFormModal: false,
+            openopenAboutMeFormModal: false,
+            openSkillModalForm: false,
+          });
+        }
+      },
+      (error) => {
+        console.log('error:', error.response);
+      }
+    );
   };
 
   render() {
@@ -296,7 +319,8 @@ class PersonalDetails extends Component {
                     </div>
                     <div class="col-12 col-sm-6 col-lg-4 p-0">
                       <div class="d-sm-block d-none">
-                        {this.props.studentInfoStore.studentProfile.PhoneNo.length === 0 ? (
+                        {this.props.studentInfoStore.studentProfile.PhoneNo === null ||
+                        this.props.studentInfoStore.studentProfile.PhoneNo.length === 0 ? (
                           <div class="no-gutters mb-xsm d-flex justify-content-start align-items-start">
                             <div class="col-12">
                               <button
@@ -350,46 +374,6 @@ class PersonalDetails extends Component {
                                   </g>
                                 </svg>
                               </span>
-                              <div class="col-12 col-sm-6 col-lg-4 p-0">
-                                <div class="d-sm-block d-none">
-                                  <div class="no-gutters mb-xsm d-flex justify-content-start align-items-start">
-                                    <div class="col-12">
-                                      <button class="gd-ui-button no-gutters m-0 p-0 d-flex justify-content-start align-items-center profileInfoStyle__addBtn___12Pvw css-1c2vj07">
-                                        <div class="d-flex justify-content-center mr-xsm profileInfoStyle__addIcon___MsVEi profileInfoStyle__entryIcon___2D6u_">
-                                          <span class="SVGInline">
-                                            <svg
-                                              class="SVGInline-svg"
-                                              height="24"
-                                              viewBox="0 0 24 24"
-                                              width="24"
-                                              xmlns="http://www.w3.org/2000/svg"
-                                            >
-                                              <g fill="none" fill-rule="evenodd">
-                                                <circle
-                                                  cx="12"
-                                                  cy="12"
-                                                  fill="#f5f6f7"
-                                                  r="12"
-                                                ></circle>
-                                                <path
-                                                  d="M12.5 12.5H18h-5.5V7zm0 0V18v-5.5H7z"
-                                                  stroke="#1861bf"
-                                                  stroke-linecap="round"
-                                                  stroke-linejoin="round"
-                                                  stroke-width="2"
-                                                ></path>
-                                              </g>
-                                            </svg>
-                                          </span>
-                                        </div>
-                                        <div class="d-flex justify-content-start profileInfoStyle__addCopy___rCroE">
-                                          Add&nbsp;phone number
-                                        </div>
-                                      </button>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
                             </div>
                             <div class="profileInfoStyle__default___3mWZn profileInfoStyle__wrap___102WU">
                               {this.props.studentInfoStore.studentProfile.PhoneNo}
@@ -628,5 +612,16 @@ const mapStateToProps = (state) => {
   };
 };
 
+const mapDispatchToProps = (dispatch) => {
+  return {
+    updateStudentProfile: (payload) => {
+      dispatch({
+        type: updateStudentProfile,
+        payload,
+      });
+    },
+  };
+};
+
 // export default LeftBlock;
-export default connect(mapStateToProps, null)(PersonalDetails);
+export default connect(mapStateToProps, mapDispatchToProps)(PersonalDetails);

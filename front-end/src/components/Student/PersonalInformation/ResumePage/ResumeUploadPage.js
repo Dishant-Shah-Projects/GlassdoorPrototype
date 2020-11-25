@@ -1,23 +1,37 @@
 import React, { Component } from 'react';
-import Navbar from '../../../Employer/Common/Navbar';
 import './ResumeUploadPage.css';
 import { Redirect } from 'react-router-dom';
 import { history } from '../../../../App';
 import { openProfileTabOnClick } from '../../../../constants/action-types';
 import { connect } from 'react-redux';
+import axios from 'axios';
+import serverUrl from '../../../../config';
+import { updateStudentProfile } from '../../../../constants/action-types';
 
 class ResumeUploadPage extends Component {
   constructor(props) {
     super(props);
-    this.state = { file: null, redirect: null };
+    this.state = {
+      file: null,
+      redirect: null,
+      msg: false,
+      showPromaryButton: false,
+      msg2: false,
+      savedResumeUrl: null,
+    };
   }
 
   onchangeFileHandler = (event) => {
     if (event.target.files.length === 1) {
       console.log('file: ', event.target.files[0].name);
-      this.setState({ file: event.target.files[0] });
+      this.setState({
+        file: event.target.files[0],
+        showPromaryButton: false,
+        msg2: false,
+        savedResumeUrl: null,
+      });
     } else {
-      this.setState({ file: null });
+      this.setState({ file: null, showPromaryButton: false, msg2: false, savedResumeUrl: null });
     }
   };
 
@@ -27,6 +41,78 @@ class ResumeUploadPage extends Component {
     localStorage.setItem('openTab', 'Resumes');
     let payload = { openTab: 'Resumes' };
     this.props.openProfileTabOnClick(payload);
+  };
+
+  uploadResume = (event) => {
+    event.preventDefault();
+    if (this.state.file !== null) {
+      axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+      let formData = new FormData();
+      formData.append('file', this.state.file, this.state.file.name);
+      formData.append('StudentID', localStorage.getItem('userId'));
+      axios({
+        method: 'post',
+        url: serverUrl + 'student/resumesAdd',
+        data: formData,
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
+        .then((response) => {
+          // console.log('Status Code : ', response.status);
+          if (response.status === 200) {
+            // console.log('Product Saved');
+
+            this.setState({
+              file: null,
+              msg: true,
+              showPromaryButton: true,
+              savedResumeUrl: response.data,
+            });
+            let studentProfile = { ...this.props.studentInfoStore.studentProfile };
+            studentProfile.Resumes.push(response.data);
+            const payload = {
+              studentProfile,
+            };
+            this.props.updateStudentProfile(payload);
+          } else if (parseInt(response.status) === 400) {
+            // console.log(response.data);
+          }
+        })
+        .catch((error) => {
+          this.setState({
+            msg: true,
+          });
+        });
+    }
+  };
+
+  updatePrimaryResume = (event) => {
+    event.preventDefault();
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    let student = { ...this.props.studentInfoStore.studentProfile };
+    student.ResumePrimary = this.state.savedResumeUrl;
+    axios.post(serverUrl + 'student/profileUpdate', student).then(
+      (response) => {
+        console.log('Status Code : ', response.status);
+        if (response.status === 200) {
+          // let studentProfile = { ...this.props.studentInfoStore.studentProfile };
+          // studentProfile.AppliedJobs.push(this.props.selectedJob._id);
+          this.setState({
+            file: null,
+            msg: false,
+            showPromaryButton: false,
+            savedResumeUrl: null,
+            msg2: true,
+          });
+          const payload = {
+            studentProfile: student,
+          };
+          this.props.updateStudentProfile(payload);
+        }
+      },
+      (error) => {
+        console.log('error:', error.response);
+      }
+    );
   };
 
   render() {
@@ -265,15 +351,27 @@ class ResumeUploadPage extends Component {
                                         </div>
                                       </div>
                                     </div>
-                                    <div class="d-flex justify-content-center css-y1gt6f e5i7ex40">
+                                    <div
+                                      style={{ flexDirection: 'column' }}
+                                      class="d-flex justify-content-center css-y1gt6f e5i7ex40"
+                                    >
+                                      {this.state.msg ? (
+                                        <span style={{ textAlign: 'center' }}>
+                                          Image Uploaded Succesfully!!!
+                                        </span>
+                                      ) : (
+                                        ''
+                                      )}
+                                      {this.state.msg2 ? (
+                                        <span style={{ textAlign: 'center' }}>
+                                          Primary Resume Updated!!!
+                                        </span>
+                                      ) : (
+                                        ''
+                                      )}
                                       <button
-                                        class="gd-ui-button d-block d-md-none css-1iue7ku"
-                                        data-test="uploadResumeBtn"
-                                        disabled={this.state.file === null}
-                                      >
-                                        Upload Resume
-                                      </button>
-                                      <button
+                                        style={{ marginTop: '10px' }}
+                                        onClick={this.uploadResume}
                                         class="gd-ui-button d-none d-md-block css-uk8w9o"
                                         data-test="uploadResumeBtn"
                                         disabled={this.state.file === null}
@@ -281,6 +379,24 @@ class ResumeUploadPage extends Component {
                                         Upload Resume
                                       </button>
                                     </div>
+                                    {this.state.showPromaryButton ? (
+                                      <div
+                                        style={{ flexDirection: 'column' }}
+                                        class="d-flex justify-content-center css-y1gt6f e5i7ex40"
+                                      >
+                                        <button
+                                          style={{ marginTop: '10px' }}
+                                          onClick={this.updatePrimaryResume}
+                                          class="gd-ui-button d-none d-md-block css-uk8w9o"
+                                          data-test="uploadResumeBtn"
+                                          disabled={this.state.savedResumeUrl === null}
+                                        >
+                                          Make last uploaded resume as primary
+                                        </button>
+                                      </div>
+                                    ) : (
+                                      ''
+                                    )}
                                   </div>
                                 </div>
                               </span>
@@ -302,6 +418,12 @@ class ResumeUploadPage extends Component {
 }
 
 // export default ResumeUploadPage;
+const mapStateToProps = (state) => {
+  const { studentInfoStore } = state.StudentCompleteInfoReducer;
+  return {
+    studentInfoStore,
+  };
+};
 
 const mapDispatchToProps = (dispatch) => {
   return {
@@ -311,8 +433,14 @@ const mapDispatchToProps = (dispatch) => {
         payload,
       });
     },
+    updateStudentProfile: (payload) => {
+      dispatch({
+        type: updateStudentProfile,
+        payload,
+      });
+    },
   };
 };
 
 // export default LoginBody;
-export default connect(null, mapDispatchToProps)(ResumeUploadPage);
+export default connect(mapStateToProps, mapDispatchToProps)(ResumeUploadPage);

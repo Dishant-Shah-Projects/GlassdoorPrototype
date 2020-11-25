@@ -2,16 +2,19 @@ import React, { Component } from 'react';
 import './JobPreferencePage.css';
 import { connect } from 'react-redux';
 import { updateStudentProfile } from '../../../../constants/action-types';
+import axios from 'axios';
+import serverUrl from '../../../../config';
 
 class JobPreferencePage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      student: { ...this.props.studentInfoStore.studentProfile },
+      JobType: [],
       showJobTitleInput: false,
       showJobSearchDropdown: false,
       showJobTypeDropdown: false,
       showtargetSalaryInput: false,
+      Range: undefined,
       jonStatuses: [
         'Select',
         'Not looking',
@@ -21,6 +24,56 @@ class JobPreferencePage extends Component {
       ],
     };
   }
+
+  sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+  componentDidMount() {
+    this.sleep(20000);
+    const JobType = [...this.props.studentInfoStore.studentProfile.JobType];
+    const Range = this.props.studentInfoStore.studentProfile.TargetSalary;
+    console.log('JobType component', JobType);
+    console.log(
+      'this.props.studentInfoStore.studentProfile.JobType',
+      this.props.studentInfoStore.studentProfile.JobType
+    );
+    this.setState({
+      Range,
+      JobType,
+    });
+  }
+
+  selectJobType = (event, jobType) => {
+    event.preventDefault();
+    const JobType = [...this.state.JobType];
+    const index = JobType.indexOf(jobType);
+    if (index === -1) {
+      JobType.push(jobType);
+    } else {
+      JobType.splice(index, 1);
+    }
+    this.setState({
+      JobType,
+    });
+  };
+
+  saveJobTypes = (event) => {
+    event.preventDefault();
+    let JobType = [...this.state.JobType];
+    const student = { ...this.props.studentInfoStore.studentProfile };
+    student.JobType = JobType;
+    this.updateStudentProfile(student);
+  };
+
+  clearAllJobTypes = (event) => {
+    event.preventDefault();
+    let JobType = [...this.state.JobType];
+    JobType = [];
+    this.setState({
+      JobType,
+    });
+  };
+
   toggleJobSearchDropdown = (event) => {
     event.preventDefault();
     this.setState({
@@ -36,15 +89,32 @@ class JobPreferencePage extends Component {
 
   togglesJobTypeDropdown = (event) => {
     event.preventDefault();
-    this.setState({
-      showJobTypeDropdown: !this.state.showJobTypeDropdown,
-    });
+
+    if (this.state.showJobTypeDropdown) {
+      const JobType = [...this.props.studentInfoStore.studentProfile.JobType];
+      this.setState({
+        JobType,
+        showJobTypeDropdown: !this.state.showJobTypeDropdown,
+      });
+    } else {
+      this.setState({
+        showJobTypeDropdown: !this.state.showJobTypeDropdown,
+      });
+    }
   };
 
   openTargetSalaryinput = (event) => {
-    this.setState({
-      showtargetSalaryInput: !this.state.showtargetSalaryInput,
-    });
+    if (this.state.showtargetSalaryInput) {
+      const Range = this.props.studentInfoStore.studentProfile.TargetSalary;
+      this.setState({
+        Range,
+        showtargetSalaryInput: !this.state.showtargetSalaryInput,
+      });
+    } else {
+      this.setState({
+        showtargetSalaryInput: !this.state.showtargetSalaryInput,
+      });
+    }
   };
 
   updateJobStatus = (event, JobStatus) => {
@@ -57,6 +127,7 @@ class JobPreferencePage extends Component {
   onChangeJobTitleHandler = (event) => {
     const studentProfile = { ...this.props.studentInfoStore.studentProfile };
     studentProfile.PreferredJobTitle = event.target.value;
+    // update in reducer
     const payload = {
       studentProfile,
     };
@@ -79,13 +150,70 @@ class JobPreferencePage extends Component {
     }
   };
 
+  // updateStudentProfile = (student) => {
+  //   console.log(student);
+  //   this.setState({
+  //     showJobSearchDropdown: false,
+  //     showJobTitleInput: false,
+  //   });
+  // };
   updateStudentProfile = (student) => {
     console.log(student);
+
+    // event.preventDefault();
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+
+    axios.post(serverUrl + 'student/profileUpdate', student).then(
+      (response) => {
+        console.log('Status Code : ', response.status);
+        if (response.status === 200) {
+          // let studentProfile = { ...this.props.studentInfoStore.studentProfile };
+          // studentProfile.AppliedJobs.push(this.props.selectedJob._id);
+          const payload = {
+            studentProfile: student,
+          };
+          this.props.updateStudentProfile(payload);
+          this.setState({
+            showJobSearchDropdown: false,
+            showJobTitleInput: false,
+            showJobTypeDropdown: false,
+            showtargetSalaryInput: false,
+          });
+        }
+      },
+      (error) => {
+        console.log('error:', error.response);
+      }
+    );
+  };
+
+  updateRange = (event) => {
     this.setState({
-      showJobSearchDropdown: false,
-      showJobTitleInput: false,
+      Range: event.target.value,
     });
   };
+
+  saveRange = (event) => {
+    event.preventDefault();
+    const student = { ...this.props.studentInfoStore.studentProfile };
+    student.TargetSalary = this.state.Range;
+    this.updateStudentProfile(student);
+  };
+
+  updateRelocation = (event) => {
+    event.preventDefault();
+    const student = { ...this.props.studentInfoStore.studentProfile };
+    student.OpentoRelocation = !student.OpentoRelocation;
+    this.updateStudentProfile(student);
+  };
+
+  updateRemoteWork = (event) => {
+    event.preventDefault();
+    const student = { ...this.props.studentInfoStore.studentProfile };
+    student.WorkRemotely = !student.WorkRemotely;
+    this.updateStudentProfile(student);
+  };
+
   render() {
     return (
       <div class="col-12 col-md-8">
@@ -215,132 +343,6 @@ class JobPreferencePage extends Component {
                                 <span class="dropdownOptionLabel">{status}</span>
                               </li>
                             ))}
-                            {/* <li
-                              class="dropdownOption  checked "
-                              role="option"
-                              aria-selected="true"
-                              id="option_0_eb1284a-6177-7ae-5d30-fe3c3ea56c5"
-                            >
-                              <div class="checkmark">
-                                <span alt="" class="SVGInline">
-                                  <svg
-                                    class="SVGInline-svg"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="24"
-                                    height="24"
-                                    viewBox="0 0 24 24"
-                                  >
-                                    <path
-                                      d="M9.89 15.76l-2.64-2.363a.793.793 0 010-1.157.884.884 0 011.211 0l2.039 1.785 5.039-5.785a.884.884 0 011.21 0 .793.793 0 010 1.157L11.1 15.76a.884.884 0 01-1.21 0z"
-                                      fill="currentColor"
-                                      fill-rule="evenodd"
-                                    ></path>
-                                  </svg>
-                                </span>
-                              </div>
-                              <span class="dropdownOptionLabel">Select</span>
-                            </li>
-                            <li
-                              class="dropdownOption   "
-                              role="option"
-                              aria-selected="false"
-                              id="option_1_eb1284a-6177-7ae-5d30-fe3c3ea56c5"
-                            >
-                              <div class="checkmark">
-                                <span alt="" class="SVGInline">
-                                  <svg
-                                    class="SVGInline-svg"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="24"
-                                    height="24"
-                                    viewBox="0 0 24 24"
-                                  >
-                                    <path
-                                      d="M9.89 15.76l-2.64-2.363a.793.793 0 010-1.157.884.884 0 011.211 0l2.039 1.785 5.039-5.785a.884.884 0 011.21 0 .793.793 0 010 1.157L11.1 15.76a.884.884 0 01-1.21 0z"
-                                      fill="currentColor"
-                                      fill-rule="evenodd"
-                                    ></path>
-                                  </svg>
-                                </span>
-                              </div>
-                              <span class="dropdownOptionLabel">Not looking</span>
-                            </li>
-                            <li
-                              class="dropdownOption   "
-                              role="option"
-                              aria-selected="false"
-                              id="option_2_eb1284a-6177-7ae-5d30-fe3c3ea56c5"
-                            >
-                              <div class="checkmark">
-                                <span alt="" class="SVGInline">
-                                  <svg
-                                    class="SVGInline-svg"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="24"
-                                    height="24"
-                                    viewBox="0 0 24 24"
-                                  >
-                                    <path
-                                      d="M9.89 15.76l-2.64-2.363a.793.793 0 010-1.157.884.884 0 011.211 0l2.039 1.785 5.039-5.785a.884.884 0 011.21 0 .793.793 0 010 1.157L11.1 15.76a.884.884 0 01-1.21 0z"
-                                      fill="currentColor"
-                                      fill-rule="evenodd"
-                                    ></path>
-                                  </svg>
-                                </span>
-                              </div>
-                              <span class="dropdownOptionLabel">Not looking, but open</span>
-                            </li>
-                            <li
-                              class="dropdownOption   "
-                              role="option"
-                              aria-selected="false"
-                              id="option_3_eb1284a-6177-7ae-5d30-fe3c3ea56c5"
-                            >
-                              <div class="checkmark">
-                                <span alt="" class="SVGInline">
-                                  <svg
-                                    class="SVGInline-svg"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="24"
-                                    height="24"
-                                    viewBox="0 0 24 24"
-                                  >
-                                    <path
-                                      d="M9.89 15.76l-2.64-2.363a.793.793 0 010-1.157.884.884 0 011.211 0l2.039 1.785 5.039-5.785a.884.884 0 011.21 0 .793.793 0 010 1.157L11.1 15.76a.884.884 0 01-1.21 0z"
-                                      fill="currentColor"
-                                      fill-rule="evenodd"
-                                    ></path>
-                                  </svg>
-                                </span>
-                              </div>
-                              <span class="dropdownOptionLabel">Casually looking</span>
-                            </li>
-                            <li
-                              class="dropdownOption   "
-                              role="option"
-                              aria-selected="false"
-                              id="option_4_eb1284a-6177-7ae-5d30-fe3c3ea56c5"
-                            >
-                              <div class="checkmark">
-                                <span alt="" class="SVGInline">
-                                  <svg
-                                    class="SVGInline-svg"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="24"
-                                    height="24"
-                                    viewBox="0 0 24 24"
-                                  >
-                                    <path
-                                      d="M9.89 15.76l-2.64-2.363a.793.793 0 010-1.157.884.884 0 011.211 0l2.039 1.785 5.039-5.785a.884.884 0 011.21 0 .793.793 0 010 1.157L11.1 15.76a.884.884 0 01-1.21 0z"
-                                      fill="currentColor"
-                                      fill-rule="evenodd"
-                                    ></path>
-                                  </svg>
-                                </span>
-                              </div>
-                              <span class="dropdownOptionLabel">Actively looking</span>
-                            </li>
-                           */}{' '}
                           </ul>
                         </div>
                       </div>
@@ -480,11 +482,11 @@ class JobPreferencePage extends Component {
                       class="css-1kd4gul"
                     >
                       <div onClick={this.togglesJobTypeDropdown} class="selectedLabel">
-                        {this.state.student.JobType.length === 0
+                        {this.state.JobType.length === 0
                           ? 'Job Types'
-                          : this.state.student.JobType.length === 1
-                          ? this.state.student.JobType
-                          : 'Job Types(' + this.state.student.JobType.length + ')'}
+                          : this.state.JobType.length === 1
+                          ? this.state.JobType
+                          : 'Job Types(' + this.state.JobType.length + ')'}
                         {this.state.showJobTypeDropdown ? (
                           <span alt="" class="SVGInline arrowUp">
                             <svg
@@ -531,8 +533,9 @@ class JobPreferencePage extends Component {
                           <ul>
                             {this.props.masterData.JobType.map((jobType) => (
                               <li
+                                onClick={(event) => this.selectJobType(event, jobType)}
                                 class={
-                                  this.state.student.JobType.includes(jobType)
+                                  this.state.JobType.includes(jobType)
                                     ? 'dropdownOption multiple checked '
                                     : 'dropdownOption multiple '
                                 }
@@ -561,182 +564,6 @@ class JobPreferencePage extends Component {
                                 <span class="dropdownOptionLabel">{jobType}</span>
                               </li>
                             ))}
-                            {/* <li
-                              class="dropdownOption multiple  "
-                              role="option"
-                              aria-selected="false"
-                              id="option_0_5ce00f5-d42b-7743-7783-fbb8b31485e"
-                            >
-                              <div class="checkmark">
-                                <span alt="" class="SVGInline">
-                                  <svg
-                                    class="SVGInline-svg"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="24"
-                                    height="24"
-                                    viewBox="0 0 24 24"
-                                  >
-                                    <path
-                                      d="M9.89 15.76l-2.64-2.363a.793.793 0 010-1.157.884.884 0 011.211 0l2.039 1.785 5.039-5.785a.884.884 0 011.21 0 .793.793 0 010 1.157L11.1 15.76a.884.884 0 01-1.21 0z"
-                                      fill="currentColor"
-                                      fill-rule="evenodd"
-                                    ></path>
-                                  </svg>
-                                </span>
-                              </div>
-                              <span class="dropdownOptionLabel">Full-time</span>
-                            </li>
-                            <li
-                              class="dropdownOption multiple  "
-                              role="option"
-                              aria-selected="false"
-                              id="option_1_5ce00f5-d42b-7743-7783-fbb8b31485e"
-                            >
-                              <div class="checkmark">
-                                <span alt="" class="SVGInline">
-                                  <svg
-                                    class="SVGInline-svg"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="24"
-                                    height="24"
-                                    viewBox="0 0 24 24"
-                                  >
-                                    <path
-                                      d="M9.89 15.76l-2.64-2.363a.793.793 0 010-1.157.884.884 0 011.211 0l2.039 1.785 5.039-5.785a.884.884 0 011.21 0 .793.793 0 010 1.157L11.1 15.76a.884.884 0 01-1.21 0z"
-                                      fill="currentColor"
-                                      fill-rule="evenodd"
-                                    ></path>
-                                  </svg>
-                                </span>
-                              </div>
-                              <span class="dropdownOptionLabel">Part-time</span>
-                            </li>
-                            <li
-                              class="dropdownOption multiple  "
-                              role="option"
-                              aria-selected="false"
-                              id="option_2_5ce00f5-d42b-7743-7783-fbb8b31485e"
-                            >
-                              <div class="checkmark">
-                                <span alt="" class="SVGInline">
-                                  <svg
-                                    class="SVGInline-svg"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="24"
-                                    height="24"
-                                    viewBox="0 0 24 24"
-                                  >
-                                    <path
-                                      d="M9.89 15.76l-2.64-2.363a.793.793 0 010-1.157.884.884 0 011.211 0l2.039 1.785 5.039-5.785a.884.884 0 011.21 0 .793.793 0 010 1.157L11.1 15.76a.884.884 0 01-1.21 0z"
-                                      fill="currentColor"
-                                      fill-rule="evenodd"
-                                    ></path>
-                                  </svg>
-                                </span>
-                              </div>
-                              <span class="dropdownOptionLabel">Contract</span>
-                            </li>
-                            <li
-                              class="dropdownOption multiple  "
-                              role="option"
-                              aria-selected="false"
-                              id="option_3_5ce00f5-d42b-7743-7783-fbb8b31485e"
-                            >
-                              <div class="checkmark">
-                                <span alt="" class="SVGInline">
-                                  <svg
-                                    class="SVGInline-svg"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="24"
-                                    height="24"
-                                    viewBox="0 0 24 24"
-                                  >
-                                    <path
-                                      d="M9.89 15.76l-2.64-2.363a.793.793 0 010-1.157.884.884 0 011.211 0l2.039 1.785 5.039-5.785a.884.884 0 011.21 0 .793.793 0 010 1.157L11.1 15.76a.884.884 0 01-1.21 0z"
-                                      fill="currentColor"
-                                      fill-rule="evenodd"
-                                    ></path>
-                                  </svg>
-                                </span>
-                              </div>
-                              <span class="dropdownOptionLabel">Internship</span>
-                            </li>
-                            <li
-                              class="dropdownOption multiple  "
-                              role="option"
-                              aria-selected="false"
-                              id="option_4_5ce00f5-d42b-7743-7783-fbb8b31485e"
-                            >
-                              <div class="checkmark">
-                                <span alt="" class="SVGInline">
-                                  <svg
-                                    class="SVGInline-svg"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="24"
-                                    height="24"
-                                    viewBox="0 0 24 24"
-                                  >
-                                    <path
-                                      d="M9.89 15.76l-2.64-2.363a.793.793 0 010-1.157.884.884 0 011.211 0l2.039 1.785 5.039-5.785a.884.884 0 011.21 0 .793.793 0 010 1.157L11.1 15.76a.884.884 0 01-1.21 0z"
-                                      fill="currentColor"
-                                      fill-rule="evenodd"
-                                    ></path>
-                                  </svg>
-                                </span>
-                              </div>
-                              <span class="dropdownOptionLabel">Temporary</span>
-                            </li>
-                            <li
-                              class="dropdownOption multiple  "
-                              role="option"
-                              aria-selected="false"
-                              id="option_5_5ce00f5-d42b-7743-7783-fbb8b31485e"
-                            >
-                              <div class="checkmark">
-                                <span alt="" class="SVGInline">
-                                  <svg
-                                    class="SVGInline-svg"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="24"
-                                    height="24"
-                                    viewBox="0 0 24 24"
-                                  >
-                                    <path
-                                      d="M9.89 15.76l-2.64-2.363a.793.793 0 010-1.157.884.884 0 011.211 0l2.039 1.785 5.039-5.785a.884.884 0 011.21 0 .793.793 0 010 1.157L11.1 15.76a.884.884 0 01-1.21 0z"
-                                      fill="currentColor"
-                                      fill-rule="evenodd"
-                                    ></path>
-                                  </svg>
-                                </span>
-                              </div>
-                              <span class="dropdownOptionLabel">Apprenticeship</span>
-                            </li>
-                            <li
-                              class="dropdownOption multiple  "
-                              role="option"
-                              aria-selected="false"
-                              id="option_6_5ce00f5-d42b-7743-7783-fbb8b31485e"
-                            >
-                              <div class="checkmark">
-                                <span alt="" class="SVGInline">
-                                  <svg
-                                    class="SVGInline-svg"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="24"
-                                    height="24"
-                                    viewBox="0 0 24 24"
-                                  >
-                                    <path
-                                      d="M9.89 15.76l-2.64-2.363a.793.793 0 010-1.157.884.884 0 011.211 0l2.039 1.785 5.039-5.785a.884.884 0 011.21 0 .793.793 0 010 1.157L11.1 15.76a.884.884 0 01-1.21 0z"
-                                      fill="currentColor"
-                                      fill-rule="evenodd"
-                                    ></path>
-                                  </svg>
-                                </span>
-                              </div>
-                              <span class="dropdownOptionLabel">Entry-level</span>
-                            </li>
-                           */}
                           </ul>
                           <div class="scrollBar">
                             <div
@@ -746,8 +573,22 @@ class JobPreferencePage extends Component {
                           </div>
                         </div>
                         <div class="dropdownFooter">
-                          <button class="gd-ui-button buttonClear css-1ffg0gd">Clear</button>
-                          <button class="gd-ui-button buttonApply css-1iue7ku">Apply</button>
+                          {this.state.JobType.length > 0 ? (
+                            <button
+                              onClick={this.clearAllJobTypes}
+                              class="gd-ui-button buttonClear css-1ffg0gd"
+                            >
+                              Clear
+                            </button>
+                          ) : (
+                            ''
+                          )}
+                          <button
+                            onClick={this.saveJobTypes}
+                            class="gd-ui-button buttonApply css-1iue7ku"
+                          >
+                            Apply
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -764,6 +605,16 @@ class JobPreferencePage extends Component {
                   <div class="desiredSalaryStyle__editIcons___32777"></div>
                 </div>
                 <div>
+                  {this.state.Range !== undefined && this.state.Range >= 0 ? (
+                    <div
+                      style={{ width: '30%', textAlign: 'center' }}
+                      class="chip idealJobStyle__chip___3I3VC"
+                    >
+                      <span class="pr-sm">{this.state.Range} $</span>
+                    </div>
+                  ) : (
+                    ''
+                  )}
                   {this.state.showtargetSalaryInput ? (
                     <span>
                       <div class="">
@@ -777,11 +628,13 @@ class JobPreferencePage extends Component {
                                 </label>
                                 <div class="input-wrapper css-q444d9">
                                   <input
+                                    onChange={this.updateRange}
                                     data-test="payRangeMin"
                                     maxlength="400"
                                     aria-label=""
                                     class="css-ofiv3k"
-                                    value=""
+                                    type="number"
+                                    value={this.state.Range}
                                   />
                                 </div>
                               </div>
@@ -795,13 +648,21 @@ class JobPreferencePage extends Component {
                             >
                               Cancel
                             </button>
-                            <button class="gd-ui-button  css-uk8w9o" data-test="saveChanges">
+                            <button
+                              onClick={this.saveRange}
+                              class="gd-ui-button  css-uk8w9o"
+                              data-test="saveChanges"
+                            >
                               Save Changes
                             </button>
                           </div>
                         </div>
                       </div>
                     </span>
+                  ) : this.state.Range !== undefined && this.state.Range >= 0 ? (
+                    <a onClick={this.openTargetSalaryinput}>
+                      <strong>+ Change Target Range</strong>
+                    </a>
                   ) : (
                     <a onClick={this.openTargetSalaryinput}>
                       <strong>+ Add Target Range</strong>
@@ -834,7 +695,13 @@ class JobPreferencePage extends Component {
                   <div class="pb-sm pb-md-0 pr-md-lg mr-lg-xl ml-xxsm">
                     <div class="d-flex align-items-center">
                       <div
-                        class=" gd-ui-checkbox css-1i7401q"
+                        onClick={this.updateRelocation}
+                        class={` gd-ui-checkbox ${
+                          this.props.studentInfoStore.studentProfile.OpentoRelocation
+                            ? 'css-1i7401q'
+                            : 'css-13md0bs'
+                        }`}
+                        // class=" gd-ui-checkbox css-1i7401q"
                         role="checkbox"
                         aria-checked="true"
                         tabindex="0"
@@ -850,7 +717,12 @@ class JobPreferencePage extends Component {
                   </div>
                   <div class="d-flex align-items-center ml-xxsm">
                     <div
-                      class=" gd-ui-checkbox css-13md0bs"
+                      onClick={this.updateRemoteWork}
+                      class={` gd-ui-checkbox ${
+                        this.props.studentInfoStore.studentProfile.WorkRemotely
+                          ? 'css-1i7401q'
+                          : 'css-13md0bs'
+                      }`}
                       role="checkbox"
                       aria-checked="false"
                       tabindex="0"

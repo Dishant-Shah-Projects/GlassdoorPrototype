@@ -459,7 +459,7 @@ const studentSalaryReview = async (req, res) => {
 const resumesAdd = async (req, res) => {
   try {
     const { StudentID } = req.body;
-    const { ResumeURL } = req.file.location;
+    const ResumeURL = req.file.location;
     Student.update({ StudentID }, { $push: { Resumes: ResumeURL } }, (err) => {
       if (err) {
         res.writeHead(500, { 'content-type': 'text/json' });
@@ -468,7 +468,7 @@ const resumesAdd = async (req, res) => {
         res.writeHead(200, {
           'Content-Type': 'application/json',
         });
-        res.end(JSON.stringify('Added Resume'));
+        res.end(JSON.stringify(req.file.location));
       }
     });
   } catch (error) {
