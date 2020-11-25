@@ -41,6 +41,10 @@ const {
   addCompanyPhotos,
   searchSalary,
   companyViewCount,
+  deleteSalaryReview,
+  deleteInterviewReview,
+  deleteGeneralReview,
+  deletePhoto,
   // getAllReview,
 } = require('../Student/studentFunctionality');
 
@@ -282,6 +286,30 @@ Router.get('/searchSalary', checkAuth, async (req, res) => {
 // To increase the view count of a company
 Router.post('/companyViewCount', checkAuth, async (req, res) => {
   const value = await companyViewCount(req, res);
+  return value;
+});
+
+// Delete the Salary Review
+Router.delete('/deleteSalaryReview', checkAuth, async (req, res) => {
+  const value = await deleteSalaryReview(req, res);
+  return value;
+});
+
+// Delete the Interview Review
+Router.delete('/deleteInterviewReview', checkAuth, async (req, res) => {
+  const value = await deleteInterviewReview(req, res);
+  return value;
+});
+
+// Delete the General Review
+Router.delete('/deleteGeneralReview', checkAuth, async (req, res) => {
+  const value = await deleteGeneralReview(req, res);
+  return value;
+});
+
+// Delete the photo
+Router.post('/deletePhoto', checkAuth, async (req, res) => {
+  const value = await deletePhoto(req, res);
   return value;
 });
 module.exports = Router;
