@@ -71,8 +71,8 @@ class CompanyInterviews extends Component {
           let payload = {
             InterViewList: response.data.results,
             PageNo,
-            Totalcount: response.data.count[0].TOTALCOUNT,
-            PageCount: Math.ceil(response.data.count[0].TOTALCOUNT / 10),
+            Totalcount: response.data.count,
+            PageCount: Math.ceil(response.data.count / 10),
 
             // PageCount: Math.ceil(response.data.Totalcount / 3),
           };
@@ -105,19 +105,26 @@ class CompanyInterviews extends Component {
           let InterViewList = [...this.props.companyInterviewStore.InterViewList];
           const index = InterViewList.findIndex((x) => x.InterviewReviewID === ID);
           let interview = { ...InterViewList[index] };
-          interview.Helpful = interview.Helpful + 1;
+
+          let studentProfile = { ...this.props.studentInfoStore.studentProfile };
+          const index2 = studentProfile.HelpfullInterviewReviews.indexOf(ID);
+          if (index2 < 0) {
+            studentProfile.HelpfullInterviewReviews.push(ID);
+            interview.Helpful = interview.Helpful + 1;
+          } else {
+            studentProfile.HelpfullInterviewReviews.splice(index2, 1);
+            interview.Helpful = interview.Helpful - 1;
+          }
+
           InterViewList[index] = interview;
           let payload = {
             InterViewList,
-
-            // PageCount: Math.ceil(response.data.Totalcount / 3),
           };
-          this.props.updateCompanyInterviewStore(payload);
-          let studentProfile = { ...this.props.studentInfoStore.studentProfile };
-          studentProfile.HelpfullInterviewReviews.push(ID);
           const payload2 = {
             studentProfile,
           };
+
+          this.props.updateCompanyInterviewStore(payload);
           this.props.updateStudentProfile(payload2);
         }
       },

@@ -445,54 +445,8 @@ class Navbar extends Component {
                                           </div>
                                         </a>
                                       </li>
-                                      <li
-                                        onClick={(event) =>
-                                          this.mainMenuClicked(event, 'Company Follows')
-                                        }
-                                        className="p-0 m-0"
-                                      >
-                                        <a
-                                          className="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
-                                          href="/member/account/followedCompanies_input.htm"
-                                          target="_top"
-                                          rel="nofollow"
-                                          data-ga-lbl="Company Follows"
-                                        >
-                                          <div className="d-flex align-items-center py-std col header-menu-item-label">
-                                            <span className="col">
-                                              <span className="menuItem__MenuItemStyles__menuItemColor">
-                                                Company Follows
-                                              </span>
-                                            </span>
-                                          </div>
-                                        </a>
-                                      </li>
                                     </ul>
-                                    <ul className="p-0 m-0 memberHeader__HeaderStyles__list">
-                                      <li
-                                        onClick={(event) =>
-                                          this.mainMenuClicked(event, 'Account Settings')
-                                        }
-                                        className="p-0 m-0"
-                                      >
-                                        <a
-                                          className="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
-                                          href="/member/account/settings_input.htm"
-                                          target="_top"
-                                          rel="nofollow"
-                                          data-ga-lbl="Account"
-                                          data-test="account-settings"
-                                        >
-                                          <div className="d-flex align-items-center py-std col header-menu-item-label">
-                                            <span className="col">
-                                              <span className="menuItem__MenuItemStyles__menuItemColor">
-                                                Account Settings
-                                              </span>
-                                            </span>
-                                          </div>
-                                        </a>
-                                      </li>
-                                    </ul>
+
                                     <ul className="p-0 m-0 memberHeader__HeaderStyles__list">
                                       <li
                                         onClick={(event) => this.mainMenuClicked(event, 'Sign Out')}

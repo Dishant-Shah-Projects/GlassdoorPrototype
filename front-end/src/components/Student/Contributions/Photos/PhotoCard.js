@@ -24,10 +24,7 @@ class PhotoCard extends Component {
                     Edit
                 </a>
       &nbsp;&nbsp;|&nbsp;&nbsp;*/}
-          <a
-            href="#"
-            onclick="return GD.account.showDeleteContentConfirm('/member/account/interviews_execute.htm?deleteId=38213485&amp;gdToken=KHHEmO68WzDfNopVTPHw_w%3AMQFMIcRK2h7CuTbpk18qNXS_vgJg3Fu1f1Y2qm_3Kre-KPP_Sch4oLGVC3Adc8V-SPEZ2WoRsCk9hoK9zZdqcA%3Ah1yX63Ywq_qPtBqVDb6WXjZFftZU3lin7oj6qHsXjqM', 'Interview');"
-          >
+          <a href="#" onClick={(event) => this.props.delete(event)}>
             Delete
           </a>
         </td>

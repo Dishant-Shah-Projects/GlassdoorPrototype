@@ -51,6 +51,26 @@ class Interview extends Component {
     this.commonFetch(e.selected);
   };
 
+  delete = (event, InterviewReviewID) => {
+    event.preventDefault();
+    console.log('InterviewReviewID:', InterviewReviewID);
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    const data = {
+      InterviewReviewID,
+    };
+    axios.post(serverUrl + 'student/deleteInterviewReview', data).then(
+      (response) => {
+        console.log('Status Code : ', response.status);
+        if (response.status === 200) {
+          this.commonFetch(this.props.studentInterviewStore.PageNo);
+        }
+      },
+      (error) => {
+        console.log('error:', error.response);
+      }
+    );
+  };
+
   render() {
     return (
       <div id="MainCol" class="col span-3-4 noPadLt padRt">
@@ -93,18 +113,34 @@ class Interview extends Component {
               </tr>
             </thead>
             <tbody>
+              {this.props.studentInterviewStore.InterViewList.length === 0 ? (
+                <tr>
+                  <td colspan="4">
+                    <p> You have not yet submitted any Interview review. </p>
+                  </td>
+                </tr>
+              ) : (
+                ''
+              )}
               {this.props.studentInterviewStore.InterViewList.map((interview) => (
-                <InterviewCard interview={interview} />
+                <InterviewCard
+                  delete={(event) => this.delete(event, interview.InterviewReviewID)}
+                  interview={interview}
+                />
               ))}
             </tbody>
           </table>
-          <PaginationComponent
-            PageCount={this.props.studentInterviewStore.PageCount}
-            PageNo={this.props.studentInterviewStore.PageNo}
-            onPageClick={(e) => {
-              this.onPageClick(e);
-            }}
-          />
+          {this.props.studentInterviewStore.InterViewList.length > 0 ? (
+            <PaginationComponent
+              PageCount={this.props.studentInterviewStore.PageCount}
+              PageNo={this.props.studentInterviewStore.PageNo}
+              onPageClick={(e) => {
+                this.onPageClick(e);
+              }}
+            />
+          ) : (
+            ''
+          )}
         </div>
       </div>
     );

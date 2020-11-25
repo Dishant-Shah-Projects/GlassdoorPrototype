@@ -50,13 +50,33 @@ class Photos extends Component {
     this.commonFetch(e.selected);
   };
 
+  delete = (event, ID) => {
+    event.preventDefault();
+    console.log('ID:', ID);
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    const data = {
+      ID,
+    };
+    axios.post(serverUrl + 'student/deletePhoto', data).then(
+      (response) => {
+        console.log('Status Code : ', response.status);
+        if (response.status === 200) {
+          this.commonFetch(this.props.studentPhotosStore.PageNo);
+        }
+      },
+      (error) => {
+        console.log('error:', error.response);
+      }
+    );
+  };
+
   render() {
     return (
       <div id="MainCol" class="col span-3-4 noPadLt padRt">
         <div class="module" id="MyAccountSalaries">
           <h1>Photos</h1>
           {/*<a
-            href="/mz-survey/start_input.htm?showSurvey=PHOTOS&amp;c=PAGE_MYACCOUNT_TOP"
+            href="#"
             id="AddPhoto"
             class="gd-btn gd-btn-link gradient gd-btn-1 gd-btn-med ctaButtons margBot"
           >
@@ -88,30 +108,31 @@ class Photos extends Component {
               </tr>
             </thead>
             <tbody>
-              {/*<tr>
-                <td colspan="4">
-                  <p>
-                    {' '}
-                    You have not yet submitted any Photos.{' '}
-                    <a href="/survey/start_input.htm?showSurvey=PHOTOS&amp;amp;contentOriginHook=PAGE_MYACCOUNT_TOP">
-                      Submit a Photo
-                    </a>
-                    .{' '}
-                  </p>
-                </td>
-              </tr>*/}
+              {this.props.studentPhotosStore.PhotoList.length === 0 ? (
+                <tr>
+                  <td colspan="4">
+                    <p> You have not yet submitted any Photos. </p>
+                  </td>
+                </tr>
+              ) : (
+                ''
+              )}
               {this.props.studentPhotosStore.PhotoList.map((photo) => (
-                <PhotoCard photo={photo} />
+                <PhotoCard delete={(event) => this.delete(event, photo.ID)} photo={photo} />
               ))}
             </tbody>
           </table>
-          <PaginationComponent
-            PageCount={this.props.studentPhotosStore.PageCount}
-            PageNo={this.props.studentPhotosStore.PageNo}
-            onPageClick={(e) => {
-              this.onPageClick(e);
-            }}
-          />
+          {this.props.studentPhotosStore.PhotoList.length > 0 ? (
+            <PaginationComponent
+              PageCount={this.props.studentPhotosStore.PageCount}
+              PageNo={this.props.studentPhotosStore.PageNo}
+              onPageClick={(e) => {
+                this.onPageClick(e);
+              }}
+            />
+          ) : (
+            ''
+          )}
         </div>
       </div>
     );

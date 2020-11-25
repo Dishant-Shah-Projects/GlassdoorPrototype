@@ -290,19 +290,19 @@ Router.post('/companyViewCount', checkAuth, async (req, res) => {
 });
 
 // Delete the Salary Review
-Router.delete('/deleteSalaryReview', checkAuth, async (req, res) => {
+Router.post('/deleteSalaryReview', checkAuth, async (req, res) => {
   const value = await deleteSalaryReview(req, res);
   return value;
 });
 
 // Delete the Interview Review
-Router.delete('/deleteInterviewReview', checkAuth, async (req, res) => {
+Router.post('/deleteInterviewReview', checkAuth, async (req, res) => {
   const value = await deleteInterviewReview(req, res);
   return value;
 });
 
 // Delete the General Review
-Router.delete('/deleteGeneralReview', checkAuth, async (req, res) => {
+Router.post('/deleteGeneralReview', checkAuth, async (req, res) => {
   const value = await deleteGeneralReview(req, res);
   return value;
 });

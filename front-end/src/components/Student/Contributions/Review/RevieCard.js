@@ -47,7 +47,7 @@ class RevieCard extends Component {
                     Edit
                 </a>
       &nbsp;&nbsp;|&nbsp;&nbsp;*/}
-          <a href="#" onclick={(event) => this.props.delete(event)}>
+          <a href="#" onClick={(event) => this.props.delete(event)}>
             Delete
           </a>
         </td>

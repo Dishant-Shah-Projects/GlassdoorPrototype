@@ -52,6 +52,28 @@ class Salaries extends Component {
     this.commonFetch(e.selected);
   };
 
+  delete = (event, SalaryReviewID) => {
+    event.preventDefault();
+    // console.log('SalaryReviewID:', SalaryReviewID);
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    const data = {
+      SalaryReviewID,
+    };
+    console.log('SalaryReviewID:', data);
+    axios.post(serverUrl + 'student/deleteSalaryReview', data).then(
+      (response) => {
+        console.log('Status Code : ', response.status);
+        if (response.status === 200) {
+          console.log('Review Submitted');
+          this.commonFetch(this.props.studentSalariesStore.PageNo);
+        }
+      },
+      (error) => {
+        console.log('error:', error.response);
+      }
+    );
+  };
+
   render() {
     return (
       <div id="MainCol" style={{ paddingBottom: '0px' }} class="col span-3-4 noPadLt padRt">
@@ -77,18 +99,34 @@ class Salaries extends Component {
               </tr>
             </thead>
             <tbody>
+              {this.props.studentSalariesStore.SalaryList.length === 0 ? (
+                <tr>
+                  <td colspan="4">
+                    <p> You have not yet submitted any Salary Review. </p>
+                  </td>
+                </tr>
+              ) : (
+                ''
+              )}
               {this.props.studentSalariesStore.SalaryList.map((salary) => (
-                <SalaryCard salary={salary} />
+                <SalaryCard
+                  delete={(event) => this.delete(event, salary.SalaryReviewID)}
+                  salary={salary}
+                />
               ))}
             </tbody>
           </table>
-          <PaginationComponent
-            PageCount={this.props.studentSalariesStore.PageCount}
-            PageNo={this.props.studentSalariesStore.PageNo}
-            onPageClick={(e) => {
-              this.onPageClick(e);
-            }}
-          />
+          {this.props.studentSalariesStore.SalaryList.length > 0 ? (
+            <PaginationComponent
+              PageCount={this.props.studentSalariesStore.PageCount}
+              PageNo={this.props.studentSalariesStore.PageNo}
+              onPageClick={(e) => {
+                this.onPageClick(e);
+              }}
+            />
+          ) : (
+            ''
+          )}
         </div>
       </div>
     );

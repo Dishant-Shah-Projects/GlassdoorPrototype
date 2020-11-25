@@ -33,8 +33,8 @@ class CompanySalaries extends Component {
           let payload = {
             SalaryList: response.data.results,
             PageNo,
-            Totalcount: response.data.count[0].TOTALCOUNT,
-            PageCount: Math.ceil(response.data.count[0].TOTALCOUNT / 10),
+            Totalcount: response.data.count,
+            PageCount: Math.ceil(response.data.count / 10),
 
             // PageCount: Math.ceil(response.data.Totalcount / 3),
           };
@@ -59,19 +59,32 @@ class CompanySalaries extends Component {
             <div data-test="ei-salaries">
               <div class="eiSalaries__EISalariesStyle__salariesContainer module ">
                 <div id="SalariesRef">
+                  {this.props.companySalariesStore.SalaryList.length === 0 ? (
+                    <tr>
+                      <td colspan="4">
+                        <p> Company have not yet recieved any Salary review. </p>
+                      </td>
+                    </tr>
+                  ) : (
+                    ''
+                  )}
                   <div data-test="salary-list-items">
                     {this.props.companySalariesStore.SalaryList.map((salary) => (
                       <CompanySalaryCard salary={salary} />
                     ))}
                   </div>
                 </div>
-                <PaginationComponent
-                  PageCount={this.props.companySalariesStore.PageCount}
-                  PageNo={this.props.companySalariesStore.PageNo}
-                  onPageClick={(e) => {
-                    this.onPageClick(e);
-                  }}
-                />{' '}
+                {this.props.companySalariesStore.SalaryList.length > 0 ? (
+                  <PaginationComponent
+                    PageCount={this.props.companySalariesStore.PageCount}
+                    PageNo={this.props.companySalariesStore.PageNo}
+                    onPageClick={(e) => {
+                      this.onPageClick(e);
+                    }}
+                  />
+                ) : (
+                  ''
+                )}
               </div>
             </div>
           </main>

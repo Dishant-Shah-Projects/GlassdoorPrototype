@@ -51,6 +51,27 @@ class Reviews extends Component {
     this.commonFetch(e.selected);
   };
 
+  delete = (event, GeneralReviewID) => {
+    event.preventDefault();
+    console.log('GeneralReviewID:', GeneralReviewID);
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    const data = {
+      GeneralReviewID,
+    };
+    axios.post(serverUrl + 'student/deleteGeneralReview', data).then(
+      (response) => {
+        console.log('Status Code : ', response.status);
+        if (response.status === 200) {
+          console.log('Review Submitted');
+          this.commonFetch(this.props.studentReviewsStore.PageNo);
+        }
+      },
+      (error) => {
+        console.log('error:', error.response);
+      }
+    );
+  };
+
   render() {
     return (
       <div id="MainCol" style={{ paddingBottom: '0px' }} class="col span-3-4 noPadLt padRt">
@@ -91,18 +112,34 @@ class Reviews extends Component {
               </tr>
             </thead>
             <tbody>
+              {this.props.studentReviewsStore.ReviewList.length === 0 ? (
+                <tr>
+                  <td colspan="4">
+                    <p> You have not yet submitted any Review. </p>
+                  </td>
+                </tr>
+              ) : (
+                ''
+              )}
               {this.props.studentReviewsStore.ReviewList.map((review) => (
-                <RevieCard review={review} />
+                <RevieCard
+                  delete={(event) => this.delete(event, review.GeneralReviewID)}
+                  review={review}
+                />
               ))}
             </tbody>
           </table>
-          <PaginationComponent
-            PageCount={this.props.studentReviewsStore.PageCount}
-            PageNo={this.props.studentReviewsStore.PageNo}
-            onPageClick={(e) => {
-              this.onPageClick(e);
-            }}
-          />
+          {this.props.studentReviewsStore.ReviewList.length > 0 ? (
+            <PaginationComponent
+              PageCount={this.props.studentReviewsStore.PageCount}
+              PageNo={this.props.studentReviewsStore.PageNo}
+              onPageClick={(e) => {
+                this.onPageClick(e);
+              }}
+            />
+          ) : (
+            ''
+          )}
         </div>
       </div>
     );

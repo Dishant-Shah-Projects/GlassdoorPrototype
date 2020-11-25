@@ -87,21 +87,27 @@ class CompanyReviews extends Component {
           let ReviewList = [...this.props.companyReviewsStore.ReviewList];
           const index = ReviewList.findIndex((x) => x.ID === ID);
           let review = { ...ReviewList[index] };
-          review.Helpful = review.Helpful + 1;
+
+          // this.commonFetch(this.props.companyReviewsStore.PageNo);
+
+          let studentProfile = { ...this.props.studentInfoStore.studentProfile };
+          const index2 = studentProfile.HelpfullGeneralReviews.indexOf(ID);
+          if (index2 < 0) {
+            studentProfile.HelpfullGeneralReviews.push(ID);
+            review.Helpful = review.Helpful + 1;
+          } else {
+            studentProfile.HelpfullGeneralReviews.splice(index2, 1);
+            review.Helpful = review.Helpful - 1;
+          }
+
           ReviewList[index] = review;
           let payload = {
             ReviewList,
-
-            // PageCount: Math.ceil(response.data.Totalcount / 3),
           };
-
-          // this.commonFetch(this.props.companyReviewsStore.PageNo);
-          this.props.updateCompanyReviewsStore(payload);
-          let studentProfile = { ...this.props.studentInfoStore.studentProfile };
-          studentProfile.HelpfullGeneralReviews.push(ID);
           const payload2 = {
             studentProfile,
           };
+          this.props.updateCompanyReviewsStore(payload);
           this.props.updateStudentProfile(payload2);
         }
       },
@@ -110,6 +116,7 @@ class CompanyReviews extends Component {
       }
     );
   };
+
   render() {
     let recomendPercentage = 0;
     if (this.props.companyOverviewStore.companyOverview.recommendedcount > 0) {
