@@ -15,54 +15,11 @@ const StudentSchema = new mongoose.Schema({
   AboutMe: { type: String },
   CurrentJobTitle: { type: String },
   Skills: [{ type: String }],
-  SalaryReview: [
-    {
-      ReviewID: { type: String },
-      Status: {
-        type: String,
-        enum: ['Not Approved', 'Approved', 'Disapproved'],
-      },
-      DatePosted: { type: Date },
-      BaseSalary: { type: Number },
-      Bonuses: { type: Number },
-      JobTitle: { type: String },
-      Years: { type: Number },
-      StreetAddress: { type: String },
-      State: { type: String },
-      Country: { type: String },
-      Zip: { type: Number, min: 10000, max: 99999 },
-    },
-  ],
-  InterviewReview: [
-    {
-      ReviewID: { type: String },
-      Status: {
-        type: String,
-        enum: ['Not Approved', 'Approved', 'Disapproved'],
-      },
-      Helpful: { type: Number },
-      DatePosted: { type: Date },
-      OverallExperience: {
-        type: String,
-        enum: ['Positive', 'Negative', 'Neutral'],
-      },
-      JobTitle: { type: String },
-      Description: { type: String },
-      Difficulty: {
-        type: String,
-        enum: ['Easy', 'Average', 'Difficult'],
-      },
-      OfferStatus: {
-        type: String,
-        enum: ['Rejected', 'Accepted'],
-      },
-      InterviewQuestions: { type: String },
-      Answers: { type: String },
-    },
-  ],
   ResumePrimary: { type: String },
   Resumes: [{ type: String }],
   FavouriteJobs: [{ type: String }],
+  HelpfullGeneralReviews: [Number],
+  HelpfullInterviewReviews: [Number],
   JobStatus: {
     type: String,
     enum: [
@@ -74,6 +31,23 @@ const StudentSchema = new mongoose.Schema({
     ],
     default: 'Select',
   },
+  Ethnicity: {
+    type: String,
+    enum: [
+      'Indigenous American or Alaska Native',
+      'East Asian',
+      'South Asian',
+      'Southeast Asian',
+      'Native Hawaiian or Other Pacific Islander',
+      'Middle Eastern',
+      'Black or African American',
+      'Hispanic or Latinx',
+      'White',
+      'Prefer to Self Describe',
+      'Prefer Not to Say',
+    ],
+    default: 'Prefer Not to Say',
+  },
   JobType: [
     {
       type: String,
@@ -81,7 +55,8 @@ const StudentSchema = new mongoose.Schema({
   ],
   PreferredJobTitle: { type: String },
   TargetSalary: { type: Number },
-  OpentoRelocation: { type: Boolean },
+  OpentoRelocation: { type: Boolean, default: false },
+  WorkRemotely: { type: Boolean, default: false },
   Industry: { type: String },
   Race: [
     {
@@ -91,17 +66,22 @@ const StudentSchema = new mongoose.Schema({
 
   Gender: {
     type: String,
-    enum: ['Male', 'Female', 'Prefer not to share'],
+    enum: ['Male', 'Female', 'Non-Binary', 'Prefer Not to Say'],
+    default: 'Prefer Not to Say',
   },
   AcceptedReviewCount: { type: Number },
   Disability: {
     type: String,
     enum: ['Yes', 'No', 'Prefer Not to Say'],
+    default: 'Prefer Not to Say',
   },
   VeteranStatus: {
     type: String,
     enum: ['Yes', 'No', 'Prefer Not to Say'],
+    default: 'Prefer Not to Say',
   },
+
+  AppliedJobs: [String],
 });
 
 module.exports = mongoose.model('student', StudentSchema);

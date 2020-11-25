@@ -400,7 +400,7 @@ const searchInterview = async (req, res) => {
   // eslint-disable-next-line no-unused-vars
   const { SearchString, State, PageNo } = req.query;
   try {
-    let results = await Interview.find({
+    const results = await Interview.find({
       CompanyName: { $regex: `.*${SearchString}.*` },
       State,
     })
@@ -416,7 +416,6 @@ const searchInterview = async (req, res) => {
       if (company.ProfileImg) {
         ProfileImgs.push(company.ProfileImg);
       } else {
-        console.log('apple)');
         ProfileImgs.push(null);
       }
     }
