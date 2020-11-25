@@ -55,7 +55,8 @@ const StudentSchema = new mongoose.Schema({
   ],
   PreferredJobTitle: { type: String },
   TargetSalary: { type: Number },
-  OpentoRelocation: { type: Boolean },
+  OpentoRelocation: { type: Boolean, default: false },
+  WorkRemotely: { type: Boolean, default: false },
   Industry: { type: String },
   Race: [
     {
@@ -65,8 +66,8 @@ const StudentSchema = new mongoose.Schema({
 
   Gender: {
     type: String,
-    enum: ['Male', 'Female', 'Prefer not to share'],
-    default: 'Prefer not to share',
+    enum: ['Male', 'Female', 'Non-Binary', 'Prefer Not to Say'],
+    default: 'Prefer Not to Say',
   },
   AcceptedReviewCount: { type: Number },
   Disability: {

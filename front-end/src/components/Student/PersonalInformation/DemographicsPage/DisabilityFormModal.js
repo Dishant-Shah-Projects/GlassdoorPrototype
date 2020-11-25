@@ -21,7 +21,11 @@ class DisabilityFormModal extends Component {
   render() {
     return (
       <div class="gd-ui-modal css-q2nzru">
-        <div class="background-overlay" aria-label="Background Overlay"></div>
+        <div
+          style={{ maxWidth: '100%' }}
+          class="background-overlay"
+          aria-label="Background Overlay"
+        ></div>
         <div class="modal_main ">
           <span onClick={this.props.openForm} alt="Close" class="SVGInline modal_closeIcon">
             <svg

@@ -1,16 +1,58 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { LowerNavBarOther, updateSalaryList } from '../../../constants/action-types';
-import Navbar from '../Common/Navbar';
+import { LowerNavBarOther, updateInterviewList } from '../../../constants/action-types';
 import PaginationComponent from '../Common/PaginationComponent';
 import './interviewList.css';
 import Questions from './Questions';
+import axios from 'axios';
+import serverUrl from '../../../config';
 
 class interviewList extends Component {
   constructor(props) {
     super(props);
     this.state = {};
   }
+
+  commonFetch = (PageNo = 0) => {
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    axios
+      .get(serverUrl + 'student/searchInterview', {
+        params: {
+          SearchString: localStorage.getItem('SearchString'),
+          State: localStorage.getItem('Location'),
+          PageNo,
+        },
+        withCredentials: true,
+      })
+      .then(
+        (response) => {
+          console.log('interview list', response);
+          let payload = {
+            interviewSearchList: response.data.results,
+            PageNo,
+            PageCount: Math.ceil(response.data.count / 10),
+            Totalcount: response.data.count,
+
+            // PageCount: Math.ceil(response.data.Totalcount / 3),
+          };
+          this.props.updateInterviewList(payload);
+        },
+        (error) => {
+          console.log('error', error);
+        }
+      );
+  };
+
+  componentDidMount() {
+    localStorage.setItem('companyID', '');
+    this.commonFetch();
+  }
+
+  onPageClick = (e) => {
+    // console.log('Page Clicked:', e.selected);
+    this.commonFetch(e.selected);
+  };
+
   render() {
     this.props.LowerNavBarOther();
     return (
@@ -31,27 +73,44 @@ class interviewList extends Component {
                                 <div id="InterviewQuestionList" class="module">
                                   <header class="lined">
                                     <h2 class="block" style={{ fontWeight: '400' }}>
-                                      amazon Interview Questions
+                                      {localStorage.getItem('SearchString')} Interview Questions
                                     </h2>
                                   </header>
                                   <div class="interviewQuestionsList lockedInterviewQuestions">
-                                    {<Questions />}
-                                    {<Questions />}
-                                    {<Questions />}
-                                    {<Questions />}
-                                    {<Questions />}
+                                    {this.props.interviewListStore.interviewSearchList.map(
+                                      (interview) => (
+                                        <Questions interview={interview} />
+                                      )
+                                    )}
                                   </div>
                                   <div class="tbl fill margTopSm">
                                     <div class="row alignMid">
                                       <div class="cell span-1-2 drop noWrap middle">
                                         <div class="margTopSm">
-                                          <strong>1</strong>–<strong>10</strong> of{' '}
-                                          <strong>11,940</strong> Interview Questions
+                                          <strong>
+                                            {this.props.interviewListStore.PageNo * 10 + 1}
+                                          </strong>
+                                          –
+                                          <strong>
+                                            {' '}
+                                            {this.props.interviewListStore.interviewSearchList
+                                              .length +
+                                              this.props.interviewListStore.PageNo * 10}
+                                          </strong>{' '}
+                                          of{' '}
+                                          <strong>
+                                            {this.props.interviewListStore.Totalcount}
+                                          </strong>{' '}
+                                          Interview Questions
                                         </div>
                                       </div>
-                                      <div class="cell span-1-2 drop">
-                                        <PaginationComponent />{' '}
-                                      </div>
+                                      <PaginationComponent
+                                        PageCount={this.props.interviewListStore.PageCount}
+                                        PageNo={this.props.interviewListStore.PageNo}
+                                        onPageClick={(e) => {
+                                          this.onPageClick(e);
+                                        }}
+                                      />
                                     </div>
                                   </div>
                                 </div>
@@ -74,10 +133,10 @@ class interviewList extends Component {
 
 // export default interviewList;
 const mapStateToProps = (state) => {
-  const { salaryListStore } = state.SalaryListReducer;
+  const { interviewListStore } = state.InterviewListReducer;
 
   return {
-    salaryListStore,
+    interviewListStore,
   };
 };
 const mapDispatchToProps = (dispatch) => {
@@ -88,9 +147,9 @@ const mapDispatchToProps = (dispatch) => {
         payload,
       });
     },
-    updateSalaryList: (payload) => {
+    updateInterviewList: (payload) => {
       dispatch({
-        type: updateSalaryList,
+        type: updateInterviewList,
         payload,
       });
     },

@@ -7,6 +7,9 @@ import DisabilityFormModal from './DisabilityFormModal';
 import VeteranStatusFormModal from './VeteranStatusFormModal';
 import { connect } from 'react-redux';
 import glassdoorDemographics from './glassdoorDemographics.png';
+import axios from 'axios';
+import serverUrl from '../../../../config';
+import { updateStudentProfile } from '../../../../constants/action-types';
 
 class DemographicsPage extends Component {
   constructor(props) {
@@ -20,20 +23,50 @@ class DemographicsPage extends Component {
       openForm: formName,
     });
   };
+
   updateStudentProfile = (event, student) => {
     event.preventDefault();
     console.log(student);
-    this.setState({
-      openForm: null,
-    });
+
+    // event.preventDefault();
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+
+    axios.post(serverUrl + 'student/profileUpdate', student).then(
+      (response) => {
+        console.log('Status Code : ', response.status);
+        if (response.status === 200) {
+          // let studentProfile = { ...this.props.studentInfoStore.studentProfile };
+          // studentProfile.AppliedJobs.push(this.props.selectedJob._id);
+          const payload = {
+            studentProfile: student,
+          };
+          this.props.updateStudentProfile(payload);
+          this.setState({
+            openForm: null,
+          });
+        }
+      },
+      (error) => {
+        console.log('error:', error.response);
+      }
+    );
+  };
+
+  removeDemographics = (event) => {
+    let student = { ...this.props.studentInfoStore.studentProfile };
+    student.Gender = '';
+    student.Disability = '';
+    student.VeteranStatus = '';
+    student.Race = '';
+    this.updateStudentProfile(event, student);
   };
 
   render() {
-    let genderOutput = null;
-    if (this.props.studentInfoStore.studentProfile.Gender.length > 0) {
-      switch (this.props.studentInfoStore.studentProfile.Gender) {
+    let disabilityOutput = null;
+    if (this.props.studentInfoStore.studentProfile.Disability.length > 0) {
+      switch (this.props.studentInfoStore.studentProfile.Disability) {
         case 'Yes': {
-          genderOutput = (
+          disabilityOutput = (
             <div class="css-ewb0zt eqb0scq0">
               <span class="user-answer">Yes</span>, I do have a disability
             </div>
@@ -42,7 +75,7 @@ class DemographicsPage extends Component {
           break;
         }
         case 'No': {
-          genderOutput = (
+          disabilityOutput = (
             <div class="css-ewb0zt eqb0scq0">
               <span class="user-answer">No</span>, I do not have a disability
             </div>
@@ -51,7 +84,7 @@ class DemographicsPage extends Component {
           break;
         }
         case 'Prefer Not to Say': {
-          genderOutput = (
+          disabilityOutput = (
             <div class="css-ewb0zt eqb0scq0">
               <span class="user-answer">Prefer Not to Say</span>
             </div>
@@ -63,6 +96,42 @@ class DemographicsPage extends Component {
           break;
       }
     }
+
+    let veteranOutput = null;
+    if (this.props.studentInfoStore.studentProfile.VeteranStatus.length > 0) {
+      switch (this.props.studentInfoStore.studentProfile.VeteranStatus) {
+        case 'Yes': {
+          veteranOutput = (
+            <div class="css-ewb0zt eqb0scq0">
+              <span class="user-answer">Yes</span>, I am a US military veteran
+            </div>
+          );
+
+          break;
+        }
+        case 'No': {
+          veteranOutput = (
+            <div class="css-ewb0zt eqb0scq0">
+              <span class="user-answer">No</span>, I am not a US military veteran
+            </div>
+          );
+
+          break;
+        }
+        case 'Prefer Not to Say': {
+          veteranOutput = (
+            <div class="css-ewb0zt eqb0scq0">
+              <span class="user-answer">Prefer Not to Say</span>
+            </div>
+          );
+
+          break;
+        }
+        default:
+          break;
+      }
+    }
+
     return (
       <div className="col-12 col-md-8">
         <main class>
@@ -307,8 +376,15 @@ class DemographicsPage extends Component {
                   Add gender identity
                 </div>
               </button>
+            ) : this.props.studentInfoStore.studentProfile.Gender === 'Prefer Not to Say' ? (
+              <div class="css-ewb0zt eqb0scq0">
+                <span class="user-answer">{this.props.studentInfoStore.studentProfile.Gender}</span>
+              </div>
             ) : (
-              { genderOutput }
+              <div class="css-ewb0zt eqb0scq0">
+                I identify my gender as:
+                <span class="user-answer">{this.props.studentInfoStore.studentProfile.Gender}</span>
+              </div>
             )}
           </section>
           {this.state.openForm === 'GenderFormModal' ? (
@@ -368,7 +444,56 @@ class DemographicsPage extends Component {
                   </ReactTooltip>
                 </div>
               </div>
-              <button
+              {this.props.studentInfoStore.studentProfile.Disability.length === 0 ? (
+                <button
+                  onClick={(event) => this.openForm(event, 'DisabilityFormModal')}
+                  class="SectionHeaderStyles__addIcon___2YMd- p-0 css-1d45jd4 espki3r0"
+                >
+                  <span class="SVGInline">
+                    <svg
+                      class="SVGInline-svg"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      width="24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <g fill="none" fill-rule="evenodd">
+                        <circle cx="12" cy="12" fill="#f5f6f7" r="12"></circle>
+                        <path
+                          d="M12.5 12.5H18h-5.5V7zm0 0V18v-5.5H7z"
+                          stroke="#1861bf"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                        ></path>
+                      </g>
+                    </svg>
+                  </span>
+                </button>
+              ) : (
+                <button
+                  onClick={(event) => this.openForm(event, 'DisabilityFormModal')}
+                  class="SectionHeaderStyles__editIcon___LCEeu p-0 css-1d45jd4 espki3r0"
+                >
+                  <span class="SVGInline">
+                    <svg
+                      class="SVGInline-svg"
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                    >
+                      <g fill="currentColor" fill-rule="evenodd">
+                        <path
+                          id="prefix__icon-edit"
+                          d="M14.775 6.202l2.99 2.99-11.81 11.663a.499.499 0 01-.352.144H3.498a.5.5 0 01-.5-.5v-2.342a.5.5 0 01.147-.354l11.63-11.6zM16.19 4.79l1.641-1.638a.502.502 0 01.707 0l2.3 2.298a.5.5 0 010 .707l-.003.003-1.648 1.627L16.19 4.79z"
+                        ></path>
+                      </g>
+                    </svg>
+                  </span>
+                </button>
+              )}
+              {/* <button
                 onClick={(event) => this.openForm(event, 'DisabilityFormModal')}
                 class="SectionHeaderStyles__addIcon___2YMd- p-0 css-1d45jd4 espki3r0"
               >
@@ -393,36 +518,41 @@ class DemographicsPage extends Component {
                   </svg>
                 </span>
               </button>
+             */}
             </div>
-            <button
-              style={{ cursor: 'pointer' }}
-              onClick={(event) => this.openForm(event, 'DisabilityFormModal')}
-              class="no-gutters m-0 p-0 d-flex justify-content-start align-items-center e1q9njc70 css-rm509o espki3r0"
-            >
-              <div class="d-flex justify-content-center mr-xsm css-1q1dol4 e1q9njc71">
-                <span class="SVGInline">
-                  <svg
-                    class="SVGInline-svg"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    width="24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <g fill="none" fill-rule="evenodd">
-                      <circle cx="12" cy="12" fill="#f5f6f7" r="12"></circle>
-                      <path
-                        d="M12.5 12.5H18h-5.5V7zm0 0V18v-5.5H7z"
-                        stroke="#1861bf"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                      ></path>
-                    </g>
-                  </svg>
-                </span>
-              </div>
-              <div class="d-flex justify-content-start css-1h3h083 e1q9njc72">Add disability</div>
-            </button>
+            {this.props.studentInfoStore.studentProfile.Disability.length === 0 ? (
+              <button
+                style={{ cursor: 'pointer' }}
+                onClick={(event) => this.openForm(event, 'DisabilityFormModal')}
+                class="no-gutters m-0 p-0 d-flex justify-content-start align-items-center e1q9njc70 css-rm509o espki3r0"
+              >
+                <div class="d-flex justify-content-center mr-xsm css-1q1dol4 e1q9njc71">
+                  <span class="SVGInline">
+                    <svg
+                      class="SVGInline-svg"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      width="24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <g fill="none" fill-rule="evenodd">
+                        <circle cx="12" cy="12" fill="#f5f6f7" r="12"></circle>
+                        <path
+                          d="M12.5 12.5H18h-5.5V7zm0 0V18v-5.5H7z"
+                          stroke="#1861bf"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                        ></path>
+                      </g>
+                    </svg>
+                  </span>
+                </div>
+                <div class="d-flex justify-content-start css-1h3h083 e1q9njc72">Add disability</div>
+              </button>
+            ) : (
+              disabilityOutput
+            )}
           </section>
           {this.state.openForm === 'DisabilityFormModal' ? (
             <DisabilityFormModal
@@ -445,7 +575,7 @@ class DemographicsPage extends Component {
                   <h2>Veteran Status</h2>
                 </div>
               </div>
-              <button
+              {/*<button
                 onClick={(event) => this.openForm(event, 'VeteranStatusFormModal')}
                 class="SectionHeaderStyles__addIcon___2YMd- p-0 css-1d45jd4 espki3r0"
               >
@@ -470,38 +600,92 @@ class DemographicsPage extends Component {
                   </svg>
                 </span>
               </button>
+              */}
+              {this.props.studentInfoStore.studentProfile.VeteranStatus.length === 0 ? (
+                <button
+                  onClick={(event) => this.openForm(event, 'VeteranStatusFormModal')}
+                  class="SectionHeaderStyles__addIcon___2YMd- p-0 css-1d45jd4 espki3r0"
+                >
+                  <span class="SVGInline">
+                    <svg
+                      class="SVGInline-svg"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      width="24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <g fill="none" fill-rule="evenodd">
+                        <circle cx="12" cy="12" fill="#f5f6f7" r="12"></circle>
+                        <path
+                          d="M12.5 12.5H18h-5.5V7zm0 0V18v-5.5H7z"
+                          stroke="#1861bf"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                        ></path>
+                      </g>
+                    </svg>
+                  </span>
+                </button>
+              ) : (
+                <button
+                  onClick={(event) => this.openForm(event, 'VeteranStatusFormModal')}
+                  class="SectionHeaderStyles__editIcon___LCEeu p-0 css-1d45jd4 espki3r0"
+                >
+                  <span class="SVGInline">
+                    <svg
+                      class="SVGInline-svg"
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                    >
+                      <g fill="currentColor" fill-rule="evenodd">
+                        <path
+                          id="prefix__icon-edit"
+                          d="M14.775 6.202l2.99 2.99-11.81 11.663a.499.499 0 01-.352.144H3.498a.5.5 0 01-.5-.5v-2.342a.5.5 0 01.147-.354l11.63-11.6zM16.19 4.79l1.641-1.638a.502.502 0 01.707 0l2.3 2.298a.5.5 0 010 .707l-.003.003-1.648 1.627L16.19 4.79z"
+                        ></path>
+                      </g>
+                    </svg>
+                  </span>
+                </button>
+              )}
             </div>
-            <button
-              style={{ cursor: 'pointer' }}
-              onClick={(event) => this.openForm(event, 'VeteranStatusFormModal')}
-              class="no-gutters m-0 p-0 d-flex justify-content-start align-items-center e1q9njc70 css-rm509o espki3r0"
-            >
-              <div class="d-flex justify-content-center mr-xsm css-1q1dol4 e1q9njc71">
-                <span class="SVGInline">
-                  <svg
-                    class="SVGInline-svg"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    width="24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <g fill="none" fill-rule="evenodd">
-                      <circle cx="12" cy="12" fill="#f5f6f7" r="12"></circle>
-                      <path
-                        d="M12.5 12.5H18h-5.5V7zm0 0V18v-5.5H7z"
-                        stroke="#1861bf"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                      ></path>
-                    </g>
-                  </svg>
-                </span>
-              </div>
-              <div class="d-flex justify-content-start css-1h3h083 e1q9njc72">
-                Add veteran status
-              </div>
-            </button>
+            {this.props.studentInfoStore.studentProfile.VeteranStatus.length === 0 ? (
+              <button
+                style={{ cursor: 'pointer' }}
+                onClick={(event) => this.openForm(event, 'VeteranStatusFormModal')}
+                class="no-gutters m-0 p-0 d-flex justify-content-start align-items-center e1q9njc70 css-rm509o espki3r0"
+              >
+                <div class="d-flex justify-content-center mr-xsm css-1q1dol4 e1q9njc71">
+                  <span class="SVGInline">
+                    <svg
+                      class="SVGInline-svg"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      width="24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <g fill="none" fill-rule="evenodd">
+                        <circle cx="12" cy="12" fill="#f5f6f7" r="12"></circle>
+                        <path
+                          d="M12.5 12.5H18h-5.5V7zm0 0V18v-5.5H7z"
+                          stroke="#1861bf"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                        ></path>
+                      </g>
+                    </svg>
+                  </span>
+                </div>
+                <div class="d-flex justify-content-start css-1h3h083 e1q9njc72">
+                  Add veteran status
+                </div>
+              </button>
+            ) : (
+              veteranOutput
+            )}
           </section>
           {this.state.openForm === 'VeteranStatusFormModal' ? (
             <VeteranStatusFormModal
@@ -515,7 +699,9 @@ class DemographicsPage extends Component {
             <h2>Remove My Demographic Information</h2>If you no longer want to share your personal
             diversity and inclusion information with Glassdoor, you can remove or delete all of it
             by clicking below. You are welcome to update your information at any time.
-            <button class="gd-ui-button d-block mt-lg css-3ybntp">Remove All</button>
+            <button onClick={this.removeDemographics} class="gd-ui-button d-block mt-lg css-3ybntp">
+              Remove All
+            </button>
           </div>
         </main>
       </div>
@@ -534,4 +720,15 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, null)(DemographicsPage);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    updateStudentProfile: (payload) => {
+      dispatch({
+        type: updateStudentProfile,
+        payload,
+      });
+    },
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(DemographicsPage);

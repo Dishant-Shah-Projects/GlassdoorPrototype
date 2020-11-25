@@ -5,7 +5,11 @@ import { connect } from 'react-redux';
 class SkillModal extends Component {
   constructor(props) {
     super(props);
-    this.state = { studentProfile: { ...this.props.studentInfoStore.studentProfile }, Skill: '' };
+    this.state = {
+      // studentProfile: this.props.studentInfoStore.studentProfile,
+      Skill: '',
+      Skills: [...this.props.studentInfoStore.studentProfile.Skills],
+    };
   }
 
   onChangeHandler = (event) => {
@@ -16,10 +20,10 @@ class SkillModal extends Component {
 
   saveSkill = (event) => {
     if (event.key === 'Enter') {
-      const studentProfile = this.state.studentProfile;
-      studentProfile.Skills.push(this.state.Skill);
+      const Skills = this.state.Skills;
+      Skills.push(this.state.Skill);
       this.setState({
-        studentProfile,
+        Skills,
         Skill: '',
       });
     }
@@ -27,23 +31,29 @@ class SkillModal extends Component {
 
   removeSkill = (event, skill) => {
     event.preventDefault();
-    const studentProfile = this.state.studentProfile;
-    const index = studentProfile.Skills.indexOf(skill);
+    const Skills = this.state.Skills;
+    const index = Skills.indexOf(skill);
     if (index > -1) {
-      studentProfile.Skills.splice(index, 1);
+      Skills.splice(index, 1);
       this.setState({
-        studentProfile,
+        Skills,
       });
     }
   };
 
-  restoreToDefault = (event) => {
-    // event.preventDefault();
-    this.setState({
-      studentProfile: this.props.studentInfoStore.studentProfile,
-    });
-    this.props.openSkillForm(event);
+  updateStudentProfile = (event) => {
+    const student = { ...this.props.studentInfoStore.studentProfile };
+    student.Skills = this.state.Skills;
+    this.props.updateStudentProfile(event, student);
   };
+
+  // restoreToDefault = (event) => {
+  //   // event.preventDefault();
+  //   this.setState({
+  //     studentProfile: this.props.studentInfoStore.studentProfile,
+  //   });
+  //   this.props.openSkillForm(event);
+  // };
 
   render() {
     return (
@@ -103,7 +113,7 @@ class SkillModal extends Component {
                   </div>
                 </div>
                 <div class="editableSkillList pt">
-                  {this.state.studentProfile.Skills.map((skill) => (
+                  {this.state.Skills.map((skill) => (
                     <span class="skillsStyle__capitalize___1tkT7">
                       <div class="css-zomrfc">
                         <span title="Flask" class="css-1p0oo7a">
@@ -121,106 +131,6 @@ class SkillModal extends Component {
                       </div>
                     </span>
                   ))}
-                  {/*<span class="skillsStyle__capitalize___1tkT7">
-                    <div class="css-zomrfc">
-                      <span title="Flask" class="css-1p0oo7a">
-                        Flask
-                      </span>
-                      <button type="button" class="css-gw9vqy">
-                        ✕
-                      </button>
-                    </div>
-                  </span>
-                  <span class="skillsStyle__capitalize___1tkT7">
-                    <div class="css-zomrfc">
-                      <span title="Ambari" class="css-1p0oo7a">
-                        Ambari
-                      </span>
-                      <button type="button" class="css-gw9vqy">
-                        ✕
-                      </button>
-                    </div>
-                  </span>
-                  <span class="skillsStyle__capitalize___1tkT7">
-                    <div class="css-zomrfc">
-                      <span title="Visual Studio" class="css-1p0oo7a">
-                        Visual Studio
-                      </span>
-                      <button type="button" class="css-gw9vqy">
-                        ✕
-                      </button>
-                    </div>
-                  </span>
-                  <span class="skillsStyle__capitalize___1tkT7">
-                    <div class="css-zomrfc">
-                      <span title="Tensorflow" class="css-1p0oo7a">
-                        Tensorflow
-                      </span>
-                      <button type="button" class="css-gw9vqy">
-                        ✕
-                      </button>
-                    </div>
-                  </span>
-                  <span class="skillsStyle__capitalize___1tkT7">
-                    <div class="css-zomrfc">
-                      <span title="Svn" class="css-1p0oo7a">
-                        Svn
-                      </span>
-                      <button type="button" class="css-gw9vqy">
-                        ✕
-                      </button>
-                    </div>
-                  </span>
-                  <span class="skillsStyle__capitalize___1tkT7">
-                    <div class="css-zomrfc">
-                      <span title="Redux" class="css-1p0oo7a">
-                        Redux
-                      </span>
-                      <button type="button" class="css-gw9vqy">
-                        ✕
-                      </button>
-                    </div>
-                  </span>
-                  <span class="skillsStyle__capitalize___1tkT7">
-                    <div class="css-zomrfc">
-                      <span title="Pandas" class="css-1p0oo7a">
-                        Pandas
-                      </span>
-                      <button type="button" class="css-gw9vqy">
-                        ✕
-                      </button>
-                    </div>
-                  </span>
-                  <span class="skillsStyle__capitalize___1tkT7">
-                    <div class="css-zomrfc">
-                      <span title="Object-oriented Programming" class="css-1p0oo7a">
-                        Object-oriented Programming
-                      </span>
-                      <button type="button" class="css-gw9vqy">
-                        ✕
-                      </button>
-                    </div>
-                  </span>
-                  <span class="skillsStyle__capitalize___1tkT7">
-                    <div class="css-zomrfc">
-                      <span title="Node.js" class="css-1p0oo7a">
-                        Node.js
-                      </span>
-                      <button type="button" class="css-gw9vqy">
-                        ✕
-                      </button>
-                    </div>
-                  </span>
-                  <span class="skillsStyle__capitalize___1tkT7">
-                    <div class="css-zomrfc">
-                      <span title="Matplotlib" class="css-1p0oo7a">
-                        Matplotlib
-                      </span>
-                      <button type="button" class="css-gw9vqy">
-                        ✕
-                      </button>
-                    </div>
-                  </span>*/}
                 </div>
               </div>
             </div>
@@ -236,9 +146,7 @@ class SkillModal extends Component {
                 Cancel
               </button>
               <button
-                onClick={(event) =>
-                  this.props.updateStudentProfile(event, this.state.studentProfile)
-                }
+                onClick={(event) => this.updateStudentProfile(event)}
                 class="gd-ui-button  css-uk8w9o"
                 data-test="saveChanges"
               >
