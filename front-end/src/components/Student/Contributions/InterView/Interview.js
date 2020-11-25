@@ -1,24 +1,69 @@
 import React, { Component } from 'react';
 import '../Salary/Salaries.css';
+import PaginationComponent from '../../Common/PaginationComponent';
+import axios from 'axios';
+import serverUrl from '../../../../config';
+import { updateStudentInterviewStore } from '../../../../constants/action-types';
+import { connect } from 'react-redux';
+import InterviewCard from './InterviewCard';
 
 class Interview extends Component {
   constructor(props) {
     super(props);
     this.state = {};
   }
+
+  componentDidMount() {
+    this.commonFetch();
+  }
+
+  commonFetch = (PageNo = 0) => {
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    axios
+      .get(serverUrl + 'student/studentInterviewReview', {
+        params: {
+          PageNo,
+          StudentID: localStorage.getItem('userId'),
+        },
+        withCredentials: true,
+      })
+      .then(
+        (response) => {
+          console.log('studentInterviewReview', response.data);
+          let payload = {
+            InterViewList: response.data.results,
+            PageNo,
+            Totalcount: response.data.count,
+            PageCount: Math.ceil(response.data.count / 10),
+
+            // PageCount: Math.ceil(response.data.Totalcount / 3),
+          };
+          this.props.updateStudentInterviewStore(payload);
+        },
+        (error) => {
+          console.log('error', error);
+        }
+      );
+  };
+
+  onPageClick = (e) => {
+    // console.log('Page Clicked:', e.selected);
+    this.commonFetch(e.selected);
+  };
+
   render() {
     return (
       <div id="MainCol" class="col span-3-4 noPadLt padRt">
         <div class="module" id="MyAccountSalaries">
           <h1>Inter­views</h1>
-          <a
+          {/*<a
             href="/mz-survey/start_input.htm?showSurvey=INTERVIEWS&amp;c=PAGE_MYACCOUNT_TOP"
             id="AddInterview"
             class="gd-btn gd-btn-link gradient gd-btn-1 gd-btn-med ctaButtons margBot"
           >
             <span>Share an Interview</span>
             <i class="hlpr"></i>
-          </a>
+          </a>*/}
           <p>
             {' '}
             The Glassdoor team reviews every piece of content submitted by users, so please be
@@ -48,41 +93,44 @@ class Interview extends Component {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td class="summary">
-                  <p>
-                    <strong>Software Engineer(Internship)</strong> at <strong>Okta</strong>
-                  </p>
-                  <p>
-                    <strong> Interviewed Oct 2020 in San Jose, CA</strong>
-                  </p>
-                  <p>
-                    {' '}
-                    “Online, Live coding was monitored by the interviewer. Guiding after each step.
-                    Was asked to implement List via class and some...”
-                  </p>
-                </td>
-                <td class="submitted center"> Nov 10, 2020</td>
-                <td class="itemStatus hideMob center"> Pending</td>
-                <td class="actions center noWrap">
-                  <a href="/member/account/editInterview_input.htm?editId=38213485&amp;gdToken=KHHEmO68WzDfNopVTPHw_w%3AMQFMIcRK2h7CuTbpk18qNXS_vgJg3Fu1f1Y2qm_3Kre-KPP_Sch4oLGVC3Adc8V-SPEZ2WoRsCk9hoK9zZdqcA%3Ah1yX63Ywq_qPtBqVDb6WXjZFftZU3lin7oj6qHsXjqM">
-                    Edit
-                  </a>{' '}
-                  &nbsp;&nbsp;|&nbsp;&nbsp;{' '}
-                  <a
-                    href="/member/account/interviews_execute.htm?deleteId=38213485&amp;gdToken=KHHEmO68WzDfNopVTPHw_w%3AMQFMIcRK2h7CuTbpk18qNXS_vgJg3Fu1f1Y2qm_3Kre-KPP_Sch4oLGVC3Adc8V-SPEZ2WoRsCk9hoK9zZdqcA%3Ah1yX63Ywq_qPtBqVDb6WXjZFftZU3lin7oj6qHsXjqM"
-                    onclick="return GD.account.showDeleteContentConfirm('/member/account/interviews_execute.htm?deleteId=38213485&amp;gdToken=KHHEmO68WzDfNopVTPHw_w%3AMQFMIcRK2h7CuTbpk18qNXS_vgJg3Fu1f1Y2qm_3Kre-KPP_Sch4oLGVC3Adc8V-SPEZ2WoRsCk9hoK9zZdqcA%3Ah1yX63Ywq_qPtBqVDb6WXjZFftZU3lin7oj6qHsXjqM', 'Interview');"
-                  >
-                    Delete
-                  </a>
-                </td>
-              </tr>
+              {this.props.studentInterviewStore.InterViewList.map((interview) => (
+                <InterviewCard interview={interview} />
+              ))}
             </tbody>
           </table>
+          <PaginationComponent
+            PageCount={this.props.studentInterviewStore.PageCount}
+            PageNo={this.props.studentInterviewStore.PageNo}
+            onPageClick={(e) => {
+              this.onPageClick(e);
+            }}
+          />
         </div>
       </div>
     );
   }
 }
 
-export default Interview;
+// export default Interview;
+
+const mapStateToProps = (state) => {
+  const { studentInterviewStore } = state.StudentContributionsReducer;
+  const { studentInfoStore } = state.StudentCompleteInfoReducer;
+
+  return {
+    studentInterviewStore,
+    studentInfoStore,
+  };
+};
+const mapDispatchToProps = (dispatch) => {
+  return {
+    updateStudentInterviewStore: (payload) => {
+      dispatch({
+        type: updateStudentInterviewStore,
+        payload,
+      });
+    },
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Interview);

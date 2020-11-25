@@ -18,6 +18,7 @@ import ApplicantsListModalReducer from './ApplicantsListModalReducer';
 import JobsListReducer from './JobsListReducer';
 import PostJobModalReducer from './PostJobModalReducer';
 import InterviewListReducer from './InterviewListReducer';
+import StudentContributionsReducer from './StudentContributionsReducer';
 
 const finalReducers = combineReducers({
   SignupModalViewReducer: SignupModalViewReducer,
@@ -39,6 +40,7 @@ const finalReducers = combineReducers({
   JobsListReducer: JobsListReducer,
   PostJobModalReducer: PostJobModalReducer,
   InterviewListReducer: InterviewListReducer,
+  StudentContributionsReducer: StudentContributionsReducer,
 });
 
 export default finalReducers;

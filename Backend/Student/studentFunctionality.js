@@ -804,6 +804,7 @@ const salaryAddReview = async (req, res) => {
     StreetAddress,
     City,
     State,
+    CompanyName,
     Zip,
   } = req.body;
   try {
@@ -827,6 +828,7 @@ const salaryAddReview = async (req, res) => {
       StreetAddress,
       City,
       State,
+      CompanyName,
       Zip,
     });
     await review.save();
@@ -1457,6 +1459,98 @@ const companyViewCount = async (req, res) => {
   return res;
 };
 
+const deleteSalaryReview = async (req, res) => {
+  try {
+    const { SalaryReviewID } = req.body;
+    await Salary.deleteOne({ SalaryReviewID }, (err, result) => {
+      if (err) {
+        res.writeHead(500, { 'content-type': 'text/json' });
+        res.end(JSON.stringify('Network Error'));
+      }
+      if (result) {
+        res.writeHead(200, { 'content-type': 'text/json' });
+        res.end(JSON.stringify('Deleted the Salary review'));
+      } else {
+        res.writeHead(404, { 'content-type': 'text/json' });
+        res.end(JSON.stringify('Not found'));
+      }
+    });
+  } catch (error) {
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  }
+  return res;
+};
+
+const deleteInterviewReview = async (req, res) => {
+  try {
+    const { InterviewReviewID } = req.body;
+    await Interview.deleteOne({ InterviewReviewID }, (err, result) => {
+      if (err) {
+        res.writeHead(500, { 'content-type': 'text/json' });
+        res.end(JSON.stringify('Network Error'));
+      }
+      if (result) {
+        res.writeHead(200, { 'content-type': 'text/json' });
+        res.end(JSON.stringify('Deleted the Interview review'));
+      } else {
+        res.writeHead(404, { 'content-type': 'text/json' });
+        res.end(JSON.stringify('Not found'));
+      }
+    });
+  } catch (error) {
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  }
+  return res;
+};
+
+const deleteGeneralReview = async (req, res) => {
+  try {
+    const { GeneralReviewID } = req.body;
+    await General.deleteOne({ GeneralReviewID }, (err, result) => {
+      if (err) {
+        res.writeHead(500, { 'content-type': 'text/json' });
+        res.end(JSON.stringify('Network Error'));
+      }
+      if (result) {
+        res.writeHead(200, { 'content-type': 'text/json' });
+        res.end(JSON.stringify('Deleted the General review'));
+      } else {
+        res.writeHead(404, { 'content-type': 'text/json' });
+        res.end(JSON.stringify('Not found'));
+      }
+    });
+  } catch (error) {
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  }
+  return res;
+};
+
+const deletePhoto = async (req, res) => {
+  try {
+    const { ID } = req.body;
+    await Photo.deleteOne({ ID }, (err, result) => {
+      if (err) {
+        res.writeHead(500, { 'content-type': 'text/json' });
+        res.end(JSON.stringify('Network Error'));
+      }
+      if (result) {
+        res.writeHead(200, { 'content-type': 'text/json' });
+        res.end(JSON.stringify('Deleted the Photo'));
+      } else {
+        res.writeHead(404, { 'content-type': 'text/json' });
+        res.end(JSON.stringify('Not found'));
+      }
+    });
+  } catch (error) {
+    res.writeHead(500, { 'content-type': 'text/json' });
+    res.end(JSON.stringify('Network Error'));
+  }
+  return res;
+};
+
 module.exports = {
   navbar,
   searchCompany,
@@ -1493,5 +1587,9 @@ module.exports = {
   addCompanyPhotos,
   searchSalary,
   companyViewCount,
+  deleteSalaryReview,
+  deleteInterviewReview,
+  deleteGeneralReview,
+  deletePhoto,
   // getAllReview,
 };
