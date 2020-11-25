@@ -264,8 +264,7 @@ async function handle_request(msg, callback) {
             callback(null, res);
           }
         });
-        const querynew =
-          'INSERT INTO APPLICATION_JOB (JobID,CompanyName, CompanyID, PostedDate,StreetAddress,City,State) VALUES (?,?,?,CURDATE(),?,?,?);';
+        const querynew = 'INSERT INTO APPLICATION_JOB (JobID,CompanyName, CompanyID, PostedDate,StreetAddress,City,State) VALUES (?,?,?,CURDATE(),?,?,?);';
         const userInsertProcedure = 'CALL jobInsert(?,?,?,CURDATE(),?,?,?)';
         // eslint-disable-next-line no-underscore-dangle
         const ID = job._id.toString();
@@ -358,7 +357,7 @@ async function handle_request(msg, callback) {
               res.end = 'Not found';
               callback(null, res);
             }
-          }
+          },
         );
       } catch (error) {
         res.status = 500;
@@ -384,16 +383,13 @@ async function handle_request(msg, callback) {
           // jobID.push(data[i].JobID);
           const jobData = jobDataFetched[i];
           resultApplication.jobDetails = { jobData };
-          let getQuery =
-            'SELECT COUNT(*) As TotalApplicants FROM APPLICATION_RECEIVED WHERE JobID = ?';
+          let getQuery = 'SELECT COUNT(*) As TotalApplicants FROM APPLICATION_RECEIVED WHERE JobID = ?';
           let [results] = await con.query(getQuery, jobData.JobID);
           resultApplication.Applied = { results };
-          getQuery =
-            'SELECT COUNT(*) AS SelectedApplicants FROM APPLICATION_RECEIVED WHERE JobID = ? AND STATUS = ?';
+          getQuery = 'SELECT COUNT(*) AS SelectedApplicants FROM APPLICATION_RECEIVED WHERE JobID = ? AND STATUS = ?';
           [results] = await con.query(getQuery, [jobData.JobID, 'Hired']);
           resultApplication.Selected = { results };
-          getQuery =
-            'SELECT COUNT(*) As RejectedApplicants FROM APPLICATION_RECEIVED WHERE JobID = ? AND STATUS = ?';
+          getQuery = 'SELECT COUNT(*) As RejectedApplicants FROM APPLICATION_RECEIVED WHERE JobID = ? AND STATUS = ?';
           [results] = await con.query(getQuery, [jobData.JobID, 'Rejected']);
           resultApplication.Rejected = { results };
           finalResult.push(resultApplication);
@@ -423,20 +419,16 @@ async function handle_request(msg, callback) {
         const resultObject = {};
         const { JobID } = msg.query;
         con = await mysqlConnection();
-        let getQuery =
-          'SELECT Ethnicity, COUNT(Ethnicity) As Count FROM APPLICATION_RECEIVED WHERE JobID = ? GROUP BY Ethnicity';
+        let getQuery = 'SELECT Ethnicity, COUNT(Ethnicity) As Count FROM APPLICATION_RECEIVED WHERE JobID = ? GROUP BY Ethnicity';
         let [results] = await con.query(getQuery, JobID);
         resultObject.Ethnicity = results;
-        getQuery =
-          'SELECT Gender, COUNT(Gender) As Count FROM APPLICATION_RECEIVED WHERE JobID = ? GROUP BY Gender';
+        getQuery = 'SELECT Gender, COUNT(Gender) As Count FROM APPLICATION_RECEIVED WHERE JobID = ? GROUP BY Gender';
         [results] = await con.query(getQuery, JobID);
         resultObject.Gender = results;
-        getQuery =
-          'SELECT Disability, COUNT(Disability) As Count FROM APPLICATION_RECEIVED WHERE JobID = ? GROUP BY Disability';
+        getQuery = 'SELECT Disability, COUNT(Disability) As Count FROM APPLICATION_RECEIVED WHERE JobID = ? GROUP BY Disability';
         [results] = await con.query(getQuery, JobID);
         resultObject.Disability = results;
-        getQuery =
-          'SELECT VeteranStatus, COUNT(VeteranStatus) As Count FROM APPLICATION_RECEIVED WHERE JobID = ? GROUP BY VeteranStatus';
+        getQuery = 'SELECT VeteranStatus, COUNT(VeteranStatus) As Count FROM APPLICATION_RECEIVED WHERE JobID = ? GROUP BY VeteranStatus';
         [results] = await con.query(getQuery, JobID);
         resultObject.VeteranStatus = results;
 
