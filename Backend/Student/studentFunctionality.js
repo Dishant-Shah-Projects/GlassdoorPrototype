@@ -1492,7 +1492,7 @@ const companyViewCount = async (req, res) => {
     } else {
       ViewCount = 1;
     }
-    await Company.updateOne({ CompanyID }, { ViewCount });
+    Company.updateOne({ CompanyID }, { ViewCount });
     res.writeHead(200, { 'content-type': 'text/json' });
     res.end(JSON.stringify('Updated the view count of the company'));
   } catch (error) {
