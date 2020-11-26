@@ -68,7 +68,7 @@ mongoose.connect(mongoDB, options, (err, res) => {
 cron.schedule('0 0 * * *', async () => {
   try {
     const ViewCount = 0;
-    await Company.updateOne({}, { ViewCount });
+    await Company.updateMany({}, { ViewCount });
     console.log('Updated');
   } catch (error) {
     console.log('did not update');

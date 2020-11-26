@@ -34,8 +34,8 @@ function handleTopicRequest(topic_name, fname) {
   const producer = connection.getProducer();
   console.log('server is running ');
   consumer.on('message', (message) => {
-    // console.log(`message received for ${topic_name} `, fname);
-    // console.log(JSON.stringify(message.value));
+    console.log(`message received for ${topic_name} `, fname);
+    console.log(JSON.stringify(message.value));
     const data = JSON.parse(message.value);
 
     fname.handle_request(data.data, (err, res) => {
@@ -59,5 +59,5 @@ function handleTopicRequest(topic_name, fname) {
 // Add your TOPICs here
 // first argument is topic name
 // second argument is a function that will handle this topic request
-handleTopicRequest('company', company);
+handleTopicRequest('company2', company);
 handleTopicRequest('student', student);

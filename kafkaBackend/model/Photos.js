@@ -3,10 +3,9 @@ const mongoose = require('mongoose');
 const Photoschema = new mongoose.Schema({
   ID: { type: Number, required: true },
   CompanyID: { type: String, required: true },
-  StudentID: { type: Number, required: true },
+  StudentID: { type: String, required: true },
   PhotoURL: { type: String, required: true },
   DateUploaded: { type: Date, required: true },
-  StudentName: { type: String, required: true },
   CompanyName: { type: String, required: true },
   Status: {
     type: String,

@@ -33,36 +33,11 @@ const getCompanyProfile = async (req, res) => {
 const companyProfileUpdate = async (req, res) => {
   // eslint-disable-next-line no-console
   try {
-    const {
-      CompanyID,
-      Website,
-      Size,
-      Type,
-      Revenue,
-      Headquarter,
-      Industry,
-      Founded,
-      CompanyMission,
-      CEO,
-      CompanyDescription,
-      City,
-      State,
-    } = req.body;
+    const { CompanyID } = req.body;
     Company.findOneAndUpdate(
       { CompanyID },
       {
-        Website,
-        Size,
-        Type,
-        Revenue,
-        Headquarter,
-        Industry,
-        Founded,
-        CompanyMission,
-        CEO,
-        CompanyDescription,
-        City,
-        State,
+        ...req.body,
       },
       (e, output) => {
         if (e) {
@@ -94,15 +69,13 @@ const companyReviews = async (req, res) => {
     const results = await General.find({ CompanyID })
       .limit(10)
       .skip(PageNo * 10);
-    const count2 = await General.find({ CompanyID });
-    const count = count2.length;
+    const count2 = await General.countDocuments({ CompanyID });
+    const count = count2;
     const resultData = { results, count };
-    res.writeHead(200, { 'content-type': 'text/json' });
-    res.end(JSON.stringify(resultData));
     if (results) {
       // eslint-disable-next-line no-console
       res.writeHead(200, { 'content-type': 'text/json' });
-      res.end(JSON.stringify(results));
+      res.end(JSON.stringify(resultData));
     } else {
       res.writeHead(403, { 'content-type': 'text/json' });
       res.end(JSON.stringify('No Reviews Found'));
@@ -280,8 +253,8 @@ const featuredReview = async (req, res) => {
 const getJobs = async (req, res) => {
   const { CompanyID, PageNo } = req.query;
   try {
-    const Jobs = await Job.find({ CompanyID });
-    const count = Jobs.length;
+    const Jobs = await Job.countDocuments({ CompanyID });
+    const count = Jobs;
     const noOfPages = Math.ceil(count / 10);
     const resultObj = {};
     const Jobresult = await Job.find({ CompanyID })
@@ -336,7 +309,7 @@ const jobsApplications = async (req, res) => {
 
 // update the applications status
 const jobsApplicantUpdate = async (req, res) => {
-  const { JobID, StudentID, Status } = req.query;
+  const { JobID, StudentID, Status } = req.body;
   let con = null;
   try {
     const updateApplicationsStatusQuery = 'CALL updateApplicationsStatus(?,?,?)';
