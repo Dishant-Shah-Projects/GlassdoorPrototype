@@ -1,6 +1,11 @@
 import React, { Component } from 'react';
 import moment from 'moment';
 import './JobSuggestion.css';
+import defaultplaceholder from '../CompanyProfile/CompanyNavbar/default-placeholder.png';
+import { connect } from 'react-redux';
+import axios from 'axios';
+import serverUrl from '../../../config';
+import { updateStudentProfile } from '../../../constants/action-types';
 
 class JobSuggestion extends Component {
   constructor(props) {
@@ -8,32 +13,121 @@ class JobSuggestion extends Component {
     this.state = {};
   }
 
+  saveJob = (event, JobID) => {
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    const data = {
+      JobID,
+      StudentID: localStorage.getItem('userId'),
+    };
+    axios.post(serverUrl + 'student/companyFavouriteJobs', data).then(
+      (response) => {
+        console.log('Status Code : ', response.status);
+        if (response.status === 200) {
+          console.log(response.data);
+
+          let studentProfile = { ...this.props.studentInfoStore.studentProfile };
+          studentProfile.FavouriteJobs.push(JobID);
+          const payload = {
+            studentProfile,
+          };
+          this.props.updateStudentProfile(payload);
+        }
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  };
+
+  unsaveJob = (event, JobID) => {
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    const data = {
+      JobID,
+      StudentID: localStorage.getItem('userId'),
+    };
+    axios.post(serverUrl + 'student/removeFavouriteJobs', data).then(
+      (response) => {
+        console.log('Status Code : ', response.status);
+        if (response.status === 200) {
+          console.log(response.data);
+
+          let studentProfile = { ...this.props.studentInfoStore.studentProfile };
+          var index = studentProfile.FavouriteJobs.indexOf(JobID);
+          if (index !== -1) {
+            studentProfile.FavouriteJobs.splice(index, 1);
+          }
+          // studentProfile.FavouriteJobs.push(JobID);
+          const payload = {
+            studentProfile,
+          };
+          this.props.updateStudentProfile(payload);
+        }
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  };
+
   render() {
     const job = this.props.job;
-    const postedDate = moment(job.PostedDate);
-    const currentDate = moment();
-    const diff = currentDate.diff(postedDate);
-    const diffDuration = moment.duration(diff);
-    const postedSince =
-      diffDuration.hours() < 24 ? diffDuration.hours() : Math.ceil(diffDuration.days());
-    const h_d = diffDuration.hours() < 24 ? 'h' : 'd';
+    const date1 = new Date(job.PostedDate);
+    const date2 = new Date();
+    // console.log('date1:', date1);
+    // console.log('date2:', date2);
+    const diffTime = Math.abs(date2 - date1);
+    // console.log('diffTime:', diffTime);
+    const hours = Math.floor(diffTime / (1000 * 60 * 60));
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    const postedSince = hours < 24 ? hours : diffDays;
+    const h_d = hours < 24 ? 'h' : 'd';
+    let avgRating = 0;
+    if (
+      job.GeneralReviewCount &&
+      job.GeneralReviewCount > 0 &&
+      job.TotalGeneralReviewRating &&
+      job.TotalGeneralReviewRating > 0
+    ) {
+      avgRating = (job.TotalGeneralReviewRating / job.GeneralReviewCount).toFixed(1);
+    }
+
+    let alreadyFav = false;
+    let heartIcon = (
+      <path
+        d="M12 5.11l.66-.65a5.56 5.56 0 017.71.19 5.63 5.63 0 010 7.92L12 21l-8.37-8.43a5.63 5.63 0 010-7.92 5.56 5.56 0 017.71-.19zm7.66 6.75a4.6 4.6 0 00-6.49-6.51L12 6.53l-1.17-1.18a4.6 4.6 0 10-6.49 6.51L12 19.58z"
+        fill="currentColor"
+        fill-rule="evenodd"
+      ></path>
+    );
+
+    if (this.props.studentInfoStore.studentProfile.FavouriteJobs.includes(job._id)) {
+      heartIcon = (
+        <path
+          d="M20.37 4.65a5.57 5.57 0 00-7.91 0l-.46.46-.46-.46a5.57 5.57 0 00-7.91 0 5.63 5.63 0 000 7.92L12 21l8.37-8.43a5.63 5.63 0 000-7.92z"
+          fill="currentColor"
+          fill-rule="evenodd"
+        ></path>
+      );
+      alreadyFav = true;
+    }
     return (
       <div>
         <a
           className="job-tile css-poeuz4 css-1wh1oc8 d-flex flex-nowrap p-std"
-          href="https://www.glassdoor.com/partner/jobListing.htm?pos=101&amp;ao=1044074&amp;s=320&amp;guid=000001754d86f34fad15907ab8e769b6&amp;src=GD_JOB_AD&amp;t=REC_JOBS&amp;extid=37&amp;exst=&amp;ist=L&amp;ast=L&amp;slr=true&amp;cs=1_3ef23b50&amp;cb=1603323491908&amp;jobListingId=3715058826&amp;srs=MEMBER_HOME_RECOMMENDED"
+          // href="#"
           data-test="job-tile"
           data-brandviews="BRAND:n=jobs-recommended-for-you:eid=1704:jlid=3715058826"
         >
           <div className="d-flex flex-column align-items-center pr-std">
             <img
               className="css-x3wokz my-xxsm css-16d1ee2"
-              src="https://media.glassdoor.com/sqlm/1704/nordstrom-squarelogo-1557161537917.png"
+              src={job.ProfileImg ? job.ProfileImg : defaultplaceholder}
+              // src={job.ProfileImg}
               alt="Nordstrom"
             />
             <div className="d-flex align-items-center">
               <div className="css-b63kyi small">
-                <strong>3.6 ★</strong>
+                <strong>{avgRating} ★</strong>
               </div>
             </div>
           </div>
@@ -48,6 +142,11 @@ class JobSuggestion extends Component {
               <div className="pl-xsm">
                 <div className="css-m2m9ow d-inline-flex">
                   <button
+                    onClick={
+                      alreadyFav
+                        ? (event) => this.unsaveJob(event, job._id)
+                        : (event) => this.saveJob(event, job._id)
+                    }
                     aria-label="save job"
                     type="button"
                     className=" d-inline-flex flex-row align-items-center css-1wk59ve equmezk0"
@@ -60,11 +159,12 @@ class JobSuggestion extends Component {
                         height="24"
                         viewBox="0 0 24 24"
                       >
-                        <path
+                        {/*<path
                           d="M12 5.11l.66-.65a5.56 5.56 0 017.71.19 5.63 5.63 0 010 7.92L12 21l-8.37-8.43a5.63 5.63 0 010-7.92 5.56 5.56 0 017.71-.19zm7.66 6.75a4.6 4.6 0 00-6.49-6.51L12 6.53l-1.17-1.18a4.6 4.6 0 10-6.49 6.51L12 19.58z"
                           fill="currentColor"
                           fill-rule="evenodd"
-                        ></path>
+                        ></path>*/}
+                        {heartIcon}
                       </svg>
                     </span>
                   </button>
@@ -118,4 +218,24 @@ class JobSuggestion extends Component {
   }
 }
 
-export default JobSuggestion;
+// export default JobSuggestion;
+
+const mapStateToProps = (state) => {
+  const { studentInfoStore } = state.StudentCompleteInfoReducer;
+
+  return {
+    studentInfoStore,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    updateStudentProfile: (payload) => {
+      dispatch({
+        type: updateStudentProfile,
+        payload,
+      });
+    },
+  };
+};
+export default connect(mapStateToProps, mapDispatchToProps)(JobSuggestion);

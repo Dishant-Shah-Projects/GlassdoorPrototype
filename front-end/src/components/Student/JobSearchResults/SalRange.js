@@ -51,6 +51,7 @@ class SalRange extends Component {
                   <div className="input-wrapper css-q444d9" style={{ flexDirection: 'row' }}>
                     <h4 className="salRange">$</h4>
                     <input
+                      style={{ minWidth: '10px' }}
                       onChange={this.onCommonCHangeHandler}
                       name="StartSalary"
                       type="number"
@@ -73,6 +74,7 @@ class SalRange extends Component {
                   <div className="input-wrapper css-q444d9" style={{ flexDirection: 'row' }}>
                     <h4 className="salRange">$</h4>
                     <input
+                      style={{ minWidth: '10px' }}
                       onChange={this.onCommonCHangeHandler}
                       name="UptoSalary"
                       type="number"

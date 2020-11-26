@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import moment from 'moment';
+import defaultplaceholder from '../CompanyProfile/CompanyNavbar/default-placeholder.png';
 
 class Questions extends Component {
   constructor(props) {
@@ -14,6 +15,7 @@ class Questions extends Component {
   };
   render() {
     const interview = this.props.interview;
+
     return (
       <div id="InterviewQuestionResult_1" class="interviewQuestionWrapper padVertLg">
         <div
@@ -26,8 +28,6 @@ class Questions extends Component {
                 <a href="/Interview/Amazon-Interview-Questions-E6036.htm" class="sqLogoLink">
                   <span class="sqLogo tighten smSqLogo">
                     <img
-                      data-original="https://media.glassdoor.com/sqls/6036/amazon-squarelogo-1552847650117.png"
-                      data-original-2x="https://media.glassdoor.com/sqlm/6036/amazon-squarelogo-1552847650117.png"
                       src="https://media.glassdoor.com/sqls/6036/amazon-squarelogo-1552847650117.png"
                       class="lazy lazy-loaded"
                       data-retina-ok="true"
@@ -43,7 +43,7 @@ class Questions extends Component {
                   <div id="interview" class="row">
                     <h3 class="cell p">
                       <span class="authorInfo">
-                        <a href="#">
+                        <a>
                           {interview.JobTitle} at {interview.CompanyName} was asked...
                         </a>
                       </span>

@@ -1,43 +1,101 @@
 import React, { Component } from 'react';
 import PaginationComponent from '../../Common/PaginationComponent';
 import './CompanyPhotos.css';
+import axios from 'axios';
+import serverUrl from '../../../../config';
+import { updateCompanyPhotosStore } from '../../../../constants/action-types';
+import { connect } from 'react-redux';
 
 class CompanyPhotos extends Component {
   constructor(props) {
     super(props);
     this.state = {};
   }
+
+  componentDidMount() {
+    this.commonFetch();
+  }
+
+  commonFetch = (PageNo = 0) => {
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    axios
+      .get(serverUrl + 'student/companyPhotos', {
+        params: {
+          CompanyID: localStorage.getItem('companyID'),
+          PageNo,
+        },
+        withCredentials: true,
+      })
+      .then(
+        (response) => {
+          console.log('Photos', response.data);
+          let payload = {
+            PhotoList: response.data.results,
+            PageNo,
+            Totalcount: response.data.count,
+            PageCount: Math.ceil(response.data.count / 10),
+
+            // PageCount: Math.ceil(response.data.Totalcount / 3),
+          };
+          this.props.updateCompanyPhotosStore(payload);
+        },
+        (error) => {
+          console.log('error', error);
+        }
+      );
+  };
+
+  onPageClick = (e) => {
+    // console.log('Page Clicked:', e.selected);
+    this.commonFetch(e.selected);
+  };
+
   render() {
     return (
       <article id="MainCol">
         <div id="NodeReplace" class="gdGrid">
           <div>
             <div class=" gd-ui-module css-1mzux4t">
+              {this.props.companyPhotosStore.PhotoList.length === 0 ? (
+                <tr>
+                  <td colspan="4">
+                    <p> Employees haven't posted any photos yet. </p>
+                  </td>
+                </tr>
+              ) : (
+                ''
+              )}
               <div class="mb row d-flex flex-wrap">
-                <button
-                  style={{ paddingLeft: '0', height: '100%', paddingRight: '0' }}
-                  class="eiPhoto css-15w2ie1 e25p3zc0"
-                  data-id="12643486"
-                  data-slide-num="1"
-                  data-slide-num-on-page="18"
-                >
-                  <img
-                    class="p-xsm"
-                    src="https://media.glassdoor.com/lst/ad/7a/0e/0f/amazon-office-location-in-munich-schwabing-north.jpg"
-                    alt=" photo of: Amazon office location in Munich Schwabing-North"
-                  />
-                </button>
-              </div>{' '}
+                {this.props.companyPhotosStore.PhotoList.map((photo) => (
+                  <button
+                    style={{ paddingLeft: '0', height: '100%', paddingRight: '0' }}
+                    class="eiPhoto css-15w2ie1 e25p3zc0"
+                    data-id="12643486"
+                    data-slide-num="1"
+                    data-slide-num-on-page="18"
+                  >
+                    <img class="p-xsm" src={photo.PhotoURL} alt={photo.CompanyName} />
+                  </button>
+                ))}
+              </div>
               <div class="gd-ui-pagination css-k5362a css-1rvdm42" data-test="">
-                <PaginationComponent
-                  //   PageCount={this.props.jobListStore.PageCount}
-                  //   PageNo={this.props.jobListStore.PageNo}
-                  onPageClick={(e) => {
-                    this.onPageClick(e);
-                  }}
-                />{' '}
+                {this.props.companyPhotosStore.PhotoList.length > 0 ? (
+                  <PaginationComponent
+                    PageCount={this.props.companyPhotosStore.PageCount}
+                    PageNo={this.props.companyPhotosStore.PageNo}
+                    onPageClick={(e) => {
+                      this.onPageClick(e);
+                    }}
+                  />
+                ) : (
+                  ''
+                )}
                 <div class="paginationFooter">
-                  Viewing 1 - 18 of 653 <span class="filterLabel"></span> Photos
+                  Viewing {this.props.companyPhotosStore.PageNo * 10 + 1} -{' '}
+                  {this.props.companyPhotosStore.PhotoList.length +
+                    this.props.companyPhotosStore.PageNo * 10}{' '}
+                  of {this.props.companyPhotosStore.Totalcount} <span class="filterLabel"></span>{' '}
+                  Photos
                 </div>
               </div>
             </div>
@@ -48,4 +106,25 @@ class CompanyPhotos extends Component {
   }
 }
 
-export default CompanyPhotos;
+// export default CompanyPhotos;
+
+const mapStateToProps = (state) => {
+  const { companyOverviewStore, companyPhotosStore } = state.CompanyPageReducer;
+
+  return {
+    companyOverviewStore,
+    companyPhotosStore,
+  };
+};
+const mapDispatchToProps = (dispatch) => {
+  return {
+    updateCompanyPhotosStore: (payload) => {
+      dispatch({
+        type: updateCompanyPhotosStore,
+        payload,
+      });
+    },
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(CompanyPhotos);

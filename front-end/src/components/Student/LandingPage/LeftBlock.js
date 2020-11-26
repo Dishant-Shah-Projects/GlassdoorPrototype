@@ -32,30 +32,40 @@ class LeftBlock extends Component {
               <div class="d-block css-4w4zia el0n26p0" data-test="profile-container">
                 <div class="d-none d-lg-block p-std">
                   <div class="d-flex flex-row container-fluid justify-content-between align-items-center">
-                    <span class="SVGInline mb-xsm css-1k2lqp9">
-                      <svg
-                        className="SVGInline-svg mb-xsm-svg css-1k2lqp9-svg"
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="48"
-                        height="48"
-                        viewBox="0 0 48 48"
-                      >
-                        <g fill="none" fill-rule="evenodd">
-                          <path d="M0 0h48v48H0z"></path>
-                          <g fill="#C4C7CC" transform="translate(3.5 3.21)">
+                    {this.props.studentInfoStore.studentProfile.ProfilePicURL &&
+                    this.props.studentInfoStore.studentProfile.ProfilePicURL.length > 0 ? (
+                      <img
+                        style={{ borderRadius: '50%' }}
+                        src={this.props.studentInfoStore.studentProfile.ProfilePicURL}
+                        alt="Profile avatar"
+                        class="mb-xsm css-uodor8 css-1k2lqp9"
+                      ></img>
+                    ) : (
+                      <span class="SVGInline mb-xsm css-1k2lqp9">
+                        <svg
+                          className="SVGInline-svg mb-xsm-svg css-1k2lqp9-svg"
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="48"
+                          height="48"
+                          viewBox="0 0 48 48"
+                        >
+                          <g fill="none" fill-rule="evenodd">
+                            <path d="M0 0h48v48H0z"></path>
+                            <g fill="#C4C7CC" transform="translate(3.5 3.21)">
+                              <path
+                                id="prefix__avatar-a"
+                                d="M20.5 40.79c-11.046 0-20-8.954-20-20 0-11.045 8.954-20 20-20s20 8.955 20 20c0 11.046-8.954 20-20 20z"
+                              ></path>
+                            </g>
                             <path
-                              id="prefix__avatar-a"
-                              d="M20.5 40.79c-11.046 0-20-8.954-20-20 0-11.045 8.954-20 20-20s20 8.955 20 20c0 11.046-8.954 20-20 20z"
+                              fill="#FFF"
+                              fill-rule="nonzero"
+                              d="M36.71 38.123A18.93 18.93 0 0124 43a18.93 18.93 0 01-12.71-4.877C13.51 33.327 18.367 30 24 30c5.633 0 10.489 3.327 12.71 8.123zM24 28a8 8 0 110-16 8 8 0 010 16z"
                             ></path>
                           </g>
-                          <path
-                            fill="#FFF"
-                            fill-rule="nonzero"
-                            d="M36.71 38.123A18.93 18.93 0 0124 43a18.93 18.93 0 01-12.71-4.877C13.51 33.327 18.367 30 24 30c5.633 0 10.489 3.327 12.71 8.123zM24 28a8 8 0 110-16 8 8 0 010 16z"
-                          ></path>
-                        </g>
-                      </svg>
-                    </span>
+                        </svg>
+                      </span>
+                    )}
                     <span
                       showbadge="false"
                       className="SVGInline align-self-start css-171gp5j evfqoqj3"

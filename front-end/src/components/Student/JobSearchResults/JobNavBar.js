@@ -3,14 +3,55 @@ import React, { Component } from 'react';
 import JobCities from './JobCities';
 import JobTypes from './JobTypes';
 import SalRange from './SalRange';
-import { updateJobFilterStore, updateJobListStore } from '../../../constants/action-types';
+import {
+  updateJobFilterStore,
+  updateJobListStore,
+  openProfileTabOnClick,
+} from '../../../constants/action-types';
 import { connect } from 'react-redux';
+import { history } from '../../../App';
 
 class JobNavBar extends Component {
   constructor(props) {
     super(props);
     this.state = {};
   }
+
+  changeFavJobTab = (event) => {
+    event.preventDefault();
+    if (this.props.jobListStore.favJobSelected) {
+      this.props.filterChangeCall('', '', '', '', 0);
+    } else {
+      this.props.savedJobCall();
+    }
+  };
+
+  changeAppliedJobTab = (event) => {
+    event.preventDefault();
+    if (this.props.jobListStore.appliedJobSelected) {
+      // this.setState({
+      //   appliedJobSelected: false,
+      // });
+      this.props.filterChangeCall('', '', '', '', 0);
+    } else {
+      // this.setState({
+      //   appliedJobSelected: true,
+      //   favJobSelected: false,
+      // });
+      this.props.appliedJobCall();
+    }
+  };
+
+  openProfile = (event, profile) => {
+    history.push('/Profile');
+    // this.setState({
+    //   redirect: '/Profile',
+    // });
+    // localStorage.setItem('openTab', selectedMenuoption);
+    let payload = { openTab: profile };
+    this.props.openProfileTabOnClick(payload);
+  };
+
   render() {
     let salRange =
       '$' + this.props.jobListStore.SalStart + 'K-$' + this.props.jobListStore.SalEnd + 'K';
@@ -23,70 +64,125 @@ class JobNavBar extends Component {
     } else if (this.props.jobFilterStore.fiterSlected === 'SALRANGE') {
       dropDownStyle = { left: '186px' };
     } else {
-      dropDownStyle = { left: '362px' };
+      dropDownStyle = { left: '362px', minWidth: '158px' };
     }
     return (
       <div id="HzFiltersWrap" className="borderBot">
         <header id="DKFilters" className="wide">
           <div id="dynamicFiltersContainer">
             <div className="selectContainer">
-              <div className="allDropdowns">
-                <div className="selectDynamicFilters">
+              {this.props.jobListStore.appliedJobSelected ||
+              this.props.jobListStore.favJobSelected ? (
+                ''
+              ) : (
+                <div className="allDropdowns">
+                  <div className="selectDynamicFilters">
+                    <div
+                      onClick={() => this.props.toggleFilter('JOBTYPE')}
+                      data-test="JOBTYPE"
+                      className={
+                        this.props.jobFilterStore.fiterSlected === 'JOBTYPE'
+                          ? 'filter expanded'
+                          : 'filter'
+                      }
+                      id="filter_jobType"
+                    >
+                      <span className="label">
+                        {this.props.jobListStore.JobType === ''
+                          ? 'All Job Types'
+                          : this.props.jobListStore.JobType}
+                      </span>
+                      <span className="labelArrow small"></span>
+                    </div>
+                    <div
+                      onClick={() => this.props.toggleFilter('SALRANGE')}
+                      data-test="SALRANGE"
+                      className={
+                        this.props.jobFilterStore.fiterSlected === 'SALRANGE'
+                          ? 'filter expanded'
+                          : 'filter'
+                      }
+                      id="filter_minSalary"
+                    >
+                      <span className="label">{salRange}</span>
+                      <span className="labelArrow small"></span>
+                    </div>
+                    <div
+                      onClick={() => this.props.toggleFilter('CITY')}
+                      data-test="CITY"
+                      className={
+                        this.props.jobFilterStore.fiterSlected === 'CITY'
+                          ? 'filter expanded'
+                          : 'filter'
+                      }
+                      // className="filter"
+                      id="filter_cityId"
+                    >
+                      <span className="label">
+                        {this.props.jobListStore.State === ''
+                          ? 'All States'
+                          : this.props.jobListStore.State}
+                      </span>
+                      <span className="labelArrow small"></span>
+                    </div>
+                  </div>
+                </div>
+              )}
+              <div class="button-set ">
+                <div>
                   <div
-                    onClick={() => this.props.toggleFilter('JOBTYPE')}
-                    data-test="JOBTYPE"
-                    className={
-                      this.props.jobFilterStore.fiterSlected === 'JOBTYPE'
-                        ? 'filter expanded'
-                        : 'filter'
-                    }
-                    id="filter_jobType"
+                    onClick={this.changeFavJobTab}
+                    class={this.props.jobListStore.favJobSelected ? 'selected' : ''}
+                    tabindex="0"
                   >
-                    <span className="label">
-                      {this.props.jobListStore.JobType === ''
-                        ? 'All Job Types'
-                        : this.props.jobListStore.JobType}
-                    </span>
-                    <span className="labelArrow small"></span>
+                    <label
+                      style={{ height: '40px' }}
+                      for="employerUIData.state.employerReview.currentJob_true"
+                    >
+                      Favourite Jobs
+                    </label>
+                    <input
+                      class="hidden"
+                      type="radio"
+                      name="employerUIData.state.employerReview.currentJob"
+                      id="employerUIData.state.employerReview.currentJob_true"
+                      value="true"
+                      checked=""
+                    />
                   </div>
                   <div
-                    onClick={() => this.props.toggleFilter('SALRANGE')}
-                    data-test="SALRANGE"
-                    className={
-                      this.props.jobFilterStore.fiterSlected === 'SALRANGE'
-                        ? 'filter expanded'
-                        : 'filter'
-                    }
-                    id="filter_minSalary"
+                    onClick={this.changeAppliedJobTab}
+                    class={this.props.jobListStore.appliedJobSelected ? 'selected' : ''}
+                    tabindex="0"
                   >
-                    <span className="label">{salRange}</span>
-                    <span className="labelArrow small"></span>
-                  </div>
-                  <div
-                    onClick={() => this.props.toggleFilter('CITY')}
-                    data-test="CITY"
-                    className={
-                      this.props.jobFilterStore.fiterSlected === 'CITY'
-                        ? 'filter expanded'
-                        : 'filter'
-                    }
-                    // className="filter"
-                    id="filter_cityId"
-                  >
-                    <span className="label">
-                      {this.props.jobListStore.State === ''
-                        ? 'All States'
-                        : this.props.jobListStore.State}
-                    </span>
-                    <span className="labelArrow small"></span>
+                    <label
+                      style={{ height: '40px' }}
+                      for="employerUIData.state.employerReview.currentJob_false"
+                    >
+                      Applied Jobs
+                    </label>
+                    <input
+                      class="hidden"
+                      type="radio"
+                      name="employerUIData.state.employerReview.currentJob"
+                      id="employerUIData.state.employerReview.currentJob_false"
+                      value="false"
+                    />
                   </div>
                 </div>
               </div>
+
               <div className="clearFilters">
                 <span>Clear Filters</span>
               </div>
               <div className="filter expandable right containerLess createBtnContainer">
-                <a className="gd-btn gd-btn-link gradient gd-btn-2 gd-btn-med">
+                <a
+                  href="#"
+                  onClick={(event) => {
+                    this.openProfile(event, 'Profile');
+                  }}
+                  className="gd-btn gd-btn-link gradient gd-btn-2 gd-btn-med"
+                >
                   <span className="SVGInline filterIcons profileIcon">
                     <svg
                       className="SVGInline-svg filterIcons-svg profileIcon-svg"
@@ -169,6 +265,12 @@ const mapDispatchToProps = (dispatch) => {
     updateJobListStore: (payload) => {
       dispatch({
         type: updateJobListStore,
+        payload,
+      });
+    },
+    openProfileTabOnClick: (payload) => {
+      dispatch({
+        type: openProfileTabOnClick,
         payload,
       });
     },

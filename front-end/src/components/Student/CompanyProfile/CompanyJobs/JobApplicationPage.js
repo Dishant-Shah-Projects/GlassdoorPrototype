@@ -144,7 +144,7 @@ class JobApplicationPage extends Component {
           console.log('Status Code : ', response.status);
           if (response.status === 200) {
             let studentProfile = { ...this.props.studentInfoStore.studentProfile };
-            studentProfile.AppliedJobs.push(this.props.selectedJob._id);
+            studentProfile.AppliedJobs.push(localStorage.getItem('application_job_id'));
             const payload = {
               studentProfile,
             };
@@ -161,6 +161,40 @@ class JobApplicationPage extends Component {
         }
       );
     }
+  };
+
+  withdrawJob = (event) => {
+    event.preventDefault();
+    // console.log('withdraw job, jobid:', this.props.jobOonFocusStore.jobOonFocus._id);
+
+    // event.preventDefault();
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    const data = {
+      StudentID: localStorage.getItem('userId'),
+      JobID: localStorage.getItem('application_job_id'),
+    };
+    axios.post(serverUrl + 'student/jobWithdraw', data).then(
+      (response) => {
+        console.log('Status Code : ', response.status);
+        if (response.status === 200) {
+          // this.props.toggle(event);
+          let studentProfile = { ...this.props.studentInfoStore.studentProfile };
+          const index = studentProfile.AppliedJobs.indexOf(
+            localStorage.getItem('application_job_id')
+          );
+          if (index >= 0) {
+            studentProfile.AppliedJobs.splice(index, 1);
+          }
+          const payload = {
+            studentProfile,
+          };
+          this.props.updateStudentProfile(payload);
+        }
+      },
+      (error) => {
+        console.log('error:', error.response);
+      }
+    );
   };
 
   saveJob = (event) => {
@@ -273,7 +307,7 @@ class JobApplicationPage extends Component {
         <span style={{ fontSize: 'large' }} class="appliedOnMsg">
           Already Applied! want to{' '}
         </span>
-        <span style={{ fontSize: 'large' }}>
+        <span onClick={this.withdrawJob} style={{ fontSize: 'large' }}>
           <a>withdraw?</a>
         </span>
       </div>

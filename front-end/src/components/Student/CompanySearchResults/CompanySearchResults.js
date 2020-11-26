@@ -57,13 +57,19 @@ class CompanySearchResults extends Component {
   };
 
   openCompanyProfile = (event, CompanyID) => {
-    // event.preventDefault();
-    // event.stopPropagation();
     localStorage.setItem('companyID', CompanyID);
     history.push('/CompanyPage');
-    // this.setState({
-    //   redirect: '/CompanyPage',
-    // });
+
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    const data = { CompanyID };
+    axios.post(serverUrl + 'student/companyViewCount', data).then(
+      (response) => {
+        console.log('View incremented');
+      },
+      (error) => {
+        console.log('error', error);
+      }
+    );
   };
 
   openAddReview = (CompanyID, ceo, name) => {
@@ -92,40 +98,48 @@ class CompanySearchResults extends Component {
                     <div id="ReviewSearchResults" className="flex-aside">
                       <article id="MainCol" className="mainCol">
                         <div className="companySearchHierarchies gdGrid">
-                          <header className="px-lg-0 px">
-                            {localStorage.getItem('SearchString') ? (
+                          {this.props.companyListStore.companyList.length === 0 ? (
+                            <header className="px-lg-0 px">
                               <h1 className="pt-lg-std py-sm m-0">
+                                No companies found, try different search criteria
+                              </h1>
+                            </header>
+                          ) : (
+                            <header className="px-lg-0 px">
+                              {localStorage.getItem('SearchString') ? (
+                                <h1 className="pt-lg-std py-sm m-0">
+                                  {' '}
+                                  Showing results for{' '}
+                                  <strong className="capitalize">
+                                    {localStorage.getItem('SearchString')}
+                                  </strong>{' '}
+                                  in{' '}
+                                  <strong className="capitalize">
+                                    {localStorage.getItem('Location')}{' '}
+                                  </strong>
+                                </h1>
+                              ) : (
+                                <h1 className="pt-lg-std py-sm m-0">
+                                  {' '}
+                                  Top Companies in{' '}
+                                  <strong className="capitalize">
+                                    {localStorage.getItem('Location')}{' '}
+                                  </strong>
+                                </h1>
+                              )}
+                              <div className="pb-lg-xxl pb-std">
                                 {' '}
-                                Showing results for{' '}
-                                <strong className="capitalize">
-                                  {localStorage.getItem('SearchString')}
+                                Showing{' '}
+                                <strong>{this.props.companyListStore.PageNo * 10 + 1}</strong>–
+                                <strong>
+                                  {this.props.companyListStore.companyList.length +
+                                    this.props.companyListStore.PageNo * 10}
                                 </strong>{' '}
-                                in{' '}
-                                <strong className="capitalize">
-                                  {localStorage.getItem('Location')}{' '}
-                                </strong>
-                              </h1>
-                            ) : (
-                              <h1 className="pt-lg-std py-sm m-0">
-                                {' '}
-                                Top Companies in{' '}
-                                <strong className="capitalize">
-                                  {localStorage.getItem('Location')}{' '}
-                                </strong>
-                              </h1>
-                            )}
-                            <div className="pb-lg-xxl pb-std">
-                              {' '}
-                              Showing <strong>{this.props.companyListStore.PageNo * 10 + 1}</strong>
-                              –
-                              <strong>
-                                {this.props.companyListStore.companyList.length +
-                                  this.props.companyListStore.PageNo * 10}
-                              </strong>{' '}
-                              of <strong>{this.props.companyListStore.Totalcount}</strong> Companies
-                            </div>
-                          </header>
-
+                                of <strong>{this.props.companyListStore.Totalcount}</strong>{' '}
+                                Companies
+                              </div>
+                            </header>
+                          )}
                           {this.props.companyListStore.companyList.map((company) => (
                             <div
                               className="single-company-result module "
@@ -152,13 +166,17 @@ class CompanySearchResults extends Component {
                           ))}
 
                           <div className="module pt-xxsm">
-                            <PaginationComponent
-                              PageCount={this.props.companyListStore.PageCount}
-                              PageNo={this.props.companyListStore.PageNo}
-                              onPageClick={(e) => {
-                                this.onPageClick(e);
-                              }}
-                            />
+                            {this.props.companyListStore.companyList.length > 0 ? (
+                              <PaginationComponent
+                                PageCount={this.props.companyListStore.PageCount}
+                                PageNo={this.props.companyListStore.PageNo}
+                                onPageClick={(e) => {
+                                  this.onPageClick(e);
+                                }}
+                              />
+                            ) : (
+                              ''
+                            )}
                           </div>
                         </div>
                       </article>

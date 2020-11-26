@@ -14,9 +14,17 @@ class ProfileFormModal extends Component {
     };
   }
   onChangeCommonHandler = (event) => {
-    this.setState({
-      studentProfile: { ...this.state.studentProfile, [event.target.name]: event.target.value },
-    });
+    if (event.target.name === 'Zip' || event.target.name === 'PhoneNo') {
+      if (/^(\s*|\d+)$/.test(event.target.value)) {
+        this.setState({
+          studentProfile: { ...this.state.studentProfile, [event.target.name]: event.target.value },
+        });
+      }
+    } else {
+      this.setState({
+        studentProfile: { ...this.state.studentProfile, [event.target.name]: event.target.value },
+      });
+    }
   };
   switchTab = (event, Openedtab) => {
     if (Openedtab !== this.state.Openedtab) {

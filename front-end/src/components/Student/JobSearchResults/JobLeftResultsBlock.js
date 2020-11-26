@@ -83,6 +83,13 @@ class JobLeftResultsBlock extends Component {
             </div>
           </div>
           <ul className="jlGrid hover p-0 ">
+            {this.props.jobListStore.jobList.length === 0 ? (
+              <h2 class="block" style={{ fontWeight: '400' }}>
+                No Jobs Found, try different search criteria.
+              </h2>
+            ) : (
+              ''
+            )}
             {this.props.jobListStore.jobList.map((job) => (
               <JobResultCard
                 key={job._id}
@@ -98,13 +105,43 @@ class JobLeftResultsBlock extends Component {
             Page {this.props.jobListStore.PageNo + 1} of {this.props.jobListStore.PageCount}
           </div>
           <div className="cell alignRt middle">
-            <PaginationComponent
-              PageCount={this.props.jobListStore.PageCount}
-              PageNo={this.props.jobListStore.PageNo}
-              onPageClick={(e) => {
-                this.onPageClick(e);
-              }}
-            />
+            {(this.props.jobListStore.appliedJobSelected ||
+              this.props.jobListStore.favJobSelected) &&
+            this.props.jobListStore.jobList.length > 0 ? (
+              ''
+            ) : (
+              <PaginationComponent
+                PageCount={this.props.jobListStore.PageCount}
+                PageNo={this.props.jobListStore.PageNo}
+                onPageClick={(e) => {
+                  this.onPageClick(e);
+                }}
+              />
+            )}
+            {this.props.jobListStore.appliedJobSelected &&
+            this.props.jobListStore.jobList.length > 0 ? (
+              <PaginationComponent
+                PageCount={this.props.jobListStore.PageCount}
+                PageNo={this.props.jobListStore.PageNo}
+                onPageClick={(e) => {
+                  this.props.appliedJobCall(e.selected);
+                }}
+              />
+            ) : (
+              ''
+            )}
+            {this.props.jobListStore.favJobSelected &&
+            this.props.jobListStore.jobList.length > 0 ? (
+              <PaginationComponent
+                PageCount={this.props.jobListStore.PageCount}
+                PageNo={this.props.jobListStore.PageNo}
+                onPageClick={(e) => {
+                  this.props.savedJobCall(e.selected);
+                }}
+              />
+            ) : (
+              ''
+            )}
           </div>
         </div>
       </article>

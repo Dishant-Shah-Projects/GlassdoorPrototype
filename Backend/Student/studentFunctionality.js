@@ -265,6 +265,7 @@ const getJobSuggestions = async (req, res) => {
       let companyID = resultData[i].CompanyID;
       let company = await Company.findOne({ CompanyID: companyID }).exec();
       let tmpObj = {};
+      tmpObj['_id'] = resultData[i]._id;
       tmpObj['Title'] = resultData[i].Title;
       tmpObj['TitCompanyIDle'] = resultData[i].CompanyID;
       tmpObj['CompanyName'] = resultData[i].CompanyName;
@@ -282,6 +283,8 @@ const getJobSuggestions = async (req, res) => {
       tmpObj['ExpectedSalary'] = resultData[i].ExpectedSalary;
       tmpObj['Votes'] = resultData[i].TitVotesle;
       tmpObj['ProfileImg'] = company.ProfileImg;
+      tmpObj['GeneralReviewCount'] = company.GeneralReviewCount;
+      tmpObj['TotalGeneralReviewRating'] = company.TotalGeneralReviewRating;
       companyResult.push(tmpObj);
     }
     res.writeHead(200, {
@@ -1403,7 +1406,7 @@ const studentCompanyPhotos = async (req, res) => {
 const addCompanyPhotos = async (req, res) => {
   try {
     const { StudentID, CompanyID, Photos, CompanyName } = req.body;
-    const count2 = await Photo.countDocuments({ StudentID });
+    const count2 = await Photo.countDocuments();
     let ID = count2 + 1;
     let PhotoURL = null;
     // eslint-disable-next-line no-restricted-syntax
@@ -1413,7 +1416,7 @@ const addCompanyPhotos = async (req, res) => {
         CompanyID,
         StudentID,
         // eslint-disable-next-line no-undef
-        PhotoURL,
+        PhotoURL: PhotoURL.imageurl,
         DateUploaded: Date.now(),
         CompanyName,
         Status: 'Not Approved',

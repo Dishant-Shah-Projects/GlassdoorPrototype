@@ -31,15 +31,15 @@ class JobResultCard extends Component {
     // const diffDuration = moment.duration(diff);
     const date1 = new Date(job.PostedDate);
     const date2 = new Date();
-    console.log('date1:', date1);
-    console.log('date2:', date2);
+    // console.log('date1:', date1);
+    // console.log('date2:', date2);
     const diffTime = Math.abs(date2 - date1);
     const hours = Math.floor(diffTime / (1000 * 60 * 60));
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    console.log('diffDuration milliseconds:', diffTime);
+    // console.log('diffDuration milliseconds:', diffTime);
 
-    console.log('hours:', hours);
-    console.log('diffDays:', diffDays);
+    // console.log('hours:', hours);
+    // console.log('diffDays:', diffDays);
     const postedSince = hours < 24 ? hours : diffDays;
     const h_d = hours < 24 ? 'h' : 'd';
 
@@ -164,7 +164,7 @@ class JobResultCard extends Component {
             </div>
           </div>
           <a
-            href="/partner/jobListing.htm?pos=101&amp;ao=1131672&amp;s=149&amp;guid=000001756bc2a114bc220f15246b43c4&amp;src=GD_JOB_AD&amp;t=SRFJ&amp;vt=w&amp;uido=5B485F458EBD641B&amp;cs=1_96b751a7&amp;cb=1603830720282&amp;jobListingId=3360350142"
+            // href="/partner/jobListing.htm?pos=101&amp;ao=1131672&amp;s=149&amp;guid=000001756bc2a114bc220f15246b43c4&amp;src=GD_JOB_AD&amp;t=SRFJ&amp;vt=w&amp;uido=5B485F458EBD641B&amp;cs=1_96b751a7&amp;cb=1603830720282&amp;jobListingId=3360350142"
             rel="nofollow noopener noreferrer"
             target="_blank"
             className="jobInfoItem jobTitle css-jq9w1v css-13w0lq6 eigr9kq1 jobLink"

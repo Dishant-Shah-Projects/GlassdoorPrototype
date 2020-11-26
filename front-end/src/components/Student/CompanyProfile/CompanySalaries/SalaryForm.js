@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import './SalaryForm.css';
 import axios from 'axios';
 import serverUrl from '../../../../config';
+import { connect } from 'react-redux';
+import { history } from '../../../../App';
+import { Link } from 'react-router-dom';
 
 class SalaryForm extends Component {
   constructor(props) {
@@ -23,7 +26,7 @@ class SalaryForm extends Component {
     // event.preventDefault();
     console.log('something');
     if (event.target.name === 'Zip') {
-      if (/^\d+$/.test(event.target.value)) {
+      if (/^(\s*|\d+)$/.test(event.target.value)) {
         this.setState(
           {
             [event.target.name]: event.target.value,
@@ -124,7 +127,15 @@ class SalaryForm extends Component {
     );
   };
 
+  goToHomePage = () => {
+    this.setState({
+      filterDropDownOpen: false,
+    });
+    history.push('/Home');
+  };
+
   render() {
+    // document.location.href = String(document.location.href).replace('#', '');
     return (
       <main id="mount">
         <div>
@@ -132,7 +143,13 @@ class SalaryForm extends Component {
             <div class="background">
               <nav>
                 <div class="logoContainer">
-                  <a class="logo green " aria-label="Go To Glassdoor homepage"></a>
+                  <a
+                    href="#"
+                    // to="/"
+                    onClick={this.goToHomePage}
+                    class="logo green "
+                    aria-label="Go To Glassdoor homepage"
+                  ></a>
                 </div>
               </nav>
             </div>
@@ -394,19 +411,22 @@ class SalaryForm extends Component {
                     >
                       <div class=" css-1ohf0ui">
                         <div class="input-wrapper css-q444d9">
-                          <input
+                          <select
+                            style={{ backgroundColor: '#fff' }}
+                            id="stateName"
+                            data-test="state"
+                            maxlength="100"
+                            aria-label=""
+                            class="css-ofiv3k"
                             onChange={this.commonOnChangeHandler}
-                            name="State"
                             value={this.state.State}
-                            placeholder="State"
-                            autocomplete="off"
-                            // name="salaryUIData.state.salaryReview.userEnteredOccupation"
-                            id="salaryUIData.state.salaryReview.userEnteredOccupation-ed3f62f-0130-8627-ab63-258c7681fc6c"
-                            data-test=""
-                            aria-label="State*"
-                            class="css-1sk6eli"
-                            // value=""
-                          />
+                            name="State"
+                          >
+                            <option value=""></option>
+                            {this.props.masterData.States.map((state) => (
+                              <option value={state}>{state}</option>
+                            ))}
+                          </select>
                         </div>
                       </div>
                       <ul class="suggestions down"></ul>
@@ -515,4 +535,13 @@ class SalaryForm extends Component {
   }
 }
 
-export default SalaryForm;
+// export default SalaryForm;
+const mapStateToProps = (state) => {
+  const { masterData } = state.staticDataReducer;
+
+  return {
+    masterData,
+  };
+};
+
+export default connect(mapStateToProps, null)(SalaryForm);

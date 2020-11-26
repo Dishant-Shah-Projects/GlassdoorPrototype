@@ -15,6 +15,9 @@ const defaultState = {
     State: '',
     SalStart: '',
     SalEnd: '',
+    JobID: '',
+    favJobSelected: false,
+    appliedJobSelected: false,
   },
   jobFilterStore: {
     fiterSlected: '',

@@ -3,6 +3,7 @@ import './InterviewForm.css';
 import axios from 'axios';
 import serverUrl from '../../../../config';
 import { history } from '../../../../App';
+import { connect } from 'react-redux';
 
 class InterviewForm extends Component {
   constructor(props) {
@@ -18,12 +19,28 @@ class InterviewForm extends Component {
       openDifficultyDropDown: false,
       openOfferStatusDropDown: false,
       invalidData: true,
+      StreetAddress: '',
+      City: '',
+      State: '',
+      Zip: '',
     };
   }
 
   validationCheck = () => {
     let invalidData = false;
     if (this.state.OverallExperience === '') {
+      invalidData = true;
+    }
+    if (this.state.State === '') {
+      invalidData = true;
+    }
+    if (this.state.StreetAddress === '') {
+      invalidData = true;
+    }
+    if (this.state.City === '') {
+      invalidData = true;
+    }
+    if (this.state.Zip === '' || this.state.Zip < 10000) {
       invalidData = true;
     }
     if (this.state.JobTitle.length === 0) {
@@ -52,15 +69,27 @@ class InterviewForm extends Component {
 
   commonOnChangeHandler = (event) => {
     // event.preventDefault();
-    this.setState(
-      {
-        [event.target.name]: event.target.value,
-        openStatusDropDown: false,
-      },
-      function () {
-        this.validationCheck();
+    if (event.target.name === 'Zip') {
+      if (/^(\s*|\d+)$/.test(event.target.value)) {
+        this.setState(
+          {
+            [event.target.name]: event.target.value,
+          },
+          function () {
+            this.validationCheck();
+          }
+        );
       }
-    );
+    } else {
+      this.setState(
+        {
+          [event.target.name]: event.target.value,
+        },
+        function () {
+          this.validationCheck();
+        }
+      );
+    }
   };
 
   submitOverallEcperience = (event, OverallExperience) => {
@@ -123,6 +152,10 @@ class InterviewForm extends Component {
       OfferStatus: this.state.OfferStatus,
       InterviewQuestions: this.state.InterviewQuestions,
       Answers: this.state.Answers,
+      StreetAddress: this.state.StreetAddress,
+      City: this.state.City,
+      State: this.state.State,
+      Zip: this.state.Zip,
     };
     axios.post(serverUrl + 'student/interviewAddReview', data).then(
       (response) => {
@@ -150,6 +183,14 @@ class InterviewForm extends Component {
       }
     );
   };
+
+  goToHomePage = () => {
+    this.setState({
+      filterDropDownOpen: false,
+    });
+    history.push('/Home');
+  };
+
   render() {
     return (
       <div class="pageContentWrapper ">
@@ -159,7 +200,12 @@ class InterviewForm extends Component {
               <div id="NodeReplace">
                 <main class="gdGrid" data-test="new-surveys">
                   <header class="d-flex align-items-center justify-content-center justify-content-md-start css-1q22y4n eylfow80">
-                    <a href="/" title="glassdoor.com" class="css-19ug521 eylfow81">
+                    <a
+                      onClick={this.goToHomePage}
+                      href="#"
+                      title="glassdoor.com"
+                      class="css-19ug521 eylfow81"
+                    >
                       <svg
                         width="125"
                         height="25"
@@ -224,9 +270,155 @@ class InterviewForm extends Component {
                                       />
                                     </div>
                                   </div>
-                                  <ul class="suggestions down"></ul>
-                                  <div>
-                                    <div data-test="FilterChips"></div>
+                                </div>
+                              </div>
+                              <div class=" mb css-1ohf0ui">
+                                <label
+                                  style={{
+                                    fontSize: '15px',
+                                    lineHeight: '24px',
+                                    whiteSpace: 'normal',
+                                  }}
+                                  for="State"
+                                  class="css-xwfp7p"
+                                >
+                                  <span>State *</span>
+                                </label>
+                                <div
+                                  data-test="interview-survey-interview-employer"
+                                  aria-expanded="false"
+                                  role="combobox"
+                                  aria-autocomplete="list"
+                                  class="css-1xtvih1"
+                                >
+                                  <div class=" css-1ohf0ui">
+                                    <div class="input-wrapper css-q444d9">
+                                      <select
+                                        style={{ backgroundColor: '#fff' }}
+                                        id="stateName"
+                                        data-test="state"
+                                        maxlength="100"
+                                        aria-label=""
+                                        class="css-ofiv3k"
+                                        onChange={this.commonOnChangeHandler}
+                                        value={this.state.State}
+                                        name="State"
+                                      >
+                                        <option value=""></option>
+                                        {this.props.masterData.States.map((state) => (
+                                          <option value={state}>{state}</option>
+                                        ))}
+                                      </select>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class=" mb css-1ohf0ui">
+                                <label
+                                  style={{
+                                    fontSize: '15px',
+                                    lineHeight: '24px',
+                                    whiteSpace: 'normal',
+                                  }}
+                                  for="City"
+                                  class="css-xwfp7p"
+                                >
+                                  <span>City *</span>
+                                </label>
+                                <div
+                                  data-test="interview-survey-interview-employer"
+                                  aria-expanded="false"
+                                  role="combobox"
+                                  aria-autocomplete="list"
+                                  class="css-1xtvih1"
+                                >
+                                  <div class=" css-1ohf0ui">
+                                    <div class="input-wrapper css-q444d9">
+                                      <input
+                                        onChange={this.commonOnChangeHandler}
+                                        placeholder="City"
+                                        autocomplete="off"
+                                        name="City"
+                                        id="City"
+                                        data-test=""
+                                        aria-label="Employer *"
+                                        class="css-1etjok6"
+                                        value={this.state.City}
+                                      />
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class=" mb css-1ohf0ui">
+                                <label
+                                  style={{
+                                    fontSize: '15px',
+                                    lineHeight: '24px',
+                                    whiteSpace: 'normal',
+                                  }}
+                                  for="StreetAddress"
+                                  class="css-xwfp7p"
+                                >
+                                  <span>Street Address *</span>
+                                </label>
+                                <div
+                                  data-test="interview-survey-interview-employer"
+                                  aria-expanded="false"
+                                  role="combobox"
+                                  aria-autocomplete="list"
+                                  class="css-1xtvih1"
+                                >
+                                  <div class=" css-1ohf0ui">
+                                    <div class="input-wrapper css-q444d9">
+                                      <input
+                                        onChange={this.commonOnChangeHandler}
+                                        placeholder="Street Address"
+                                        autocomplete="off"
+                                        name="StreetAddress"
+                                        id="StreetAddress"
+                                        data-test=""
+                                        aria-label="Employer *"
+                                        class="css-1etjok6"
+                                        value={this.state.StreetAddress}
+                                      />
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class=" mb css-1ohf0ui">
+                                <label
+                                  style={{
+                                    fontSize: '15px',
+                                    lineHeight: '24px',
+                                    whiteSpace: 'normal',
+                                  }}
+                                  for="Zip"
+                                  class="css-xwfp7p"
+                                >
+                                  <span>Zip *</span>
+                                </label>
+                                <div
+                                  data-test="interview-survey-interview-employer"
+                                  aria-expanded="false"
+                                  role="combobox"
+                                  aria-autocomplete="list"
+                                  class="css-1xtvih1"
+                                >
+                                  <div class=" css-1ohf0ui">
+                                    <div class="input-wrapper css-q444d9">
+                                      <input
+                                        onChange={this.commonOnChangeHandler}
+                                        placeholder="Zip"
+                                        autocomplete="off"
+                                        name="Zip"
+                                        id="Zip"
+                                        maxLength="5"
+                                        data-test=""
+                                        aria-label="Employer *"
+                                        class="css-1etjok6"
+                                        value={this.state.Zip}
+                                      />
+                                    </div>
                                   </div>
                                 </div>
                               </div>
@@ -933,4 +1125,14 @@ class InterviewForm extends Component {
   }
 }
 
-export default InterviewForm;
+// export default InterviewForm;
+const mapStateToProps = (state) => {
+  const { masterData } = state.staticDataReducer;
+
+  return {
+    masterData,
+  };
+};
+
+// export default LeftBlock;
+export default connect(mapStateToProps, null)(InterviewForm);

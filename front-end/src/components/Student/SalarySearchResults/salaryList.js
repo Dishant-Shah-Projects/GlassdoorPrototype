@@ -5,6 +5,9 @@ import Navbar from '../Common/Navbar';
 import PaginationComponent from '../Common/PaginationComponent';
 import SalaryCard from './SalaryCard';
 import './salaryList.css';
+import axios from 'axios';
+import serverUrl from '../../../config';
+import { history } from '../../../App';
 
 class salaryList extends Component {
   constructor(props) {
@@ -13,15 +16,43 @@ class salaryList extends Component {
   }
 
   commonFetch = (PageNo = 0) => {
-    let payload = {
-      SalarySearchList: [{ name: 'pr' }, { name: 'pr' }, { name: 'pr' }, { name: 'pr' }],
-      PageNo,
-      PageCount: Math.ceil(116 / 10),
-      Totalcount: 116,
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    axios
+      .get(serverUrl + 'student/searchSalary', {
+        params: {
+          SearchString: localStorage.getItem('SearchString'),
+          State: localStorage.getItem('Location'),
+          PageNo,
+        },
+        withCredentials: true,
+      })
+      .then(
+        (response) => {
+          console.log('salary', response);
+          let payload = {
+            SalarySearchList: response.data.result.result,
+            PageNo,
+            PageCount: Math.ceil(response.data.count / 10),
+            Totalcount: response.count,
 
-      // PageCount: Math.ceil(response.data.Totalcount / 3),
-    };
-    this.props.updateSalaryList(payload);
+            // PageCount: Math.ceil(response.data.Totalcount / 3),
+          };
+          this.props.updateSalaryList(payload);
+        },
+        (error) => {
+          console.log('error', error);
+        }
+      );
+
+    // let payload = {
+    //   SalarySearchList: [{ name: 'pr' }, { name: 'pr' }, { name: 'pr' }, { name: 'pr' }],
+    //   PageNo,
+    //   PageCount: Math.ceil(116 / 10),
+    //   Totalcount: 116,
+
+    //   // PageCount: Math.ceil(response.data.Totalcount / 3),
+    // };
+    // this.props.updateSalaryList(payload);
   };
 
   componentDidMount() {
@@ -32,6 +63,23 @@ class salaryList extends Component {
     // console.log('Page Clicked:', e.selected);
     this.commonFetch(e.selected);
   };
+
+  openCompanyProfile = (event, CompanyID) => {
+    localStorage.setItem('companyID', CompanyID);
+    history.push('/CompanyPage');
+
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    const data = { CompanyID };
+    axios.post(serverUrl + 'student/companyViewCount', data).then(
+      (response) => {
+        console.log('View incremented');
+      },
+      (error) => {
+        console.log('error', error);
+      }
+    );
+  };
+
   render() {
     this.props.LowerNavBarOther();
     return (
@@ -86,31 +134,54 @@ class salaryList extends Component {
                                     </span>
                                   </div>
                                   <div class="text">
-                                    {localStorage.getItem('SearchString') ? (
+                                    {this.props.salaryListStore.SalarySearchList.length > 0 ? (
+                                      localStorage.getItem('SearchString') ? (
+                                        <strong class="title">
+                                          Did you mean job titles matching{' '}
+                                          {localStorage.getItem('SearchString')}?
+                                        </strong>
+                                      ) : (
+                                        <strong class="title">Top salary searches </strong>
+                                      )
+                                    ) : (
+                                      <strong class="title">
+                                        No Data found, try changing search criteria{' '}
+                                      </strong>
+                                    )}
+                                    {/*localStorage.getItem('SearchString') ? (
                                       <strong class="title">
                                         Did you mean job titles matching{' '}
                                         {localStorage.getItem('SearchString')}?
                                       </strong>
                                     ) : (
                                       <strong class="title">Top salary searches </strong>
-                                    )}
+                                    )*/}
                                   </div>
                                 </div>
                               </div>
-                              {this.props.salaryListStore.SalarySearchList.map(() => (
-                                <SalaryCard />
+                              {this.props.salaryListStore.SalarySearchList.map((salary) => (
+                                <SalaryCard
+                                  salary={salary}
+                                  openCompanyProfile={(event) =>
+                                    this.openCompanyProfile(event, salary.CompanyID)
+                                  }
+                                />
                               ))}{' '}
                             </div>
                           </div>
 
                           <div className="module pt-xxsm">
-                            <PaginationComponent
-                              PageCount={this.props.salaryListStore.PageCount}
-                              PageNo={this.props.salaryListStore.PageNo}
-                              onPageClick={(e) => {
-                                this.onPageClick(e);
-                              }}
-                            />
+                            {this.props.salaryListStore.SalarySearchList.length > 0 ? (
+                              <PaginationComponent
+                                PageCount={this.props.salaryListStore.PageCount}
+                                PageNo={this.props.salaryListStore.PageNo}
+                                onPageClick={(e) => {
+                                  this.onPageClick(e);
+                                }}
+                              />
+                            ) : (
+                              ''
+                            )}
                           </div>
                         </article>
                       </div>

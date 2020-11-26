@@ -25,6 +25,13 @@ class ReviewForm extends Component {
     };
   }
 
+  goToHomePage = () => {
+    this.setState({
+      filterDropDownOpen: false,
+    });
+    history.push('/Home');
+  };
+
   validationCheck = () => {
     let invalidData = false;
     if (this.state.rating === 0) {
@@ -205,7 +212,12 @@ class ReviewForm extends Component {
             <div class="background">
               <nav>
                 <div class="logoContainer">
-                  <a class="logo green " aria-label="Go To Glassdoor homepage"></a>
+                  <a
+                    href="#"
+                    onClick={this.goToHomePage}
+                    class="logo green "
+                    aria-label="Go To Glassdoor homepage"
+                  ></a>
                 </div>
               </nav>
             </div>
@@ -251,134 +263,7 @@ class ReviewForm extends Component {
                                 />
                               </div>
                             </div>
-                            {/* <ul class="suggestions up">
-                              <li>
-                                <div class="" role="presentation">
-                                  <span class="logo">
-                                    <img
-                                      src="https://media.glassdoor.com/sqlm/6036/amazon-squarelogo-1552847650117.png"
-                                      alt="Amazon"
-                                    />
-                                  </span>
-                                  <span>
-                                    <span class="suggestionLabel">
-                                      <span class="query">Amazon</span>
-                                    </span>
-                                    <span class="website">www.amazon.com</span>
-                                  </span>
-                                </div>
-                              </li>
-                              <li>
-                                <div class="" role="presentation">
-                                  <span class="logo">
-                                    <img
-                                      src="https://media.glassdoor.com/sqlm/1324363/amazon-flex-squarelogo-1502775346513.png"
-                                      alt="Amazon Flex"
-                                    />
-                                  </span>
-                                  <span>
-                                    <span class="suggestionLabel">
-                                      <span class="query">Amazon</span> Flex
-                                    </span>
-                                    <span class="website">flex.amazon.com</span>
-                                  </span>
-                                </div>
-                              </li>
-                              <li>
-                                <div class="" role="presentation">
-                                  <span class="logo">
-                                    <img
-                                      src="https://media.glassdoor.com/sqlm/267709/lab126-squarelogo.png"
-                                      alt="Amazon Lab126"
-                                    />
-                                  </span>
-                                  <span>
-                                    <span class="suggestionLabel">
-                                      <span class="query">Amazon</span> Lab126
-                                    </span>
-                                    <span class="website">www.lab126.com</span>
-                                  </span>
-                                </div>
-                              </li>
-                              <li>
-                                <div class="" role="presentation">
-                                  <span class="logo">
-                                    <img
-                                      src="https://media.glassdoor.com/sqlm/1125115/amazon-robotics-squarelogo-1488995396779.png"
-                                      alt="Amazon Robotics"
-                                    />
-                                  </span>
-                                  <span>
-                                    <span class="suggestionLabel">
-                                      <span class="query">Amazon</span> Robotics
-                                    </span>
-                                    <span class="website">www.amazonrobotics.com</span>
-                                  </span>
-                                </div>
-                              </li>
-                              <li>
-                                <div class="" role="presentation">
-                                  <span class="logo">
-                                    <img
-                                      src="https://media.glassdoor.com/sqlm/1919947/amazon-prime-now-squarelogo-1523253274644.png"
-                                      alt="Amazon Prime Now"
-                                    />
-                                  </span>
-                                  <span>
-                                    <span class="suggestionLabel">
-                                      <span class="query">Amazon</span> Prime Now
-                                    </span>
-                                    <span class="website">primenow.amazon.com</span>
-                                  </span>
-                                </div>
-                              </li>
-                              <li>
-                                <div class="" role="presentation">
-                                  <span class="logo"></span>
-                                  <span>
-                                    <span class="suggestionLabel">
-                                      <span class="query">Amazon</span> Logistics
-                                    </span>
-                                    <span class="website">www.amazonlogisticsgroup.com</span>
-                                  </span>
-                                </div>
-                              </li>
-                              <li>
-                                <div class="" role="presentation">
-                                  <span class="logo">
-                                    <img
-                                      src="https://media.glassdoor.com/sqlm/870167/federal-university-of-amazonas-squarelogo-1568287909705.png"
-                                      alt="UFAM - Universidade Federal do Amazonas"
-                                    />
-                                  </span>
-                                  <span>
-                                    <span class="suggestionLabel">
-                                      UFAM - Universidade Federal do{' '}
-                                      <span class="query">Amazon</span>as
-                                    </span>
-                                    <span class="website">ufam.edu.br</span>
-                                  </span>
-                                </div>
-                              </li>
-                              <li>
-                                <div class="" role="presentation">
-                                  <span class="logo">
-                                    <img
-                                      src="https://media.glassdoor.com/sqlm/2485969/polícia-militar-do-estado-do-amazonas-squarelogo-1553483566273.png"
-                                      alt="Polícia Militar do Estado do Amazonas (PMAM)"
-                                    />
-                                  </span>
-                                  <span>
-                                    <span class="suggestionLabel">
-                                      Polícia Militar do Estado do <span class="query">Amazon</span>
-                                      as (PMAM)
-                                    </span>
-                                    <span class="website">pm.am.gov.br</span>
-                                  </span>
-                                </div>
-                              </li>
-                            </ul>
-    */}
+
                             <div>
                               <div data-test="FilterChips"></div>
                             </div>

@@ -180,11 +180,7 @@ class CompanyNavbar extends Component {
             </div>
             <div class="empInfo tbl hideHH ">
               <div class="logo cell">
-                <a
-                  href="/Overview/Working-at-Amazon-EI_IE6036.11,17.htm"
-                  data-ajax="true"
-                  class="sqLogoLink"
-                >
+                <a data-ajax="true" class="sqLogoLink">
                   <span class="sqLogo tighten lgSqLogo logoOverlay">
                     <img
                       src={
@@ -295,7 +291,7 @@ class CompanyNavbar extends Component {
                             : 'eiCell cell interviews '
                         }
                         // class="eiCell cell interviews "
-                        href="/Interview/Amazon-Interview-Questions-E6036.htm"
+                        href="#"
                         data-label="Inter­views"
                       >
                         <span class="num h2"> {InterviewReviewCount}</span>

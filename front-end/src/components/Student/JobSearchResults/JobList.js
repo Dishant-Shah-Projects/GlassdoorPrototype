@@ -114,6 +114,8 @@ class JobList extends Component {
           State,
           SalStart,
           SalEnd,
+          appliedJobSelected: false,
+          favJobSelected: false,
         };
         this.props.updateJobListStore(payload);
         let payload2 = {
@@ -129,6 +131,85 @@ class JobList extends Component {
         }
       });
   };
+
+  savedJobCall = (PageNo = 0) => {
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    axios
+      .get(serverUrl + 'student/getFavoriteJobs', {
+        params: {
+          StudentID: localStorage.getItem('userId'),
+          PageNo,
+        },
+        withCredentials: true,
+      })
+      .then((response) => {
+        console.log('Favourite Jobs:', response.data);
+        let payload = {
+          jobList: response.data.job,
+          PageNo,
+          PageCount: Math.ceil(response.data.count.length / 10),
+          Totalcount: response.data.count.length,
+          JobType: '',
+          State: '',
+          SalStart: '',
+          SalEnd: '',
+          appliedJobSelected: false,
+          favJobSelected: true,
+        };
+        this.props.updateJobListStore(payload);
+        let payload2 = {
+          fiterSlected: '',
+        };
+        this.props.updateJobFilterStore(payload2);
+
+        if (response.data.job.length > 0) {
+          let payload3 = {
+            jobOonFocus: { ...response.data.job[0] },
+          };
+          this.props.updateOnFocusJob(payload3);
+        }
+      });
+  };
+
+  appliedJobCall = (PageNo = 0) => {
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    axios
+      .get(serverUrl + 'student/getAppliedJobs', {
+        params: {
+          StudentID: localStorage.getItem('userId'),
+          PageNo,
+        },
+        withCredentials: true,
+      })
+      .then((response) => {
+        console.log('Jobs:', response.data);
+        let payload = {
+          jobList: response.data.job,
+          PageNo,
+          PageCount: Math.ceil(response.data.count.length / 10),
+          Totalcount: response.data.count.length,
+          JobType: '',
+          State: '',
+          SalStart: '',
+          SalEnd: '',
+          appliedJobSelected: true,
+          favJobSelected: false,
+        };
+        this.props.updateJobListStore(payload);
+        let payload2 = {
+          fiterSlected: '',
+        };
+        this.props.updateJobFilterStore(payload2);
+
+        if (response.data.job.length > 0) {
+          let payload3 = {
+            jobOonFocus: { ...response.data.job[0] },
+          };
+          this.props.updateOnFocusJob(payload3);
+        }
+      });
+  };
+
   render() {
     this.props.LowerNavBarOther();
     return (
@@ -143,6 +224,8 @@ class JobList extends Component {
                     filterChangeCall={(JobType, State, SalStart, SalEnd, PageNo) =>
                       this.filterChangeCall(JobType, State, SalStart, SalEnd, PageNo)
                     }
+                    savedJobCall={this.savedJobCall}
+                    appliedJobCall={this.appliedJobCall}
                     toggleFilter={(filter) => this.toggleFilter(filter)}
                   />
                 }
@@ -151,6 +234,8 @@ class JobList extends Component {
                     filterChangeCall={(JobType, State, SalStart, SalEnd, PageNo) =>
                       this.filterChangeCall(JobType, State, SalStart, SalEnd, PageNo)
                     }
+                    savedJobCall={(PageNo) => this.savedJobCall(PageNo)}
+                    appliedJobCall={(PageNo) => this.appliedJobCall(PageNo)}
                     saveJob={(event, JobID) => this.saveJob(event, JobID)}
                     unsaveJob={(event, JobID) => this.unsaveJob(event, JobID)}
                   />

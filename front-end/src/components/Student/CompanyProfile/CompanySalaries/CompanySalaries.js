@@ -62,7 +62,7 @@ class CompanySalaries extends Component {
                   {this.props.companySalariesStore.SalaryList.length === 0 ? (
                     <tr>
                       <td colspan="4">
-                        <p> Company have not yet recieved any Salary review. </p>
+                        <p>Employees haven't posted any Salary review yet </p>
                       </td>
                     </tr>
                   ) : (

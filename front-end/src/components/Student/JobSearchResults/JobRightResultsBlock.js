@@ -5,6 +5,9 @@ import JobFeaturedReview from './JobFeaturedReview';
 import JobInfo from './JobInfo';
 import './JobRightResultsBlock.css';
 import { connect } from 'react-redux';
+import axios from 'axios';
+import serverUrl from '../../../config';
+import { updateStudentProfile } from '../../../constants/action-types';
 
 class JobRightResultsBlock extends Component {
   constructor(props) {
@@ -16,6 +19,40 @@ class JobRightResultsBlock extends Component {
     this.setState({
       tabOpened,
     });
+  };
+
+  withdrawJob = (event) => {
+    event.preventDefault();
+    console.log('withdraw job, jobid:', this.props.jobOonFocusStore.jobOonFocus._id);
+
+    // event.preventDefault();
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    const data = {
+      StudentID: localStorage.getItem('userId'),
+      JobID: this.props.jobOonFocusStore.jobOonFocus._id,
+    };
+    axios.post(serverUrl + 'student/jobWithdraw', data).then(
+      (response) => {
+        console.log('Status Code : ', response.status);
+        if (response.status === 200) {
+          // this.props.toggle(event);
+          let studentProfile = { ...this.props.studentInfoStore.studentProfile };
+          const index = studentProfile.AppliedJobs.indexOf(
+            this.props.jobOonFocusStore.jobOonFocus._id
+          );
+          if (index >= 0) {
+            studentProfile.AppliedJobs.splice(index, 1);
+          }
+          const payload = {
+            studentProfile,
+          };
+          this.props.updateStudentProfile(payload);
+        }
+      },
+      (error) => {
+        console.log('error:', error.response);
+      }
+    );
   };
 
   render() {
@@ -76,7 +113,7 @@ class JobRightResultsBlock extends Component {
         <span style={{ fontSize: 'large' }} class="appliedOnMsg">
           Already Applied! want to{' '}
         </span>
-        <span style={{ fontSize: 'large' }}>
+        <span onClick={this.withdrawJob} style={{ fontSize: 'large' }}>
           <a>withdraw?</a>
         </span>
       </div>
@@ -298,6 +335,18 @@ const mapStateToProps = (state) => {
     jobOonFocusStore,
   };
 };
-export default connect(mapStateToProps, null)(JobRightResultsBlock);
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    updateStudentProfile: (payload) => {
+      dispatch({
+        type: updateStudentProfile,
+        payload,
+      });
+    },
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(JobRightResultsBlock);
 
 // export default JobRightResultsBlock;

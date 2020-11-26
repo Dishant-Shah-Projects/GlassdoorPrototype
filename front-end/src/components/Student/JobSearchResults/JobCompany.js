@@ -1,12 +1,46 @@
 import React, { Component } from 'react';
 import './JobCompany.css';
 import moment from 'moment';
+import axios from 'axios';
+import serverUrl from '../../../config';
+import { updateCompanyPhotosStore } from '../../../constants/action-types';
+import { connect } from 'react-redux';
 
 class JobCompany extends Component {
   constructor(props) {
     super(props);
     this.state = {};
   }
+
+  componentDidMount() {
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    axios
+      .get(serverUrl + 'student/companyPhotos', {
+        params: {
+          CompanyID: this.props.selectedJob.CompanyID,
+          PageNo: 0,
+        },
+        withCredentials: true,
+      })
+      .then(
+        (response) => {
+          console.log('Photos', response.data);
+          let payload = {
+            PhotoList: response.data.results,
+            PageNo: 0,
+            Totalcount: response.data.count,
+            PageCount: Math.ceil(response.data.count / 10),
+
+            // PageCount: Math.ceil(response.data.Totalcount / 3),
+          };
+          this.props.updateCompanyPhotosStore(payload);
+        },
+        (error) => {
+          console.log('error', error);
+        }
+      );
+  }
+
   render() {
     const selectedJob = this.props.selectedJob;
     return (
@@ -66,25 +100,19 @@ class JobCompany extends Component {
           <div className="photos">
             <div className="spacer"></div>
             <div className="photoSlider">
-              {selectedJob.jobdetails.length > 0
-                ? selectedJob.jobdetails[0].Photos.map((job) => (
-                    <a
-                      href="/Photos/RoadRunner-Recycling-Office-Photos-IMG2565496.htm"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="photo"
-                    >
+              {this.props.companyPhotosStore.PhotoList.length > 0
+                ? this.props.companyPhotosStore.PhotoList.map((photo) => (
+                    <a href="" target="_blank" rel="noopener noreferrer" className="photo">
                       <figure data-id="13658880" data-num="1">
-                        <img
-                          alt="Company pic"
-                          className="companyPhoto"
-                          src="https://media.glassdoor.com/lst/1277356/roadrunner-recycling-office.jpg"
-                        />
+                        <img alt="Company pic" className="companyPhoto" src={photo.PhotoURL} />
                       </figure>
                     </a>
                   ))
                 : ''}
             </div>
+            <a style={{ textAlign: 'center' }} class="seeAll" href="#" rel="noopener noreferrer">
+              Few of the company Photos<i class="css-1cip1pj"></i>
+            </a>
           </div>
         </div>
       </div>
@@ -92,4 +120,25 @@ class JobCompany extends Component {
   }
 }
 
-export default JobCompany;
+// export default JobCompany;
+
+const mapStateToProps = (state) => {
+  const { companyOverviewStore, companyPhotosStore } = state.CompanyPageReducer;
+
+  return {
+    companyOverviewStore,
+    companyPhotosStore,
+  };
+};
+const mapDispatchToProps = (dispatch) => {
+  return {
+    updateCompanyPhotosStore: (payload) => {
+      dispatch({
+        type: updateCompanyPhotosStore,
+        payload,
+      });
+    },
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(JobCompany);

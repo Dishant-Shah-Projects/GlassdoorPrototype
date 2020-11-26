@@ -51,10 +51,10 @@ class LowerNavBarOther extends Component {
                   // className="gd-ui-button d-flex plain px-xxsm  HeaderStyles__activeButton css-1aftjfw"
                   type="button"
                   data-test="site-header-jobs"
-                  href="#"
-                  target="_top"
+                  // href="#"
+                  // target="_top"
                   data-ga-lbl="null"
-                  onClick={(event) => this.lowerMenuShow(event, 'Jobs')}
+                  // onClick={(event) => this.lowerMenuShow(event, 'Jobs')}
                 >
                   <span className="SVGInline d-flex IconStyles__colorDefault ">
                     <svg
@@ -151,10 +151,10 @@ class LowerNavBarOther extends Component {
                   // className="gd-ui-button d-flex plain px-xxsm HeaderStyles__activeMenuItem HeaderStyles__activeButton css-1aftjfw"
                   type="button"
                   data-test="site-header-companies"
-                  href="#"
-                  target="_top"
+                  // href="#"
+                  // target="_top"
                   data-ga-lbl="null"
-                  onClick={(event) => this.lowerMenuShow(event, 'Companies')}
+                  // onClick={(event) => this.lowerMenuShow(event, 'Companies')}
                 >
                   <span className="SVGInline d-flex IconStyles__colorActive ">
                     <svg
@@ -235,10 +235,10 @@ class LowerNavBarOther extends Component {
                   // className="gd-ui-button d-flex plain px-xxsm  HeaderStyles__activeButton css-1aftjfw"
                   type="button"
                   data-test="site-header-salaries"
-                  href="#"
-                  target="_top"
+                  // href="#"
+                  // target="_top"
                   data-ga-lbl="null"
-                  onClick={(event) => this.lowerMenuShow(event, 'Salaries')}
+                  // onClick={(event) => this.lowerMenuShow(event, 'Salaries')}
                 >
                   <span className="SVGInline d-flex IconStyles__colorDefault ">
                     <svg
@@ -319,10 +319,10 @@ class LowerNavBarOther extends Component {
                   // className="gd-ui-button d-flex plain px-xxsm  HeaderStyles__activeButton css-1aftjfw"
                   type="button"
                   data-test="site-header-interviews"
-                  href="#"
-                  target="_top"
+                  // href="#"
+                  // target="_top"
                   data-ga-lbl="null"
-                  onClick={(event) => this.lowerMenuShow(event, 'Interviews')}
+                  // onClick={(event) => this.lowerMenuShow(event, 'Interviews')}
                 >
                   <span className="SVGInline d-flex IconStyles__colorDefault ">
                     <svg

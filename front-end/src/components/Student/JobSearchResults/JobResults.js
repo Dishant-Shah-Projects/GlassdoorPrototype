@@ -31,6 +31,8 @@ class JobResults extends Component {
             filterChangeCall={(JobType, State, SalStart, SalEnd, PageNo) =>
               this.props.filterChangeCall(JobType, State, SalStart, SalEnd, PageNo)
             }
+            savedJobCall={(PageNo) => this.props.savedJobCall(PageNo)}
+            appliedJobCall={(PageNo) => this.props.appliedJobCall(PageNo)}
             unsaveJob={(event, JobID) => this.props.unsaveJob(event, JobID)}
             saveJob={(event, JobID) => this.props.saveJob(event, JobID)}
           />

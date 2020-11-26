@@ -2,12 +2,20 @@ import React, { Component } from 'react';
 import './PhotoUploadForm.css';
 import axios from 'axios';
 import serverUrl from '../../../../config';
+import { history } from '../../../../App';
 
 class PhotoUploadForm extends Component {
   constructor(props) {
     super(props);
-    this.state = { photos: [] };
+    this.state = { photos: [], uploadMessage: null };
   }
+
+  goToHomePage = () => {
+    this.setState({
+      filterDropDownOpen: false,
+    });
+    history.push('/Home');
+  };
 
   onChangeFileHandler = (event) => {
     if (event.target.files.length === 1) {
@@ -30,6 +38,7 @@ class PhotoUploadForm extends Component {
             photos.push({ imageurl: response.data, name: imageName });
             this.setState({
               photos,
+              uploadMessage: null,
             });
           } else if (parseInt(response.status) === 400) {
             // console.log(response.data);
@@ -44,6 +53,38 @@ class PhotoUploadForm extends Component {
     }
   };
 
+  saveImages = (event) => {
+    event.preventDefault();
+
+    if (this.state.photos.length > 0) {
+      axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+      const data = {
+        CompanyID: localStorage.getItem('companyID'),
+        StudentID: localStorage.getItem('userId'),
+        CompanyName: localStorage.getItem('form_company_name'),
+        Photos: this.state.photos,
+      };
+      axios.post(serverUrl + 'student/addCompanyPhotos', data).then(
+        (response) => {
+          console.log('Status Code : ', response.status);
+          if (response.status === 200) {
+            this.setState({
+              uploadMessage: 'Photos uploaded Successfully!',
+              photos: [],
+            });
+          }
+        },
+        (error) => {
+          console.log('error:', error.response);
+        }
+      );
+    } else {
+      this.setState({
+        uploadMessage: 'First choose some pics',
+      });
+    }
+  };
+
   render() {
     return (
       <main id="mount">
@@ -52,7 +93,12 @@ class PhotoUploadForm extends Component {
             <div class="background">
               <nav>
                 <div class="logoContainer">
-                  <a class="logo green " aria-label="Go To Glassdoor homepage"></a>
+                  <a
+                    href="#"
+                    onClick={this.goToHomePage}
+                    class="logo green "
+                    aria-label="Go To Glassdoor homepage"
+                  ></a>
                 </div>
               </nav>
             </div>
@@ -105,7 +151,19 @@ class PhotoUploadForm extends Component {
                       />
                     </label>
                   </div>
-                  <button class="gd-ui-button submitButton css-8i7bc2" type="submit" id="submit">
+                  {this.state.uploadMessage !== null ? (
+                    <div data-test="helper" class="css-1pakod1">
+                      {this.state.uploadMessage}
+                    </div>
+                  ) : (
+                    ''
+                  )}
+                  <button
+                    onClick={this.saveImages}
+                    class="gd-ui-button submitButton css-8i7bc2"
+                    type="button"
+                    id="submit"
+                  >
                     Upload Photos
                   </button>
                 </form>

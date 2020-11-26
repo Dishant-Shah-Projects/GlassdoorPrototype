@@ -6,6 +6,7 @@ import './interviewList.css';
 import Questions from './Questions';
 import axios from 'axios';
 import serverUrl from '../../../config';
+import { history } from '../../../App';
 
 class interviewList extends Component {
   constructor(props) {
@@ -53,6 +54,22 @@ class interviewList extends Component {
     this.commonFetch(e.selected);
   };
 
+  openCompanyProfile = (event, CompanyID) => {
+    localStorage.setItem('companyID', CompanyID);
+    history.push('/CompanyPage');
+
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    const data = { CompanyID };
+    axios.post(serverUrl + 'student/companyViewCount', data).then(
+      (response) => {
+        console.log('View incremented');
+      },
+      (error) => {
+        console.log('error', error);
+      }
+    );
+  };
+
   render() {
     this.props.LowerNavBarOther();
     return (
@@ -72,45 +89,67 @@ class interviewList extends Component {
                               <div class="module padHorzLg padVertLg">
                                 <div id="InterviewQuestionList" class="module">
                                   <header class="lined">
-                                    <h2 class="block" style={{ fontWeight: '400' }}>
-                                      {localStorage.getItem('SearchString')} Interview Questions
-                                    </h2>
+                                    {this.props.interviewListStore.interviewSearchList.length ===
+                                    0 ? (
+                                      <h2 class="block" style={{ fontWeight: '400' }}>
+                                        No interviews found, try different seach criteria
+                                      </h2>
+                                    ) : (
+                                      <h2 class="block" style={{ fontWeight: '400' }}>
+                                        {localStorage.getItem('SearchString')} Interview Questions
+                                      </h2>
+                                    )}
                                   </header>
                                   <div class="interviewQuestionsList lockedInterviewQuestions">
                                     {this.props.interviewListStore.interviewSearchList.map(
                                       (interview) => (
-                                        <Questions interview={interview} />
+                                        <Questions
+                                          interview={interview}
+                                          openCompanyProfile={(event) =>
+                                            this.openCompanyProfile(event, interview.CompanyID)
+                                          }
+                                        />
                                       )
                                     )}
                                   </div>
                                   <div class="tbl fill margTopSm">
                                     <div class="row alignMid">
                                       <div class="cell span-1-2 drop noWrap middle">
-                                        <div class="margTopSm">
-                                          <strong>
-                                            {this.props.interviewListStore.PageNo * 10 + 1}
-                                          </strong>
-                                          –
-                                          <strong>
-                                            {' '}
-                                            {this.props.interviewListStore.interviewSearchList
-                                              .length +
-                                              this.props.interviewListStore.PageNo * 10}
-                                          </strong>{' '}
-                                          of{' '}
-                                          <strong>
-                                            {this.props.interviewListStore.Totalcount}
-                                          </strong>{' '}
-                                          Interview Questions
-                                        </div>
+                                        {this.props.interviewListStore.interviewSearchList.length >
+                                        0 ? (
+                                          <div class="margTopSm">
+                                            <strong>
+                                              {this.props.interviewListStore.PageNo * 10 + 1}
+                                            </strong>
+                                            –
+                                            <strong>
+                                              {' '}
+                                              {this.props.interviewListStore.interviewSearchList
+                                                .length +
+                                                this.props.interviewListStore.PageNo * 10}
+                                            </strong>{' '}
+                                            of{' '}
+                                            <strong>
+                                              {this.props.interviewListStore.Totalcount}
+                                            </strong>{' '}
+                                            Interview Questions
+                                          </div>
+                                        ) : (
+                                          ''
+                                        )}
                                       </div>
-                                      <PaginationComponent
-                                        PageCount={this.props.interviewListStore.PageCount}
-                                        PageNo={this.props.interviewListStore.PageNo}
-                                        onPageClick={(e) => {
-                                          this.onPageClick(e);
-                                        }}
-                                      />
+                                      {this.props.interviewListStore.interviewSearchList.length >
+                                      0 ? (
+                                        <PaginationComponent
+                                          PageCount={this.props.interviewListStore.PageCount}
+                                          PageNo={this.props.interviewListStore.PageNo}
+                                          onPageClick={(e) => {
+                                            this.onPageClick(e);
+                                          }}
+                                        />
+                                      ) : (
+                                        ''
+                                      )}
                                     </div>
                                   </div>
                                 </div>

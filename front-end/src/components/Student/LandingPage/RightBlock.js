@@ -21,23 +21,7 @@ class RightBlock extends Component {
               </div>
             </div>
             <div className="css-56kyx5 mt-xsm mb-lg">
-              <span className="">
-                Recommendations are based on your{' '}
-                <a
-                  data-test="job-tiles-profile-link"
-                  href="/member/profile/index.htm?profileOrigin=MEMBER_HOME"
-                >
-                  <strong>profile</strong>
-                </a>
-                ,{' '}
-                <a
-                  data-test="job-tiles-preferences-link"
-                  href="/member/profile/preferences.htm?profileOrigin=MEMBER_HOME"
-                >
-                  <strong>job preferences</strong>
-                </a>
-                , and activity on Glassdoor.
-              </span>
+              <span className="">Recommendations are based on your job preferences.</span>
             </div>
             <div className="mt-std css-1i303cs egi2yce0">
               {this.props.jobList.map((job) => (

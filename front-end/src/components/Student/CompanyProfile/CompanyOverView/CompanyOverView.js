@@ -73,7 +73,7 @@ class CompanyOverView extends Component {
                   <li class="d-flex align-items-center col-12 col-sm-6 p-0 m-0 pb-sm pr-xxsm">
                     <label class="css-1f0lhlt ecl3kjh0">Website:</label>
                     <a
-                      href="//www.amazon.jobs"
+                      href={`//${this.props.companyOverviewStore.companyOverview.Website}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       class="css-1hg9omi"

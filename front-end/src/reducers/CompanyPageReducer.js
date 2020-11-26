@@ -112,7 +112,7 @@ const CompanyPageReducer = (state = defaultState, action) => {
       console.log('inside company interview store');
       return {
         ...state,
-        companySalariesStore: { ...state.companySalariesStore, ...action.payload },
+        companyPhotosStore: { ...state.companyPhotosStore, ...action.payload },
 
         //   return Object.assign(state, action.payload);
       };

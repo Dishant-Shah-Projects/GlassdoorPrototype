@@ -91,7 +91,7 @@ class ContactInformation extends Component {
               <input
                 id="zip"
                 data-test="zip"
-                maxlength="10"
+                maxlength="5"
                 aria-label=""
                 class="css-ofiv3k"
                 onChange={this.props.onChangeCommonHandler}
@@ -114,7 +114,7 @@ class ContactInformation extends Component {
               onChange={this.props.onChangeCommonHandler}
               value={this.props.studentProfile.PhoneNo}
               name="PhoneNo"
-              maxlength="20"
+              maxlength="10"
             />
           </div>
         </div>
