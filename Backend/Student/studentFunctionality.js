@@ -1445,10 +1445,13 @@ const addCompanyPhotos = async (req, res) => {
 
 const searchSalary = async (req, res) => {
   try {
-    const { searchString, PageNo } = req.query;
+    const { searchString, State, PageNo } = req.query;
     const resultData = {};
     await Company.find(
-      { CompanyName: { $regex: `${searchString}`, $options: 'i' } },
+      {
+        CompanyName: { $regex: `${searchString}`, $options: 'i' },
+        State: { $regex: `${State}`, $options: 'i' },
+      },
       { CompanyID: 1, CompanyName: 1, ProfileImg: 1, Website: 1, SalaryReviewCount: 1 },
       async (err, result) => {
         if (err) {
@@ -1468,6 +1471,7 @@ const searchSalary = async (req, res) => {
       .skip(PageNo * 10);
     const count = await Company.find({
       CompanyName: { $regex: `${searchString}`, $options: 'i' },
+      State: { $regex: `${State}`, $options: 'i' },
     }).countDocuments();
     resultData.count = { count };
     res.end(JSON.stringify(resultData));
