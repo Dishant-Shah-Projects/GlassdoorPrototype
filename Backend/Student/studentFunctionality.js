@@ -395,33 +395,33 @@ const removeFavouriteJobs = async (req, res) => {
   return res;
 };
 
-// API Calls for returning the interviews NEED TO ADD PROFILE IMAGES
+// API Calls for returning the interviews
 const searchInterview = async (req, res) => {
   // eslint-disable-next-line no-unused-vars
   const { SearchString, State, PageNo } = req.query;
   try {
     const results = await Interview.find({
       CompanyName: { $regex: `.*${SearchString}.*` },
-      State,
+      State: { $regex: `.*${State}.*` },
     })
       .limit(10)
       .skip(PageNo * 10);
     // console.log(results);
-    const ProfileImgs = [];
+    const returns = [];
     for (let i = 0; i < results.length; i += 1) {
       // eslint-disable-next-line no-await-in-loop
       const company = await Company.findOne({ CompanyID: results[i].CompanyID }).select(
         'ProfileImg'
       );
       if (company.ProfileImg) {
-        ProfileImgs.push(company.ProfileImg);
+        returns.push({ Interview: results[i], ProfileImg: company.ProfileImg });
       } else {
-        ProfileImgs.push(null);
+        returns.push({ Interview: results[i], ProfileImg: null });
       }
     }
     const temp = await Interview.countDocuments({
       CompanyName: { $regex: `.*${SearchString}.*` },
-      State,
+      State: { $regex: `.*${State}.*` },
     });
     let count = null;
     if (temp) {
@@ -430,7 +430,7 @@ const searchInterview = async (req, res) => {
     } else {
       count = 0;
     }
-    const resultData = { results, ProfileImgs, count };
+    const resultData = { returns, count };
     res.writeHead(200, { 'content-type': 'text/json' });
     res.end(JSON.stringify(resultData));
   } catch (error) {
