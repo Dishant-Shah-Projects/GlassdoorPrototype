@@ -33,7 +33,7 @@ const reviews = async (req, res) => {
   }
 };
 
-// Update review status
+// Update general review status
 const updateGeneralReviews = async (req, res) => {
   try {
     // eslint-disable-next-line object-curly-newline
@@ -53,12 +53,12 @@ const updateGeneralReviews = async (req, res) => {
       } else {
         approveCEOcount = companyData[0].approveCEOcount;
       }
-      if (companyData[0].GeneralReviewCount) {
+      if (companyData[0].GeneralReviewCount >= 0) {
         GeneralReviewCount = companyData[0].GeneralReviewCount + 1;
       }
       await Company.updateOne({ CompanyID }, { GeneralReviewCount, approveCEOcount });
-      res.end(JSON.stringify(result));
     }
+    res.end(JSON.stringify(result));
   } catch (error) {
     res.writeHead(500, {
       'Content-Type': 'application/json',
@@ -67,6 +67,7 @@ const updateGeneralReviews = async (req, res) => {
   }
 };
 
+// update interview review status
 const updateInterviewReviews = async (req, res) => {
   try {
     // eslint-disable-next-line object-curly-newline
@@ -80,12 +81,12 @@ const updateInterviewReviews = async (req, res) => {
     if (Status === 'Approved') {
       const companyData = await Company.find({ CompanyID });
       let InterviewReviewCount = 0;
-      if (companyData[0].InterviewReviewCount) {
+      if (companyData[0].InterviewReviewCount >= 0) {
         InterviewReviewCount = companyData[0].InterviewReviewCount + 1;
       }
       await Company.updateOne({ CompanyID }, { InterviewReviewCount });
-      res.end(JSON.stringify(result));
     }
+    res.end(JSON.stringify(result));
   } catch (error) {
     res.writeHead(500, {
       'Content-Type': 'application/json',
@@ -94,6 +95,7 @@ const updateInterviewReviews = async (req, res) => {
   }
 };
 
+// update salary review status
 const updateSalaryReviews = async (req, res) => {
   try {
     // eslint-disable-next-line object-curly-newline
@@ -108,12 +110,12 @@ const updateSalaryReviews = async (req, res) => {
       const companyData = await Company.find({ CompanyID });
       let SalaryReviewCount = 0;
 
-      if (companyData[0].SalaryReviewCount) {
+      if (companyData[0].SalaryReviewCount >= 0) {
         SalaryReviewCount = companyData[0].SalaryReviewCount + 1;
       }
       await Company.updateOne({ CompanyID }, { SalaryReviewCount });
-      res.end(JSON.stringify(result));
     }
+    res.end(JSON.stringify(result));
   } catch (error) {
     res.writeHead(500, {
       'Content-Type': 'application/json',
@@ -184,7 +186,7 @@ const pictures = async (req, res) => {
   }
 };
 
-// Update review status
+// Update photo status
 const updatePictures = async (req, res) => {
   try {
     // eslint-disable-next-line object-curly-newline
@@ -195,6 +197,14 @@ const updatePictures = async (req, res) => {
     res.writeHead(200, {
       'Content-Type': 'application/json',
     });
+    if (Status === 'Approved') {
+      const companyData = await Company.find({ CompanyID });
+      let PhotoCount = 0;
+      if (companyData[0].PhotoCount >= 0) {
+        PhotoCount = companyData[0].PhotoCount + 1;
+      }
+      await Company.updateOne({ CompanyID }, { PhotoCount });
+    }
     res.end(JSON.stringify(result));
   } catch (error) {
     res.writeHead(500, {
@@ -229,7 +239,7 @@ const analytics = async (req, res) => {
     const month = String(todayDate.getMonth() + 1).padStart(2, '0'); // January is 0!
     const year = todayDate.getFullYear();
     const today = `${year}-${month}-${day}`;
-    const reviewData = await GeneralReview.find({ DatePosted: { $gte: today } });
+    const reviewData = await GeneralReview.find({ DatePosted: { $gte: today } }).countDocuments();
 
     const companyReview = await GeneralReview.aggregate([
       {
