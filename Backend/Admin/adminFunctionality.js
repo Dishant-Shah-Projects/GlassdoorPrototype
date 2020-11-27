@@ -33,7 +33,7 @@ const reviews = async (req, res) => {
   }
 };
 
-// Update review status
+// Update general review status
 const updateGeneralReviews = async (req, res) => {
   try {
     // eslint-disable-next-line object-curly-newline
@@ -53,12 +53,12 @@ const updateGeneralReviews = async (req, res) => {
       } else {
         approveCEOcount = companyData[0].approveCEOcount;
       }
-      if (companyData[0].GeneralReviewCount) {
+      if (companyData[0].GeneralReviewCount >= 0) {
         GeneralReviewCount = companyData[0].GeneralReviewCount + 1;
       }
       await Company.updateOne({ CompanyID }, { GeneralReviewCount, approveCEOcount });
-      res.end(JSON.stringify(result));
     }
+    res.end(JSON.stringify(result));
   } catch (error) {
     res.writeHead(500, {
       'Content-Type': 'application/json',
@@ -67,6 +67,7 @@ const updateGeneralReviews = async (req, res) => {
   }
 };
 
+// update interview review status
 const updateInterviewReviews = async (req, res) => {
   try {
     // eslint-disable-next-line object-curly-newline
@@ -80,12 +81,12 @@ const updateInterviewReviews = async (req, res) => {
     if (Status === 'Approved') {
       const companyData = await Company.find({ CompanyID });
       let InterviewReviewCount = 0;
-      if (companyData[0].InterviewReviewCount) {
+      if (companyData[0].InterviewReviewCount >= 0) {
         InterviewReviewCount = companyData[0].InterviewReviewCount + 1;
       }
       await Company.updateOne({ CompanyID }, { InterviewReviewCount });
-      res.end(JSON.stringify(result));
     }
+    res.end(JSON.stringify(result));
   } catch (error) {
     res.writeHead(500, {
       'Content-Type': 'application/json',
@@ -94,6 +95,7 @@ const updateInterviewReviews = async (req, res) => {
   }
 };
 
+// update salary review status
 const updateSalaryReviews = async (req, res) => {
   try {
     // eslint-disable-next-line object-curly-newline
@@ -108,12 +110,12 @@ const updateSalaryReviews = async (req, res) => {
       const companyData = await Company.find({ CompanyID });
       let SalaryReviewCount = 0;
 
-      if (companyData[0].SalaryReviewCount) {
+      if (companyData[0].SalaryReviewCount >= 0) {
         SalaryReviewCount = companyData[0].SalaryReviewCount + 1;
       }
       await Company.updateOne({ CompanyID }, { SalaryReviewCount });
-      res.end(JSON.stringify(result));
     }
+    res.end(JSON.stringify(result));
   } catch (error) {
     res.writeHead(500, {
       'Content-Type': 'application/json',
@@ -184,7 +186,7 @@ const pictures = async (req, res) => {
   }
 };
 
-// Update review status
+// Update photo status
 const updatePictures = async (req, res) => {
   try {
     // eslint-disable-next-line object-curly-newline
@@ -195,6 +197,14 @@ const updatePictures = async (req, res) => {
     res.writeHead(200, {
       'Content-Type': 'application/json',
     });
+    if (Status === 'Approved') {
+      const companyData = await Company.find({ CompanyID });
+      let PhotoCount = 0;
+      if (companyData[0].PhotoCount >= 0) {
+        PhotoCount = companyData[0].PhotoCount + 1;
+      }
+      await Company.updateOne({ CompanyID }, { PhotoCount });
+    }
     res.end(JSON.stringify(result));
   } catch (error) {
     res.writeHead(500, {
@@ -229,7 +239,7 @@ const analytics = async (req, res) => {
     const month = String(todayDate.getMonth() + 1).padStart(2, '0'); // January is 0!
     const year = todayDate.getFullYear();
     const today = `${year}-${month}-${day}`;
-    const reviewData = await GeneralReview.find({ DatePosted: { $gte: today } });
+    const reviewData = await GeneralReview.find({ DatePosted: { $gte: today } }).countDocuments();
 
     const companyReview = await GeneralReview.aggregate([
       {
@@ -331,26 +341,42 @@ const analytics = async (req, res) => {
 const getGeneralReviews = async (req, res) => {
   try {
     const { Status, PageNo } = req.query;
-    const filterArray = [];
     const resultArray = [];
     if (Status.length !== 0) {
-      filterArray.push({ Status });
+      await GeneralReview.find({ Status }, (err, result) => {
+        if (err) {
+          res.writeHead(500, {
+            'Content-Type': 'application/json',
+          });
+          res.end('Network Error');
+        }
+        if (result) {
+          resultArray.push({ Review: result });
+        }
+      })
+        .sort({ DatePosted: -1 })
+        .limit(10)
+        .skip(PageNo * 10);
+      const count = await GeneralReview.find({ Status }).countDocuments();
+      resultArray.push({ Count: count });
+    } else {
+      await GeneralReview.find({}, (err, result) => {
+        if (err) {
+          res.writeHead(500, {
+            'Content-Type': 'application/json',
+          });
+          res.end('Network Error');
+        }
+        if (result) {
+          resultArray.push({ Review: result });
+        }
+      })
+        .sort({ DatePosted: -1 })
+        .limit(10)
+        .skip(PageNo * 10);
+      const count = await GeneralReview.find({}).countDocuments();
+      resultArray.push({ Count: count });
     }
-    await GeneralReview.find({ $and: filterArray }, (err, result) => {
-      if (err) {
-        res.writeHead(500, {
-          'Content-Type': 'application/json',
-        });
-        res.end('Network Error');
-      }
-      if (result) {
-        resultArray.push({ Review: result });
-      }
-    })
-      .limit(10)
-      .skip(PageNo * 10);
-    const count = await GeneralReview.find({ $and: filterArray }).countDocuments();
-    resultArray.push({ Count: count });
     res.writeHead(200, {
       'Content-Type': 'application/json',
     });
@@ -367,26 +393,40 @@ const getGeneralReviews = async (req, res) => {
 const getSalaryReviews = async (req, res) => {
   try {
     const { Status, PageNo } = req.query;
-    const filterArray = [];
     const resultArray = [];
     if (Status.length !== 0) {
-      filterArray.push({ Status });
+      await SalaryReview.find({ Status }, (err, result) => {
+        if (err) {
+          res.writeHead(500, {
+            'Content-Type': 'application/json',
+          });
+          res.end('Network Error');
+        }
+        if (result) {
+          resultArray.push({ Review: result });
+        }
+      })
+        .limit(10)
+        .skip(PageNo * 10);
+      const count = await SalaryReview.find({ Status }).countDocuments();
+      resultArray.push({ Count: count });
+    } else {
+      await SalaryReview.find({}, (err, result) => {
+        if (err) {
+          res.writeHead(500, {
+            'Content-Type': 'application/json',
+          });
+          res.end('Network Error');
+        }
+        if (result) {
+          resultArray.push({ Review: result });
+        }
+      })
+        .limit(10)
+        .skip(PageNo * 10);
+      const count = await SalaryReview.find({}).countDocuments();
+      resultArray.push({ Count: count });
     }
-    await SalaryReview.find({ $and: filterArray }, (err, result) => {
-      if (err) {
-        res.writeHead(500, {
-          'Content-Type': 'application/json',
-        });
-        res.end('Network Error');
-      }
-      if (result) {
-        resultArray.push({ Review: result });
-      }
-    })
-      .limit(10)
-      .skip(PageNo * 10);
-    const count = await SalaryReview.find({ $and: filterArray }).countDocuments();
-    resultArray.push({ Count: count });
     res.writeHead(200, {
       'Content-Type': 'application/json',
     });
@@ -403,26 +443,40 @@ const getSalaryReviews = async (req, res) => {
 const getInterviewReviews = async (req, res) => {
   try {
     const { Status, PageNo } = req.query;
-    const filterArray = [];
     const resultArray = [];
     if (Status.length !== 0) {
-      filterArray.push({ Status });
+      await InterviewReview.find({ Status }, (err, result) => {
+        if (err) {
+          res.writeHead(500, {
+            'Content-Type': 'application/json',
+          });
+          res.end('Network Error');
+        }
+        if (result) {
+          resultArray.push({ Review: result });
+        }
+      })
+        .limit(10)
+        .skip(PageNo * 10);
+      const count = await InterviewReview.find({ Status }).countDocuments();
+      resultArray.push({ Count: count });
+    } else {
+      await InterviewReview.find({}, (err, result) => {
+        if (err) {
+          res.writeHead(500, {
+            'Content-Type': 'application/json',
+          });
+          res.end('Network Error');
+        }
+        if (result) {
+          resultArray.push({ Review: result });
+        }
+      })
+        .limit(10)
+        .skip(PageNo * 10);
+      const count = await InterviewReview.find({}).countDocuments();
+      resultArray.push({ Count: count });
     }
-    await InterviewReview.find({ $and: filterArray }, (err, result) => {
-      if (err) {
-        res.writeHead(500, {
-          'Content-Type': 'application/json',
-        });
-        res.end('Network Error');
-      }
-      if (result) {
-        resultArray.push({ Review: result });
-      }
-    })
-      .limit(10)
-      .skip(PageNo * 10);
-    const count = await InterviewReview.find({ $and: filterArray }).countDocuments();
-    resultArray.push({ Count: count });
     res.writeHead(200, {
       'Content-Type': 'application/json',
     });
@@ -439,26 +493,41 @@ const getInterviewReviews = async (req, res) => {
 const getPhotos = async (req, res) => {
   try {
     const { Status, PageNo } = req.query;
-    const filterArray = [];
+
     const resultArray = [];
     if (Status.length !== 0) {
-      filterArray.push({ Status });
+      await Photos.find({ Status }, (err, result) => {
+        if (err) {
+          res.writeHead(500, {
+            'Content-Type': 'application/json',
+          });
+          res.end('Network Error');
+        }
+        if (result) {
+          resultArray.push({ Review: result });
+        }
+      })
+        .limit(10)
+        .skip(PageNo * 10);
+      const count = await Photos.find({ Status }).countDocuments();
+      resultArray.push({ Count: count });
+    } else {
+      await Photos.find({}, (err, result) => {
+        if (err) {
+          res.writeHead(500, {
+            'Content-Type': 'application/json',
+          });
+          res.end('Network Error');
+        }
+        if (result) {
+          resultArray.push({ Review: result });
+        }
+      })
+        .limit(10)
+        .skip(PageNo * 10);
+      const count = await Photos.find({}).countDocuments();
+      resultArray.push({ Count: count });
     }
-    await Photos.find({ $and: filterArray }, (err, result) => {
-      if (err) {
-        res.writeHead(500, {
-          'Content-Type': 'application/json',
-        });
-        res.end('Network Error');
-      }
-      if (result) {
-        resultArray.push({ Review: result });
-      }
-    })
-      .limit(10)
-      .skip(PageNo * 10);
-    const count = await Photos.find({ $and: filterArray }).countDocuments();
-    resultArray.push({ Count: count });
     res.writeHead(200, {
       'Content-Type': 'application/json',
     });
