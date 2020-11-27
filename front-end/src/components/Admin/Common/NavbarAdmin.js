@@ -1,24 +1,24 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { Component } from 'react';
-import './Navbar.css';
+// import './Navbar.css';
 import {
   updateSearcFilter,
-  updateLowerNavBar,
+  updateCompanyList,
   updateActiveStringList,
-  updateStudentProfile,
-  openProfileTabOnClick,
+  // updateStudentProfile,
+  // openProfileTabOnClick,
 } from '../../../constants/action-types';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import axios from 'axios';
 import serverUrl from '../../../config';
-import LowerNavBarHome from './LowerNavBarHome';
-import LowerNavBarOther from './LowerNavBarOther';
+// import LowerNavBarHome from './LowerNavBarHome';
+// import LowerNavBarOther from './LowerNavBarOther';
 import { history } from '../../../App';
-import SuggestedNames from './SuggestedNames';
+import SuggestedNames from '../../Student/Common/SuggestedNames';
 import { Link } from 'react-router-dom';
 
-class Navbar extends Component {
+class NavbarAdmin extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -34,7 +34,11 @@ class Navbar extends Component {
     });
   };
   componentDidMount() {
-    if (localStorage.getItem('userrole') === 'student') {
+    const payload = {
+      selectedDropDown: 'General',
+    };
+    this.props.updateSearcFilter(payload);
+    if (localStorage.getItem('userrole') === 'admin') {
       axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
       axios
         .get(serverUrl + 'student/navbar', {
@@ -42,52 +46,13 @@ class Navbar extends Component {
           withCredentials: true,
         })
         .then((response) => {
-          const payload1 = {
-            studentProfile: {
-              CurrentJobTitle: '',
-              Name: '',
-              PhoneNo: '',
-              AboutMe: '',
-              Skills: [],
-              Website: '',
-              StreetAddress: '',
-              City: '',
-              State: '',
-              Country: '',
-              Zip: '',
-              Disability: '',
-              Gender: '',
-              Race: [],
-              VeteranStatus: '',
-              FavouriteJobs: [],
-              JobStatus: '',
-              PreferredJobTitle: '',
-              JobType: [],
-              Resumes: [],
-              AppliedJobs: [],
-              ...response.data[0],
-            },
-          };
-          this.props.updateStudentProfile(payload1);
-
           let Companies = response.data[1].map((company) => {
             return company.CompanyName;
           });
-          let JobTitles = response.data[2].map((job) => {
-            return job.Title;
-          });
           const payload2 = {
-            companyList: Array.from(new Set(Companies)),
-
-            jobTitleList: Array.from(new Set(JobTitles)),
-            activeList: Array.from(new Set(JobTitles)),
+            activeList: Array.from(new Set(Companies)),
           };
           this.props.updateActiveStringList(payload2);
-          // let payload = {
-          //   reviewCount: response.data.reviewCount,
-          //   customerProfile,
-          // };
-          // this.props.getCustomerBasicInfo(payload);
         });
     }
   }
@@ -100,17 +65,6 @@ class Navbar extends Component {
 
   updateSearchFilter = (event, selectedDropDown) => {
     event.preventDefault();
-    let payloadSearchStrings;
-    if (selectedDropDown === 'Jobs') {
-      payloadSearchStrings = {
-        activeList: this.props.searchStringStore.jobTitleList,
-      };
-    } else {
-      payloadSearchStrings = {
-        activeList: this.props.searchStringStore.companyList,
-      };
-    }
-    this.props.updateActiveStringList(payloadSearchStrings);
     const payload = {
       selectedDropDown,
     };
@@ -139,50 +93,6 @@ class Navbar extends Component {
         });
         break;
       }
-      case 'Profile': {
-        history.push('/Profile');
-        // this.setState({
-        //   redirect: '/Profile',
-        // });
-        localStorage.setItem('openTab', selectedMenuoption);
-        let payload = { openTab: selectedMenuoption };
-        this.props.openProfileTabOnClick(payload);
-        break;
-      }
-      case 'Resumes': {
-        history.push('/Profile');
-        // this.setState({
-        //   redirect: '/Profile',
-        // });
-        localStorage.setItem('openTab', selectedMenuoption);
-        let payload = { openTab: selectedMenuoption };
-        this.props.openProfileTabOnClick(payload);
-        break;
-      }
-      case 'Job Preferences': {
-        history.push('/Profile');
-        // this.setState({
-        //   redirect: '/Profile',
-        // });
-        localStorage.setItem('openTab', selectedMenuoption);
-        let payload = { openTab: selectedMenuoption };
-        this.props.openProfileTabOnClick(payload);
-        break;
-      }
-      case 'Demographics': {
-        history.push('/Profile');
-        // this.setState({
-        //   redirect: '/Profile',
-        // });
-        localStorage.setItem('openTab', selectedMenuoption);
-        let payload = { openTab: selectedMenuoption };
-        this.props.openProfileTabOnClick(payload);
-        break;
-      }
-      case 'Contributions': {
-        history.push('/ContributionPage');
-        break;
-      }
       default: {
         break;
       }
@@ -197,8 +107,9 @@ class Navbar extends Component {
     this.setState({
       filterDropDownOpen: false,
     });
-    history.push('/Home');
+    history.push('/AdminHomePage');
   };
+
   selectString = (event, string) => {
     console.log(string);
     event.preventDefault();
@@ -215,17 +126,49 @@ class Navbar extends Component {
     this.props.updateSearcFilter(payload);
   };
 
+  fetchCompanyResult = () => {
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    axios
+      .get(serverUrl + 'student/searchCompany', {
+        params: {
+          SearchString: localStorage.getItem('SearchString'),
+          State: '',
+          PageNo: 0,
+        },
+        withCredentials: true,
+      })
+      .then(
+        (response) => {
+          // console.log('searchCompany', response);
+          let payload = {
+            companyList: response.data[0],
+            PageNo: 0,
+            PageCount: Math.ceil(response.data[1] / 10),
+            Totalcount: response.data[1],
+
+            // PageCount: Math.ceil(response.data.Totalcount / 3),
+          };
+          this.props.updateCompanyList(payload);
+        },
+        (error) => {
+          console.log('error', error);
+        }
+      );
+  };
+
   searchResult = (event) => {
     localStorage.setItem('selectedDropDown', this.props.searchDropDownStore.selectedDropDown);
     localStorage.setItem('SearchString', this.props.searchDropDownStore.SearchString);
     localStorage.setItem('Location', this.props.searchDropDownStore.Location);
     switch (this.props.searchDropDownStore.selectedDropDown) {
-      case 'Jobs': {
+      case 'General': {
         history.push('/JobList');
         break;
       }
       case 'Companies': {
-        history.push('/CompanySearchResults');
+        // console.log(this.props.location);
+        this.fetchCompanyResult();
+        history.push('/CompanySearchResultsAdmin');
         break;
       }
       case 'Salaries': {
@@ -233,6 +176,10 @@ class Navbar extends Component {
         break;
       }
       case 'Interviews': {
+        history.push('/interviewListAdmin');
+        break;
+      }
+      case 'Photos': {
         history.push('/interviewList');
         break;
       }
@@ -252,7 +199,6 @@ class Navbar extends Component {
   };
 
   render() {
-    console.log('Student navbar selected');
     // if (this.state.redirect) {
     //   return <Redirect to={this.state.redirect} />;
     // }
@@ -260,18 +206,15 @@ class Navbar extends Component {
     // if (this.state.redirect) {
     //   tabOpen = <Redirect to={this.state.redirect} />;
     // }
-    let LowerNavBar = null;
-    if (this.props.lowerNavbarType.type === 'LowerNavBarHome') {
-      LowerNavBar = <LowerNavBarHome />;
-    } else {
-      LowerNavBar = <LowerNavBarOther />;
-    }
+
     let redirectVar = null;
     if (localStorage.getItem('token')) {
       if (localStorage.getItem('userrole') === 'student') {
-        redirectVar = null;
+        redirectVar = <Redirect to="/Home" />;
       } else if (localStorage.getItem('userrole') === 'company') {
         redirectVar = <Redirect to="/Employer" />;
+      } else if (localStorage.getItem('userrole') === 'admin') {
+        redirectVar = null;
       }
     }
     if (!localStorage.getItem('token')) {
@@ -281,7 +224,7 @@ class Navbar extends Component {
     // if (this.state.loggedout) {
     //   redirectVarLogout = <Redirect to="/login" />;
     // }
-
+    console.log('Admin navbar selected');
     return (
       <header id="SiteNav">
         {redirectVar}
@@ -328,126 +271,6 @@ class Navbar extends Component {
                               <div style={{ width: '100%' }} className="d-flex flex-column col">
                                 <div className="accountPopup__AccountPopupStyles__menuContainer">
                                   <div className="accountPopup__AccountPopupStyles__accountMenu accountPopup__AccountPopupStyles__active">
-                                    <ul className="p-0 m-0 memberHeader__HeaderStyles__list">
-                                      <li
-                                        style={{ cursor: 'pointer' }}
-                                        onClick={(event) => {
-                                          this.mainMenuClicked(event, 'Profile');
-                                        }}
-                                        className="p-0 m-0"
-                                      >
-                                        <a
-                                          className="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
-                                          // to="/Profile"
-                                          // to="#"
-                                          href="#"
-                                          target="_top"
-                                          rel="nofollow"
-                                          data-ga-lbl="My Profile"
-                                        >
-                                          <div className="d-flex align-items-center py-std col header-menu-item-label">
-                                            <span className="col">
-                                              <span className="menuItem__MenuItemStyles__menuItemColor">
-                                                Profile
-                                              </span>
-                                            </span>
-                                          </div>
-                                        </a>
-                                      </li>
-                                      <li
-                                        style={{ cursor: 'pointer' }}
-                                        onClick={(event) => this.mainMenuClicked(event, 'Resumes')}
-                                        className="p-0 m-0"
-                                      >
-                                        <a
-                                          // to="/Resume"
-                                          className="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
-                                          href="#"
-                                          target="_top"
-                                          rel="nofollow"
-                                          data-ga-lbl="My Resumes"
-                                        >
-                                          <div className="d-flex align-items-center py-std col header-menu-item-label">
-                                            <span className="col">
-                                              <span className="menuItem__MenuItemStyles__menuItemColor">
-                                                Resumes
-                                              </span>
-                                            </span>
-                                          </div>
-                                        </a>
-                                      </li>
-                                      <li
-                                        onClick={(event) =>
-                                          this.mainMenuClicked(event, 'Job Preferences')
-                                        }
-                                        className="p-0 m-0"
-                                      >
-                                        <a
-                                          className="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
-                                          href="#"
-                                          target="_top"
-                                          rel="nofollow"
-                                          data-ga-lbl="Job Preferences"
-                                        >
-                                          <div className="d-flex align-items-center py-std col header-menu-item-label">
-                                            <span className="col">
-                                              <span className="menuItem__MenuItemStyles__menuItemColor">
-                                                Job Preferences
-                                              </span>
-                                            </span>
-                                          </div>
-                                        </a>
-                                      </li>
-                                      <li
-                                        onClick={(event) =>
-                                          this.mainMenuClicked(event, 'Demographics')
-                                        }
-                                        className="p-0 m-0"
-                                      >
-                                        <a
-                                          className="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
-                                          href="#"
-                                          target="_top"
-                                          rel="nofollow"
-                                          data-ga-lbl="Demographics"
-                                        >
-                                          <div className="d-flex align-items-center py-std col header-menu-item-label">
-                                            <span className="col">
-                                              <span className="menuItem__MenuItemStyles__menuItemColor">
-                                                Demographics
-                                              </span>
-                                            </span>
-                                          </div>
-                                        </a>
-                                      </li>
-                                    </ul>
-                                    <ul className="p-0 m-0 memberHeader__HeaderStyles__list">
-                                      <li
-                                        onClick={(event) =>
-                                          this.mainMenuClicked(event, 'Contributions')
-                                        }
-                                        className="p-0 m-0"
-                                      >
-                                        <a
-                                          href="#"
-                                          // to="/ContributionPage"
-                                          className="d-flex align-items-center px-std menuItem__MenuItemStyles__menuItem menuItem__MenuItemStyles__menuItemHoverEffect header-menu-item"
-                                          // href="/member/account/salaries_input.htm"
-                                          target="_top"
-                                          rel="nofollow"
-                                          data-ga-lbl="Contributions"
-                                        >
-                                          <div className="d-flex align-items-center py-std col header-menu-item-label">
-                                            <span className="col">
-                                              <span className="menuItem__MenuItemStyles__menuItemColor">
-                                                Contributions
-                                              </span>
-                                            </span>
-                                          </div>
-                                        </a>
-                                      </li>
-                                    </ul>
-
                                     <ul className="p-0 m-0 memberHeader__HeaderStyles__list">
                                       <li
                                         onClick={(event) => this.mainMenuClicked(event, 'Sign Out')}
@@ -592,8 +415,11 @@ class Navbar extends Component {
                         <div className="col headerSearchInput css-1ohf0ui">
                           <div className="input-wrapper css-q444d9">
                             <input
+                              disabled={
+                                this.props.searchDropDownStore.selectedDropDown !== 'Companies'
+                              }
                               type="text"
-                              placeholder="Job Title, Keywords, or Company"
+                              placeholder="Company"
                               data-test=""
                               aria-label=""
                               className="css-1etjok6"
@@ -646,6 +472,9 @@ class Navbar extends Component {
                             <div className="col headerSearchInput css-1ohf0ui">
                               <div className="input-wrapper css-q444d9">
                                 <input
+                                  disabled={
+                                    this.props.searchDropDownStore.selectedDropDown !== 'Companies'
+                                  }
                                   style={{ padding: '0 0 0 40px' }}
                                   // onFocus={() => this.showSuggestion(true)}
                                   // onBlur={() => this.showSuggestion(false)}
@@ -653,7 +482,7 @@ class Navbar extends Component {
                                   type="text"
                                   id="sc.keyword"
                                   name="SearchString"
-                                  placeholder="Job Title, Keywords, or Company"
+                                  placeholder="Company"
                                   data-test="search-bar-keyword-input"
                                   aria-label=""
                                   value={this.props.searchDropDownStore.SearchString}
@@ -742,9 +571,12 @@ class Navbar extends Component {
                                   <div className="dropDownOptionsContainer">
                                     <ul>
                                       <li
-                                        onClick={(event) => this.updateSearchFilter(event, 'Jobs')}
+                                        onClick={(event) =>
+                                          this.updateSearchFilter(event, 'General')
+                                        }
                                         className={`dropdownOption  ${
-                                          this.props.searchDropDownStore.selectedDropDown === 'Jobs'
+                                          this.props.searchDropDownStore.selectedDropDown ===
+                                          'General'
                                             ? 'checked'
                                             : ''
                                         } `}
@@ -770,7 +602,7 @@ class Navbar extends Component {
                                           </span>
                                         </div>
 
-                                        <span className="dropdownOptionLabel">Jobs</span>
+                                        <span className="dropdownOptionLabel">General</span>
                                       </li>
                                       <li
                                         onClick={(event) =>
@@ -872,36 +704,45 @@ class Navbar extends Component {
                                         </div>
                                         <span className="dropdownOptionLabel">Interviews</span>
                                       </li>
+                                      <li
+                                        onClick={(event) =>
+                                          this.updateSearchFilter(event, 'Photos')
+                                        }
+                                        className={`dropdownOption  ${
+                                          this.props.searchDropDownStore.selectedDropDown ===
+                                          'Photos'
+                                            ? 'checked'
+                                            : ''
+                                        } `}
+                                        role="option"
+                                        aria-selected="false"
+                                        id="option_3"
+                                      >
+                                        <div className="checkmark">
+                                          <span alt="" className="SVGInline">
+                                            <svg
+                                              className="SVGInline-svg"
+                                              xmlns="http://www.w3.org/2000/svg"
+                                              width="24"
+                                              height="24"
+                                              viewBox="0 0 24 24"
+                                            >
+                                              <path
+                                                d="M9.89 15.76l-2.64-2.363a.793.793 0 010-1.157.884.884 0 011.211 0l2.039 1.785 5.039-5.785a.884.884 0 011.21 0 .793.793 0 010 1.157L11.1 15.76a.884.884 0 01-1.21 0z"
+                                                fill="currentColor"
+                                                fillRule="evenodd"
+                                              ></path>
+                                            </svg>
+                                          </span>
+                                        </div>
+                                        <span className="dropdownOptionLabel">Photos</span>
+                                      </li>
                                     </ul>
                                   </div>
                                 </div>
                               ) : (
                                 ''
                               )}
-                            </div>
-                          </div>
-                          <div className="ml-xsm col-4 p-0 headerSearchInput search__SearchStyles__searchBarLocationInput css-1ohf0ui">
-                            <div className="input-wrapper css-q444d9">
-                              <input
-                                onChange={this.onChangeCommonHandler}
-                                name="Location"
-                                type="text"
-                                id="sc.location"
-                                placeholder="Location"
-                                data-test="search-bar-location-input"
-                                aria-label=""
-                                value={this.props.searchDropDownStore.Location}
-                                className="css-1etjok6"
-                                autoComplete="off"
-                              />
-                              <div
-                                style={{
-                                  left: '0px',
-                                  top: '41px',
-                                  width: '266px',
-                                }}
-                                className="autoComplete-suggestions "
-                              ></div>
                             </div>
                           </div>
                           <a href="#" onClick={this.searchResult}>
@@ -924,21 +765,18 @@ class Navbar extends Component {
         ) : (
           ''
         )}
-        {localStorage.getItem('token') ? LowerNavBar : ''}
       </header>
     );
   }
 }
 
-// export default Navbar;
+// export default NavbarAdmin;
 const mapStateToProps = (state) => {
   const { searchDropDownStore } = state.searchDropDownReducer;
-  const { lowerNavbarType } = state.lowerNavBarReducer;
   const { searchStringStore } = state.SearchStringsReducer;
   return {
     searchDropDownStore,
     searchStringStore,
-    lowerNavbarType,
   };
 };
 
@@ -950,27 +788,27 @@ const mapDispatchToProps = (dispatch) => {
         payload,
       });
     },
-    updateLowerNavBar: (payload) => {
-      dispatch({
-        type: updateLowerNavBar,
-        payload,
-      });
-    },
-    updateStudentProfile: (payload) => {
-      dispatch({
-        type: updateStudentProfile,
-        payload,
-      });
-    },
+    // updateLowerNavBar: (payload) => {
+    //   dispatch({
+    //     type: updateLowerNavBar,
+    //     payload,
+    //   });
+    // },
+    // updateStudentProfile: (payload) => {
+    //   dispatch({
+    //     type: updateStudentProfile,
+    //     payload,
+    //   });
+    // },
     updateActiveStringList: (payload) => {
       dispatch({
         type: updateActiveStringList,
         payload,
       });
     },
-    openProfileTabOnClick: (payload) => {
+    updateCompanyList: (payload) => {
       dispatch({
-        type: openProfileTabOnClick,
+        type: updateCompanyList,
         payload,
       });
     },
@@ -978,4 +816,4 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 // export default LoginBody;
-export default connect(mapStateToProps, mapDispatchToProps)(Navbar);
+export default connect(mapStateToProps, mapDispatchToProps)(NavbarAdmin);
