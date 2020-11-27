@@ -341,26 +341,42 @@ const analytics = async (req, res) => {
 const getGeneralReviews = async (req, res) => {
   try {
     const { Status, PageNo } = req.query;
-    const filterArray = [];
     const resultArray = [];
     if (Status.length !== 0) {
-      filterArray.push({ Status });
+      await GeneralReview.find({ Status }, (err, result) => {
+        if (err) {
+          res.writeHead(500, {
+            'Content-Type': 'application/json',
+          });
+          res.end('Network Error');
+        }
+        if (result) {
+          resultArray.push({ Review: result });
+        }
+      })
+        .sort({ DatePosted: -1 })
+        .limit(10)
+        .skip(PageNo * 10);
+      const count = await GeneralReview.find({ Status }).countDocuments();
+      resultArray.push({ Count: count });
+    } else {
+      await GeneralReview.find({}, (err, result) => {
+        if (err) {
+          res.writeHead(500, {
+            'Content-Type': 'application/json',
+          });
+          res.end('Network Error');
+        }
+        if (result) {
+          resultArray.push({ Review: result });
+        }
+      })
+        .sort({ DatePosted: -1 })
+        .limit(10)
+        .skip(PageNo * 10);
+      const count = await GeneralReview.find({}).countDocuments();
+      resultArray.push({ Count: count });
     }
-    await GeneralReview.find({ $and: filterArray }, (err, result) => {
-      if (err) {
-        res.writeHead(500, {
-          'Content-Type': 'application/json',
-        });
-        res.end('Network Error');
-      }
-      if (result) {
-        resultArray.push({ Review: result });
-      }
-    })
-      .limit(10)
-      .skip(PageNo * 10);
-    const count = await GeneralReview.find({ $and: filterArray }).countDocuments();
-    resultArray.push({ Count: count });
     res.writeHead(200, {
       'Content-Type': 'application/json',
     });
@@ -377,26 +393,40 @@ const getGeneralReviews = async (req, res) => {
 const getSalaryReviews = async (req, res) => {
   try {
     const { Status, PageNo } = req.query;
-    const filterArray = [];
     const resultArray = [];
     if (Status.length !== 0) {
-      filterArray.push({ Status });
+      await SalaryReview.find({ Status }, (err, result) => {
+        if (err) {
+          res.writeHead(500, {
+            'Content-Type': 'application/json',
+          });
+          res.end('Network Error');
+        }
+        if (result) {
+          resultArray.push({ Review: result });
+        }
+      })
+        .limit(10)
+        .skip(PageNo * 10);
+      const count = await SalaryReview.find({ Status }).countDocuments();
+      resultArray.push({ Count: count });
+    } else {
+      await SalaryReview.find({}, (err, result) => {
+        if (err) {
+          res.writeHead(500, {
+            'Content-Type': 'application/json',
+          });
+          res.end('Network Error');
+        }
+        if (result) {
+          resultArray.push({ Review: result });
+        }
+      })
+        .limit(10)
+        .skip(PageNo * 10);
+      const count = await SalaryReview.find({}).countDocuments();
+      resultArray.push({ Count: count });
     }
-    await SalaryReview.find({ $and: filterArray }, (err, result) => {
-      if (err) {
-        res.writeHead(500, {
-          'Content-Type': 'application/json',
-        });
-        res.end('Network Error');
-      }
-      if (result) {
-        resultArray.push({ Review: result });
-      }
-    })
-      .limit(10)
-      .skip(PageNo * 10);
-    const count = await SalaryReview.find({ $and: filterArray }).countDocuments();
-    resultArray.push({ Count: count });
     res.writeHead(200, {
       'Content-Type': 'application/json',
     });
@@ -413,26 +443,40 @@ const getSalaryReviews = async (req, res) => {
 const getInterviewReviews = async (req, res) => {
   try {
     const { Status, PageNo } = req.query;
-    const filterArray = [];
     const resultArray = [];
     if (Status.length !== 0) {
-      filterArray.push({ Status });
+      await InterviewReview.find({ Status }, (err, result) => {
+        if (err) {
+          res.writeHead(500, {
+            'Content-Type': 'application/json',
+          });
+          res.end('Network Error');
+        }
+        if (result) {
+          resultArray.push({ Review: result });
+        }
+      })
+        .limit(10)
+        .skip(PageNo * 10);
+      const count = await InterviewReview.find({ Status }).countDocuments();
+      resultArray.push({ Count: count });
+    } else {
+      await InterviewReview.find({}, (err, result) => {
+        if (err) {
+          res.writeHead(500, {
+            'Content-Type': 'application/json',
+          });
+          res.end('Network Error');
+        }
+        if (result) {
+          resultArray.push({ Review: result });
+        }
+      })
+        .limit(10)
+        .skip(PageNo * 10);
+      const count = await InterviewReview.find({}).countDocuments();
+      resultArray.push({ Count: count });
     }
-    await InterviewReview.find({ $and: filterArray }, (err, result) => {
-      if (err) {
-        res.writeHead(500, {
-          'Content-Type': 'application/json',
-        });
-        res.end('Network Error');
-      }
-      if (result) {
-        resultArray.push({ Review: result });
-      }
-    })
-      .limit(10)
-      .skip(PageNo * 10);
-    const count = await InterviewReview.find({ $and: filterArray }).countDocuments();
-    resultArray.push({ Count: count });
     res.writeHead(200, {
       'Content-Type': 'application/json',
     });
@@ -449,26 +493,41 @@ const getInterviewReviews = async (req, res) => {
 const getPhotos = async (req, res) => {
   try {
     const { Status, PageNo } = req.query;
-    const filterArray = [];
+
     const resultArray = [];
     if (Status.length !== 0) {
-      filterArray.push({ Status });
+      await Photos.find({ Status }, (err, result) => {
+        if (err) {
+          res.writeHead(500, {
+            'Content-Type': 'application/json',
+          });
+          res.end('Network Error');
+        }
+        if (result) {
+          resultArray.push({ Review: result });
+        }
+      })
+        .limit(10)
+        .skip(PageNo * 10);
+      const count = await Photos.find({ Status }).countDocuments();
+      resultArray.push({ Count: count });
+    } else {
+      await Photos.find({}, (err, result) => {
+        if (err) {
+          res.writeHead(500, {
+            'Content-Type': 'application/json',
+          });
+          res.end('Network Error');
+        }
+        if (result) {
+          resultArray.push({ Review: result });
+        }
+      })
+        .limit(10)
+        .skip(PageNo * 10);
+      const count = await Photos.find({}).countDocuments();
+      resultArray.push({ Count: count });
     }
-    await Photos.find({ $and: filterArray }, (err, result) => {
-      if (err) {
-        res.writeHead(500, {
-          'Content-Type': 'application/json',
-        });
-        res.end('Network Error');
-      }
-      if (result) {
-        resultArray.push({ Review: result });
-      }
-    })
-      .limit(10)
-      .skip(PageNo * 10);
-    const count = await Photos.find({ $and: filterArray }).countDocuments();
-    resultArray.push({ Count: count });
     res.writeHead(200, {
       'Content-Type': 'application/json',
     });
