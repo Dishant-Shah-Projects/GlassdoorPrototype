@@ -11,6 +11,7 @@ const SalaryReview = require('../model/SalaryReview');
 const Company = require('../model/Company');
 const Student = require('../model/Student');
 const Photos = require('../model/Photos');
+const { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } = require('constants');
 
 // get reviews for the admin to approve
 const reviews = async (req, res) => {
@@ -241,26 +242,8 @@ const analytics = async (req, res) => {
     const today = `${year}-${month}-${day}`;
     const reviewData = await GeneralReview.find({ DatePosted: { $gte: today } }).countDocuments();
 
-    const companyReview = await GeneralReview.aggregate([
-      {
-        $group: {
-          _id: '$CompanyID',
-          count: { $sum: 1 },
-        },
-      },
-      {
-        $sort: { count: -1 },
-      },
-      {
-        $limit: 5,
-      },
-    ]);
-    const topCompanyIDArray = [];
-    // eslint-disable-next-line no-plusplus
-    for (let index = 0; index < companyReview.length; index++) {
-      topCompanyIDArray.push(companyReview[index]._id);
-    }
-    const topCompanyList = await Company.find({ CompanyID: { $in: topCompanyIDArray } });
+    const topCompanyList = await Company.find({}).sort({ GeneralReviewCount: -1, CompanyName: 1 })
+      .limit(5);
 
     const topAveragerRating = await Company.aggregate([
       {
@@ -284,39 +267,32 @@ const analytics = async (req, res) => {
 
     const topAverageCompanyArray = [];
     // eslint-disable-next-line no-plusplus
-    for (let index = 0; index < topAveragerRating.length; index++) {
-      topAverageCompanyArray.push(topAveragerRating[index]._id);
-    }
-    const topAverageList = await Company.find({ CompanyID: { $in: topAverageCompanyArray } });
-
-    const topStudentList = await Student.find({}).sort({ AcceptedReviewCount: -1 }).limit(5);
-
-    const topCEO = await GeneralReview.aggregate([
-      {
-        $match: { CEOApproval: { $eq: true } },
-      },
-      {
-        $group: {
-          _id: '$CompanyID',
-          count: { $sum: 1 },
-        },
-      },
-      {
-        $sort: { count: -1 },
-      },
-      {
-        $limit: 10,
-      },
-    ]);
-    const topCEOArray = [];
+    let count = 0;
     // eslint-disable-next-line no-plusplus
-    for (let index = 0; index < topCEO.length; index++) {
-      topCEOArray.push(topCEO[index]._id);
+    for (let index = 0; index < topAveragerRating.length; index++) {
+      if (topAveragerRating[index].average !== null) {
+        count += 1;
+        topAverageCompanyArray.push(topAveragerRating[index]._id);
+      }
     }
-    const topCEOCompanyList = await Company.find({ CompanyID: { $in: topCEOArray } });
+
+    let topAverageList = await Company.find({ CompanyID: { $in: topAverageCompanyArray } });
+
+    if (count < 5) {
+      const zeroCount = await Company.find({ GeneralReviewCount: 0 })
+        .sort({ CompanyName: 1 })
+        .limit(5 - count);
+      topAverageList = topAverageList.concat(zeroCount);
+    }
+
+    const topStudentList = await Student.find({})
+      .sort({ AcceptedReviewCount: -1, Name: 1 })
+      .limit(5);
+
+    const topCEOCompanyList = await Company.find({}).sort({ approveCEOcount: -1, CompanyName: 1 })
+      .limit(5);
 
     const topViewCompanyList = await Company.find({}).sort({ ViewCount: -1 }).limit(10);
-
     const resultData = {
       reviewData,
       topCompanyList,
