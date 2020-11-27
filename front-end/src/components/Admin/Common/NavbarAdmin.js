@@ -5,8 +5,8 @@ import {
   updateSearcFilter,
   updateCompanyList,
   updateActiveStringList,
-  // updateStudentProfile,
-  // openProfileTabOnClick,
+  updateInterviewList,
+  updateCompanyReviewsStore,
 } from '../../../constants/action-types';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
@@ -156,13 +156,90 @@ class NavbarAdmin extends Component {
       );
   };
 
+  fetchInterviewReviews = (
+    Status = '',
+    PageNo = 0,
+    PendingTab = false,
+    ApprovedTab = false,
+    DisapprovedTab = false
+  ) => {
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    axios
+      .get(serverUrl + 'admin/getInterviewReviews', {
+        params: {
+          Status: '',
+          PageNo: 0,
+        },
+        withCredentials: true,
+      })
+      .then(
+        (response) => {
+          console.log('interview list', response.data);
+          let payload = {
+            interviewSearchList: response.data[0].Review,
+            PageNo,
+            PageCount: Math.ceil(response.data[1].Count / 10),
+            Totalcount: response.data[1].Count,
+            PendingTab,
+            ApprovedTab,
+            DisapprovedTab,
+
+            // PageCount: Math.ceil(response.data.Totalcount / 3),
+          };
+          this.props.updateInterviewList(payload);
+        },
+        (error) => {
+          console.log('error', error);
+        }
+      );
+  };
+
+  fetchGeneralReviews = (
+    PageNo = 0,
+    Status = '',
+    PendingTab = false,
+    ApprovedTab = false,
+    DisapprovedTab = false
+  ) => {
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    axios
+      .get(serverUrl + 'admin/getGeneralReviews', {
+        params: {
+          Status,
+          PageNo,
+        },
+        withCredentials: true,
+      })
+      .then(
+        (response) => {
+          console.log('getGeneralReviews admin', response.data);
+          let payload = {
+            ReviewList: response.data[0].Review,
+            PageNo,
+            Totalcount: response.data[1].Count,
+            PageCount: Math.ceil(response.data[1].Count / 10),
+            PendingTab,
+            ApprovedTab,
+            DisapprovedTab,
+
+            // PageCount: Math.ceil(response.data.Totalcount / 3),
+          };
+          this.props.updateCompanyReviewsStore(payload);
+        },
+        (error) => {
+          console.log('error', error);
+        }
+      );
+  };
+
   searchResult = (event) => {
     localStorage.setItem('selectedDropDown', this.props.searchDropDownStore.selectedDropDown);
     localStorage.setItem('SearchString', this.props.searchDropDownStore.SearchString);
     localStorage.setItem('Location', this.props.searchDropDownStore.Location);
     switch (this.props.searchDropDownStore.selectedDropDown) {
       case 'General': {
-        history.push('/JobList');
+        this.fetchGeneralReviews();
+        history.push('/CompanyGeneralReviewsAdmin');
         break;
       }
       case 'Companies': {
@@ -176,6 +253,7 @@ class NavbarAdmin extends Component {
         break;
       }
       case 'Interviews': {
+        this.fetchInterviewReviews();
         history.push('/interviewListAdmin');
         break;
       }
@@ -788,18 +866,18 @@ const mapDispatchToProps = (dispatch) => {
         payload,
       });
     },
-    // updateLowerNavBar: (payload) => {
-    //   dispatch({
-    //     type: updateLowerNavBar,
-    //     payload,
-    //   });
-    // },
-    // updateStudentProfile: (payload) => {
-    //   dispatch({
-    //     type: updateStudentProfile,
-    //     payload,
-    //   });
-    // },
+    updateCompanyReviewsStore: (payload) => {
+      dispatch({
+        type: updateCompanyReviewsStore,
+        payload,
+      });
+    },
+    updateInterviewList: (payload) => {
+      dispatch({
+        type: updateInterviewList,
+        payload,
+      });
+    },
     updateActiveStringList: (payload) => {
       dispatch({
         type: updateActiveStringList,

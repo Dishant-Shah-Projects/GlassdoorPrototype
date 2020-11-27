@@ -6,6 +6,9 @@ const defaultState = {
     PageNo: 0,
     PageCount: 0,
     Totalcount: 0,
+    PendingTab: false,
+    ApprovedTab: false,
+    DisapprovedTab: false,
   },
 };
 

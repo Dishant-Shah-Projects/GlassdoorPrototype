@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import { LowerNavBarOther, updateInterviewList } from '../../../constants/action-types';
 import PaginationComponent from '../../Student/Common/PaginationComponent';
 // import './interviewList.css';
-import Questions from './Questions';
 import axios from 'axios';
 import serverUrl from '../../../config';
 import { history } from '../../../App';
@@ -16,7 +15,13 @@ class interviewListAdmin extends Component {
     this.state = { PendingTab: false, ApprovedTab: false, DisapprovedTab: false };
   }
 
-  commonFetch = (PageNo = 0, Status = '') => {
+  commonFetch = (
+    PageNo = 0,
+    Status = '',
+    PendingTab = false,
+    ApprovedTab = false,
+    DisapprovedTab = false
+  ) => {
     axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
     axios
       .get(serverUrl + 'admin/getInterviewReviews', {
@@ -34,7 +39,9 @@ class interviewListAdmin extends Component {
             PageNo,
             PageCount: Math.ceil(response.data[1].Count / 10),
             Totalcount: response.data[1].Count,
-
+            PendingTab,
+            ApprovedTab,
+            DisapprovedTab,
             // PageCount: Math.ceil(response.data.Totalcount / 3),
           };
           this.props.updateInterviewList(payload);
@@ -51,24 +58,26 @@ class interviewListAdmin extends Component {
   }
 
   onPageClick = (e) => {
-    // console.log('Page Clicked:', e.selected);
-    this.commonFetch(e.selected);
+    let Status = '';
+    if (this.props.interviewListStore.PendingTab) {
+      Status = 'Not Approved';
+    } else if (this.props.interviewListStore.ApprovedTab) {
+      Status = 'Approved';
+    } else if (this.props.interviewListStore.DisapprovedTab) {
+      Status = 'Disapproved';
+    }
+    this.commonFetch(
+      e.selected,
+      Status,
+      this.props.interviewListStore.PendingTab,
+      this.props.interviewListStore.ApprovedTab,
+      this.props.interviewListStore.DisapprovedTab
+    );
   };
 
   openCompanyProfile = (event, CompanyID) => {
     localStorage.setItem('companyID', CompanyID);
     history.push('/CompanyPage');
-
-    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
-    const data = { CompanyID };
-    axios.post(serverUrl + 'student/companyViewCount', data).then(
-      (response) => {
-        console.log('View incremented');
-      },
-      (error) => {
-        console.log('error', error);
-      }
-    );
   };
 
   buttonClicked = (event, Status, InterviewReviewID, CompanyID) => {
@@ -83,20 +92,31 @@ class interviewListAdmin extends Component {
       (response) => {
         console.log('Status Code : ', response.status);
         if (response.status === 200) {
-          // this.commonFetch(,)
+          if (this.props.interviewListStore.PendingTab) {
+            Status = 'Not Approved';
+          } else if (this.props.interviewListStore.ApprovedTab) {
+            Status = 'Approved';
+          } else if (this.props.interviewListStore.DisapprovedTab) {
+            Status = 'Disapproved';
+          }
+          this.commonFetch(
+            this.props.interviewListStore.PageNo,
+            Status,
+            this.props.interviewListStore.PendingTab,
+            this.props.interviewListStore.ApprovedTab,
+            this.props.interviewListStore.DisapprovedTab
+          );
+          // let InterViewList = [...this.props.interviewListStore.interviewSearchList];
+          // const index = InterViewList.findIndex((x) => x.InterviewReviewID === InterviewReviewID);
+          // let interview = { ...InterViewList[index] };
 
-          // console.log('Helpful success id:', ID);
-          let InterViewList = [...this.props.interviewListStore.interviewSearchList];
-          const index = InterViewList.findIndex((x) => x.InterviewReviewID === InterviewReviewID);
-          let interview = { ...InterViewList[index] };
+          // interview.Status = Status;
+          // InterViewList[index] = interview;
+          // let payload = {
+          //   interviewSearchList: InterViewList,
+          // };
 
-          interview.Status = Status;
-          InterViewList[index] = interview;
-          let payload = {
-            interviewSearchList: InterViewList,
-          };
-
-          this.props.updateInterviewList(payload);
+          // this.props.updateInterviewList(payload);
         }
       },
       (error) => {
@@ -107,45 +127,48 @@ class interviewListAdmin extends Component {
 
   changePendingTab = (event) => {
     event.preventDefault();
-    if (this.state.PendingTab) {
-      this.setState({ PendingTab: false, ApprovedTab: false, DisapprovedTab: false });
-      this.commonFetch();
+    if (this.props.interviewListStore.PendingTab) {
+      // this.setState({ PendingTab: false, ApprovedTab: false, DisapprovedTab: false });
+      this.commonFetch(0, '', false, false, false);
     } else {
-      this.setState({
-        PendingTab: true,
-        ApprovedTab: false,
-        DisapprovedTab: false,
-      });
-      this.commonFetch(0, 'Not Approved');
+      // this.setState({
+      //   PendingTab: true,
+      //   ApprovedTab: false,
+      //   DisapprovedTab: false,
+      // });
+      this.commonFetch(0, 'Not Approved', true, false, false);
+      // this.commonFetch(0, 'Not Approved');
     }
   };
 
   changeApprovedTab = (event) => {
     event.preventDefault();
-    if (this.state.ApprovedTab) {
-      this.setState({ PendingTab: false, ApprovedTab: false, DisapprovedTab: false });
-      this.commonFetch();
+    if (this.props.interviewListStore.ApprovedTab) {
+      // this.setState({ PendingTab: false, ApprovedTab: false, DisapprovedTab: false });
+      this.commonFetch(0, '', false, false, false);
     } else {
-      this.setState({
-        PendingTab: false,
-        ApprovedTab: true,
-        DisapprovedTab: false,
-      });
-      this.commonFetch(0, 'Approved');
+      // this.setState({
+      //   PendingTab: false,
+      //   ApprovedTab: true,
+      //   DisapprovedTab: false,
+      // });
+      this.commonFetch(0, 'Approved', false, true, false);
+      // this.commonFetch(0, 'Approved');
     }
   };
   changeDisapprovedTab = (event) => {
     event.preventDefault();
-    if (this.state.DisapprovedTab) {
-      this.setState({ PendingTab: false, ApprovedTab: false, DisapprovedTab: false });
-      this.commonFetch();
+    if (this.props.interviewListStore.DisapprovedTab) {
+      // this.setState({ PendingTab: false, ApprovedTab: false, DisapprovedTab: false });
+      this.commonFetch(0, '', false, false, false);
     } else {
-      this.setState({
-        PendingTab: false,
-        ApprovedTab: false,
-        DisapprovedTab: true,
-      });
-      this.commonFetch(0, 'Disapproved');
+      // this.setState({
+      //   PendingTab: false,
+      //   ApprovedTab: false,
+      //   DisapprovedTab: true,
+      // });
+      // this.commonFetch(0, 'Disapproved');
+      this.commonFetch(0, 'Disapproved', false, false, true);
     }
   };
 
@@ -188,7 +211,11 @@ class interviewListAdmin extends Component {
                                               paddingLeft: '30%',
                                             }}
                                             onClick={this.changePendingTab}
-                                            class={this.state.PendingTab ? 'selected' : ''}
+                                            class={
+                                              this.props.interviewListStore.PendingTab
+                                                ? 'selected'
+                                                : ''
+                                            }
                                             tabindex="0"
                                           >
                                             <label
@@ -208,7 +235,11 @@ class interviewListAdmin extends Component {
                                           </div>
                                           <div
                                             onClick={this.changeDisapprovedTab}
-                                            class={this.state.DisapprovedTab ? 'selected' : ''}
+                                            class={
+                                              this.props.interviewListStore.DisapprovedTab
+                                                ? 'selected'
+                                                : ''
+                                            }
                                             tabindex="0"
                                           >
                                             <label
@@ -227,7 +258,11 @@ class interviewListAdmin extends Component {
                                           </div>
                                           <div
                                             onClick={this.changeApprovedTab}
-                                            class={this.state.ApprovedTab ? 'selected' : ''}
+                                            class={
+                                              this.props.interviewListStore.ApprovedTab
+                                                ? 'selected'
+                                                : ''
+                                            }
                                             tabindex="0"
                                           >
                                             <label

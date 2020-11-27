@@ -5,13 +5,13 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const url = require('url');
 
+const { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } = require('constants');
 const GeneralReview = require('../model/GeneralReview');
 const InterviewReview = require('../model/InterviewReview');
 const SalaryReview = require('../model/SalaryReview');
 const Company = require('../model/Company');
 const Student = require('../model/Student');
 const Photos = require('../model/Photos');
-const { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } = require('constants');
 
 // get reviews for the admin to approve
 const reviews = async (req, res) => {
