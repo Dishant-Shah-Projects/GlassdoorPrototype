@@ -5,7 +5,9 @@ const { checkAuth } = require('../SharedFuntionalities/passport');
 
 const {
   reviews,
-  updateReviews,
+  updateGeneralReviews,
+  updateInterviewReviews,
+  updateSalaryReviews,
   companyList,
   companyReviewList,
   pictures,
@@ -23,8 +25,18 @@ Router.get('/reviews', checkAuth, async (req, res) => {
   return value;
 });
 
-Router.post('/updateReviews', checkAuth, async (req, res) => {
-  const value = await updateReviews(req, res);
+Router.post('/updateGeneralReviews', checkAuth, async (req, res) => {
+  const value = await updateGeneralReviews(req, res);
+  return value;
+});
+
+Router.post('/updateInterviewReviews', checkAuth, async (req, res) => {
+  const value = await updateInterviewReviews(req, res);
+  return value;
+});
+
+Router.post('/updateSalaryReviews', checkAuth, async (req, res) => {
+  const value = await updateSalaryReviews(req, res);
   return value;
 });
 

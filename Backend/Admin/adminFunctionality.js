@@ -34,7 +34,7 @@ const reviews = async (req, res) => {
 };
 
 // Update review status
-const updateReviews = async (req, res) => {
+const updateGeneralReviews = async (req, res) => {
   try {
     // eslint-disable-next-line object-curly-newline
     const { CompanyID, ID, Status } = req.body;
@@ -44,7 +44,76 @@ const updateReviews = async (req, res) => {
     res.writeHead(200, {
       'Content-Type': 'application/json',
     });
-    res.end(JSON.stringify(result));
+    if (Status === 'Approved') {
+      const companyData = await Company.find({ CompanyID });
+      let GeneralReviewCount = 0;
+      let approveCEOcount = 0;
+      if (result.CEOApproval === true) {
+        approveCEOcount = companyData[0].approveCEOcount + 1;
+      } else {
+        approveCEOcount = companyData[0].approveCEOcount;
+      }
+      if (companyData[0].GeneralReviewCount) {
+        GeneralReviewCount = companyData[0].GeneralReviewCount + 1;
+      }
+      await Company.updateOne({ CompanyID }, { GeneralReviewCount, approveCEOcount });
+      res.end(JSON.stringify(result));
+    }
+  } catch (error) {
+    res.writeHead(500, {
+      'Content-Type': 'application/json',
+    });
+    res.end('Network Error');
+  }
+};
+
+const updateInterviewReviews = async (req, res) => {
+  try {
+    // eslint-disable-next-line object-curly-newline
+    const { CompanyID, ID, Status } = req.body;
+    const filter = { $and: [{ CompanyID }, { ID }] };
+    const update = { Status };
+    const result = await InterviewReview.findOneAndUpdate(filter, update);
+    res.writeHead(200, {
+      'Content-Type': 'application/json',
+    });
+    if (Status === 'Approved') {
+      const companyData = await Company.find({ CompanyID });
+      let InterviewReviewCount = 0;
+      if (companyData[0].InterviewReviewCount) {
+        InterviewReviewCount = companyData[0].InterviewReviewCount + 1;
+      }
+      await Company.updateOne({ CompanyID }, { InterviewReviewCount });
+      res.end(JSON.stringify(result));
+    }
+  } catch (error) {
+    res.writeHead(500, {
+      'Content-Type': 'application/json',
+    });
+    res.end('Network Error');
+  }
+};
+
+const updateSalaryReviews = async (req, res) => {
+  try {
+    // eslint-disable-next-line object-curly-newline
+    const { CompanyID, ID, Status } = req.body;
+    const filter = { $and: [{ CompanyID }, { ID }] };
+    const update = { Status };
+    const result = await SalaryReview.findOneAndUpdate(filter, update);
+    res.writeHead(200, {
+      'Content-Type': 'application/json',
+    });
+    if (Status === 'Approved') {
+      const companyData = await Company.find({ CompanyID });
+      let SalaryReviewCount = 0;
+
+      if (companyData[0].SalaryReviewCount) {
+        SalaryReviewCount = companyData[0].SalaryReviewCount + 1;
+      }
+      await Company.updateOne({ CompanyID }, { SalaryReviewCount });
+      res.end(JSON.stringify(result));
+    }
   } catch (error) {
     res.writeHead(500, {
       'Content-Type': 'application/json',
@@ -258,6 +327,7 @@ const analytics = async (req, res) => {
   }
 };
 
+// get General reviews on the filter criteria
 const getGeneralReviews = async (req, res) => {
   try {
     const { Status, PageNo } = req.query;
@@ -293,6 +363,7 @@ const getGeneralReviews = async (req, res) => {
   }
 };
 
+// get Salary reviews on the filter criteria
 const getSalaryReviews = async (req, res) => {
   try {
     const { Status, PageNo } = req.query;
@@ -328,6 +399,7 @@ const getSalaryReviews = async (req, res) => {
   }
 };
 
+// get Interview reviews on the filter criteria
 const getInterviewReviews = async (req, res) => {
   try {
     const { Status, PageNo } = req.query;
@@ -363,6 +435,7 @@ const getInterviewReviews = async (req, res) => {
   }
 };
 
+// // get Photos on the filter criteria
 const getPhotos = async (req, res) => {
   try {
     const { Status, PageNo } = req.query;
@@ -399,7 +472,6 @@ const getPhotos = async (req, res) => {
 };
 module.exports = {
   reviews,
-  updateReviews,
   companyList,
   companyReviewList,
   pictures,
@@ -410,4 +482,7 @@ module.exports = {
   getSalaryReviews,
   getInterviewReviews,
   getPhotos,
+  updateGeneralReviews,
+  updateInterviewReviews,
+  updateSalaryReviews,
 };
