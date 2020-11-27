@@ -12,6 +12,10 @@ const {
   updatePictures,
   jobStats,
   analytics,
+  getGeneralReviews,
+  getSalaryReviews,
+  getInterviewReviews,
+  getPhotos,
 } = require('../Admin/adminFunctionality');
 
 Router.get('/reviews', checkAuth, async (req, res) => {
@@ -51,6 +55,26 @@ Router.get('/jobStats', checkAuth, async (req, res) => {
 
 Router.get('/analytics', checkAuth, async (req, res) => {
   const value = await analytics(req, res);
+  return value;
+});
+
+Router.get('/getGeneralReviews', checkAuth, async (req, res) => {
+  const value = await getGeneralReviews(req, res);
+  return value;
+});
+
+Router.get('/getSalaryReviews', checkAuth, async (req, res) => {
+  const value = await getSalaryReviews(req, res);
+  return value;
+});
+
+Router.get('/getInterviewReviews', checkAuth, async (req, res) => {
+  const value = await getInterviewReviews(req, res);
+  return value;
+});
+
+Router.get('/getPhotos', checkAuth, async (req, res) => {
+  const value = await getPhotos(req, res);
   return value;
 });
 
