@@ -6,6 +6,8 @@ const jwt = require('jsonwebtoken');
 const url = require('url');
 
 const GeneralReview = require('../model/GeneralReview');
+const InterviewReview = require('../model/InterviewReview');
+const SalaryReview = require('../model/SalaryReview');
 const Company = require('../model/Company');
 const Student = require('../model/Student');
 const Photos = require('../model/Photos');
@@ -32,7 +34,7 @@ const reviews = async (req, res) => {
 };
 
 // Update review status
-const updateReviews = async (req, res) => {
+const updateGeneralReviews = async (req, res) => {
   try {
     // eslint-disable-next-line object-curly-newline
     const { CompanyID, ID, Status } = req.body;
@@ -42,7 +44,76 @@ const updateReviews = async (req, res) => {
     res.writeHead(200, {
       'Content-Type': 'application/json',
     });
-    res.end(JSON.stringify(result));
+    if (Status === 'Approved') {
+      const companyData = await Company.find({ CompanyID });
+      let GeneralReviewCount = 0;
+      let approveCEOcount = 0;
+      if (result.CEOApproval === true) {
+        approveCEOcount = companyData[0].approveCEOcount + 1;
+      } else {
+        approveCEOcount = companyData[0].approveCEOcount;
+      }
+      if (companyData[0].GeneralReviewCount) {
+        GeneralReviewCount = companyData[0].GeneralReviewCount + 1;
+      }
+      await Company.updateOne({ CompanyID }, { GeneralReviewCount, approveCEOcount });
+      res.end(JSON.stringify(result));
+    }
+  } catch (error) {
+    res.writeHead(500, {
+      'Content-Type': 'application/json',
+    });
+    res.end('Network Error');
+  }
+};
+
+const updateInterviewReviews = async (req, res) => {
+  try {
+    // eslint-disable-next-line object-curly-newline
+    const { CompanyID, ID, Status } = req.body;
+    const filter = { $and: [{ CompanyID }, { ID }] };
+    const update = { Status };
+    const result = await InterviewReview.findOneAndUpdate(filter, update);
+    res.writeHead(200, {
+      'Content-Type': 'application/json',
+    });
+    if (Status === 'Approved') {
+      const companyData = await Company.find({ CompanyID });
+      let InterviewReviewCount = 0;
+      if (companyData[0].InterviewReviewCount) {
+        InterviewReviewCount = companyData[0].InterviewReviewCount + 1;
+      }
+      await Company.updateOne({ CompanyID }, { InterviewReviewCount });
+      res.end(JSON.stringify(result));
+    }
+  } catch (error) {
+    res.writeHead(500, {
+      'Content-Type': 'application/json',
+    });
+    res.end('Network Error');
+  }
+};
+
+const updateSalaryReviews = async (req, res) => {
+  try {
+    // eslint-disable-next-line object-curly-newline
+    const { CompanyID, ID, Status } = req.body;
+    const filter = { $and: [{ CompanyID }, { ID }] };
+    const update = { Status };
+    const result = await SalaryReview.findOneAndUpdate(filter, update);
+    res.writeHead(200, {
+      'Content-Type': 'application/json',
+    });
+    if (Status === 'Approved') {
+      const companyData = await Company.find({ CompanyID });
+      let SalaryReviewCount = 0;
+
+      if (companyData[0].SalaryReviewCount) {
+        SalaryReviewCount = companyData[0].SalaryReviewCount + 1;
+      }
+      await Company.updateOne({ CompanyID }, { SalaryReviewCount });
+      res.end(JSON.stringify(result));
+    }
   } catch (error) {
     res.writeHead(500, {
       'Content-Type': 'application/json',
@@ -55,7 +126,9 @@ const updateReviews = async (req, res) => {
 const companyList = async (req, res) => {
   try {
     const { searchString, PageNo } = url.parse(req.url, true).query;
-    const results = await Company.find({ CompanyName: { $regex: `${searchString}`, $options: 'i' } })
+    const results = await Company.find({
+      CompanyName: { $regex: `${searchString}`, $options: 'i' },
+    })
       .limit(10)
       .skip(PageNo * 10)
       .exec();
@@ -153,104 +226,86 @@ const analytics = async (req, res) => {
   try {
     const todayDate = new Date();
     const day = String(todayDate.getDate()).padStart(2, '0');
-    const month = String(todayDate.getMonth() + 1).padStart(2, '0'); //January is 0!
+    const month = String(todayDate.getMonth() + 1).padStart(2, '0'); // January is 0!
     const year = todayDate.getFullYear();
     const today = `${year}-${month}-${day}`;
-    const reviewData = await GeneralReview.find(
-      { DatePosted: { $gte: today } },
-    );
+    const reviewData = await GeneralReview.find({ DatePosted: { $gte: today } });
 
-    const companyReview = await GeneralReview.aggregate(
-      [
-        {
-          $group: {
-            _id: '$CompanyID',
-            count: { $sum: 1 },
-          },
+    const companyReview = await GeneralReview.aggregate([
+      {
+        $group: {
+          _id: '$CompanyID',
+          count: { $sum: 1 },
         },
-        {
-          $sort: { count: -1 },
-        },
-        {
-          $limit: 5,
-        },
-      ],
-    );
+      },
+      {
+        $sort: { count: -1 },
+      },
+      {
+        $limit: 5,
+      },
+    ]);
     const topCompanyIDArray = [];
     // eslint-disable-next-line no-plusplus
     for (let index = 0; index < companyReview.length; index++) {
       topCompanyIDArray.push(companyReview[index]._id);
     }
-    const topCompanyList = await Company.find(
-      { CompanyID: { $in: topCompanyIDArray } },
-    );
+    const topCompanyList = await Company.find({ CompanyID: { $in: topCompanyIDArray } });
 
-    const topAveragerRating = await Company.aggregate(
-      [
-        {
-          $match: { GeneralReviewCount: { $ne: 0 } },
-        },
-        {
-          $project: {
-            _id: '$CompanyID',
-            average: {
-              $divide: ['$TotalGeneralReviewRating', '$GeneralReviewCount'],
-            },
+    const topAveragerRating = await Company.aggregate([
+      {
+        $match: { GeneralReviewCount: { $ne: 0 } },
+      },
+      {
+        $project: {
+          _id: '$CompanyID',
+          average: {
+            $divide: ['$TotalGeneralReviewRating', '$GeneralReviewCount'],
           },
         },
-        {
-          $sort: { average: -1 },
-        },
-        {
-          $limit: 5,
-        },
-      ],
-    );
+      },
+      {
+        $sort: { average: -1 },
+      },
+      {
+        $limit: 5,
+      },
+    ]);
 
     const topAverageCompanyArray = [];
     // eslint-disable-next-line no-plusplus
     for (let index = 0; index < topAveragerRating.length; index++) {
       topAverageCompanyArray.push(topAveragerRating[index]._id);
     }
-    const topAverageList = await Company.find(
-      { CompanyID: { $in: topAverageCompanyArray } },
-    );
+    const topAverageList = await Company.find({ CompanyID: { $in: topAverageCompanyArray } });
 
-    const topStudentList = await Student.find({})
-      .sort({ AcceptedReviewCount: -1 })
-      .limit(5);
+    const topStudentList = await Student.find({}).sort({ AcceptedReviewCount: -1 }).limit(5);
 
-    const topCEO = await GeneralReview.aggregate(
-      [
-        {
-          $match: { CEOApproval: { $eq: true } },
+    const topCEO = await GeneralReview.aggregate([
+      {
+        $match: { CEOApproval: { $eq: true } },
+      },
+      {
+        $group: {
+          _id: '$CompanyID',
+          count: { $sum: 1 },
         },
-        {
-          $group: {
-            _id: '$CompanyID',
-            count: { $sum: 1 },
-          },
-        },
-        {
-          $sort: { count: -1 },
-        },
-        {
-          $limit: 10,
-        },
-      ],
-    );
+      },
+      {
+        $sort: { count: -1 },
+      },
+      {
+        $limit: 10,
+      },
+    ]);
     const topCEOArray = [];
     // eslint-disable-next-line no-plusplus
     for (let index = 0; index < topCEO.length; index++) {
       topCEOArray.push(topCEO[index]._id);
     }
-    const topCEOCompanyList = await Company.find(
-      { CompanyID: { $in: topCEOArray } },
-    );
+    const topCEOCompanyList = await Company.find({ CompanyID: { $in: topCEOArray } });
 
-    const topViewCompanyList = await Company.find({})
-      .sort({ ViewCount: -1 })
-      .limit(10);
+    const topViewCompanyList = await Company.find({}).sort({ ViewCount: -1 }).limit(10);
 
     const resultData = {
       reviewData,
@@ -272,13 +327,162 @@ const analytics = async (req, res) => {
   }
 };
 
+// get General reviews on the filter criteria
+const getGeneralReviews = async (req, res) => {
+  try {
+    const { Status, PageNo } = req.query;
+    const filterArray = [];
+    const resultArray = [];
+    if (Status.length !== 0) {
+      filterArray.push({ Status });
+    }
+    await GeneralReview.find({ $and: filterArray }, (err, result) => {
+      if (err) {
+        res.writeHead(500, {
+          'Content-Type': 'application/json',
+        });
+        res.end('Network Error');
+      }
+      if (result) {
+        resultArray.push({ Review: result });
+      }
+    })
+      .limit(10)
+      .skip(PageNo * 10);
+    const count = await GeneralReview.find({ $and: filterArray }).countDocuments();
+    resultArray.push({ Count: count });
+    res.writeHead(200, {
+      'Content-Type': 'application/json',
+    });
+    res.end(JSON.stringify(resultArray));
+  } catch (error) {
+    res.writeHead(500, {
+      'Content-Type': 'application/json',
+    });
+    res.end('Network Error');
+  }
+};
+
+// get Salary reviews on the filter criteria
+const getSalaryReviews = async (req, res) => {
+  try {
+    const { Status, PageNo } = req.query;
+    const filterArray = [];
+    const resultArray = [];
+    if (Status.length !== 0) {
+      filterArray.push({ Status });
+    }
+    await SalaryReview.find({ $and: filterArray }, (err, result) => {
+      if (err) {
+        res.writeHead(500, {
+          'Content-Type': 'application/json',
+        });
+        res.end('Network Error');
+      }
+      if (result) {
+        resultArray.push({ Review: result });
+      }
+    })
+      .limit(10)
+      .skip(PageNo * 10);
+    const count = await SalaryReview.find({ $and: filterArray }).countDocuments();
+    resultArray.push({ Count: count });
+    res.writeHead(200, {
+      'Content-Type': 'application/json',
+    });
+    res.end(JSON.stringify(resultArray));
+  } catch (error) {
+    res.writeHead(500, {
+      'Content-Type': 'application/json',
+    });
+    res.end('Network Error');
+  }
+};
+
+// get Interview reviews on the filter criteria
+const getInterviewReviews = async (req, res) => {
+  try {
+    const { Status, PageNo } = req.query;
+    const filterArray = [];
+    const resultArray = [];
+    if (Status.length !== 0) {
+      filterArray.push({ Status });
+    }
+    await InterviewReview.find({ $and: filterArray }, (err, result) => {
+      if (err) {
+        res.writeHead(500, {
+          'Content-Type': 'application/json',
+        });
+        res.end('Network Error');
+      }
+      if (result) {
+        resultArray.push({ Review: result });
+      }
+    })
+      .limit(10)
+      .skip(PageNo * 10);
+    const count = await InterviewReview.find({ $and: filterArray }).countDocuments();
+    resultArray.push({ Count: count });
+    res.writeHead(200, {
+      'Content-Type': 'application/json',
+    });
+    res.end(JSON.stringify(resultArray));
+  } catch (error) {
+    res.writeHead(500, {
+      'Content-Type': 'application/json',
+    });
+    res.end('Network Error');
+  }
+};
+
+// // get Photos on the filter criteria
+const getPhotos = async (req, res) => {
+  try {
+    const { Status, PageNo } = req.query;
+    const filterArray = [];
+    const resultArray = [];
+    if (Status.length !== 0) {
+      filterArray.push({ Status });
+    }
+    await Photos.find({ $and: filterArray }, (err, result) => {
+      if (err) {
+        res.writeHead(500, {
+          'Content-Type': 'application/json',
+        });
+        res.end('Network Error');
+      }
+      if (result) {
+        resultArray.push({ Review: result });
+      }
+    })
+      .limit(10)
+      .skip(PageNo * 10);
+    const count = await Photos.find({ $and: filterArray }).countDocuments();
+    resultArray.push({ Count: count });
+    res.writeHead(200, {
+      'Content-Type': 'application/json',
+    });
+    res.end(JSON.stringify(resultArray));
+  } catch (error) {
+    res.writeHead(500, {
+      'Content-Type': 'application/json',
+    });
+    res.end('Network Error');
+  }
+};
 module.exports = {
   reviews,
-  updateReviews,
   companyList,
   companyReviewList,
   pictures,
   updatePictures,
   jobStats,
   analytics,
+  getGeneralReviews,
+  getSalaryReviews,
+  getInterviewReviews,
+  getPhotos,
+  updateGeneralReviews,
+  updateInterviewReviews,
+  updateSalaryReviews,
 };
