@@ -19,7 +19,7 @@ import { Redirect } from 'react-router';
 // import { Link } from 'react-router-dom';
 import Navbar1 from './Employer/Common/Navbar';
 import Navbar from './Student/Common/Navbar';
-
+import NavbarAdmin from './Admin/Common/NavbarAdmin';
 class CommonNavBar extends Component {
   constructor(props) {
     super(props);
@@ -47,6 +47,11 @@ class CommonNavBar extends Component {
           redirectVar = <Redirect to="/Employer" />;
         }
         selectedNavBar = <Navbar1 />;
+      } else if (localStorage.getItem('userrole') === 'admin') {
+        if (this.props.location.pathname === '/') {
+          redirectVar = <Redirect to="/AdminHomePage" />;
+        }
+        selectedNavBar = <NavbarAdmin />;
       }
     }
     if (!localStorage.getItem('token') && this.props.location.pathname !== '/login') {

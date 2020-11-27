@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { LowerNavBarOther, updateInterviewList } from '../../../constants/action-types';
-import PaginationComponent from '../Common/PaginationComponent';
+import PaginationComponent from '../../Student/Common/PaginationComponent';
 import './interviewList.css';
 import Questions from './Questions';
 import axios from 'axios';
 import serverUrl from '../../../config';
 import { history } from '../../../App';
 
-class interviewList extends Component {
+class interviewListAdmin extends Component {
   constructor(props) {
     super(props);
     this.state = {};
@@ -20,19 +20,16 @@ class interviewList extends Component {
       .get(serverUrl + 'student/searchInterview', {
         params: {
           SearchString: localStorage.getItem('SearchString'),
-          State: localStorage.getItem('Location'),
+          State: '',
           PageNo,
         },
         withCredentials: true,
       })
       .then(
         (response) => {
-          console.log('interview list', response);
-          let interviewSearchList = response.data.returns.map((inter) => {
-            return { ...inter.Interview, ProfileImg: inter.ProfileImg };
-          });
+          console.log('interview list', response.data.returns);
           let payload = {
-            interviewSearchList: interviewSearchList,
+            interviewSearchList: response.data.returns,
             PageNo,
             PageCount: Math.ceil(response.data.count / 10),
             Totalcount: response.data.count,
@@ -198,4 +195,4 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(interviewList);
+export default connect(mapStateToProps, mapDispatchToProps)(interviewListAdmin);

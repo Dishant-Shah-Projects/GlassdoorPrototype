@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import './EmployerHome.css';
-import Navbar from '../Common/Navbar.js';
+// import './EmployerHome.css';
+// import Navbar from '../Common/Navbar.js';
 import Body from './Body.js';
 
 class AdminHomePage extends Component {

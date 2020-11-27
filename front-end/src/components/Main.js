@@ -31,6 +31,10 @@ import InterviewForm from './Student/CompanyProfile/CompanyInterviews/InterviewF
 import PhotoUploadForm from './Student/CompanyProfile/CompanyPhotos/PhotoUploadForm';
 import JobApplicationPage from './Student/CompanyProfile/CompanyJobs/JobApplicationPage';
 import SalaryForm from './Student/CompanyProfile/CompanySalaries/SalaryForm';
+import AdminHomePage from './Admin/LandingPage/AdminHomePage';
+import CompanySearchResultsAdmin from './Admin/CompanySearchResultsAdmin/CompanySearchResultsAdmin';
+import interviewListAdmin from './Admin/InterviewSearchResultsAdmin/interviewListAdmin';
+
 class Main extends Component {
   // constructor(props) {
   //     super(props);
@@ -110,6 +114,9 @@ class Main extends Component {
         <Route path="/ContributionPage" component={ContributionPage} />
         <Route path="/CommonContribute" component={CommonContribute} />
         <Route path="/CompanyPage" component={CompanyPage} />
+        <Route path="/AdminHomePage" component={AdminHomePage} />
+        <Route path="/CompanySearchResultsAdmin" component={CompanySearchResultsAdmin} />
+        <Route path="/interviewListAdmin" component={interviewListAdmin} />
         {/*</Switch>*/}
       </div>
     );

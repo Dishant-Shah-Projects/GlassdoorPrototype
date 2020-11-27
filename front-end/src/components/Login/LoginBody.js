@@ -64,7 +64,7 @@ class LoginBody extends Component {
         if (response.status === 200) {
           console.log(response);
           const decoded = jwt_decode(response.data.split(' ')[1]);
-          console.log('role',decoded.rol);
+          console.log('role', decoded.rol);
           localStorage.setItem('token', response.data);
           localStorage.setItem('userId', decoded.ID);
           localStorage.setItem('userrole', decoded.rol);
@@ -92,6 +92,8 @@ class LoginBody extends Component {
         redirectVar = <Redirect to="/Employer" />;
       } else if (localStorage.getItem('userrole') === 'student') {
         redirectVar = <Redirect to="/home" />;
+      } else if (localStorage.getItem('userrole') === 'admin') {
+        redirectVar = <Redirect to="/AdminHomePage" />;
       }
     }
     return (
