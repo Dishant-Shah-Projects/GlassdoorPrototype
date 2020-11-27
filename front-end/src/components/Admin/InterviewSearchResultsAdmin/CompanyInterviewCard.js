@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import moment from 'moment';
-import defaultplaceholder from '../CompanyNavbar/default-placeholder.png';
+// import defaultplaceholder from '../CompanyNavbar/default-placeholder.png';
 import { connect } from 'react-redux';
 
 class CompanyInterviewCard extends Component {
@@ -10,14 +10,7 @@ class CompanyInterviewCard extends Component {
   }
   render() {
     const interview = this.props.interview;
-    let alreadyHelpful = false;
-    if (
-      this.props.studentInfoStore.studentProfile.HelpfullInterviewReviews.includes(
-        interview.InterviewReviewID
-      )
-    ) {
-      alreadyHelpful = true;
-    }
+
     return (
       <li class=" empReview cf " id="InterviewReview_24701674">
         <div class="cf">
@@ -33,22 +26,6 @@ class CompanyInterviewCard extends Component {
         </div>
         <div class="tbl fill reviewHdr">
           <div class="row">
-            <div class="cell sqLogoCell showDesk">
-              <span class="sqLogo tighten smSqLogo logoOverlay">
-                <img
-                  src={
-                    this.props.companyOverviewStore.companyOverview.ProfileImg
-                      ? this.props.companyOverviewStore.companyOverview.ProfileImg
-                      : defaultplaceholder
-                  }
-                  class="lazy lazy-loaded"
-                  data-retina-ok="true"
-                  alt=" Logo"
-                  title=""
-                  style={{ opacity: '1' }}
-                />
-              </span>
-            </div>
             <div class="cell">
               <h2 class="summary strong noMargTop tightTop margBotXs">
                 <a href="/Interview/Amazon-Interview-RVW24701674.htm">
@@ -72,9 +49,9 @@ class CompanyInterviewCard extends Component {
         <div class="tbl fill margTopMd">
           <div class="row">
             <div class="cell sqLogoCell showDesk"></div>
-            <div class="cell reviewBodyCell">
+            <div style={{ minWidth: '100%' }} class="cell reviewBodyCell">
               <div class="interviewOutcomes">
-                <div class="flex-grid">
+                <div style={{ display: 'flex' }} class="flex-grid">
                   <div class="tightLt col span-1-3">
                     <div class="middle">
                       <div class="cell">
@@ -190,10 +167,19 @@ class CompanyInterviewCard extends Component {
                           </p>
                           <div
                             class="userResponses margTopLg borderTop"
-                            style={{ display: 'block' }}
+                            style={{
+                              display: 'block',
+                              borderTop: '0px',
+                              marginTop: '12px !important',
+                            }}
                           >
                             <div class="responseText padTopSm tbl fill">
-                              <p class="cell noMargVert padVert borderBot">{interview.Answers}</p>
+                              <p
+                                style={{ borderBottom: '0px' }}
+                                class="cell noMargVert padVert borderBot"
+                              >
+                                {interview.Answers}
+                              </p>
                             </div>
                           </div>
                         </span>
@@ -207,32 +193,63 @@ class CompanyInterviewCard extends Component {
         </div>
         <div class="reviewComments">
           <div class="reviewFooter cf">
-            <div class="floatRt helpfulBtn margRtMd tightVert">
-              <span
-                class="block voteHelpful"
-                data-member="true"
-                data-type="INTERVIEW_REVIEW"
-                data-id="31683611"
-                data-count="189"
-              >
-                <button
-                  onClick={this.props.helpfulClicked}
-                  type="button"
-                  class={`tight gd-btn gd-btn-button gd-btn-2 gd-btn-sm gradient ${
-                    alreadyHelpful ? 'gd-btn-3' : ''
-                  }`}
+            {interview.Status !== 'Not Approved' ? (
+              <strong style={{ float: 'right' }}>{interview.Status}</strong>
+            ) : (
+              ''
+            )}
+            {interview.Status === 'Not Approved' ? (
+              <div class="floatRt helpfulBtn margRtMd tightVert">
+                <span
+                  class="block voteHelpful"
+                  data-member="true"
+                  data-type="INTERVIEW_REVIEW"
+                  data-id="31683611"
+                  data-count="189"
                 >
-                  <span>
-                    Helpful
-                    <span class="count">
-                      {' '}
-                      (<span>{interview.Helpful}</span>)
+                  <button
+                    style={{ backgroundColor: '#1861bf' }}
+                    onClick={(event) => this.props.buttonClicked(event, 'Approved')}
+                    type="button"
+                    class="tight gd-btn gd-btn-button gd-btn-2 gd-btn-sm gradient"
+                  >
+                    <span>
+                      Approve
+                      <span class="count"></span>
                     </span>
-                  </span>
-                  <i class="hlpr"></i>
-                </button>
-              </span>
-            </div>
+                    <i class="hlpr"></i>
+                  </button>
+                </span>
+              </div>
+            ) : (
+              ''
+            )}
+            {interview.Status === 'Not Approved' ? (
+              <div style={{ paddingRight: '2%' }} class="floatRt helpfulBtn margRtMd tightVert">
+                <span
+                  class="block voteHelpful"
+                  data-member="true"
+                  data-type="INTERVIEW_REVIEW"
+                  data-id="31683611"
+                  data-count="189"
+                >
+                  <button
+                    style={{ backgroundColor: '#1861bf' }}
+                    onClick={(event) => this.props.buttonClicked(event, 'Disapproved')}
+                    type="button"
+                    class="tight gd-btn gd-btn-button gd-btn-2 gd-btn-sm gradient"
+                  >
+                    <span>
+                      Disappove
+                      <span class="count"></span>
+                    </span>
+                    <i class="hlpr"></i>
+                  </button>
+                </span>
+              </div>
+            ) : (
+              ''
+            )}{' '}
           </div>
         </div>{' '}
       </li>

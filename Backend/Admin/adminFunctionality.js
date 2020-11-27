@@ -72,8 +72,8 @@ const updateGeneralReviews = async (req, res) => {
 const updateInterviewReviews = async (req, res) => {
   try {
     // eslint-disable-next-line object-curly-newline
-    const { CompanyID, ID, Status } = req.body;
-    const filter = { $and: [{ CompanyID }, { ID }] };
+    const { CompanyID, InterviewReviewID, Status } = req.body;
+    const filter = { $and: [{ CompanyID }, { InterviewReviewID }] };
     const update = { Status };
     const result = await InterviewReview.findOneAndUpdate(filter, update);
     res.writeHead(200, {
@@ -242,7 +242,8 @@ const analytics = async (req, res) => {
     const today = `${year}-${month}-${day}`;
     const reviewData = await GeneralReview.find({ DatePosted: { $gte: today } }).countDocuments();
 
-    const topCompanyList = await Company.find({}).sort({ GeneralReviewCount: -1, CompanyName: 1 })
+    const topCompanyList = await Company.find({})
+      .sort({ GeneralReviewCount: -1, CompanyName: 1 })
       .limit(5);
 
     const topAveragerRating = await Company.aggregate([
@@ -289,7 +290,8 @@ const analytics = async (req, res) => {
       .sort({ AcceptedReviewCount: -1, Name: 1 })
       .limit(5);
 
-    const topCEOCompanyList = await Company.find({}).sort({ approveCEOcount: -1, CompanyName: 1 })
+    const topCEOCompanyList = await Company.find({})
+      .sort({ approveCEOcount: -1, CompanyName: 1 })
       .limit(5);
 
     const topViewCompanyList = await Company.find({}).sort({ ViewCount: -1 }).limit(10);

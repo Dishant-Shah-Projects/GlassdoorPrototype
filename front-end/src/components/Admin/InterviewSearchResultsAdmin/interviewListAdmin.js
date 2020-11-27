@@ -2,37 +2,38 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { LowerNavBarOther, updateInterviewList } from '../../../constants/action-types';
 import PaginationComponent from '../../Student/Common/PaginationComponent';
-import './interviewList.css';
+// import './interviewList.css';
 import Questions from './Questions';
 import axios from 'axios';
 import serverUrl from '../../../config';
 import { history } from '../../../App';
+import CompanyInterviewCard from './CompanyInterviewCard';
+import '../../Student/CompanyProfile/CompanyInterviews/CompanyInterviews.css';
 
 class interviewListAdmin extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = { PendingTab: false, ApprovedTab: false, DisapprovedTab: false };
   }
 
-  commonFetch = (PageNo = 0) => {
+  commonFetch = (PageNo = 0, Status = '') => {
     axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
     axios
-      .get(serverUrl + 'student/searchInterview', {
+      .get(serverUrl + 'admin/getInterviewReviews', {
         params: {
-          SearchString: localStorage.getItem('SearchString'),
-          State: '',
+          Status,
           PageNo,
         },
         withCredentials: true,
       })
       .then(
         (response) => {
-          console.log('interview list', response.data.returns);
+          console.log('interview list', response.data);
           let payload = {
-            interviewSearchList: response.data.returns,
+            interviewSearchList: response.data[0].Review,
             PageNo,
-            PageCount: Math.ceil(response.data.count / 10),
-            Totalcount: response.data.count,
+            PageCount: Math.ceil(response.data[1].Count / 10),
+            Totalcount: response.data[1].Count,
 
             // PageCount: Math.ceil(response.data.Totalcount / 3),
           };
@@ -70,6 +71,84 @@ class interviewListAdmin extends Component {
     );
   };
 
+  buttonClicked = (event, Status, InterviewReviewID, CompanyID) => {
+    event.preventDefault();
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    const data = {
+      Status,
+      InterviewReviewID,
+      CompanyID,
+    };
+    axios.post(serverUrl + 'admin/updateInterviewReviews', data).then(
+      (response) => {
+        console.log('Status Code : ', response.status);
+        if (response.status === 200) {
+          // this.commonFetch(,)
+
+          // console.log('Helpful success id:', ID);
+          let InterViewList = [...this.props.interviewListStore.interviewSearchList];
+          const index = InterViewList.findIndex((x) => x.InterviewReviewID === InterviewReviewID);
+          let interview = { ...InterViewList[index] };
+
+          interview.Status = Status;
+          InterViewList[index] = interview;
+          let payload = {
+            interviewSearchList: InterViewList,
+          };
+
+          this.props.updateInterviewList(payload);
+        }
+      },
+      (error) => {
+        console.log('error:', error.response);
+      }
+    );
+  };
+
+  changePendingTab = (event) => {
+    event.preventDefault();
+    if (this.state.PendingTab) {
+      this.setState({ PendingTab: false, ApprovedTab: false, DisapprovedTab: false });
+      this.commonFetch();
+    } else {
+      this.setState({
+        PendingTab: true,
+        ApprovedTab: false,
+        DisapprovedTab: false,
+      });
+      this.commonFetch(0, 'Not Approved');
+    }
+  };
+
+  changeApprovedTab = (event) => {
+    event.preventDefault();
+    if (this.state.ApprovedTab) {
+      this.setState({ PendingTab: false, ApprovedTab: false, DisapprovedTab: false });
+      this.commonFetch();
+    } else {
+      this.setState({
+        PendingTab: false,
+        ApprovedTab: true,
+        DisapprovedTab: false,
+      });
+      this.commonFetch(0, 'Approved');
+    }
+  };
+  changeDisapprovedTab = (event) => {
+    event.preventDefault();
+    if (this.state.DisapprovedTab) {
+      this.setState({ PendingTab: false, ApprovedTab: false, DisapprovedTab: false });
+      this.commonFetch();
+    } else {
+      this.setState({
+        PendingTab: false,
+        ApprovedTab: false,
+        DisapprovedTab: true,
+      });
+      this.commonFetch(0, 'Disapproved');
+    }
+  };
+
   render() {
     this.props.LowerNavBarOther();
     return (
@@ -100,17 +179,133 @@ class interviewListAdmin extends Component {
                                       </h2>
                                     )}
                                   </header>
-                                  <div class="interviewQuestionsList lockedInterviewQuestions">
-                                    {this.props.interviewListStore.interviewSearchList.map(
-                                      (interview) => (
-                                        <Questions
-                                          interview={interview}
-                                          openCompanyProfile={(event) =>
-                                            this.openCompanyProfile(event, interview.CompanyID)
-                                          }
-                                        />
-                                      )
-                                    )}
+                                  <div class="lined" id="dynamicFiltersContainer">
+                                    <div className="selectContainer">
+                                      <div class="button-set ">
+                                        <div>
+                                          <div
+                                            style={{
+                                              paddingLeft: '30%',
+                                            }}
+                                            onClick={this.changePendingTab}
+                                            class={this.state.PendingTab ? 'selected' : ''}
+                                            tabindex="0"
+                                          >
+                                            <label
+                                              style={{ height: '40px' }}
+                                              for="employerUIData.state.employerReview.currentJob_true"
+                                            >
+                                              Pending
+                                            </label>
+                                            <input
+                                              class="hidden"
+                                              type="radio"
+                                              name="employerUIData.state.employerReview.currentJob"
+                                              id="employerUIData.state.employerReview.currentJob_true"
+                                              value="true"
+                                              checked=""
+                                            />
+                                          </div>
+                                          <div
+                                            onClick={this.changeDisapprovedTab}
+                                            class={this.state.DisapprovedTab ? 'selected' : ''}
+                                            tabindex="0"
+                                          >
+                                            <label
+                                              style={{ height: '40px' }}
+                                              for="employerUIData.state.employerReview.currentJob_false"
+                                            >
+                                              Disapproved
+                                            </label>
+                                            <input
+                                              class="hidden"
+                                              type="radio"
+                                              name="employerUIData.state.employerReview.currentJob"
+                                              id="employerUIData.state.employerReview.currentJob_false"
+                                              value="false"
+                                            />
+                                          </div>
+                                          <div
+                                            onClick={this.changeApprovedTab}
+                                            class={this.state.ApprovedTab ? 'selected' : ''}
+                                            tabindex="0"
+                                          >
+                                            <label
+                                              style={{ height: '40px' }}
+                                              for="employerUIData.state.employerReview.currentJob_false"
+                                            >
+                                              Approved
+                                            </label>
+                                            <input
+                                              class="hidden"
+                                              type="radio"
+                                              name="employerUIData.state.employerReview.currentJob"
+                                              id="employerUIData.state.employerReview.currentJob_false"
+                                              value="false"
+                                            />
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  <div class="module interviewsAndFilter">
+                                    <div id="EmployerInterviews">
+                                      <ol class="empReviews tightLt">
+                                        {this.props.interviewListStore.interviewSearchList.map(
+                                          (interview) => (
+                                            <CompanyInterviewCard
+                                              buttonClicked={(event, Status) =>
+                                                this.buttonClicked(
+                                                  event,
+                                                  Status,
+                                                  interview.InterviewReviewID,
+                                                  interview.CompanyID
+                                                )
+                                              }
+                                              interview={interview}
+                                            />
+                                          )
+                                        )}
+                                      </ol>
+                                      <div class="margTop">
+                                        <div class="breadcrumbList margTop">
+                                          <div
+                                            class="breadcrumb ib "
+                                            itemscope=""
+                                            itemtype="http://data-vocabulary.org/Breadcrumb"
+                                          >
+                                            <a
+                                              itemprop="url"
+                                              href="/Interview/index.htm"
+                                              data-ga-lbl=""
+                                            >
+                                              <span itemprop="title">Inter­views</span>{' '}
+                                              &nbsp;&gt;&nbsp;{' '}
+                                            </a>
+                                          </div>
+                                          <div
+                                            class="breadcrumb ib "
+                                            itemprop="child"
+                                            itemscope=""
+                                            itemtype="http://data-vocabulary.org/Breadcrumb"
+                                          >
+                                            <a
+                                              itemprop="url"
+                                              // href="/Interview/Amazon-Interview-Questions-E6036.htm"
+                                              data-ga-lbl=""
+                                            >
+                                              <span itemprop="title">
+                                                {/*
+                                                  this.props.companyOverviewStore.companyOverview
+                                                    .CompanyName
+                                                */}
+                                              </span>
+                                            </a>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
                                   </div>
                                   <div class="tbl fill margTopSm">
                                     <div class="row alignMid">

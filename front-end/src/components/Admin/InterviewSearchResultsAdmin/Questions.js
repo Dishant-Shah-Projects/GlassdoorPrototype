@@ -24,20 +24,6 @@ class Questions extends Component {
         >
           <div class="tbl fill">
             <div id="interview" class="row">
-              <div class="cell logo padRtLg hideHH" style={{ paddingRight: '20px' }}>
-                <a href="/Interview/Amazon-Interview-Questions-E6036.htm" class="sqLogoLink">
-                  <span class="sqLogo tighten smSqLogo">
-                    <img
-                      src={interview.ProfileImg ? interview.ProfileImg : defaultplaceholder}
-                      class="lazy lazy-loaded"
-                      data-retina-ok="true"
-                      alt=" Logo"
-                      title=""
-                      style={{ opacity: '1' }}
-                    />
-                  </span>
-                </a>
-              </div>
               <div class="cell">
                 <div class="tbl fill margBotSm">
                   <div id="interview" class="row">
