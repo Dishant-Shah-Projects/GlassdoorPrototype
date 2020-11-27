@@ -689,21 +689,7 @@ const studentCompanyReview = async (req, res) => {
 // add the company review and increment the review count
 const addCompanyReview = async (req, res) => {
   // eslint-disable-next-line no-unused-vars
-  const {
-    CompanyID,
-    StudentID,
-    CompanyName,
-    Pros,
-    Cons,
-    Description,
-    Rating,
-    EmployeeStatus,
-    CEOApproval,
-    JobType,
-    Recommended,
-    JobTitle,
-    Headline,
-  } = req.body;
+  const { CompanyID, Rating, CEOApproval, Recommended } = req.body;
   try {
     const rev = await General.findOne({}).sort({ ID: -1 }).select('ID');
     let ID = null;
@@ -716,19 +702,7 @@ const addCompanyReview = async (req, res) => {
       ID,
       Status: 'Not Approved',
       DatePosted: Date.now(),
-      CompanyID,
-      StudentID,
-      CompanyName,
-      Pros,
-      Cons,
-      Description,
-      Rating,
-      EmployeeStatus,
-      CEOApproval,
-      JobType,
-      Recommended,
-      JobTitle,
-      Headline,
+      ...req.body,
       Favorite: 0,
     });
     await review.save();
@@ -825,19 +799,7 @@ const addCompanyReview = async (req, res) => {
 // add the salary review and increment the salary review count
 const salaryAddReview = async (req, res) => {
   // eslint-disable-next-line no-unused-vars
-  const {
-    CompanyID,
-    StudentID,
-    BaseSalary,
-    Bonuses,
-    JobTitle,
-    Years,
-    StreetAddress,
-    City,
-    State,
-    CompanyName,
-    Zip,
-  } = req.body;
+  const { CompanyID } = req.body;
   try {
     const rev = await Salary.findOne({}).sort({ SalaryReviewID: -1 }).select('SalaryReviewID');
     let SalaryReviewID = null;
@@ -850,17 +812,7 @@ const salaryAddReview = async (req, res) => {
       SalaryReviewID,
       Status: 'Not Approved',
       DatePosted: Date.now(),
-      CompanyID,
-      StudentID,
-      BaseSalary,
-      Bonuses,
-      JobTitle,
-      Years,
-      StreetAddress,
-      City,
-      State,
-      CompanyName,
-      Zip,
+      ...req.body,
     });
     await review.save();
     Company.findOneAndUpdate(
@@ -887,32 +839,25 @@ const salaryAddReview = async (req, res) => {
 // get the feature Reviews for the company
 const featureReview = async (req, res) => {
   const { CompanyID } = req.query;
-  let con = null;
   try {
     const resultData = {};
     const company = await Company.findOne({ CompanyID }).select('FeaturedReview');
     resultData.featuredReview = company.FeaturedReview;
-    const posquery =
-      'SELECT* FROM GENERAL_REVIEW WHERE CompanyID=? AND Rating>3 ORDER BY Helpful DESC LIMIT 1;';
-    const negquery =
-      'SELECT* FROM GENERAL_REVIEW WHERE CompanyID=? AND Rating<=3 ORDER BY Helpful DESC LIMIT 1;';
-    con = await mysqlConnection();
-    const [results] = await con.query(posquery, CompanyID);
+    const posquery = await General.findOne({ CompanyID, Rating: { $gt: 3 } }).sort({
+      Helpful: -1,
+    });
+    const negquery = await General.findOne({ CompanyID, Rating: { $lt2: 3 } }).sort({
+      Helpful: -1,
+    });
     // eslint-disable-next-line prefer-destructuring
-    resultData.positiveReview = results[0];
-    const [results2] = await con.query(negquery, CompanyID);
+    resultData.positiveReview = posquery;
     // eslint-disable-next-line prefer-destructuring
-    resultData.negativeReview = results2[0];
-    con.end();
+    resultData.negativeReview = negquery;
     res.writeHead(200, { 'content-type': 'text/json' });
     res.end(JSON.stringify(resultData));
   } catch (error) {
     res.writeHead(500, { 'content-type': 'text/json' });
     res.end(JSON.stringify('Network Error'));
-  } finally {
-    if (con) {
-      con.end();
-    }
   }
   return res;
 };
@@ -1209,7 +1154,7 @@ const companyInterviewHelpfulReview = async (req, res) => {
 const companyJobs = async (req, res) => {
   try {
     // eslint-disable-next-line object-curly-newline
-    const { CompanyID, Title, City, PageNo } = url.parse(req.url, true).query;
+    const { CompanyID, Title, City, PageNo } = req.query;
     const filterArray = [];
     if (Title.length !== 0) {
       filterArray.push({ Title: { $regex: `${Title}`, $options: 'i' } });
