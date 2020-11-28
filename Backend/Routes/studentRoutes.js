@@ -522,7 +522,7 @@ Router.get('/companyJobs', checkAuth, async (req, res) => {
 // get search job result
 Router.get('/salaryReview', async (req, res) => {
   const data = {
-    api: 'companyJobs',
+    api: 'salaryReview',
     query: req.query,
   };
   kafka.make_request('student2', data, (err, results) => {

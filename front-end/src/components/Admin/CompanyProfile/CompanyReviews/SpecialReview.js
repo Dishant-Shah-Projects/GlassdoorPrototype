@@ -20,7 +20,7 @@ class SpecialReview extends Component {
           >
             {this.props.reviewType}
           </span>
-          <span class="css-5hofmb e16bqfyh1">Helpful ({review.Helpful})</span>
+          <span class="css-5hofmb e16bqfyh1">Helpful ({review.Helpful ? review.Helpful : 0})</span>
         </div>
         <div id="companyOverView" class="row mt-std">
           <div class="d-none d-md-block col-md-1">

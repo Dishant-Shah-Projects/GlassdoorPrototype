@@ -1,12 +1,16 @@
 import React, { Component } from 'react';
 import './CompanyInterviews.css';
-import { Pie } from 'react-chartjs-2';
 import { PieChart } from 'react-minimal-pie-chart';
-import PaginationComponent from '../../Common/PaginationComponent';
-import { updateCompanyInterviewStore } from '../../../../constants/action-types';
+import {
+  updateCompanyInterviewStore,
+  updateStudentProfile,
+} from '../../../../constants/action-types';
 import { connect } from 'react-redux';
 import axios from 'axios';
 import serverUrl from '../../../../config';
+// import CompanyInterviewCard from './CompanyInterviewCard';
+import PaginationComponent from '../../../Student/Common/PaginationComponent';
+import CompanyInterviewCard from '../../InterviewSearchResultsAdmin/CompanyInterviewCard';
 
 class CompanyInterviews extends Component {
   constructor(props) {
@@ -23,13 +27,39 @@ class CompanyInterviews extends Component {
   }
 
   componentDidMount() {
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    axios
+      .get(serverUrl + 'student/interviewData', {
+        params: {
+          CompanyID: localStorage.getItem('companyID'),
+        },
+        withCredentials: true,
+      })
+      .then(
+        (response) => {
+          console.log('interviewData', response.data);
+          let payload = {
+            avgDifficulty: response.data.avgDifficulty,
+            negative: response.data.negative,
+            neutral: response.data.neutral,
+            positive: response.data.positive,
+
+            // PageCount: Math.ceil(response.data.Totalcount / 3),
+          };
+          this.props.updateCompanyInterviewStore(payload);
+        },
+        (error) => {
+          console.log('error', error);
+        }
+      );
+
     this.commonFetch();
   }
 
   commonFetch = (PageNo = 0) => {
     axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
     axios
-      .get(serverUrl + 'student/interviewReview', {
+      .get(serverUrl + 'admin/getCompanyInterviewReviews', {
         params: {
           CompanyID: localStorage.getItem('companyID'),
           PageNo,
@@ -38,12 +68,12 @@ class CompanyInterviews extends Component {
       })
       .then(
         (response) => {
-          console.log('companyReviews', response.data);
+          console.log('interviewReview', response.data);
           let payload = {
-            RevieInterViewListwList: response.data.interviews,
+            InterViewList: response.data[0].Review,
             PageNo,
-            Totalcount: response.data.count,
-            PageCount: Math.ceil(response.data.count / 10),
+            Totalcount: response.data[1].Count,
+            PageCount: Math.ceil(response.data[1].Count / 10),
 
             // PageCount: Math.ceil(response.data.Totalcount / 3),
           };
@@ -54,16 +84,66 @@ class CompanyInterviews extends Component {
         }
       );
   };
+
+  onPageClick = (e) => {
+    // console.log('Page Clicked:', e.selected);
+    this.commonFetch(e.selected);
+  };
+
+  buttonClicked = (event, Status, InterviewReviewID, CompanyID) => {
+    event.preventDefault();
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    const data = {
+      Status,
+      InterviewReviewID,
+      CompanyID,
+    };
+    axios.post(serverUrl + 'admin/updateInterviewReviews', data).then(
+      (response) => {
+        console.log('Status Code : ', response.status);
+        if (response.status === 200) {
+          this.commonFetch(this.props.companyInterviewStore.PageNo);
+        }
+      },
+      (error) => {
+        console.log('error:', error.response);
+      }
+    );
+  };
+
   render() {
+    let positive_percent = 0;
+    let negative_percent = 0;
+    let neutral_percent = 0;
+    if (this.props.companyInterviewStore.Totalcount > 0) {
+      positive_percent = Math.round(
+        (this.props.companyInterviewStore.positive / this.props.companyInterviewStore.Totalcount) *
+          100
+      );
+      negative_percent = Math.round(
+        (this.props.companyInterviewStore.negative / this.props.companyInterviewStore.Totalcount) *
+          100
+      );
+      if (positive_percent > 0 || negative_percent > 0) {
+        neutral_percent = 100 - negative_percent - positive_percent;
+      }
+    }
+    let avg = this.props.companyInterviewStore.avgDifficulty;
+    let avgRatingGreenColor = avg % 1;
+    avg = Number(avg).toFixed(1);
+    let styledifficulty = { height: avgRatingGreenColor * 10 };
     return (
       <article id="MainCol">
         <div class="module interviewsWithSgocFiltersv1">
           {' '}
           <div class="module interviewStats ">
             <header>
-              <h2>Interviews at Amazon</h2>
+              <h2>Interviews at {this.props.companyOverviewStore.companyOverview.CompanyName}</h2>
               <div class="fill tbl minor showHH">
-                <div class=" cell middle minor"> 26,066 Interview Reviews</div>
+                <div class=" cell middle minor">
+                  {' '}
+                  {this.props.companyInterviewStore.Totalcount} Interview Reviews
+                </div>
               </div>
             </header>
             <div class="interviewStatsBody">
@@ -84,9 +164,21 @@ class CompanyInterviews extends Component {
                               viewBoxSize={[200, 250]}
                               center={[-100, 50]}
                               data={[
-                                { title: 'p', value: 59, color: 'rgb(147, 218, 103)' },
-                                { title: 'Nu', value: 22, color: 'rgb(12, 170, 65)' },
-                                { title: 'ThNeree', value: 19, color: 'rgb(25, 67, 131)' },
+                                {
+                                  title: 'p',
+                                  value: positive_percent,
+                                  color: 'rgb(147, 218, 103)',
+                                },
+                                {
+                                  title: 'Nu',
+                                  value: neutral_percent,
+                                  color: 'rgb(12, 170, 65)',
+                                },
+                                {
+                                  title: 'ThNeree',
+                                  value: negative_percent,
+                                  color: 'rgb(25, 67, 131)',
+                                },
                               ]}
                             />
                             ;
@@ -123,7 +215,7 @@ class CompanyInterviews extends Component {
                               <label class=" pros pct">Positive</label>
                             </div>
                             <div class="cell pct alignRt">
-                              <span class="strong num pros pct">59</span>
+                              <span class="strong num pros pct">{positive_percent}</span>
                               <span class=" pros pct">%</span>
                             </div>
                           </div>
@@ -136,7 +228,7 @@ class CompanyInterviews extends Component {
                               <label class=" pros pct">Neutral</label>
                             </div>
                             <div class="cell pct alignRt">
-                              <span class="strong num pros pct">22</span>
+                              <span class="strong num pros pct">{neutral_percent}</span>
                               <span class=" pros pct">%</span>
                             </div>
                           </div>
@@ -149,7 +241,7 @@ class CompanyInterviews extends Component {
                               <label class=" pros pct">Negative</label>
                             </div>
                             <div class="cell pct alignRt">
-                              <span class="strong num pros pct">19</span>
+                              <span class="strong num pros pct">{negative_percent}</span>
                               <span class=" pros pct">%</span>
                             </div>
                           </div>
@@ -166,7 +258,7 @@ class CompanyInterviews extends Component {
                   <div class="tbl dataTbl">
                     <div class="row">
                       <div class="cell middle center subtle difficultyLabelWrapper">
-                        <div class="difficultyLabel subtle">3</div> Average
+                        <div class="difficultyLabel subtle">{avg}</div> Average
                       </div>
                       <div class="cell ratingBar">
                         <h3 class="tightTop" style={{ height: '24px' }}>
@@ -175,30 +267,32 @@ class CompanyInterviews extends Component {
                         </h3>
                         <span class="gdBars gdRatings sm vertical " title="3.0">
                           <div class="row">
-                            <i></i>
+                            <i>
+                              {avg > 4 ? avg === 5 ? <i></i> : <i style={styledifficulty}></i> : ''}
+                            </i>
                             <span class="label pct">Hard</span>
                           </div>
                           <div class="row">
                             <i>
-                              <i style={{ height: '3.3212699999999984%' }}></i>
+                              {avg > 3 ? avg < 4 ? <i style={styledifficulty}></i> : <i></i> : ''}
                             </i>
                             <span class="label pct"></span>
                           </div>
                           <div class="row">
                             <i>
-                              <i></i>
+                              {avg > 2 ? avg < 3 ? <i style={styledifficulty}></i> : <i></i> : ''}
                             </i>
                             <span class="label pct">Average</span>
                           </div>
                           <div class="row">
                             <i>
-                              <i></i>
+                              {avg > 1 ? avg < 2 ? <i style={styledifficulty}></i> : <i></i> : ''}
                             </i>
                             <span class="label pct"></span>
                           </div>
                           <div class="row">
                             <i>
-                              <i></i>
+                              {avg > 0 ? avg < 1 ? <i style={styledifficulty}></i> : <i></i> : ''}
                             </i>
                             <span class="label pct">Easy</span>
                           </div>
@@ -213,189 +307,22 @@ class CompanyInterviews extends Component {
           <div class="module interviewsAndFilter">
             <div id="EmployerInterviews">
               <ol class="empReviews tightLt">
-                <li class=" empReview cf " id="InterviewReview_24701674">
-                  <div class="cf">
-                    <div class="floatLt">
-                      <time class="date subtle small" datetime="2019-02-14">
-                        {' '}
-                        Feb 14, 2019
-                      </time>
-                    </div>
-                    <p class="helpfulReviews small tightVert floatRt">
-                      <span class="helpfulCount subtle"> Helpful (382)</span> &nbsp;{' '}
-                    </p>
-                  </div>
-                  <div class="tbl fill reviewHdr">
-                    <div class="row">
-                      <div class="cell sqLogoCell showDesk">
-                        <span class="sqLogo tighten smSqLogo logoOverlay">
-                          <img
-                            data-original="https://media.glassdoor.com/sqls/6036/amazon-squarelogo-1552847650117.png"
-                            data-original-2x="https://media.glassdoor.com/sqlm/6036/amazon-squarelogo-1552847650117.png"
-                            src="https://media.glassdoor.com/sqls/6036/amazon-squarelogo-1552847650117.png"
-                            class="lazy lazy-loaded"
-                            data-retina-ok="true"
-                            alt=" Logo"
-                            title=""
-                            style={{ opacity: '1' }}
-                          />
-                        </span>
-                      </div>
-                      <div class="cell">
-                        <h2 class="summary strong noMargTop tightTop margBotXs">
-                          <a href="/Interview/Amazon-Interview-RVW24701674.htm">
-                            <span class="reviewer">Senior Software Architect</span> Interview
-                          </a>
-                        </h2>
-                        <div class="tbl reviewMeta">
-                          <div class="cell">
-                            <div class="author minor">
-                              {' '}
-                              Anonymous Employee in{' '}
-                              <span class=" authorLocation ">Seattle, WA</span>
-                              <span class="padLtSm">
-                                <i class="flag us"></i>
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="tbl fill margTopMd">
-                    <div class="row">
-                      <div class="cell sqLogoCell showDesk"></div>
-                      <div class="cell reviewBodyCell">
-                        <div class="interviewOutcomes">
-                          <div class="flex-grid">
-                            <div class="tightLt col span-1-3">
-                              <div class="middle">
-                                <div class="cell">
-                                  <i class="sqLed middle sm green margRtXs "></i>
-                                </div>
-                                <div class="cell">
-                                  <span class="middle">Accepted Offer</span>
-                                </div>
-                              </div>
-                            </div>
-                            <div class="tightLt col span-1-3">
-                              <div class="middle">
-                                <div class="cell">
-                                  <i class="sqLed middle sm green margRtXs "></i>
-                                </div>
-                                <div class="cell">
-                                  <span class="middle">Positive Experience</span>
-                                </div>
-                              </div>
-                            </div>
-                            <div class="tightLt col span-1-3">
-                              <div class="middle">
-                                <div class="cell">
-                                  <i class="sqLed middle sm red margRtXs "></i>
-                                </div>
-                                <div class="cell">
-                                  <span class="middle">Difficult Interview</span>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="description ">
-                          <div
-                            class="interviewReviewDetails truncateData"
-                            data-animate-after-less="true"
-                            data-click-anywhere="true"
-                            data-less-str="Show Less"
-                            data-more-str="Show More"
-                            data-truncate-toggle="true"
-                            data-truncate-words="70"
-                          >
-                            <div class="continueReadingWrapper gdGrid contentIsCollapsed">
-                              <p class="strong margTopMd tightBot">Application</p>
-                              <p class="applicationDetails continueReading">
-                                I applied through an employee referral. The process took 1 day. I
-                                interviewed at Amazon (Seattle, WA) in January 2019.
-                              </p>
-                              <p class="strong margTopMd tightBot">Interview</p>
-                              <p class="interviewDetails continueReading interviewContent mb-xsm ">
-                                There is one phone interview for an hour. If you clear this
-                                interview, you will be invited for an onsite interview. There are
-                                five interviews onsite, all in one day. Interviews are in a casual
-                                environment. After the first two interviews, you take a break and
-                                are escorted for lunch.
-                              </p>
-                            </div>
-                            <p class="strong margTopMd tightBot">Interview Questions</p>
-                            <div class="interviewQuestions">
-                              <ul class="undecorated">
-                                <li>
-                                  <span
-                                    class="interviewQuestion noPadVert truncateThis wrapToggleStr "
-                                    data-truncate-words="70"
-                                  >
-                                    {' '}
-                                    Most questions are built around Amazon's 14 principles. &nbsp;{' '}
-                                    <a
-                                      style={{ display: 'block' }}
-                                      class="userResponseLink margTop block hiddenLink mmLink "
-                                      href="/Interview/You-have-a-100-coins-laying-flat-on-a-table-each-with-a-head-side-and-a-tail-side-10-of-them-are-heads-up-90-are-tails-QTN_290837.htm"
-                                    >
-                                      Answer<i class="caret-blue margLtSm rotate180"></i>
-                                    </a>
-                                    <div
-                                      class="userResponses margTopLg borderTop"
-                                      style={{ display: 'block' }}
-                                    >
-                                      <div class="responseText padTopSm tbl fill">
-                                        <p class="cell noMargVert padVert borderBot">
-                                          Answer #1: Place 50 coins into two piles on its edges so
-                                          that both have the same amount of heads in each pile,
-                                          neither facing up or down. Answer #2: Trick question,
-                                          place 50 coins in both piles and in theory they all have
-                                          heads just not necessarily facing up or down.
-                                        </p>
-                                      </div>
-                                    </div>
-                                  </span>
-                                </li>
-                              </ul>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="reviewComments">
-                    <div class="reviewFooter cf">
-                      <div class="floatRt helpfulBtn margRtMd tightVert">
-                        <span
-                          class="block voteHelpful"
-                          data-member="true"
-                          data-type="INTERVIEW_REVIEW"
-                          data-id="31683611"
-                          data-count="189"
-                        >
-                          <button
-                            type="button"
-                            class="tight gd-btn gd-btn-button gd-btn-2 gd-btn-sm gradient"
-                          >
-                            <span>
-                              Helpful
-                              <span class="count">
-                                {' '}
-                                (<span>189</span>)
-                              </span>
-                            </span>
-                            <i class="hlpr"></i>
-                          </button>
-                        </span>
-                      </div>
-                    </div>
-                  </div>{' '}
-                </li>
-                <div class="hr">
+                {this.props.companyInterviewStore.InterViewList.map((interview) => (
+                  <CompanyInterviewCard
+                    buttonClicked={(event, Status) =>
+                      this.buttonClicked(
+                        event,
+                        Status,
+                        interview.InterviewReviewID,
+                        interview.CompanyID
+                      )
+                    }
+                    interview={interview}
+                  />
+                ))}
+                {/* <div class="hr">
                   <hr />
-                </div>
+                </div>*/}
               </ol>
               <div class="margTop">
                 <div class="breadcrumbList margTop">
@@ -416,17 +343,19 @@ class CompanyInterviews extends Component {
                   >
                     <a
                       itemprop="url"
-                      href="/Interview/Amazon-Interview-Questions-E6036.htm"
+                      // href="/Interview/Amazon-Interview-Questions-E6036.htm"
                       data-ga-lbl=""
                     >
-                      <span itemprop="title">Amazon</span>
+                      <span itemprop="title">
+                        {this.props.companyOverviewStore.companyOverview.CompanyName}
+                      </span>
                     </a>
                   </div>
                 </div>
               </div>
               <PaginationComponent
-                //   PageCount={this.props.jobListStore.PageCount}
-                //   PageNo={this.props.jobListStore.PageNo}
+                PageCount={this.props.companyInterviewStore.PageCount}
+                PageNo={this.props.companyInterviewStore.PageNo}
                 onPageClick={(e) => {
                   this.onPageClick(e);
                 }}
@@ -442,11 +371,13 @@ class CompanyInterviews extends Component {
 // export default CompanyInterviews;
 
 const mapStateToProps = (state) => {
-  const { companyOverviewStore, companyReviewsStore } = state.CompanyPageReducer;
+  const { companyInterviewStore, companyOverviewStore } = state.CompanyPageReducer;
+  const { studentInfoStore } = state.StudentCompleteInfoReducer;
 
   return {
     companyOverviewStore,
-    companyReviewsStore,
+    companyInterviewStore,
+    studentInfoStore,
   };
 };
 const mapDispatchToProps = (dispatch) => {
@@ -454,6 +385,12 @@ const mapDispatchToProps = (dispatch) => {
     updateCompanyInterviewStore: (payload) => {
       dispatch({
         type: updateCompanyInterviewStore,
+        payload,
+      });
+    },
+    updateStudentProfile: (payload) => {
+      dispatch({
+        type: updateStudentProfile,
         payload,
       });
     },

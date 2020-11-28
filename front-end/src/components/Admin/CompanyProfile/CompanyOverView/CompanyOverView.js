@@ -73,7 +73,7 @@ class CompanyOverView extends Component {
                   <li class="d-flex align-items-center col-12 col-sm-6 p-0 m-0 pb-sm pr-xxsm">
                     <label class="css-1f0lhlt ecl3kjh0">Website:</label>
                     <a
-                      href="//www.amazon.jobs"
+                      href={`//${this.props.companyOverviewStore.companyOverview.Website}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       class="css-1hg9omi"
@@ -132,7 +132,7 @@ class CompanyOverView extends Component {
               </div>
               <div class="mt-std gd-ui-module css-lcvd8h" data-test="wwwu-component">
                 <h2 data-brandviews="MODULE:n=eiOverview-wwwu:eid=6036" data-test="wwwu-header">
-                  Amazon - Why Work With Us?
+                  {this.props.companyOverviewStore.companyOverview.CompanyName} - Why Work With Us?
                 </h2>
                 <div class="css-79elbk e1uqj0m80">
                   <div class="css-14aw92t">
@@ -148,9 +148,15 @@ class CompanyOverView extends Component {
                 </div>
               </div>
               <div class="mt-std gd-ui-module css-lcvd8h">
-                <h2 class="title css-1bqzjlu">Amazon Reviews</h2>
+                <h2 class="title css-1bqzjlu">
+                  {' '}
+                  {this.props.companyOverviewStore.companyOverview.CompanyName} Reviews
+                </h2>
                 <header class="item m-0">
-                  <span class="hidden fn">Amazon</span>
+                  <span class="hidden fn">
+                    {' '}
+                    {this.props.companyOverviewStore.companyOverview.CompanyName}
+                  </span>
                   <span class="hidden count">
                     {this.props.companyOverviewStore.companyOverview.GeneralReviewCount}
                   </span>

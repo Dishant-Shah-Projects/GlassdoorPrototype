@@ -213,3 +213,13 @@ button.EIFilterModuleStyles__findBtn {
   border-color: #c4c7cc;
   padding: 7px 16px;
 }
+.InputStyles__input:active,
+.InputStyles__input:focus {
+  -webkit-box-shadow: 0 0 0 2px #8cdeff;
+  box-shadow: 0 0 0 2px #8cdeff;
+  outline: none;
+  border-color: #c2c2c2 !important;
+}
+.InputStyles__input:hover {
+  border-color: #7f7f7f;
+}

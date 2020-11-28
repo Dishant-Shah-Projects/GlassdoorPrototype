@@ -37,6 +37,7 @@ import InterviewListAdmin from './Admin/InterviewSearchResultsAdmin/InterviewLis
 import CompanyGeneralReviewsAdmin from './Admin/CompanyGeneralReviewsAdmin/CompanyGeneralReviewsAdmin';
 import CompanyPhotosAdmin from './Admin/CompanySearchPhotosAdmin/CompanyPhotosAdmin';
 import SalaryListAdmin from './Admin/CompanySalaryReviewsAdmin/SalaryListAdmin';
+import CompanyPageAdminView from './Admin/CompanyProfile/CompanyPageAdminView';
 
 class Main extends Component {
   // constructor(props) {
@@ -123,6 +124,7 @@ class Main extends Component {
         <Route path="/CompanyGeneralReviewsAdmin" component={CompanyGeneralReviewsAdmin} />
         <Route path="/CompanyPhotosAdmin" component={CompanyPhotosAdmin} />
         <Route path="/SalaryListAdmin" component={SalaryListAdmin} />
+        <Route path="/CompanyPageAdminView" component={CompanyPageAdminView} />
         {/*</Switch>*/}
       </div>
     );

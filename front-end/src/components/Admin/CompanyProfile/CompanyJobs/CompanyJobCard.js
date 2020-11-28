@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import moment from 'moment';
+import defaultplaceholder from '../CompanyNavbar/default-placeholder.png';
 
 class CompanyJobCard extends Component {
   constructor(props) {
@@ -8,6 +10,16 @@ class CompanyJobCard extends Component {
   }
   render() {
     const job = this.props.job;
+    const date1 = new Date(job.PostedDate);
+    const date2 = new Date();
+    const diffTime = Math.abs(date2 - date1);
+    const hours = Math.floor(diffTime / (1000 * 60 * 60));
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    const postedSince = hours < 24 ? hours : diffDays;
+    const h_d = hours < 24 ? 'h' : 'd';
+
+    let alreadyFav = false;
     let heartIcon = (
       <span class="JobsListItemStyles__saveIcon">
         <svg
@@ -64,68 +76,86 @@ class CompanyJobCard extends Component {
           </svg>
         </span>
       );
+      alreadyFav = true;
     }
     return (
-      <ul class="JobsListStyles__jobList">
-        <li class="JobsListStyles__jobListItem">
-          <div class="JobsListItemStyles__jobDetailsContainer gdGrid">
-            <div class="container-fluid">
-              <div class="row">
-                <div class="col-10 d-flex flex-column">
-                  <div class="d-flex flex-row">
+      <li class="JobsListStyles__jobListItem">
+        <div class="JobsListItemStyles__jobDetailsContainer gdGrid">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-10 d-flex flex-column">
+                <div class="d-flex flex-row">
+                  <a
+                    onClick={(event) => this.props.openJobPage(event)}
+                    href="#"
+                    data-test="jobLink"
+                    data-id="3738626687"
+                    target="_blank"
+                    class="JobDetailsStyles__iconLink mr-lg"
+                  >
+                    <img
+                      alt="Company icon"
+                      src={
+                        this.props.companyOverviewStore.companyOverview.ProfileImg
+                          ? this.props.companyOverviewStore.companyOverview.ProfileImg
+                          : defaultplaceholder
+                      }
+                    />
+                  </a>
+                  <div class="JobDetailsStyles__jobInfoContainer ">
                     <a
-                      href="/partner/jobListing.htm?pos=101&amp;ao=883174&amp;s=21&amp;guid=00000175c48e0b9e851bb28a27bdedbc&amp;src=GD_JOB_AD&amp;ei=6036&amp;t=ESR&amp;extid=2&amp;exst=E&amp;ist=L&amp;ast=EL&amp;vt=w&amp;slr=true&amp;cs=1_0151a372&amp;cb=1605320445329&amp;jobListingId=3738626687"
-                      data-test="jobLink"
-                      data-id="3738626687"
-                      target="_blank"
-                      class="JobDetailsStyles__iconLink mr-lg"
+                      onClick={(event) => this.props.openJobPage(event)}
+                      href="#"
+                      // href="/partner/jobListing.htm?pos=101&amp;ao=883174&amp;s=21&amp;guid=00000175c48e0b9e851bb28a27bdedbc&amp;src=GD_JOB_AD&amp;ei=6036&amp;t=ESR&amp;extid=2&amp;exst=E&amp;ist=L&amp;ast=EL&amp;vt=w&amp;slr=true&amp;cs=1_0151a372&amp;cb=1605320445329&amp;jobListingId=3738626687"
+                      // target="_blank"
+                      class="JobDetailsStyles__jobTitle"
                     >
-                      <img
-                        alt="Amazon icon"
-                        src="https://media.glassdoor.com/sql/6036/amazon-squarelogo-1552847650117.png"
-                      />
+                      {job.Title}
                     </a>
-                    <div class="JobDetailsStyles__jobInfoContainer ">
-                      <a
-                        href="/partner/jobListing.htm?pos=101&amp;ao=883174&amp;s=21&amp;guid=00000175c48e0b9e851bb28a27bdedbc&amp;src=GD_JOB_AD&amp;ei=6036&amp;t=ESR&amp;extid=2&amp;exst=E&amp;ist=L&amp;ast=EL&amp;vt=w&amp;slr=true&amp;cs=1_0151a372&amp;cb=1605320445329&amp;jobListingId=3738626687"
-                        target="_blank"
-                        class="JobDetailsStyles__jobTitle"
-                      >
-                        Software Engineer II
-                      </a>
-                      <div class="JobDetailsStyles__companyInfo pt-xxsm">
-                        Amazon – <span>Hyderabad</span>
-                      </div>
+                    <div class="JobDetailsStyles__companyInfo pt-xxsm">
+                      {job.CompanyName} –{' '}
+                      <span>
+                        {job.City},{job.State}
+                      </span>
                     </div>
                   </div>
                 </div>
-                <div class="col-2 d-flex flex-column justify-content-between align-items-end">
-                  <button
-                    onClick={(event) => this.props.saveJob(event)}
-                    id="SaveJobButton"
-                    class="JobsListItemStyles__saveIconButton"
-                  >
-                    <span class="hidden">Save Job</span>
-                    {heartIcon}
-                  </button>
-                  <span class="undefined undefined">
-                    <span class="d-block d-md-none">3d</span>
-                    <span class="d-none d-md-block">3 days ago</span>
+              </div>
+              <div class="col-2 d-flex flex-column justify-content-between align-items-end">
+                <button
+                  onClick={
+                    alreadyFav
+                      ? (event) => this.props.unsaveJob(event)
+                      : (event) => this.props.saveJob(event)
+                  }
+                  id="SaveJobButton"
+                  class="JobsListItemStyles__saveIconButton"
+                >
+                  <span class="hidden">Save Job</span>
+                  {heartIcon}
+                </button>
+                <span class="undefined undefined">
+                  <span class="d-block d-md-none">
+                    {postedSince}
+                    {h_d}
                   </span>
-                </div>
+                  <span class="d-none d-md-block">3 days ago</span>
+                </span>
               </div>
             </div>
           </div>
-        </li>
-      </ul>
+        </div>
+      </li>
     );
   }
 }
 const mapStateToProps = (state) => {
   const { studentInfoStore } = state.StudentCompleteInfoReducer;
+  const { companyOverviewStore } = state.CompanyPageReducer;
 
   return {
     studentInfoStore,
+    companyOverviewStore,
   };
 };
 export default connect(mapStateToProps, null)(CompanyJobCard);
