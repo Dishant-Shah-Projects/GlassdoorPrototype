@@ -4,8 +4,9 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const url = require('url');
-
 const { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } = require('constants');
+const mysqlConnection = require('../mysqlConnection');
+
 const GeneralReview = require('../model/GeneralReview');
 const InterviewReview = require('../model/InterviewReview');
 const SalaryReview = require('../model/SalaryReview');
@@ -217,13 +218,47 @@ const updatePictures = async (req, res) => {
 
 // get job status of company
 const jobStats = async (req, res) => {
+  let con = null;
   try {
+    const resultData = {};
     const { CompanyID } = url.parse(req.url, true).query;
-    const jobData = await Company.find({ CompanyID }).exec();
+    con = await mysqlConnection();
+    let getQuery = 'SELECT COUNT(*) As NumberOfJobs FROM APPLICATION_JOB WHERE CompanyID = ?';
+    let [results] = await con.query(getQuery, CompanyID);
+    resultData.JobCount = results;
+    getQuery =
+      'SELECT COUNT(*) As TotalApplicants FROM APPLICATION_RECEIVED AR JOIN APPLICATION_JOB AJ ON AR.JobID = AJ.JobID WHERE CompanyID = ?';
+    [results] = await con.query(getQuery, CompanyID);
+    resultData.TotalApplicants = results;
+    getQuery =
+      'SELECT COUNT(*) AS SelectedApplicants FROM APPLICATION_RECEIVED AR JOIN APPLICATION_JOB AJ ON AR.JobID = AJ.JobID WHERE CompanyID = ? AND STATUS = ?';
+    [results] = await con.query(getQuery, [CompanyID, 'Hired']);
+    resultData.HiredApplicants = results;
+    getQuery =
+      'SELECT COUNT(*) AS RejectedApplicants FROM APPLICATION_RECEIVED AR JOIN APPLICATION_JOB AJ ON AR.JobID = AJ.JobID WHERE CompanyID = ? AND STATUS = ?';
+    [results] = await con.query(getQuery, [CompanyID, 'Rejected']);
+    resultData.RejectedApplicants = results;
+    getQuery =
+      'SELECT Ethnicity, COUNT(Ethnicity) As Count FROM APPLICATION_RECEIVED AR JOIN APPLICATION_JOB AJ ON AR.JobID = AJ.JobID WHERE CompanyID = ? GROUP BY Ethnicity';
+    [results] = await con.query(getQuery, CompanyID);
+    resultData.Ethnicity = results;
+    getQuery =
+      'SELECT Gender, COUNT(Gender) As Count FROM APPLICATION_RECEIVED AR JOIN APPLICATION_JOB AJ ON AR.JobID = AJ.JobID WHERE CompanyID = ? GROUP BY Gender';
+    [results] = await con.query(getQuery, CompanyID);
+    resultData.Gender = results;
+    getQuery =
+      'SELECT Disability, COUNT(Disability) As Count FROM APPLICATION_RECEIVED AR JOIN APPLICATION_JOB AJ ON AR.JobID = AJ.JobID WHERE CompanyID = ? GROUP BY Disability';
+    [results] = await con.query(getQuery, CompanyID);
+    resultData.Disability = results;
+    getQuery =
+      'SELECT VeteranStatus, COUNT(VeteranStatus) As Count FROM APPLICATION_RECEIVED AR JOIN APPLICATION_JOB AJ ON AR.JobID = AJ.JobID WHERE CompanyID = ? GROUP BY VeteranStatus';
+    [results] = await con.query(getQuery, CompanyID);
+    resultData.VeteranStatus = results;
+
     res.writeHead(200, {
       'Content-Type': 'application/json',
     });
-    res.end(JSON.stringify(jobData));
+    res.end(JSON.stringify(resultData));
   } catch (error) {
     res.writeHead(500, {
       'Content-Type': 'application/json',
