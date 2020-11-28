@@ -3,6 +3,7 @@ import './ReviewForm.css';
 import axios from 'axios';
 import serverUrl from '../../../../config';
 import { history } from '../../../../App';
+import { Redirect } from 'react-router';
 
 class ReviewForm extends Component {
   constructor(props) {
@@ -23,6 +24,11 @@ class ReviewForm extends Component {
       description: '',
       formSubmiited: false,
     };
+  }
+
+  componentDidMount() {
+    localStorage.setItem('companyID', '');
+    // this.commonFetch();
   }
 
   goToHomePage = () => {
@@ -205,8 +211,18 @@ class ReviewForm extends Component {
   };
 
   render() {
+    let redirectVar = null;
+    if (localStorage.getItem('userrole') !== 'student') {
+      return <Redirect to="/" />;
+      //   if (localStorage.getItem('userrole') === 'student') {
+      //     redirectVar = null;
+      //   } else if (localStorage.getItem('userrole') === 'company') {
+      //     redirectVar = <Redirect to="/Employer" />;
+      //   }
+    }
     return (
       <main id="mount">
+        {redirectVar}
         <div>
           <header id="header">
             <div class="background">
