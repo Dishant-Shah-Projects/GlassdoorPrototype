@@ -68,54 +68,7 @@ class CompanyNavbar extends Component {
 
     const defaultCoverPic =
       'https://s3-media0.fl.yelpcdn.com/assets/public/defaultBusinessHeaderImage.yji-a94634351a246719545b17b9bddc388f.png';
-    let button = (
-      <a
-        onClick={() => this.props.openForm('ReviewForm')}
-        href="#"
-        class="gd-btn gd-btn-link gradient gd-btn-1 gd-btn-med gd-btn-icon padHorz addReview"
-      >
-        <i class="btn-plus margRtSm"></i>
-        <span>Add a Review</span>
-        <i class="hlpr"></i>
-      </a>
-    );
-    if (this.props.companyNavbarStore.selectedTab === 'CompanyInterviews') {
-      button = (
-        <a
-          onClick={() => this.props.openForm('InterviewForm')}
-          href="#"
-          class="gd-btn gd-btn-link gradient gd-btn-1 gd-btn-med gd-btn-icon padHorz addReview"
-        >
-          <i class="btn-plus margRtSm"></i>
-          <span>Add an Interview</span>
-          <i class="hlpr"></i>
-        </a>
-      );
-    } else if (this.props.companyNavbarStore.selectedTab === 'CompanyPhotos') {
-      button = (
-        <a
-          onClick={() => this.props.openForm('PhotoUploadForm')}
-          href="#"
-          class="gd-btn gd-btn-link gradient gd-btn-1 gd-btn-med gd-btn-icon padHorz addReview"
-        >
-          <i class="btn-plus margRtSm"></i>
-          <span>Add Photos</span>
-          <i class="hlpr"></i>
-        </a>
-      );
-    } else if (this.props.companyNavbarStore.selectedTab === 'CompanySalaries') {
-      button = (
-        <a
-          onClick={() => this.props.openForm('SalaryForm')}
-          href="#"
-          class="gd-btn gd-btn-link gradient gd-btn-1 gd-btn-med gd-btn-icon padHorz addReview"
-        >
-          <i class="btn-plus margRtSm"></i>
-          <span>Add a Salary</span>
-          <i class="hlpr"></i>
-        </a>
-      );
-    }
+
     return (
       <article id="WideCol">
         <div
@@ -316,7 +269,6 @@ class CompanyNavbar extends Component {
                       </a>
                     </div>
                   </div>
-                  <div class="buttons cell showDesk padRt alignRt">{button}</div>
                 </div>
               </div>
             </div>

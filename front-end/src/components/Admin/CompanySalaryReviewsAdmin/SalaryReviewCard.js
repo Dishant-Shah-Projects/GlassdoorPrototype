@@ -2,12 +2,25 @@ import React, { Component } from 'react';
 import moment from 'moment';
 // import defaultplaceholder from '../CompanyNavbar/default-placeholder.png';
 import { connect } from 'react-redux';
+import { switchTab } from '../../../constants/action-types';
 
 class SalaryReviewCard extends Component {
   constructor(props) {
     super(props);
     this.state = {};
   }
+
+  openCompanyTab = (event, tab) => {
+    const payload = {
+      selectedTab: tab,
+    };
+    //CompanySalaries
+    //CompanyInterviews
+    //GeneralReview
+    this.props.switchTab(payload);
+    this.props.openCompanyProfile(event);
+  };
+
   render() {
     const salary = this.props.salary;
 
@@ -25,7 +38,7 @@ class SalaryReviewCard extends Component {
           <div class="row">
             <div class="cell">
               <h2 class="summary strong noMargTop tightTop margBotXs">
-                <a href="/Interview/Amazon-Interview-RVW24701674.htm">
+                <a onClick={(event) => this.openCompanyTab(event, 'CompanySalaries')} href="#">
                   <span class="reviewer">{salary.JobTitle}</span> - {salary.CompanyName}
                 </a>
               </h2>
@@ -154,4 +167,15 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, null)(SalaryReviewCard);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    switchTab: (payload) => {
+      dispatch({
+        type: switchTab,
+        payload,
+      });
+    },
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(SalaryReviewCard);

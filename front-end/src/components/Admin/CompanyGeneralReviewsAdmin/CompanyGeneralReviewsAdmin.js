@@ -13,6 +13,7 @@ import {
 import { connect } from 'react-redux';
 import moment from 'moment';
 import PaginationComponent from '../../Student/Common/PaginationComponent';
+import { history } from '../../../App';
 
 class CompanyGeneralReviewsAdmin extends Component {
   constructor(props) {
@@ -79,10 +80,10 @@ class CompanyGeneralReviewsAdmin extends Component {
     );
   };
 
-  // openCompanyProfile = (event, CompanyID) => {
-  //   localStorage.setItem('companyID', CompanyID);
-  //   history.push('/CompanyPage');
-  // };
+  openCompanyProfile = (event, CompanyID) => {
+    localStorage.setItem('companyID', CompanyID);
+    history.push('/CompanyPageAdminView');
+  };
 
   buttonClicked = (event, Status, ID, CompanyID) => {
     event.preventDefault();
@@ -269,6 +270,9 @@ class CompanyGeneralReviewsAdmin extends Component {
                                       <ol class="empReviews tightLt">
                                         {this.props.companyReviewsStore.ReviewList.map((review) => (
                                           <AllReview
+                                            openCompanyProfile={(event) =>
+                                              this.openCompanyProfile(event, review.CompanyID)
+                                            }
                                             buttonClicked={(event, Status) =>
                                               this.buttonClicked(
                                                 event,

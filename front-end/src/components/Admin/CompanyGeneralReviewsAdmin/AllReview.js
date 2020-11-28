@@ -2,12 +2,23 @@ import React, { Component } from 'react';
 import moment from 'moment';
 import { connect } from 'react-redux';
 // import defaultplaceholder from '../CompanyNavbar/default-placeholder.png';
+import { switchTab } from '../../../constants/action-types';
 
 class AllReview extends Component {
   constructor(props) {
     super(props);
     this.state = {};
   }
+  openCompanyTab = (event, tab) => {
+    const payload = {
+      selectedTab: tab,
+    };
+    //CompanySalaries
+    //CompanyInterviews
+    //GeneralReview
+    this.props.switchTab(payload);
+    this.props.openCompanyProfile(event);
+  };
   render() {
     const review = this.props.review;
 
@@ -27,13 +38,20 @@ class AllReview extends Component {
               Helpful ({review.Helpful ? review.Helpful : 0})
             </div>
           </div>
+          <h1 class="h2 summary strong mt-0 mb-xsm">
+            <a
+              onClick={(event) => this.openCompanyTab(event, 'GeneralReview')}
+              href="#"
+              class="reviewLink"
+            >
+              {review.CompanyName}{' '}
+            </a>
+          </h1>
           <div id="companyReview" class="row mt">
             <div class="col-sm-11 pl-sm-lg  mx-0">
               <div class="">
                 <h2 class="h2 summary strong mt-0 mb-xsm">
-                  <a href="/Reviews/Employee-Review-Amazon-RVW9642081.htm" class="reviewLink">
-                    {review.Headline}{' '}
-                  </a>
+                  <a class="reviewLink">{review.Headline} </a>
                 </h2>
                 <div class="mr-xsm d-lg-inline-block">
                   <span class="gdStars gdRatings subRatings__SubRatingsStyles__gdStars">
@@ -275,4 +293,15 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, null)(AllReview);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    switchTab: (payload) => {
+      dispatch({
+        type: switchTab,
+        payload,
+      });
+    },
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(AllReview);

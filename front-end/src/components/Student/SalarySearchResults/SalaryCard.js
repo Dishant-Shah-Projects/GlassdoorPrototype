@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import defaultplaceholder from '../CompanyProfile/CompanyNavbar/default-placeholder.png';
+import { connect } from 'react-redux';
+import { switchTab } from '../../../constants/action-types';
 
 class SalaryCard extends Component {
   constructor(props) {
@@ -89,4 +91,16 @@ class SalaryCard extends Component {
   }
 }
 
-export default SalaryCard;
+// export default SalaryCard;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    switchTab: (payload) => {
+      dispatch({
+        type: switchTab,
+        payload,
+      });
+    },
+  };
+};
+
+export default connect(null, mapDispatchToProps)(SalaryCard);

@@ -2,12 +2,25 @@ import React, { Component } from 'react';
 import moment from 'moment';
 import { connect } from 'react-redux';
 // import defaultplaceholder from '../CompanyNavbar/default-placeholder.png';
+import { switchTab } from '../../../constants/action-types';
 
 class AllPhotos extends Component {
   constructor(props) {
     super(props);
     this.state = {};
   }
+
+  openCompanyTab = (event, tab) => {
+    const payload = {
+      selectedTab: tab,
+    };
+    //CompanySalaries
+    //CompanyInterviews
+    //GeneralReview
+    this.props.switchTab(payload);
+    this.props.openCompanyProfile(event);
+  };
+
   render() {
     const photo = this.props.photo;
 
@@ -35,7 +48,11 @@ class AllPhotos extends Component {
             <div class="col-sm-11 pl-sm-lg  mx-0">
               <div class="">
                 <h2 style={{ paddingLeft: '30px' }} class="h2 summary strong mt-0 mb-xsm">
-                  <a href="#" class="reviewLink">
+                  <a
+                    onClick={(event) => this.openCompanyTab(event, 'CompanyPhotos')}
+                    href="#"
+                    class="reviewLink"
+                  >
                     {photo.CompanyName}{' '}
                   </a>
                 </h2>
@@ -126,4 +143,15 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, null)(AllPhotos);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    switchTab: (payload) => {
+      dispatch({
+        type: switchTab,
+        payload,
+      });
+    },
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(AllPhotos);

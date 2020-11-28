@@ -77,7 +77,7 @@ class InterviewListAdmin extends Component {
 
   openCompanyProfile = (event, CompanyID) => {
     localStorage.setItem('companyID', CompanyID);
-    history.push('/CompanyPage');
+    history.push('/CompanyPageAdminView');
   };
 
   buttonClicked = (event, Status, InterviewReviewID, CompanyID) => {
@@ -290,6 +290,9 @@ class InterviewListAdmin extends Component {
                                         {this.props.interviewListStore.interviewSearchList.map(
                                           (interview) => (
                                             <CompanyInterviewCard
+                                              openCompanyProfile={(event) =>
+                                                this.openCompanyProfile(event, interview.CompanyID)
+                                              }
                                               buttonClicked={(event, Status) =>
                                                 this.buttonClicked(
                                                   event,

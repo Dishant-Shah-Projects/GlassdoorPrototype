@@ -77,7 +77,7 @@ class SalaryListAdmin extends Component {
 
   openCompanyProfile = (event, CompanyID) => {
     localStorage.setItem('companyID', CompanyID);
-    history.push('/CompanyPage');
+    history.push('/CompanyPageAdminView');
   };
 
   buttonClicked = (event, Status, SalaryReviewID, CompanyID) => {
@@ -256,6 +256,9 @@ class SalaryListAdmin extends Component {
                                         {this.props.companySalariesStore.SalaryList.map(
                                           (salary) => (
                                             <SalaryReviewCard
+                                              openCompanyProfile={(event) =>
+                                                this.openCompanyProfile(event, salary.CompanyID)
+                                              }
                                               buttonClicked={(event, Status) =>
                                                 this.buttonClicked(
                                                   event,

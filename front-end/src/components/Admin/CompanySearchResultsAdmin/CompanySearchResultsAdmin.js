@@ -100,13 +100,7 @@ class CompanySearchResultsAdmin extends Component {
                                   </strong>
                                 </h1>
                               ) : (
-                                <h1 className="pt-lg-std py-sm m-0">
-                                  {' '}
-                                  Top Companies in{' '}
-                                  <strong className="capitalize">
-                                    {localStorage.getItem('Location')}{' '}
-                                  </strong>
-                                </h1>
+                                <h1 className="pt-lg-std py-sm m-0"> Company Search results </h1>
                               )}
                               <div className="pb-lg-xxl pb-std">
                                 {' '}

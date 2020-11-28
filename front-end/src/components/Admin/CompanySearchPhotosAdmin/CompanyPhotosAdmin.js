@@ -9,6 +9,7 @@ import { updateCompanyPhotosStore, updateStudentProfile } from '../../../constan
 import { connect } from 'react-redux';
 import moment from 'moment';
 import PaginationComponent from '../../Student/Common/PaginationComponent';
+import { history } from '../../../App';
 
 class CompanyPhotosAdmin extends Component {
   constructor(props) {
@@ -73,10 +74,10 @@ class CompanyPhotosAdmin extends Component {
     );
   };
 
-  // openCompanyProfile = (event, CompanyID) => {
-  //   localStorage.setItem('companyID', CompanyID);
-  //   history.push('/CompanyPage');
-  // };
+  openCompanyProfile = (event, CompanyID) => {
+    localStorage.setItem('companyID', CompanyID);
+    history.push('/CompanyPageAdminView');
+  };
 
   buttonClicked = (event, Status, ID, CompanyID) => {
     event.preventDefault();
@@ -256,6 +257,9 @@ class CompanyPhotosAdmin extends Component {
                                       <ol class="empReviews tightLt">
                                         {this.props.companyPhotosStore.PhotoList.map((photo) => (
                                           <AllPhotos
+                                            openCompanyProfile={(event) =>
+                                              this.openCompanyProfile(event, photo.CompanyID)
+                                            }
                                             buttonClicked={(event, Status) =>
                                               this.buttonClicked(
                                                 event,
