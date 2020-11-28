@@ -38,6 +38,7 @@ import CompanyGeneralReviewsAdmin from './Admin/CompanyGeneralReviewsAdmin/Compa
 import CompanyPhotosAdmin from './Admin/CompanySearchPhotosAdmin/CompanyPhotosAdmin';
 import SalaryListAdmin from './Admin/CompanySalaryReviewsAdmin/SalaryListAdmin';
 import CompanyPageAdminView from './Admin/CompanyProfile/CompanyPageAdminView';
+import PostJob from './Employer/Jobs/PostJobModal';
 
 class Main extends Component {
   // constructor(props) {
@@ -107,6 +108,7 @@ class Main extends Component {
         <Route path="/EmployerProfile" component={ProfileUpdate} />
         <Route path="/EmployerReviews" component={EmployerReviews} />
         <Route path="/EmployerJobs" component={EmployerJobs} />
+        <Route path="/PostJob" component={PostJob} />
         <Route path="/EmployerReport" component={EmployerReport} />
         <Route path="/ApplicantProfile" component={ApplicantProfile} />
         <Route path="/Home" component={Home} />

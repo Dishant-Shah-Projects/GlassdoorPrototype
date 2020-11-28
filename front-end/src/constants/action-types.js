@@ -41,5 +41,5 @@ export const updateStudentReviewsStore = 'update-student-reviews-store';
 export const updateStudentInterviewStore = 'update-student-interview-store';
 export const updateStudentSalariesStore = 'update-student-salaries-store';
 export const updateStudentPhotosStore = 'update-student-photos-store';
-export const updateEmployerStatsStore = 'update-employer-stats-store';
-
+export const updateEmployerStats = 'update-employer-stats';
+export const updateCompanyDemographics = 'update-company-demographics';

@@ -1,4 +1,4 @@
-import { updateEmployerStatsStore } from '../constants/action-types';
+import { updateEmployerStats, updateCompanyDemographics } from '../constants/action-types';
 
 const defaultState = {
   reportStore: {
@@ -7,14 +7,24 @@ const defaultState = {
     PageCount: 5,
     Totalcount: 10,    
   },  
+  demographicsStore: {
+    demographics: {}
+  }
 };
 
 const EmployerReportStatsReducer = (state = defaultState, action) => {  
   switch (action.type) {
-    case updateEmployerStatsStore: {     
+    case updateEmployerStats: {     
       return {       
         ...state,
         reportStore: { ...state.reportStore, ...action.payload },
+        //   return Object.assign(state, action.payload);
+      };
+    }   
+    case updateCompanyDemographics: {     
+      return {       
+        ...state,
+        demographicsStore: { ...state.demographicsStore, ...action.payload1 },
         //   return Object.assign(state, action.payload);
       };
     }   

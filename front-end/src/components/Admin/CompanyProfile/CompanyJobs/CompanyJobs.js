@@ -1,258 +1,333 @@
 import React, { Component } from 'react';
-import CompanyJobCard from './CompanyJobCard';
-import './CompanyJobs.css';
+//import './RightBlock.css';
+import { Chart } from 'react-google-charts';
 import axios from 'axios';
-import serverUrl from '../../../../config';
-import { updateStudentProfile, updateCompanyJobStore } from '../../../../constants/action-types';
+import serverUrl from '../../../../config.js';
 import { connect } from 'react-redux';
-import PaginationComponent from '../../../Student/Common/PaginationComponent';
+//import { updateEmployerStats, updateCompanyDemographics } from '../../../constants/action-types';
+import DemographicsCard from './DemographicsCard';
 
 class CompanyJobs extends Component {
   constructor(props) {
     super(props);
-    this.state = { Title: '', City: '' };
+    this.state = {
+      statsData: [],
+      disabilityData: [],
+      ethnicityData: [],
+      genderData: [],
+      veteranData: [],
+      chartEvents: [],
+    };
   }
 
   componentDidMount() {
-    this.commonFetch();
+    this.fetchReport();    
   }
 
-  commonFetch = (PageNo = 0) => {
+  fetchReport = () => {
     axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
     axios
-      .get(serverUrl + 'student/companyJobs', {
-        params: {
-          CompanyID: localStorage.getItem('companyID'),
-          PageNo,
-          Title: this.state.Title,
-          City: this.state.City,
-        },
+      .get(serverUrl + 'admin/jobStats', {
+        params: { CompanyID: localStorage.getItem('companyID') },
         withCredentials: true,
       })
-      .then(
-        (response) => {
-          console.log('companyJobs:', response.data);
-          let payload = {
-            JobList: response.data[0],
-            PageNo,
-            Totalcount: response.data[1],
-            PageCount: Math.ceil(response.data[1] / 10),
-
-            // PageCount: Math.ceil(response.data.Totalcount / 3),
-          };
-          this.props.updateCompanyJobStore(payload);
-        },
-        (error) => {
-          console.log('error', error);
+      .then((response) => {
+        if (response.status == 200) {
+          console.log('response', response.data);
+          // let payload = {
+          //   statsList: response.data.statsData,
+          //   PageNo,
+          //   PageCount: Math.ceil(response.data.count / 10),
+          //   Totalcount: response.data.count,
+          // }
+          // console.log('payload', payload);
+          // this.props.updateEmployerStats(payload);
+          //this.getBarData(response.data.statsData);
+          let data1 = [];
+          let statsData1 = [];
+          data1.push('Jobs');
+          data1.push('Applicants Applied');
+          data1.push('Applicants Selected');
+          data1.push('Applicants Rejected');
+          statsData1.push(data1);
+          this.setState({
+            statsData: [...this.state.statsData, data1],
+          });
+     
+          let data = [];
+          data.push(response.data.JobCount[0].NumberOfJobs);
+          data.push(response.data.TotalApplicants[0].TotalApplicants);
+          data.push(response.data.HiredApplicants[0].SelectedApplicants);
+          data.push(response.data.RejectedApplicants[0].RejectedApplicants);
+          // data.push(response.data.statsData[i].jobDetails.jobData.Title);
+          // data.push(12);
+          // data.push(6);
+          // data.push(6);
+          console.log('data', data);
+          statsData1.push(data);
+          this.setState({
+            statsData: [...this.state.statsData, data],
+          });
+          console.log('statsData1', statsData1);
+          console.log('statsData', this.state.statsData);
+          this.fetchDemographics(response.data);
         }
-      );
+      })
+      .catch((error) => {
+        this.setState({
+          errorMessage: 'No Statistics Found',
+        });
+      });
   };
 
-  onPageClick = (e) => {
-    // console.log('Page Clicked:', e.selected);
-    this.commonFetch(e.selected);
-  };
+  fetchDemographics = (demoInfo) => {
+    
+          console.log('demoInfo', demoInfo);
+          let ethnicity = [];
+          let demos = [];
+          let Ethnicity = [];
+          ethnicity.push('Ethnicity');
+          ethnicity.push('Count');
+          //demos.push(ethnicity);
+          Ethnicity.push(ethnicity);
+          this.setState({
+            ethnicityData: [...this.state.ethnicityData, ethnicity],
+          })
 
-  saveJob = (event, JobID) => {
-    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
-    const data = {
-      JobID,
-      StudentID: localStorage.getItem('userId'),
-    };
-    axios.post(serverUrl + 'student/companyFavouriteJobs', data).then(
-      (response) => {
-        console.log('Status Code : ', response.status);
-        if (response.status === 200) {
-          console.log(response.data);
-
-          let studentProfile = { ...this.props.studentInfoStore.studentProfile };
-          studentProfile.FavouriteJobs.push(JobID);
-          const payload = {
-            studentProfile,
-          };
-          this.props.updateStudentProfile(payload);
-        }
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
-  };
-
-  unsaveJob = (event, JobID) => {
-    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
-    const data = {
-      JobID,
-      StudentID: localStorage.getItem('userId'),
-    };
-    axios.post(serverUrl + 'student/removeFavouriteJobs', data).then(
-      (response) => {
-        console.log('Status Code : ', response.status);
-        if (response.status === 200) {
-          console.log(response.data);
-
-          let studentProfile = { ...this.props.studentInfoStore.studentProfile };
-          var index = studentProfile.FavouriteJobs.indexOf(JobID);
-          if (index !== -1) {
-            studentProfile.FavouriteJobs.splice(index, 1);
+          for(var i = 0; i < demoInfo.Ethnicity.length; i++) {
+            let ethnicity1 = []
+            ethnicity1.push(demoInfo.Ethnicity[i].Ethnicity);
+            ethnicity1.push(demoInfo.Ethnicity[i].Count);
+            Ethnicity.push(ethnicity1);
+            this.setState({
+              ethnicityData: [...this.state.ethnicityData, ethnicity1],
+            })
           }
-          // studentProfile.FavouriteJobs.push(JobID);
-          const payload = {
-            studentProfile,
-          };
-          this.props.updateStudentProfile(payload);
-        }
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
-  };
 
-  commonOnChangeHandler = (event) => {
-    // event.preventDefault();
-    this.setState({
-      [event.target.name]: event.target.value,
-      openStatusDropDown: false,
-    });
-  };
+          // Ethnicity.push(demos);
+          // console.log('demos',Ethnicity);
 
-  openJobPage = (event, jobID) => {
-    localStorage.setItem('application_job_id', jobID);
-    localStorage.setItem(
-      'CoverPhoto',
-      this.props.companyOverviewStore.companyOverview.CoverPhoto
-        ? 'this.props.companyOverviewStore.companyOverview.CoverPhoto'
-        : ''
-    );
-    localStorage.setItem(
-      'ProfileImg',
-      this.props.companyOverviewStore.companyOverview.ProfileImg
-        ? 'this.props.companyOverviewStore.companyOverview.ProfileImg'
-        : ''
-    );
-    this.props.openForm('JobApplicationPage');
-  };
+          let disability = [];
+          let Disability = [];
+          disability.push('Disability');
+          disability.push('Count');
+          Disability.push(disability);
+          this.setState({
+            disabilityData: [...this.state.disabilityData, disability],
+          })
+          let disability1 = []
+          for(var i = 0; i < demoInfo.Disability.length; i++) {
+            disability1.push(demoInfo.Disability[i].Disability);
+            disability1.push(demoInfo.Disability[i].Count);
+            Disability.push(disability1);
+            this.setState({
+              disabilityData: [...this.state.disabilityData, disability1],
+            })
+          }
 
+          let gender = [];
+          let Gender = [];
+          gender.push('Gender');
+          gender.push('Count');
+          Gender.push(gender);
+          this.setState({
+            genderData: [...this.state.genderData, gender],
+          })
+          let gender1 = []
+          for(var i = 0; i < demoInfo.Gender.length; i++) {
+            gender1.push(demoInfo.Gender[i].Gender);
+            gender1.push(demoInfo.Gender[i].Count);
+            Gender.push(gender1);
+            this.setState({
+              genderData: [...this.state.genderData, gender1],
+            })
+          }
+
+          let veteran = [];
+          demos = [];
+          let Veteran = [];
+          veteran.push('VeteranStatus');
+          veteran.push('Count');
+          Veteran.push(veteran);
+          this.setState({
+            veteranData: [...this.state.veteranData, veteran],
+          })
+          let veteran1 = []
+          for(var i = 0; i < demoInfo.VeteranStatus.length; i++) {
+            veteran1.push(demoInfo.VeteranStatus[i].VeteranStatus);
+            veteran1.push(demoInfo.VeteranStatus[i].Count);
+            Veteran.push(veteran1);
+            this.setState({
+              veteranData: [...this.state.veteranData, veteran1],
+            })
+          }
+
+          // let data = {
+          //   Disability : Disability,
+          //   Ethnicity : Ethnicity,
+          //   Gender: Gender,
+          //   Veteran: Veteran
+
+          // }
+
+          // let payload1 = {
+          //   demographics: data
+          // }
+          // console.log('data', payload1);
+          // this.props.updateCompanyDemographics(payload1);
+        }      
+  
   render() {
     return (
-      <article id="MainCol">
-        <div id="JobsLandingPage">
-          <div>
-            <div class="gdGrid">
-              <div>
-                <div class="module gdGrid" data-test="employerJobsModule">
-                  <div class="HeaderAdSlotStyles__headerAdSlot"></div>
-                  <header class="d-flex justify-content-between align-items-start">
-                    <div class="HeaderContainerStyles__h1Container">
-                      <h1 class="h2 mb-0 HeaderContainerStyles__h2">
-                        {this.props.companyOverviewStore.companyOverview.CompanyName} Jobs
-                      </h1>
-                    </div>
-                  </header>
-                  <div class="mt mb">
-                    <form action="" id="JobsFilterForm">
-                      <div class="search gdGrid">
-                        <div class="d-flex flex-md-column flex-lg-row">
-                          <label for="JobTitleAC" class="hidden">
-                            Search job titles
-                          </label>
-                          <input
-                            onChange={this.commonOnChangeHandler}
-                            id="JobTitleAC"
-                            name="Title"
-                            class="InputStyles__input EIFilterModuleStyles__eiJobsTitleSearch InputStyles__hasContent"
-                            placeholder="Search job titles"
-                            value={this.state.Title}
-                            autocomplete="off"
-                          />
-                          <label for="LocationAC" class="hidden">
-                            City
-                          </label>
-                          <input
-                            onChange={this.commonOnChangeHandler}
-                            id="LocationAC"
-                            class="InputStyles__input EIFilterModuleStyles__locationSearchInput  "
-                            name="City"
-                            placeholder="City"
-                            value={this.state.City}
-                          />
-                          <div class="d-flex justify-content-between EIFilterModuleStyles__ctaButtonContainer">
-                            <button
-                              onClick={this.commonFetch}
-                              class="gd-ui-button d-none d-md-inline EIFilterModuleStyles__findBtn css-r97zbm"
-                              type="button"
-                            >
-                              Find Jobs
-                            </button>
-                          </div>
-                        </div>
-                        <div class="margTop d-none d-sm-flex justify-content-between">
-                          <div class="d-flex">
-                            <span class="EIFilterModuleStyles__noFilterText">
-                              Filter your search results by title, or location.
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </form>
-                  </div>
-                  <div class="JobsListStyles__jobListContainer gdGrid">
-                    <ul class="JobsListStyles__jobList">
-                      {this.props.companyJobStore.JobList.map((job) => (
-                        <CompanyJobCard
-                          job={job}
-                          openJobPage={(event) => this.openJobPage(event, job._id)}
-                          unsaveJob={(event) => this.unsaveJob(event, job._id)}
-                          saveJob={(event) => this.saveJob(event, job._id)}
-                        />
-                      ))}
-                    </ul>
-                  </div>
-                  <div class="col d-flex mt mx-auto justify-content-center ">
-                    <PaginationComponent
-                      PageCount={this.props.companyJobStore.PageCount}
-                      PageNo={this.props.companyJobStore.PageNo}
-                      onPageClick={(e) => {
-                        this.onPageClick(e);
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
+      <div>
+      <div class="col-12 col-md-4 pr-md-xxl">
+        <div class="d-none d-md-block">
+          <div class="d-flex flex-column">
+            <span class="mb-sm">Jobs Statistics</span>
+            <div class="d-flex">
+              <Chart
+                width={'500px'}
+                height={'300px'}
+                chartType="BarChart"
+                loader={<div>Loading Chart</div>}
+                data={this.state.statsData}
+                options={{
+                  title: 'Statistics of the Jobs Posted',
+                  chartArea: { width: '50%' },
+                  isStacked: true,
+                  hAxis: {
+                    title: 'Total Applicants',
+                    minValue: 0,
+                  },
+                  vAxis: {
+                    title: 'Jobs',
+                  },
+                }}
+                // For tests
+                rootProps={{ 'data-testid': '3' }}                
+              />
+            </div>
+          </div>
+          <div className="tbl fill padHorz margVert" id="ResultsFooter">        
+         
+        </div>
+          </div>
+          </div>
+          <div class="col-12 col-md-8 pr-md-xxl">
+        <div class="d-none d-md-block">
+            <div class="d-flex flex-column">
+          <span class="mb-sm">
+            <strong>Demographics</strong>
+          </span>
+        </div>
+        <div class="d-flex flex-column">
+          <span class="mb-sm">Race/Ethnicity</span>
+          <div class="d-flex">
+            <div>
+              <Chart
+                width={'300px'}
+                height={'300px'}
+                chartType="PieChart"
+                loader={<div>Loading Chart</div>}
+                data={this.state.ethnicityData}
+                options={{
+                  title: 'My Daily Activities',
+                  // Just add this option
+                  pieHole: 0.4,
+                }}
+                rootProps={{ 'data-testid': '3' }}
+              />
             </div>
           </div>
         </div>
-      </article>
+        <div class="d-flex flex-column">
+          <span class="mb-sm">Gender</span>
+          <div class="d-flex">
+            <Chart
+              width={'300px'}
+              height={'300px'}
+              chartType="PieChart"
+              loader={<div>Loading Chart</div>}
+              data={this.state.genderData}
+              options={{
+                title: 'My Daily Activities',
+                // Just add this option
+                pieHole: 0.4,
+              }}
+              rootProps={{ 'data-testid': '3' }}
+            />
+          </div>
+        </div>
+
+        <div class="d-flex flex-column">
+          <span class="mb-sm">Disability</span>
+          <div class="d-flex">
+            <Chart
+              width={'300px'}
+              height={'300px'}
+              chartType="PieChart"
+              loader={<div>Loading Chart</div>}
+              data={this.state.disabilityData}
+              options={{
+                title: 'My Daily Activities',
+                // Just add this option
+                pieHole: 0.4,
+              }}
+              rootProps={{ 'data-testid': '3' }}
+            />
+          </div>
+        </div>
+
+        <div class="d-flex flex-column">
+          <span class="mb-sm">Veteran Status</span>
+          <div class="d-flex">
+            <Chart
+              width={'300px'}
+              height={'300px'}
+              chartType="PieChart"
+              loader={<div>Loading Chart</div>}
+              data={this.state.veteranData}
+              options={{
+                title: 'My Daily Activities',
+                // Just add this option
+                pieHole: 0.4,
+              }}
+              rootProps={{ 'data-testid': '3' }}
+            />
+          </div>
+        </div>   
+            </div>
+          </div>           
+          </div>
     );
   }
 }
 
-const mapStateToProps = (state) => {
-  const { studentInfoStore } = state.StudentCompleteInfoReducer;
-  const { companyOverviewStore, companyJobStore } = state.CompanyPageReducer;
-  return {
-    studentInfoStore,
-    companyOverviewStore,
-    companyJobStore,
-  };
-};
-// export default CompanyJobs;
-const mapDispatchToProps = (dispatch) => {
-  return {
-    updateStudentProfile: (payload) => {
-      dispatch({
-        type: updateStudentProfile,
-        payload,
-      });
-    },
-    updateCompanyJobStore: (payload) => {
-      dispatch({
-        type: updateCompanyJobStore,
-        payload,
-      });
-    },
-  };
-};
-// export default LoginBody;
-export default connect(mapStateToProps, mapDispatchToProps)(CompanyJobs);
+// const mapStateToProps = (state) => {
+//   const { reportStore, demographicsStore } = state.EmployerReportStatsReducer;
+//   console.log(reportStore);
+//   return {
+//     reportStore: reportStore,
+//     demographicsStore: demographicsStore
+//   };
+// };
+
+// const mapDispatchToProps = (dispatch) => {
+//   return {
+//     updateEmployerStats: (payload) => {
+//       dispatch({
+//         type: updateEmployerStats,
+//         payload,
+//       });
+//     },
+//     updateCompanyDemographics: (payload1) => {
+//       dispatch({
+//         type: updateCompanyDemographics,
+//         payload1,
+//       });
+//     },
+//   };
+// };
+
+//export default connect(mapStateToProps, mapDispatchToProps)(CompanyJobs);
+export default CompanyJobs;
