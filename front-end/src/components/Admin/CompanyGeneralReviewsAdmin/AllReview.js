@@ -28,7 +28,6 @@ class AllReview extends Component {
             </div>
           </div>
           <div id="companyReview" class="row mt">
-            <div class="col-sm-1"></div>
             <div class="col-sm-11 pl-sm-lg  mx-0">
               <div class="">
                 <h2 class="h2 summary strong mt-0 mb-xsm">

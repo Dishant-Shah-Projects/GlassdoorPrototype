@@ -21,7 +21,11 @@ class CompanyInterviewCard extends Component {
             </time>
           </div>
           <p class="helpfulReviews small tightVert floatRt">
-            <span class="helpfulCount subtle"> Helpful ({interview.Helpful})</span> &nbsp;{' '}
+            <span class="helpfulCount subtle">
+              {' '}
+              Helpful ({interview.Helpful ? interview.Helpful : 0})
+            </span>{' '}
+            &nbsp;{' '}
           </p>
         </div>
         <div class="tbl fill reviewHdr">
@@ -43,7 +47,6 @@ class CompanyInterviewCard extends Component {
         </div>
         <div class="tbl fill margTopMd">
           <div class="row">
-            <div class="cell sqLogoCell showDesk"></div>
             <div style={{ minWidth: '100%' }} class="cell reviewBodyCell">
               <div class="interviewOutcomes">
                 <div style={{ display: 'flex' }} class="flex-grid">

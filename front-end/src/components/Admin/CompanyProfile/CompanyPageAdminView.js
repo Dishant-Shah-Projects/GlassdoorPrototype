@@ -12,7 +12,7 @@ import CompanyPhotos from './CompanyPhotos/CompanyPhotos';
 import { history } from '../../../App';
 import CompanySalaries from './CompanySalaries/CompanySalaries';
 
-class CompanyPage extends Component {
+class CompanyPageAdminView extends Component {
   constructor(props) {
     super(props);
     this.state = {};
@@ -33,6 +33,7 @@ class CompanyPage extends Component {
       });
     localStorage.setItem('form_company_name', '');
     localStorage.setItem('form_ceo_name', '');
+    localStorage.setItem('application_job_id', '');
   }
   openForm = (form) => {
     localStorage.setItem(
@@ -47,7 +48,7 @@ class CompanyPage extends Component {
 
     return (
       <div class="pageContentWrapperStudent ">
-        <div style={{ position: 'relative' }} id="PageContent">
+        <div style={{ position: 'relative', width: '1024px' }} id="PageContent">
           <div id="PageBodyContents">
             <div class="pageInsideContent cf">
               <div
@@ -76,7 +77,7 @@ class CompanyPage extends Component {
                         ''
                       )}
                       {this.props.companyNavbarStore.selectedTab === 'CompanyJobs' ? (
-                        <CompanyJobs />
+                        <CompanyJobs openForm={(form) => this.openForm(form)} />
                       ) : (
                         ''
                       )}
@@ -137,4 +138,4 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 // export default LoginBody;
-export default connect(mapStateToProps, mapDispatchToProps)(CompanyPage);
+export default connect(mapStateToProps, mapDispatchToProps)(CompanyPageAdminView);

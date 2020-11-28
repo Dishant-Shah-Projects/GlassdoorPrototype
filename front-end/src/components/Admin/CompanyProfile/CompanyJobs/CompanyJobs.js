@@ -1,39 +1,46 @@
 import React, { Component } from 'react';
-import PaginationComponent from '../../Common/PaginationComponent';
 import CompanyJobCard from './CompanyJobCard';
 import './CompanyJobs.css';
 import axios from 'axios';
 import serverUrl from '../../../../config';
-import { updateStudentProfile } from '../../../../constants/action-types';
+import { updateStudentProfile, updateCompanyJobStore } from '../../../../constants/action-types';
 import { connect } from 'react-redux';
+import PaginationComponent from '../../../Student/Common/PaginationComponent';
 
 class CompanyJobs extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = { Title: '', City: '' };
   }
+
+  componentDidMount() {
+    this.commonFetch();
+  }
+
   commonFetch = (PageNo = 0) => {
     axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
     axios
-      .get(serverUrl + 'student/companyReview', {
+      .get(serverUrl + 'student/companyJobs', {
         params: {
           CompanyID: localStorage.getItem('companyID'),
           PageNo,
+          Title: this.state.Title,
+          City: this.state.City,
         },
         withCredentials: true,
       })
       .then(
         (response) => {
-          console.log('companyReviews', response.data);
+          console.log('companyJobs:', response.data);
           let payload = {
-            ReviewList: response.data[2],
+            JobList: response.data[0],
             PageNo,
-            Totalcount: response.data[0].count,
-            PageCount: Math.ceil(response.data[0].count / 10),
+            Totalcount: response.data[1],
+            PageCount: Math.ceil(response.data[1] / 10),
 
             // PageCount: Math.ceil(response.data.Totalcount / 3),
           };
-          this.props.updateCompanyReviewsStore(payload);
+          this.props.updateCompanyJobStore(payload);
         },
         (error) => {
           console.log('error', error);
@@ -45,6 +52,7 @@ class CompanyJobs extends Component {
     // console.log('Page Clicked:', e.selected);
     this.commonFetch(e.selected);
   };
+
   saveJob = (event, JobID) => {
     axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
     const data = {
@@ -70,6 +78,62 @@ class CompanyJobs extends Component {
       }
     );
   };
+
+  unsaveJob = (event, JobID) => {
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    const data = {
+      JobID,
+      StudentID: localStorage.getItem('userId'),
+    };
+    axios.post(serverUrl + 'student/removeFavouriteJobs', data).then(
+      (response) => {
+        console.log('Status Code : ', response.status);
+        if (response.status === 200) {
+          console.log(response.data);
+
+          let studentProfile = { ...this.props.studentInfoStore.studentProfile };
+          var index = studentProfile.FavouriteJobs.indexOf(JobID);
+          if (index !== -1) {
+            studentProfile.FavouriteJobs.splice(index, 1);
+          }
+          // studentProfile.FavouriteJobs.push(JobID);
+          const payload = {
+            studentProfile,
+          };
+          this.props.updateStudentProfile(payload);
+        }
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  };
+
+  commonOnChangeHandler = (event) => {
+    // event.preventDefault();
+    this.setState({
+      [event.target.name]: event.target.value,
+      openStatusDropDown: false,
+    });
+  };
+
+  openJobPage = (event, jobID) => {
+    localStorage.setItem('application_job_id', jobID);
+    localStorage.setItem(
+      'CoverPhoto',
+      this.props.companyOverviewStore.companyOverview.CoverPhoto
+        ? 'this.props.companyOverviewStore.companyOverview.CoverPhoto'
+        : ''
+    );
+    localStorage.setItem(
+      'ProfileImg',
+      this.props.companyOverviewStore.companyOverview.ProfileImg
+        ? 'this.props.companyOverviewStore.companyOverview.ProfileImg'
+        : ''
+    );
+    this.props.openForm('JobApplicationPage');
+  };
+
   render() {
     return (
       <article id="MainCol">
@@ -81,7 +145,9 @@ class CompanyJobs extends Component {
                   <div class="HeaderAdSlotStyles__headerAdSlot"></div>
                   <header class="d-flex justify-content-between align-items-start">
                     <div class="HeaderContainerStyles__h1Container">
-                      <h1 class="h2 mb-0 HeaderContainerStyles__h2">Amazon Jobs</h1>
+                      <h1 class="h2 mb-0 HeaderContainerStyles__h2">
+                        {this.props.companyOverviewStore.companyOverview.CompanyName} Jobs
+                      </h1>
                     </div>
                   </header>
                   <div class="mt mb">
@@ -92,36 +158,32 @@ class CompanyJobs extends Component {
                             Search job titles
                           </label>
                           <input
+                            onChange={this.commonOnChangeHandler}
                             id="JobTitleAC"
-                            name="filter.jobTitleFTS"
+                            name="Title"
                             class="InputStyles__input EIFilterModuleStyles__eiJobsTitleSearch InputStyles__hasContent"
                             placeholder="Search job titles"
-                            value=""
+                            value={this.state.Title}
                             autocomplete="off"
                           />
                           <label for="LocationAC" class="hidden">
-                            City, State, or Zip
+                            City
                           </label>
                           <input
+                            onChange={this.commonOnChangeHandler}
                             id="LocationAC"
                             class="InputStyles__input EIFilterModuleStyles__locationSearchInput  "
-                            name="filter.jobLocationFTS"
-                            placeholder="City, State, or Zip"
-                            value=""
+                            name="City"
+                            placeholder="City"
+                            value={this.state.City}
                           />
                           <div class="d-flex justify-content-between EIFilterModuleStyles__ctaButtonContainer">
                             <button
+                              onClick={this.commonFetch}
                               class="gd-ui-button d-none d-md-inline EIFilterModuleStyles__findBtn css-r97zbm"
                               type="button"
                             >
                               Find Jobs
-                            </button>
-                            <button
-                              class="gd-ui-button with-icon d-lg-none ml-xsm EIFilterModuleStyles__filterBtn css-1ef15q7"
-                              data-test="filterToggleBtnMobile"
-                              type="button"
-                            >
-                              Filter
                             </button>
                           </div>
                         </div>
@@ -136,12 +198,21 @@ class CompanyJobs extends Component {
                     </form>
                   </div>
                   <div class="JobsListStyles__jobListContainer gdGrid">
-                    {<CompanyJobCard job={'job'} savJob={(event) => this.saveJob(event, 'id')} />}
+                    <ul class="JobsListStyles__jobList">
+                      {this.props.companyJobStore.JobList.map((job) => (
+                        <CompanyJobCard
+                          job={job}
+                          openJobPage={(event) => this.openJobPage(event, job._id)}
+                          unsaveJob={(event) => this.unsaveJob(event, job._id)}
+                          saveJob={(event) => this.saveJob(event, job._id)}
+                        />
+                      ))}
+                    </ul>
                   </div>
                   <div class="col d-flex mt mx-auto justify-content-center ">
                     <PaginationComponent
-                      //   PageCount={this.props.jobListStore.PageCount}
-                      //   PageNo={this.props.jobListStore.PageNo}
+                      PageCount={this.props.companyJobStore.PageCount}
+                      PageNo={this.props.companyJobStore.PageNo}
                       onPageClick={(e) => {
                         this.onPageClick(e);
                       }}
@@ -159,8 +230,11 @@ class CompanyJobs extends Component {
 
 const mapStateToProps = (state) => {
   const { studentInfoStore } = state.StudentCompleteInfoReducer;
+  const { companyOverviewStore, companyJobStore } = state.CompanyPageReducer;
   return {
     studentInfoStore,
+    companyOverviewStore,
+    companyJobStore,
   };
 };
 // export default CompanyJobs;
@@ -169,6 +243,12 @@ const mapDispatchToProps = (dispatch) => {
     updateStudentProfile: (payload) => {
       dispatch({
         type: updateStudentProfile,
+        payload,
+      });
+    },
+    updateCompanyJobStore: (payload) => {
+      dispatch({
+        type: updateCompanyJobStore,
         payload,
       });
     },

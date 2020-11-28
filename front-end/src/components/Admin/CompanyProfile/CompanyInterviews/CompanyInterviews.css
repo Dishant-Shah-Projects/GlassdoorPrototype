@@ -239,3 +239,18 @@ ul.undecorated li {
 .ib {
   display: inline-block;
 }
+i.sqLed.yellow {
+  background-color: #f6b500;
+}
+a.gd-btn-3,
+button.gd-btn-3 {
+  z-index: 0;
+  position: relative;
+  overflow: hidden;
+  background-color: #fff;
+  color: #404040;
+  -webkit-transition: background-color 200ms linear;
+  -o-transition: background-color 200ms linear;
+  transition: background-color 200ms linear;
+  border: 1px solid #c2c2c2;
+}

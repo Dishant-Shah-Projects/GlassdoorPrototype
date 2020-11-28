@@ -58,7 +58,7 @@ class CompanySearchResultsAdmin extends Component {
   // Update once admin company page is created
   openCompanyProfile = (event, CompanyID) => {
     localStorage.setItem('companyID', CompanyID);
-    history.push('/CompanyPage');
+    history.push('/CompanyPageAdminView');
   };
 
   render() {

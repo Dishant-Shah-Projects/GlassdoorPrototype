@@ -1,6 +1,4 @@
 import React, { Component } from 'react';
-import PaginationComponent from '../../Common/PaginationComponent';
-import AllReview from './AllReview';
 // import '../CompanyOverView/CompanyOverView.css';
 import './CompanyReviews.css';
 import SpecialReview from './SpecialReview';
@@ -9,9 +7,12 @@ import serverUrl from '../../../../config';
 import {
   updatespecialReviews,
   updateCompanyReviewsStore,
+  updateStudentProfile,
 } from '../../../../constants/action-types';
 import { connect } from 'react-redux';
 import moment from 'moment';
+import PaginationComponent from '../../../Student/Common/PaginationComponent';
+import AllReview from '../../CompanyGeneralReviewsAdmin/AllReview';
 
 class CompanyReviews extends Component {
   constructor(props) {
@@ -36,10 +37,11 @@ class CompanyReviews extends Component {
       });
     this.commonFetch();
   }
+
   commonFetch = (PageNo = 0) => {
     axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
     axios
-      .get(serverUrl + 'student/companyReview', {
+      .get(serverUrl + 'admin/getCompanyGeneralReviews', {
         params: {
           CompanyID: localStorage.getItem('companyID'),
           PageNo,
@@ -48,12 +50,12 @@ class CompanyReviews extends Component {
       })
       .then(
         (response) => {
-          console.log('companyReviews', response.data);
+          console.log('getCompanyGeneralReviews', response.data);
           let payload = {
-            ReviewList: response.data[2],
+            ReviewList: response.data[0].Review,
             PageNo,
-            Totalcount: response.data[0].count,
-            PageCount: Math.ceil(response.data[0].count / 10),
+            Totalcount: response.data[1].Count,
+            PageCount: Math.ceil(response.data[1].Count / 10),
 
             // PageCount: Math.ceil(response.data.Totalcount / 3),
           };
@@ -69,29 +71,20 @@ class CompanyReviews extends Component {
     // console.log('Page Clicked:', e.selected);
     this.commonFetch(e.selected);
   };
-  helpfulClicked = (e, ID) => {
-    e.preventDefault();
+
+  buttonClicked = (event, Status, ID, CompanyID) => {
+    event.preventDefault();
     axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
     const data = {
-      CompanyID: localStorage.getItem('companyID'),
+      Status,
       ID,
+      CompanyID,
     };
-    axios.post(serverUrl + 'student/companyHelpfulReview', data).then(
+    axios.post(serverUrl + 'admin/updateGeneralReviews', data).then(
       (response) => {
         console.log('Status Code : ', response.status);
         if (response.status === 200) {
-          console.log('Helpful success id:', ID);
-          let ReviewList = [...this.props.companyReviewsStore.ReviewList];
-          const index = ReviewList.findIndex((x) => x.ID === ID);
-          let review = { ...ReviewList[index] };
-          review.Helpful = review.Helpful + 1;
-          ReviewList[index] = review;
-          let payload = {
-            ReviewList,
-
-            // PageCount: Math.ceil(response.data.Totalcount / 3),
-          };
-          this.props.updateCompanyReviewsStore(payload);
+          this.commonFetch(this.props.companyReviewsStore.PageNo);
         }
       },
       (error) => {
@@ -99,6 +92,7 @@ class CompanyReviews extends Component {
       }
     );
   };
+
   render() {
     let recomendPercentage = 0;
     if (this.props.companyOverviewStore.companyOverview.recommendedcount > 0) {
@@ -308,36 +302,15 @@ class CompanyReviews extends Component {
                     </div>
                   </div>
                 </div>
-                {this.props.companyOverviewStore.featuredReview ? (
-                  <SpecialReview
-                    review={this.props.companyOverviewStore.featuredReview}
-                    reviewType={'Featured Review'}
-                  />
-                ) : (
-                  ''
-                )}
-                {this.props.companyOverviewStore.positiveReview ? (
-                  <SpecialReview
-                    review={this.props.companyOverviewStore.positiveReview}
-                    reviewType={'Most Helpufl Positive Review'}
-                  />
-                ) : (
-                  ''
-                )}
-                {this.props.companyOverviewStore.negatieReview ? (
-                  <SpecialReview
-                    review={this.props.companyOverviewStore.negatieReview}
-                    reviewType={'Most Helpufl Negative Review'}
-                  />
-                ) : (
-                  ''
-                )}
+
                 <div id="ReviewsRef">
                   <div id="ReviewsFeed" class=" mt">
                     <ol class=" empReviews emp-reviews-feed pl-0">
                       {this.props.companyReviewsStore.ReviewList.map((review) => (
                         <AllReview
-                          helpfulClicked={(event) => this.helpfulClicked(event, review.ID)}
+                          buttonClicked={(event, Status) =>
+                            this.buttonClicked(event, Status, review.ID, review.CompanyID)
+                          }
                           review={review}
                         />
                       ))}
@@ -366,10 +339,12 @@ class CompanyReviews extends Component {
 
 const mapStateToProps = (state) => {
   const { companyOverviewStore, companyReviewsStore } = state.CompanyPageReducer;
+  const { studentInfoStore } = state.StudentCompleteInfoReducer;
 
   return {
     companyOverviewStore,
     companyReviewsStore,
+    studentInfoStore,
   };
 };
 const mapDispatchToProps = (dispatch) => {
@@ -383,6 +358,12 @@ const mapDispatchToProps = (dispatch) => {
     updateCompanyReviewsStore: (payload) => {
       dispatch({
         type: updateCompanyReviewsStore,
+        payload,
+      });
+    },
+    updateStudentProfile: (payload) => {
+      dispatch({
+        type: updateStudentProfile,
         payload,
       });
     },
