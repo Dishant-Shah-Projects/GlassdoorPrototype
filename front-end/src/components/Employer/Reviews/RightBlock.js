@@ -45,18 +45,9 @@ class RightBlock extends Component {
       authFlag: false,
       cancelUpdate: false,
       feature: 0,
-      Favorite:0
+      Favorite: 0,
     };
-  }
-
-  showReply = (Id) => {
-    localStorage.setItem('currentId', Id);
-    this.props.showReplyModal();
-  };
-
-  closeReplyModal = () => {
-    this.props.hideReplyModal();
-  };
+  }  
 
   componentDidMount() {
     this.props.fetchReviews();
@@ -67,7 +58,10 @@ class RightBlock extends Component {
   };
 
   handleFeatured(Id, CompanyId) {
-    this.setFeature();
+    this.setFeature(Id, CompanyId);
+  }
+
+  saveFeat(Id,CompanyId) {
     axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
     axios
       .post(serverUrl + 'company/reviewFeatured', {
@@ -76,12 +70,67 @@ class RightBlock extends Component {
         Response: this.state.feature,
       })
       .then((response) => {
-        if (response.status == 201) {
+        if (response.status === 200) {
           console.log('response', response);
-          let payload2 = {
-            reviewFeature: this.state.feature,
-          };
-          this.props.updateReviewFeature(payload2);
+          
+          // let payload2 = {
+          //   reviewFeature: this.state.feature,
+          // };
+          // this.props.updateReviewFeature(payload2);
+        }
+      })
+      .catch((error) => {
+        this.setState({
+          errorMessage: 'No Reviews Found',
+        });
+      });
+  }
+  setFeature(Id,CompanyId) {
+    if (this.state.Feature === 0) {
+      console.log('inside if 0');
+      this.setState(
+        {
+          Feature: 1,
+        },
+        function () {
+          this.saveFeat(Id,CompanyId);
+        }
+      );
+    } else {
+      console.log('inside if 1');
+      this.setState(
+        {
+          Feature: 0,
+        },
+        function (Id) {
+          this.saveFeat(Id,CompanyId);
+        }
+      );
+    }
+    
+  }
+
+  handleSaveFavorite(Id) {
+    this.setFavorite(Id);
+    
+  }
+
+  saveFav(Id) {
+    console.log('Id1',Id);
+    console.log('inside save', this.state.Favorite);
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    axios
+      .post(serverUrl + 'company/reviewFavorite', {
+        ID: Id,
+        Favorite: this.state.Favorite,
+      })
+      .then((response) => {
+        if (response.status == 200) {
+          console.log('response', response);
+          // let payload3 = {
+          //   reviewFavorite: this.state.Favorite,
+          // };
+          // this.props.updateReviewFavorite(payload3);
         }
       })
       .catch((error) => {
@@ -91,40 +140,29 @@ class RightBlock extends Component {
       });
   }
 
-  setFeature() {
-    this.setState((prevState) => ({
-      feature: !prevState.feature,
-    }));
-  }
-  handleSaveFavorite(Id) {
-    console.log('inside save');
-    this.setFavorite();
-    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
-    axios
-      .post(serverUrl + 'company/reviewFavorite', {
-        ID: Id,
-        Favorite: this.state.Favorite,
-      })
-      .then((response) => {
-        if (response.status == 201) {
-          console.log('response', response);
-          let payload3 = {
-            reviewFavorite: this.state.Favorite,
-          };
-          this.props.updateReviewFavorite(payload3);
-        }       
-      })
-      .catch((error) => {
-        this.setState({
-          errorMessage: 'No Reviews Found',
-        });
-      });
-  }
-
-  setFavorite() {
-    this.setState((prevState) => ({
-      Favorite: !prevState.Favorite,
-    }));
+  setFavorite(Id) {
+    console.log('Id',Id);
+    if (this.state.Favorite === 0) {
+      console.log('inside if 0');
+      this.setState(
+        {
+          Favorite: 1,
+        },
+        function () {
+          this.saveFav(Id);
+        }
+      );
+    } else {
+      console.log('inside if 1');
+      this.setState(
+        {
+          Favorite: 0,
+        },
+        function (Id) {
+          this.saveFav(Id);
+        }
+      );
+    }
   }
 
   render() {

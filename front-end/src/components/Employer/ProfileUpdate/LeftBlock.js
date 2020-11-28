@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import '../LandingPage/Body.css';
+import { connect } from 'react-redux';
 
 class LeftBlock extends Component {
   constructor(props) {
@@ -25,6 +26,14 @@ class LeftBlock extends Component {
             <div class="profilePhotoStyle__profilePhoto___CTVQw">
               <div class="d-inline-flex justify-content-start align-items-center profilePhotoStyle__photoContainer___3itOq">
                 <div class="mr-xsm">
+                {this.props.companyInfo.ProfileImg ? (                  
+                    <img
+                      src={this.props.companyInfo.ProfileImg}
+                      alt="Profile avatar"
+                      class="mb-xsm css-uodor8 css-1k2lqp9"
+                    />
+                     
+                  ) : (
                   <span class="SVGInline profilePhotoStyle__icon___1H_01">
                     <svg
                       class="SVGInline-svg profilePhotoStyle__icon___1H_01-svg"
@@ -41,10 +50,11 @@ class LeftBlock extends Component {
                       ></path>
                     </svg>
                   </span>
+                  )}
                 </div>
                 <div class="profilePhotoBadge">
                   <div onClick={this.openImageModal} class="profilePhotoStyle__caption___HtLE-">
-                    <span>Add a photo</span>
+                    <span>Add/Update a photo</span>
                   </div>
                 </div>
                 {this.state.showImageUploadModal ? (
@@ -200,5 +210,11 @@ class LeftBlock extends Component {
     );
   }
 }
-
-export default LeftBlock;
+const mapStateToProps = (state) => {
+  const { companyInfo } = state.CompaniesProfileReducer;
+  return {
+    companyInfo,
+  };
+};
+export default connect(mapStateToProps, null)(LeftBlock);
+//export default LeftBlock;

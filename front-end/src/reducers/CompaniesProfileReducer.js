@@ -16,6 +16,7 @@ const defaultState = {
     CEO: '',
     City: '',
     State: '',
+    FeaturedReview: '',    
   },
 };
 

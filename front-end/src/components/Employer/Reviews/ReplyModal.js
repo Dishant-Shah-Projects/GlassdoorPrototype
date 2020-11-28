@@ -21,11 +21,13 @@ class ReplyModal extends Component {
     });      
   }
 
-  handleCancelReply =() => {
-    this.props.hideReplyModal();
+  handleCancelReply =() => {    
+    this.props.toggle();    
   }
-  handleSaveReply = () => {    
-    const Id = localStorage.getItem('currentId');
+  handleSaveReply = () => {  
+    
+    const Id = this.props.reviewID;
+    console.log('inside save', Id);
     axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
     axios
       .post(serverUrl + 'company/reviewResponse', {
@@ -33,8 +35,9 @@ class ReplyModal extends Component {
         Response: this.state.Response,
       })
       .then((response) => {
-        if (response.status == 201) {
-          this.props.hideReplyModal();          
+        console.log('response', response);
+        if (response.status === 200) {          
+          this.props.toggle();              
         }
       })
       .catch((error) => {

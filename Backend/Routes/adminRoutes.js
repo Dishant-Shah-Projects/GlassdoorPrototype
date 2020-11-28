@@ -18,6 +18,10 @@ const {
   getSalaryReviews,
   getInterviewReviews,
   getPhotos,
+  getCompanyGeneralReviews,
+  getCompanySalaryReviews,
+  getCompanyInterviewReviews,
+  getCompanyPhotos,
 } = require('../Admin/adminFunctionality');
 
 Router.get('/reviews', checkAuth, async (req, res) => {
@@ -87,6 +91,26 @@ Router.get('/getInterviewReviews', checkAuth, async (req, res) => {
 
 Router.get('/getPhotos', checkAuth, async (req, res) => {
   const value = await getPhotos(req, res);
+  return value;
+});
+
+Router.get('/getCompanyGeneralReviews', checkAuth, async (req, res) => {
+  const value = await getCompanyGeneralReviews(req, res);
+  return value;
+});
+
+Router.get('/getCompanySalaryReviews', checkAuth, async (req, res) => {
+  const value = await getCompanySalaryReviews(req, res);
+  return value;
+});
+
+Router.get('/getCompanyInterviewReviews', checkAuth, async (req, res) => {
+  const value = await getCompanyInterviewReviews(req, res);
+  return value;
+});
+
+Router.get('/getCompanyPhotos', checkAuth, async (req, res) => {
+  const value = await getCompanyPhotos(req, res);
   return value;
 });
 

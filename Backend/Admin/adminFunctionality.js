@@ -517,6 +517,140 @@ const getPhotos = async (req, res) => {
     res.end('Network Error');
   }
 };
+
+// get Company General reviews on the filter criteria
+const getCompanyGeneralReviews = async (req, res) => {
+  try {
+    const { CompanyID, PageNo } = req.query;
+    const resultArray = [];
+    await GeneralReview.find({ CompanyID }, (err, result) => {
+      if (err) {
+        res.writeHead(500, {
+          'Content-Type': 'application/json',
+        });
+        res.end('Network Error');
+      }
+      if (result) {
+        resultArray.push({ Review: result });
+      }
+    })
+      .sort({ DatePosted: -1 })
+      .limit(10)
+      .skip(PageNo * 10);
+    const count = await GeneralReview.find({ CompanyID }).countDocuments();
+    resultArray.push({ Count: count });
+    res.writeHead(200, {
+      'Content-Type': 'application/json',
+    });
+    res.end(JSON.stringify(resultArray));
+  } catch (error) {
+    res.writeHead(500, {
+      'Content-Type': 'application/json',
+    });
+    res.end('Network Error');
+  }
+};
+
+// get Company Salary reviews on the filter criteria
+const getCompanySalaryReviews = async (req, res) => {
+  try {
+    const { CompanyID, PageNo } = req.query;
+    const resultArray = [];
+    await SalaryReview.find({ CompanyID }, (err, result) => {
+      if (err) {
+        res.writeHead(500, {
+          'Content-Type': 'application/json',
+        });
+        res.end('Network Error');
+      }
+      if (result) {
+        resultArray.push({ Review: result });
+      }
+    })
+      .sort({ DatePosted: -1 })
+      .limit(10)
+      .skip(PageNo * 10);
+    const count = await SalaryReview.find({ CompanyID }).countDocuments();
+    resultArray.push({ Count: count });
+    res.writeHead(200, {
+      'Content-Type': 'application/json',
+    });
+    res.end(JSON.stringify(resultArray));
+  } catch (error) {
+    res.writeHead(500, {
+      'Content-Type': 'application/json',
+    });
+    res.end('Network Error');
+  }
+};
+
+// get Company Interview reviews on the filter criteria
+const getCompanyInterviewReviews = async (req, res) => {
+  try {
+    const { CompanyID, PageNo } = req.query;
+    const resultArray = [];
+    await InterviewReview.find({ CompanyID }, (err, result) => {
+      if (err) {
+        res.writeHead(500, {
+          'Content-Type': 'application/json',
+        });
+        res.end('Network Error');
+      }
+      if (result) {
+        resultArray.push({ Review: result });
+      }
+    })
+      .sort({ DatePosted: -1 })
+      .limit(10)
+      .skip(PageNo * 10);
+    const count = await InterviewReview.find({ CompanyID }).countDocuments();
+    resultArray.push({ Count: count });
+    res.writeHead(200, {
+      'Content-Type': 'application/json',
+    });
+    res.end(JSON.stringify(resultArray));
+  } catch (error) {
+    res.writeHead(500, {
+      'Content-Type': 'application/json',
+    });
+    res.end('Network Error');
+  }
+};
+
+// get company Photos on the filter criteria
+const getCompanyPhotos = async (req, res) => {
+  try {
+    const { CompanyID, PageNo } = req.query;
+    const resultArray = [];
+    await Photos.find({ CompanyID }, (err, result) => {
+      if (err) {
+        res.writeHead(500, {
+          'Content-Type': 'application/json',
+        });
+        res.end('Network Error');
+      }
+      if (result) {
+        resultArray.push({ Review: result });
+      }
+    })
+      .sort({ DateUploaded: -1 })
+      .limit(10)
+      .skip(PageNo * 10);
+    const count = await Photos.find({ CompanyID }).countDocuments();
+    resultArray.push({ Count: count });
+
+    res.writeHead(200, {
+      'Content-Type': 'application/json',
+    });
+    res.end(JSON.stringify(resultArray));
+  } catch (error) {
+    res.writeHead(500, {
+      'Content-Type': 'application/json',
+    });
+    res.end('Network Error');
+  }
+};
+
 module.exports = {
   reviews,
   companyList,
@@ -532,4 +666,8 @@ module.exports = {
   updateGeneralReviews,
   updateInterviewReviews,
   updateSalaryReviews,
+  getCompanyGeneralReviews,
+  getCompanySalaryReviews,
+  getCompanyInterviewReviews,
+  getCompanyPhotos,
 };

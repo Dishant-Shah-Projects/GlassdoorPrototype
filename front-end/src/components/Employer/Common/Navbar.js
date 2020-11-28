@@ -4,7 +4,7 @@ import { Redirect } from 'react-router';
 import { history } from '../../../App';
 import axios from 'axios';
 import serverUrl from '../../../config';
-import { openProfileTabOnClick, updateSearcFilter } from '../../../constants/action-types';
+import { openProfileTabOnClick, updateSearcFilter, updateCompanyProfile } from '../../../constants/action-types';
 import { connect } from 'react-redux';
 
 class Navbar extends Component {
@@ -13,6 +13,57 @@ class Navbar extends Component {
     this.state = {
       loggedout: false,
     };
+  }
+
+  componentDidMount() {
+    //set the with credentials to true
+    const data = localStorage.getItem('userId');
+    console.log(data);
+    axios.defaults.withCredentials = true;
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    //make a post request with the user data')
+    axios
+      .get(serverUrl + 'company/profile', {
+        params: {
+          CompanyID: data,
+        },
+      })
+      .then(
+        (response) => {
+          if (response.status === 200) {
+            console.log(response);
+            localStorage.setItem('companyName',response.data);
+            let payload = {
+              CompanyName: response.data.CompanyName,
+              Website: response.data.Website,
+              Size: response.data.Size,
+              ProfileImg: response.data.ProfileImg,
+              Type: response.data.Type,
+              Revenue: response.data.Revenue,
+              Headquarter: response.data.Headquarter,
+              Industry: response.data.Industry,
+              Founded: response.data.Founded,
+              CompanyDescription: response.data.CompanyDescription,
+              CompanyMission: response.data.CompanyMission,
+              CEO: response.data.CEO,
+              City: response.data.City,
+              State: response.data.State,
+              FeaturedReview: response.data.FeaturedReview,              
+            };
+            console.log('payload', payload);
+            localStorage.setItem('companyName', response.data.CompanyName);
+            this.props.updateCompanyProfile(payload);
+            this.setState({
+              authFlag: true,
+            });
+          }
+        },
+        (error) => {
+          this.setState({
+            errorMessage: error.response.data,
+          });
+        }
+      );
   }
 
   handleOnClick = (selectedOption) => {
@@ -547,6 +598,12 @@ const mapDispatchToProps = (dispatch) => {
     updateSearcFilter: (payload) => {
       dispatch({
         type: updateSearcFilter,
+        payload,
+      });
+    },
+    updateCompanyProfile: (payload) => {
+      dispatch({
+        type: updateCompanyProfile,
         payload,
       });
     },

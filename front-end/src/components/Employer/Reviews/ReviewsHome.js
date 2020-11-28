@@ -28,14 +28,16 @@ class ReviewsHome extends Component {
       })
       .then((response) => {
         if (response.status == 200) {
-          console.log('response', response.data.results);
+          console.log('response', response.data);
           let payload1 = {
             reviewList: response.data.results,
             PageNo,
-            PageCount: Math.ceil(response.data.count[0].TOTALCOUNT / 10),
-            Totalcount: response.data.count[0].TOTALCOUNT,
-          }                 
-          this.props.updateReviewList(payload1);
+            PageCount: Math.ceil(response.data.count / 10),
+            Totalcount: response.data.count,
+            // PageCount: Math.ceil(response.data.Totalcount / 3),
+          };           
+          console.log('payload',payload1);
+          this.props.updateReviewList(payload1);          
         }
       })
       .catch((error) => {
