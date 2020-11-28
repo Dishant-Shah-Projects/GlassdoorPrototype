@@ -89,7 +89,7 @@ async function handle_request(msg, callback) {
       const res = {};
       try {
         const { ID, Favorite } = msg.body;
-        const results = await General.findOneAndUpdate({ ID }, Favorite, (err) => {
+        const results = await General.findOneAndUpdate({ ID }, {Favorite}, (err) => {
           if (err) {
             res.status = 500;
             res.end = 'Network Error';
@@ -111,7 +111,7 @@ async function handle_request(msg, callback) {
       const res = {};
       try {
         const { ID, Response } = msg.body;
-        const results = await General.findOneAndUpdate({ ID }, Response, (err) => {
+        const results = await General.updateOne({ ID }, {Response}, (err) => {
           if (err) {
             res.status = 500;
             res.end = 'Network Error';
