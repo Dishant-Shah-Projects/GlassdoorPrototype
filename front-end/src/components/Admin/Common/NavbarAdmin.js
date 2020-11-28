@@ -7,6 +7,8 @@ import {
   updateActiveStringList,
   updateInterviewList,
   updateCompanyReviewsStore,
+  updateCompanyPhotosStore,
+  updateCompanySalariesStore,
 } from '../../../constants/action-types';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
@@ -232,6 +234,79 @@ class NavbarAdmin extends Component {
       );
   };
 
+  fetchPhotos = (
+    PageNo = 0,
+    Status = '',
+    PendingTab = false,
+    ApprovedTab = false,
+    DisapprovedTab = false
+  ) => {
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    axios
+      .get(serverUrl + 'admin/getPhotos', {
+        params: {
+          Status,
+          PageNo,
+        },
+        withCredentials: true,
+      })
+      .then(
+        (response) => {
+          console.log('getPhotos admin', response.data);
+          let payload = {
+            PhotoList: response.data[0].Review,
+            PageNo,
+            Totalcount: response.data[1].Count,
+            PageCount: Math.ceil(response.data[1].Count / 10),
+            PendingTab,
+            ApprovedTab,
+            DisapprovedTab,
+          };
+          this.props.updateCompanyPhotosStore(payload);
+        },
+        (error) => {
+          console.log('error', error);
+        }
+      );
+  };
+
+  fetchSalaryReviews = (
+    PageNo = 0,
+    Status = '',
+    PendingTab = false,
+    ApprovedTab = false,
+    DisapprovedTab = false
+  ) => {
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    axios
+      .get(serverUrl + 'admin/getSalaryReviews', {
+        params: {
+          Status,
+          PageNo,
+        },
+        withCredentials: true,
+      })
+      .then(
+        (response) => {
+          console.log('interview list', response.data);
+          let payload = {
+            SalaryList: response.data[0].Review,
+            PageNo,
+            PageCount: Math.ceil(response.data[1].Count / 10),
+            Totalcount: response.data[1].Count,
+            PendingTab,
+            ApprovedTab,
+            DisapprovedTab,
+            // PageCount: Math.ceil(response.data.Totalcount / 3),
+          };
+          this.props.updateCompanySalariesStore(payload);
+        },
+        (error) => {
+          console.log('error', error);
+        }
+      );
+  };
+
   searchResult = (event) => {
     localStorage.setItem('selectedDropDown', this.props.searchDropDownStore.selectedDropDown);
     localStorage.setItem('SearchString', this.props.searchDropDownStore.SearchString);
@@ -249,7 +324,8 @@ class NavbarAdmin extends Component {
         break;
       }
       case 'Salaries': {
-        history.push('/salaryList');
+        this.fetchSalaryReviews();
+        history.push('/SalaryListAdmin');
         break;
       }
       case 'Interviews': {
@@ -258,7 +334,8 @@ class NavbarAdmin extends Component {
         break;
       }
       case 'Photos': {
-        history.push('/interviewList');
+        this.fetchPhotos();
+        history.push('/CompanyPhotosAdmin');
         break;
       }
       default:
@@ -890,8 +967,19 @@ const mapDispatchToProps = (dispatch) => {
         payload,
       });
     },
+    updateCompanyPhotosStore: (payload) => {
+      dispatch({
+        type: updateCompanyPhotosStore,
+        payload,
+      });
+    },
+    updateCompanySalariesStore: (payload) => {
+      dispatch({
+        type: updateCompanySalariesStore,
+        payload,
+      });
+    },
   };
 };
-
 // export default LoginBody;
 export default connect(mapStateToProps, mapDispatchToProps)(NavbarAdmin);

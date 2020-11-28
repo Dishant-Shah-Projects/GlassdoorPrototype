@@ -23,7 +23,9 @@ class AllReview extends Component {
                 {moment(review.DatePosted).format('ll')}
               </time>
             </div>
-            <div class="helpfulReviews helpfulCount small subtle">Helpful ({review.Helpful})</div>
+            <div class="helpfulReviews helpfulCount small subtle">
+              Helpful ({review.Helpful ? review.Helpful : 0})
+            </div>
           </div>
           <div id="companyReview" class="row mt">
             <div class="col-sm-1"></div>

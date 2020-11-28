@@ -1,20 +1,16 @@
 import React, { Component } from 'react';
-import AllReview from './AllReview';
+import AllPhotos from './AllPhotos';
 // import '../CompanyOverView/CompanyOverView.css';
 import './CompanyReviews.css';
 // import SpecialReview from './SpecialReview';
 import axios from 'axios';
 import serverUrl from '../../../config';
-import {
-  updatespecialReviews,
-  updateCompanyReviewsStore,
-  updateStudentProfile,
-} from '../../../constants/action-types';
+import { updateCompanyPhotosStore, updateStudentProfile } from '../../../constants/action-types';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import PaginationComponent from '../../Student/Common/PaginationComponent';
 
-class CompanyGeneralReviewsAdmin extends Component {
+class CompanyPhotosAdmin extends Component {
   constructor(props) {
     super(props);
     this.state = { PendingTab: false, ApprovedTab: false, DisapprovedTab: false };
@@ -32,7 +28,7 @@ class CompanyGeneralReviewsAdmin extends Component {
   ) => {
     axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
     axios
-      .get(serverUrl + 'admin/getGeneralReviews', {
+      .get(serverUrl + 'admin/getPhotos', {
         params: {
           Status,
           PageNo,
@@ -41,19 +37,17 @@ class CompanyGeneralReviewsAdmin extends Component {
       })
       .then(
         (response) => {
-          console.log('getGeneralReviews admin', response.data);
+          console.log('getPhotos admin', response.data);
           let payload = {
-            ReviewList: response.data[0].Review,
+            PhotoList: response.data[0].Review,
             PageNo,
             Totalcount: response.data[1].Count,
             PageCount: Math.ceil(response.data[1].Count / 10),
             PendingTab,
             ApprovedTab,
             DisapprovedTab,
-
-            // PageCount: Math.ceil(response.data.Totalcount / 3),
           };
-          this.props.updateCompanyReviewsStore(payload);
+          this.props.updateCompanyPhotosStore(payload);
         },
         (error) => {
           console.log('error', error);
@@ -63,19 +57,19 @@ class CompanyGeneralReviewsAdmin extends Component {
 
   onPageClick = (e) => {
     let Status = '';
-    if (this.props.companyReviewsStore.PendingTab) {
+    if (this.props.companyPhotosStore.PendingTab) {
       Status = 'Not Approved';
-    } else if (this.props.companyReviewsStore.ApprovedTab) {
+    } else if (this.props.companyPhotosStore.ApprovedTab) {
       Status = 'Approved';
-    } else if (this.props.companyReviewsStore.DisapprovedTab) {
+    } else if (this.props.companyPhotosStore.DisapprovedTab) {
       Status = 'Disapproved';
     }
     this.commonFetch(
       e.selected,
       Status,
-      this.props.companyReviewsStore.PendingTab,
-      this.props.companyReviewsStore.ApprovedTab,
-      this.props.companyReviewsStore.DisapprovedTab
+      this.props.companyPhotosStore.PendingTab,
+      this.props.companyPhotosStore.ApprovedTab,
+      this.props.companyPhotosStore.DisapprovedTab
     );
   };
 
@@ -92,34 +86,25 @@ class CompanyGeneralReviewsAdmin extends Component {
       ID,
       CompanyID,
     };
-    axios.post(serverUrl + 'admin/updateGeneralReviews', data).then(
+    axios.post(serverUrl + 'admin/updatePictures', data).then(
       (response) => {
         console.log('Status Code : ', response.status);
         if (response.status === 200) {
           let Status = '';
-          if (this.props.companyReviewsStore.PendingTab) {
+          if (this.props.companyPhotosStore.PendingTab) {
             Status = 'Not Approved';
-          } else if (this.props.companyReviewsStore.ApprovedTab) {
+          } else if (this.props.companyPhotosStore.ApprovedTab) {
             Status = 'Approved';
-          } else if (this.props.companyReviewsStore.DisapprovedTab) {
+          } else if (this.props.companyPhotosStore.DisapprovedTab) {
             Status = 'Disapproved';
           }
           this.commonFetch(
-            this.props.companyReviewsStore.PageNo,
+            this.props.companyPhotosStore.PageNo,
             Status,
-            this.props.companyReviewsStore.PendingTab,
-            this.props.companyReviewsStore.ApprovedTab,
-            this.props.companyReviewsStore.DisapprovedTab
+            this.props.companyPhotosStore.PendingTab,
+            this.props.companyPhotosStore.ApprovedTab,
+            this.props.companyPhotosStore.DisapprovedTab
           );
-          // let ReviewList = [...this.props.companyReviewsStore.ReviewList];
-          // const index = ReviewList.findIndex((x) => x.ID === ID);
-          // let review = { ...ReviewList[index] };
-          // review.Status = Status;
-          // ReviewList[index] = review;
-          // let payload = {
-          //   ReviewList: ReviewList,
-          // };
-          // this.props.updateCompanyReviewsStore(payload);
         }
       },
       (error) => {
@@ -130,7 +115,7 @@ class CompanyGeneralReviewsAdmin extends Component {
 
   changePendingTab = (event) => {
     event.preventDefault();
-    if (this.props.companyReviewsStore.PendingTab) {
+    if (this.props.companyPhotosStore.PendingTab) {
       this.commonFetch(0, '', false, false, false);
     } else {
       this.commonFetch(0, 'Not Approved', true, false, false);
@@ -139,15 +124,16 @@ class CompanyGeneralReviewsAdmin extends Component {
 
   changeApprovedTab = (event) => {
     event.preventDefault();
-    if (this.props.companyReviewsStore.ApprovedTab) {
+    if (this.props.companyPhotosStore.ApprovedTab) {
       this.commonFetch(0, '', false, false, false);
     } else {
       this.commonFetch(0, 'Approved', false, true, false);
     }
   };
+
   changeDisapprovedTab = (event) => {
     event.preventDefault();
-    if (this.props.companyReviewsStore.DisapprovedTab) {
+    if (this.props.companyPhotosStore.DisapprovedTab) {
       this.commonFetch(0, '', false, false, false);
     } else {
       this.commonFetch(0, 'Disapproved', false, false, true);
@@ -155,11 +141,12 @@ class CompanyGeneralReviewsAdmin extends Component {
   };
 
   render() {
+    // this.props.LowerNavBarOther();
     return (
       <body className="main flex loggedIn lang-en en-US hollywood  _initOk noTouch desktop">
         {/*<Navbar />*/}
         <div class="pageContentWrapperStudent ">
-          <div id="PageContent">
+          <div style={{ width: '725px' }} id="PageContent">
             <div id="PageBodyContents" class="meat">
               <div class="pageInsideContent cf">
                 <div id="nodeReplace">
@@ -167,18 +154,18 @@ class CompanyGeneralReviewsAdmin extends Component {
                     <div id="EI-Srch">
                       <div id="SearchResults">
                         <div id="InterviewsSearchResults">
-                          <div class="flex-aside">
+                          <div style={{ width: '725px' }} class="flex-aside">
                             <article style={{ position: 'relative' }} id="MainCol" class="mainCol">
                               <div class="module padHorzLg padVertLg">
                                 <div id="InterviewQuestionList" class="module">
                                   <header class="lined">
-                                    {this.props.companyReviewsStore.ReviewList.length === 0 ? (
+                                    {this.props.companyPhotosStore.PhotoList.length === 0 ? (
                                       <h2 class="block" style={{ fontWeight: '400' }}>
-                                        No Reviews found, try different seach criteria
+                                        No Photos found, try different seach criteria
                                       </h2>
                                     ) : (
                                       <h2 class="block" style={{ fontWeight: '400' }}>
-                                        {localStorage.getItem('SearchString')} General Reviews
+                                        {localStorage.getItem('SearchString')} Photos
                                       </h2>
                                     )}
                                   </header>
@@ -192,7 +179,7 @@ class CompanyGeneralReviewsAdmin extends Component {
                                             }}
                                             onClick={this.changePendingTab}
                                             class={
-                                              this.props.companyReviewsStore.PendingTab
+                                              this.props.companyPhotosStore.PendingTab
                                                 ? 'selected'
                                                 : ''
                                             }
@@ -216,7 +203,7 @@ class CompanyGeneralReviewsAdmin extends Component {
                                           <div
                                             onClick={this.changeDisapprovedTab}
                                             class={
-                                              this.props.companyReviewsStore.DisapprovedTab
+                                              this.props.companyPhotosStore.DisapprovedTab
                                                 ? 'selected'
                                                 : ''
                                             }
@@ -239,7 +226,7 @@ class CompanyGeneralReviewsAdmin extends Component {
                                           <div
                                             onClick={this.changeApprovedTab}
                                             class={
-                                              this.props.companyReviewsStore.ApprovedTab
+                                              this.props.companyPhotosStore.ApprovedTab
                                                 ? 'selected'
                                                 : ''
                                             }
@@ -267,17 +254,17 @@ class CompanyGeneralReviewsAdmin extends Component {
                                   <div class="module interviewsAndFilter">
                                     <div id="EmployerInterviews">
                                       <ol class="empReviews tightLt">
-                                        {this.props.companyReviewsStore.ReviewList.map((review) => (
-                                          <AllReview
+                                        {this.props.companyPhotosStore.PhotoList.map((photo) => (
+                                          <AllPhotos
                                             buttonClicked={(event, Status) =>
                                               this.buttonClicked(
                                                 event,
                                                 Status,
-                                                review.ID,
-                                                review.CompanyID
+                                                photo.ID,
+                                                photo.CompanyID
                                               )
                                             }
-                                            review={review}
+                                            photo={photo}
                                           />
                                         ))}
                                       </ol>
@@ -309,31 +296,31 @@ class CompanyGeneralReviewsAdmin extends Component {
                                   <div class="tbl fill margTopSm">
                                     <div class="row alignMid">
                                       <div class="cell span-1-2 drop noWrap middle">
-                                        {this.props.companyReviewsStore.ReviewList.length > 0 ? (
+                                        {this.props.companyPhotosStore.PhotoList.length > 0 ? (
                                           <div class="margTopSm">
                                             <strong>
-                                              {this.props.companyReviewsStore.PageNo * 10 + 1}
+                                              {this.props.companyPhotosStore.PageNo * 10 + 1}
                                             </strong>
                                             –
                                             <strong>
                                               {' '}
-                                              {this.props.companyReviewsStore.ReviewList.length +
-                                                this.props.companyReviewsStore.PageNo * 10}
+                                              {this.props.companyPhotosStore.PhotoList.length +
+                                                this.props.companyPhotosStore.PageNo * 10}
                                             </strong>{' '}
                                             of{' '}
                                             <strong>
-                                              {this.props.companyReviewsStore.Totalcount}
+                                              {this.props.companyPhotosStore.Totalcount}
                                             </strong>{' '}
-                                            General Reviews
+                                            Photos
                                           </div>
                                         ) : (
                                           ''
                                         )}
                                       </div>
-                                      {this.props.companyReviewsStore.ReviewList.length > 0 ? (
+                                      {this.props.companyPhotosStore.PhotoList.length > 0 ? (
                                         <PaginationComponent
-                                          PageCount={this.props.companyReviewsStore.PageCount}
-                                          PageNo={this.props.companyReviewsStore.PageNo}
+                                          PageCount={this.props.companyPhotosStore.PageCount}
+                                          PageNo={this.props.companyPhotosStore.PageNo}
                                           onPageClick={(e) => {
                                             this.onPageClick(e);
                                           }}
@@ -364,23 +351,17 @@ class CompanyGeneralReviewsAdmin extends Component {
 // export default CompanyReviews;
 
 const mapStateToProps = (state) => {
-  const { companyReviewsStore } = state.CompanyPageReducer;
+  const { companyPhotosStore } = state.CompanyPageReducer;
 
   return {
-    companyReviewsStore,
+    companyPhotosStore,
   };
 };
 const mapDispatchToProps = (dispatch) => {
   return {
-    updatespecialReviews: (payload) => {
+    updateCompanyPhotosStore: (payload) => {
       dispatch({
-        type: updatespecialReviews,
-        payload,
-      });
-    },
-    updateCompanyReviewsStore: (payload) => {
-      dispatch({
-        type: updateCompanyReviewsStore,
+        type: updateCompanyPhotosStore,
         payload,
       });
     },
@@ -393,4 +374,4 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(CompanyGeneralReviewsAdmin);
+export default connect(mapStateToProps, mapDispatchToProps)(CompanyPhotosAdmin);

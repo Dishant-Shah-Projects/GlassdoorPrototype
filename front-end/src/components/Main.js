@@ -33,8 +33,10 @@ import JobApplicationPage from './Student/CompanyProfile/CompanyJobs/JobApplicat
 import SalaryForm from './Student/CompanyProfile/CompanySalaries/SalaryForm';
 import AdminHomePage from './Admin/LandingPage/AdminHomePage';
 import CompanySearchResultsAdmin from './Admin/CompanySearchResultsAdmin/CompanySearchResultsAdmin';
-import interviewListAdmin from './Admin/InterviewSearchResultsAdmin/interviewListAdmin';
+import InterviewListAdmin from './Admin/InterviewSearchResultsAdmin/InterviewListAdmin';
 import CompanyGeneralReviewsAdmin from './Admin/CompanyGeneralReviewsAdmin/CompanyGeneralReviewsAdmin';
+import CompanyPhotosAdmin from './Admin/CompanySearchPhotosAdmin/CompanyPhotosAdmin';
+import SalaryListAdmin from './Admin/CompanySalaryReviewsAdmin/SalaryListAdmin';
 
 class Main extends Component {
   // constructor(props) {
@@ -117,8 +119,10 @@ class Main extends Component {
         <Route path="/CompanyPage" component={CompanyPage} />
         <Route path="/AdminHomePage" component={AdminHomePage} />
         <Route path="/CompanySearchResultsAdmin" component={CompanySearchResultsAdmin} />
-        <Route path="/interviewListAdmin" component={interviewListAdmin} />
+        <Route path="/InterviewListAdmin" component={InterviewListAdmin} />
         <Route path="/CompanyGeneralReviewsAdmin" component={CompanyGeneralReviewsAdmin} />
+        <Route path="/CompanyPhotosAdmin" component={CompanyPhotosAdmin} />
+        <Route path="/SalaryListAdmin" component={SalaryListAdmin} />
         {/*</Switch>*/}
       </div>
     );

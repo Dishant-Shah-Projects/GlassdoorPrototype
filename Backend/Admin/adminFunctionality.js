@@ -100,8 +100,8 @@ const updateInterviewReviews = async (req, res) => {
 const updateSalaryReviews = async (req, res) => {
   try {
     // eslint-disable-next-line object-curly-newline
-    const { CompanyID, ID, Status } = req.body;
-    const filter = { $and: [{ CompanyID }, { ID }] };
+    const { CompanyID, SalaryReviewID, Status } = req.body;
+    const filter = { $and: [{ CompanyID }, { SalaryReviewID }] };
     const update = { Status };
     const result = await SalaryReview.findOneAndUpdate(filter, update);
     res.writeHead(200, {

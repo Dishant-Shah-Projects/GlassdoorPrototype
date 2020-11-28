@@ -9,7 +9,7 @@ import { history } from '../../../App';
 import CompanyInterviewCard from './CompanyInterviewCard';
 import '../../Student/CompanyProfile/CompanyInterviews/CompanyInterviews.css';
 
-class interviewListAdmin extends Component {
+class InterviewListAdmin extends Component {
   constructor(props) {
     super(props);
     this.state = { PendingTab: false, ApprovedTab: false, DisapprovedTab: false };
@@ -173,7 +173,7 @@ class interviewListAdmin extends Component {
   };
 
   render() {
-    this.props.LowerNavBarOther();
+    // this.props.LowerNavBarOther();
     return (
       <body className="main flex loggedIn lang-en en-US hollywood  _initOk noTouch desktop">
         {/*<Navbar />*/}
@@ -425,4 +425,4 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(interviewListAdmin);
+export default connect(mapStateToProps, mapDispatchToProps)(InterviewListAdmin);

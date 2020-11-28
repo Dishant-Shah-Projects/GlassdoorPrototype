@@ -29,18 +29,13 @@ class CompanyInterviewCard extends Component {
             <div class="cell">
               <h2 class="summary strong noMargTop tightTop margBotXs">
                 <a href="/Interview/Amazon-Interview-RVW24701674.htm">
-                  <span class="reviewer">{interview.JobTitle}</span> Interview
+                  <span class="reviewer">{interview.JobTitle}</span> Interview -{' '}
+                  {interview.CompanyName}
                 </a>
               </h2>
               <div class="tbl reviewMeta">
                 <div class="cell">
-                  <div class="author minor">
-                    {' '}
-                    Anonymous Employee in
-                    <span class="padLtSm">
-                      <i class="flag us"></i>
-                    </span>
-                  </div>
+                  <div class="author minor"></div>
                 </div>
               </div>
             </div>

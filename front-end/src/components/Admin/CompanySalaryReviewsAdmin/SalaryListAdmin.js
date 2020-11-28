@@ -1,26 +1,18 @@
 import React, { Component } from 'react';
-import AllReview from './AllReview';
-// import '../CompanyOverView/CompanyOverView.css';
-import './CompanyReviews.css';
-// import SpecialReview from './SpecialReview';
+import { connect } from 'react-redux';
+import { updateCompanySalariesStore } from '../../../constants/action-types';
+import PaginationComponent from '../../Student/Common/PaginationComponent';
+// import './interviewList.css';
 import axios from 'axios';
 import serverUrl from '../../../config';
-import {
-  updatespecialReviews,
-  updateCompanyReviewsStore,
-  updateStudentProfile,
-} from '../../../constants/action-types';
-import { connect } from 'react-redux';
-import moment from 'moment';
-import PaginationComponent from '../../Student/Common/PaginationComponent';
+import { history } from '../../../App';
+import SalaryReviewCard from './SalaryReviewCard';
+import '../../Student/CompanyProfile/CompanyInterviews/CompanyInterviews.css';
 
-class CompanyGeneralReviewsAdmin extends Component {
+class SalaryListAdmin extends Component {
   constructor(props) {
     super(props);
     this.state = { PendingTab: false, ApprovedTab: false, DisapprovedTab: false };
-  }
-  componentDidMount() {
-    this.commonFetch();
   }
 
   commonFetch = (
@@ -32,7 +24,7 @@ class CompanyGeneralReviewsAdmin extends Component {
   ) => {
     axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
     axios
-      .get(serverUrl + 'admin/getGeneralReviews', {
+      .get(serverUrl + 'admin/getSalaryReviews', {
         params: {
           Status,
           PageNo,
@@ -41,19 +33,18 @@ class CompanyGeneralReviewsAdmin extends Component {
       })
       .then(
         (response) => {
-          console.log('getGeneralReviews admin', response.data);
+          console.log('interview list', response.data);
           let payload = {
-            ReviewList: response.data[0].Review,
+            SalaryList: response.data[0].Review,
             PageNo,
-            Totalcount: response.data[1].Count,
             PageCount: Math.ceil(response.data[1].Count / 10),
+            Totalcount: response.data[1].Count,
             PendingTab,
             ApprovedTab,
             DisapprovedTab,
-
             // PageCount: Math.ceil(response.data.Totalcount / 3),
           };
-          this.props.updateCompanyReviewsStore(payload);
+          this.props.updateCompanySalariesStore(payload);
         },
         (error) => {
           console.log('error', error);
@@ -61,65 +52,60 @@ class CompanyGeneralReviewsAdmin extends Component {
       );
   };
 
+  componentDidMount() {
+    localStorage.setItem('companyID', '');
+    this.commonFetch();
+  }
+
   onPageClick = (e) => {
     let Status = '';
-    if (this.props.companyReviewsStore.PendingTab) {
+    if (this.props.companySalariesStore.PendingTab) {
       Status = 'Not Approved';
-    } else if (this.props.companyReviewsStore.ApprovedTab) {
+    } else if (this.props.companySalariesStore.ApprovedTab) {
       Status = 'Approved';
-    } else if (this.props.companyReviewsStore.DisapprovedTab) {
+    } else if (this.props.companySalariesStore.DisapprovedTab) {
       Status = 'Disapproved';
     }
     this.commonFetch(
       e.selected,
       Status,
-      this.props.companyReviewsStore.PendingTab,
-      this.props.companyReviewsStore.ApprovedTab,
-      this.props.companyReviewsStore.DisapprovedTab
+      this.props.companySalariesStore.PendingTab,
+      this.props.companySalariesStore.ApprovedTab,
+      this.props.companySalariesStore.DisapprovedTab
     );
   };
 
-  // openCompanyProfile = (event, CompanyID) => {
-  //   localStorage.setItem('companyID', CompanyID);
-  //   history.push('/CompanyPage');
-  // };
+  openCompanyProfile = (event, CompanyID) => {
+    localStorage.setItem('companyID', CompanyID);
+    history.push('/CompanyPage');
+  };
 
-  buttonClicked = (event, Status, ID, CompanyID) => {
+  buttonClicked = (event, Status, SalaryReviewID, CompanyID) => {
     event.preventDefault();
     axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
     const data = {
       Status,
-      ID,
+      SalaryReviewID,
       CompanyID,
     };
-    axios.post(serverUrl + 'admin/updateGeneralReviews', data).then(
+    axios.post(serverUrl + 'admin/updateSalaryReviews', data).then(
       (response) => {
         console.log('Status Code : ', response.status);
         if (response.status === 200) {
-          let Status = '';
-          if (this.props.companyReviewsStore.PendingTab) {
+          if (this.props.companySalariesStore.PendingTab) {
             Status = 'Not Approved';
-          } else if (this.props.companyReviewsStore.ApprovedTab) {
+          } else if (this.props.companySalariesStore.ApprovedTab) {
             Status = 'Approved';
-          } else if (this.props.companyReviewsStore.DisapprovedTab) {
+          } else if (this.props.companySalariesStore.DisapprovedTab) {
             Status = 'Disapproved';
           }
           this.commonFetch(
-            this.props.companyReviewsStore.PageNo,
+            this.props.companySalariesStore.PageNo,
             Status,
-            this.props.companyReviewsStore.PendingTab,
-            this.props.companyReviewsStore.ApprovedTab,
-            this.props.companyReviewsStore.DisapprovedTab
+            this.props.companySalariesStore.PendingTab,
+            this.props.companySalariesStore.ApprovedTab,
+            this.props.companySalariesStore.DisapprovedTab
           );
-          // let ReviewList = [...this.props.companyReviewsStore.ReviewList];
-          // const index = ReviewList.findIndex((x) => x.ID === ID);
-          // let review = { ...ReviewList[index] };
-          // review.Status = Status;
-          // ReviewList[index] = review;
-          // let payload = {
-          //   ReviewList: ReviewList,
-          // };
-          // this.props.updateCompanyReviewsStore(payload);
         }
       },
       (error) => {
@@ -130,7 +116,7 @@ class CompanyGeneralReviewsAdmin extends Component {
 
   changePendingTab = (event) => {
     event.preventDefault();
-    if (this.props.companyReviewsStore.PendingTab) {
+    if (this.props.companySalariesStore.PendingTab) {
       this.commonFetch(0, '', false, false, false);
     } else {
       this.commonFetch(0, 'Not Approved', true, false, false);
@@ -139,7 +125,7 @@ class CompanyGeneralReviewsAdmin extends Component {
 
   changeApprovedTab = (event) => {
     event.preventDefault();
-    if (this.props.companyReviewsStore.ApprovedTab) {
+    if (this.props.companySalariesStore.ApprovedTab) {
       this.commonFetch(0, '', false, false, false);
     } else {
       this.commonFetch(0, 'Approved', false, true, false);
@@ -147,7 +133,7 @@ class CompanyGeneralReviewsAdmin extends Component {
   };
   changeDisapprovedTab = (event) => {
     event.preventDefault();
-    if (this.props.companyReviewsStore.DisapprovedTab) {
+    if (this.props.companySalariesStore.DisapprovedTab) {
       this.commonFetch(0, '', false, false, false);
     } else {
       this.commonFetch(0, 'Disapproved', false, false, true);
@@ -172,13 +158,13 @@ class CompanyGeneralReviewsAdmin extends Component {
                               <div class="module padHorzLg padVertLg">
                                 <div id="InterviewQuestionList" class="module">
                                   <header class="lined">
-                                    {this.props.companyReviewsStore.ReviewList.length === 0 ? (
+                                    {this.props.companySalariesStore.SalaryList.length === 0 ? (
                                       <h2 class="block" style={{ fontWeight: '400' }}>
-                                        No Reviews found, try different seach criteria
+                                        No Salary Reviews found, try different seach criteria
                                       </h2>
                                     ) : (
                                       <h2 class="block" style={{ fontWeight: '400' }}>
-                                        {localStorage.getItem('SearchString')} General Reviews
+                                        {localStorage.getItem('SearchString')} Salary Reviews
                                       </h2>
                                     )}
                                   </header>
@@ -192,7 +178,7 @@ class CompanyGeneralReviewsAdmin extends Component {
                                             }}
                                             onClick={this.changePendingTab}
                                             class={
-                                              this.props.companyReviewsStore.PendingTab
+                                              this.props.companySalariesStore.PendingTab
                                                 ? 'selected'
                                                 : ''
                                             }
@@ -216,7 +202,7 @@ class CompanyGeneralReviewsAdmin extends Component {
                                           <div
                                             onClick={this.changeDisapprovedTab}
                                             class={
-                                              this.props.companyReviewsStore.DisapprovedTab
+                                              this.props.companySalariesStore.DisapprovedTab
                                                 ? 'selected'
                                                 : ''
                                             }
@@ -239,7 +225,7 @@ class CompanyGeneralReviewsAdmin extends Component {
                                           <div
                                             onClick={this.changeApprovedTab}
                                             class={
-                                              this.props.companyReviewsStore.ApprovedTab
+                                              this.props.companySalariesStore.ApprovedTab
                                                 ? 'selected'
                                                 : ''
                                             }
@@ -267,22 +253,38 @@ class CompanyGeneralReviewsAdmin extends Component {
                                   <div class="module interviewsAndFilter">
                                     <div id="EmployerInterviews">
                                       <ol class="empReviews tightLt">
-                                        {this.props.companyReviewsStore.ReviewList.map((review) => (
-                                          <AllReview
-                                            buttonClicked={(event, Status) =>
-                                              this.buttonClicked(
-                                                event,
-                                                Status,
-                                                review.ID,
-                                                review.CompanyID
-                                              )
-                                            }
-                                            review={review}
-                                          />
-                                        ))}
+                                        {this.props.companySalariesStore.SalaryList.map(
+                                          (salary) => (
+                                            <SalaryReviewCard
+                                              buttonClicked={(event, Status) =>
+                                                this.buttonClicked(
+                                                  event,
+                                                  Status,
+                                                  salary.SalaryReviewID,
+                                                  salary.CompanyID
+                                                )
+                                              }
+                                              salary={salary}
+                                            />
+                                          )
+                                        )}
                                       </ol>
                                       <div class="margTop">
                                         <div class="breadcrumbList margTop">
+                                          <div
+                                            class="breadcrumb ib "
+                                            itemscope=""
+                                            itemtype="http://data-vocabulary.org/Breadcrumb"
+                                          >
+                                            <a
+                                              itemprop="url"
+                                              href="/Interview/index.htm"
+                                              data-ga-lbl=""
+                                            >
+                                              <span itemprop="title">Inter­views</span>{' '}
+                                              &nbsp;&gt;&nbsp;{' '}
+                                            </a>
+                                          </div>
                                           <div
                                             class="breadcrumb ib "
                                             itemprop="child"
@@ -309,31 +311,31 @@ class CompanyGeneralReviewsAdmin extends Component {
                                   <div class="tbl fill margTopSm">
                                     <div class="row alignMid">
                                       <div class="cell span-1-2 drop noWrap middle">
-                                        {this.props.companyReviewsStore.ReviewList.length > 0 ? (
+                                        {this.props.companySalariesStore.SalaryList.length > 0 ? (
                                           <div class="margTopSm">
                                             <strong>
-                                              {this.props.companyReviewsStore.PageNo * 10 + 1}
+                                              {this.props.companySalariesStore.PageNo * 10 + 1}
                                             </strong>
                                             –
                                             <strong>
                                               {' '}
-                                              {this.props.companyReviewsStore.ReviewList.length +
-                                                this.props.companyReviewsStore.PageNo * 10}
+                                              {this.props.companySalariesStore.SalaryList.length +
+                                                this.props.companySalariesStore.PageNo * 10}
                                             </strong>{' '}
                                             of{' '}
                                             <strong>
-                                              {this.props.companyReviewsStore.Totalcount}
+                                              {this.props.companySalariesStore.Totalcount}
                                             </strong>{' '}
-                                            General Reviews
+                                            Salary Reviews
                                           </div>
                                         ) : (
                                           ''
                                         )}
                                       </div>
-                                      {this.props.companyReviewsStore.ReviewList.length > 0 ? (
+                                      {this.props.companySalariesStore.SalaryList.length > 0 ? (
                                         <PaginationComponent
-                                          PageCount={this.props.companyReviewsStore.PageCount}
-                                          PageNo={this.props.companyReviewsStore.PageNo}
+                                          PageCount={this.props.companySalariesStore.PageCount}
+                                          PageNo={this.props.companySalariesStore.PageNo}
                                           onPageClick={(e) => {
                                             this.onPageClick(e);
                                           }}
@@ -361,36 +363,23 @@ class CompanyGeneralReviewsAdmin extends Component {
   }
 }
 
-// export default CompanyReviews;
-
+// export default interviewList;
 const mapStateToProps = (state) => {
-  const { companyReviewsStore } = state.CompanyPageReducer;
+  const { companySalariesStore } = state.CompanyPageReducer;
 
   return {
-    companyReviewsStore,
+    companySalariesStore,
   };
 };
 const mapDispatchToProps = (dispatch) => {
   return {
-    updatespecialReviews: (payload) => {
+    updateCompanySalariesStore: (payload) => {
       dispatch({
-        type: updatespecialReviews,
-        payload,
-      });
-    },
-    updateCompanyReviewsStore: (payload) => {
-      dispatch({
-        type: updateCompanyReviewsStore,
-        payload,
-      });
-    },
-    updateStudentProfile: (payload) => {
-      dispatch({
-        type: updateStudentProfile,
+        type: updateCompanySalariesStore,
         payload,
       });
     },
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(CompanyGeneralReviewsAdmin);
+export default connect(mapStateToProps, mapDispatchToProps)(SalaryListAdmin);
