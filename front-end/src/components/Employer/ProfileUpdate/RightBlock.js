@@ -7,29 +7,90 @@ import './RightBody.css';
 
 class RightBlock extends Component {
   constructor(props) {
-    super(props);
+    super(props);    
     this.state = {
       errorMessage: '',
-      CompanyName: this.props.companyInfo.CompanyName,
-      Website: this.props.companyInfo.Website,
-      Size: this.props.companyInfo.Size,
-      ProfileImg: this.props.companyInfo.ProfileImg,
-      Type: this.props.companyInfo.Type,
-      Revenue: this.props.companyInfo.Revenue,
-      Headquarter: this.props.companyInfo.Headquarter,
-      Industry: this.props.companyInfo.Industry,
-      Founded: this.props.companyInfo.Founded,
-      CompanyDescription: this.props.companyInfo.CompanyDescription,
-      CompanyMission: this.props.companyInfo.CompanyMission,
-      CEO: this.props.companyInfo.CEO,
-      City: this.props.companyInfo.City,
-      State: this.props.companyInfo.State,
+      CompanyName: '',
+      Website: '',
+      Size: '',
+      ProfileImg: '',
+      Type: '',
+      Revenue: '',
+      Headquarter: '',
+      Industry: '',
+      Founded: '',
+      CompanyDescription: '',
+      CompanyMission: '',
+      CEO: '',
+      City: '',
+      State: '',
       authFlag: false, 
       cancelUpdate: false
     };
     
   }
- 
+  
+  componentDidMount() {
+    //set the with credentials to true
+    const data = localStorage.getItem('userId');
+    console.log(data);
+    axios.defaults.withCredentials = true;
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    //make a post request with the user data')
+    axios
+      .get(serverUrl + 'company/profile', {
+        params: {
+          CompanyID: data,
+        },
+      })
+      .then(
+        (response) => {
+          if (response.status === 200) {
+            console.log(response);
+            localStorage.setItem('companyName',response.data.CompanyName);
+            // let payload = {
+            //   CompanyName: response.data.CompanyName,
+            //   Website: response.data.Website,
+            //   Size: response.data.Size,
+            //   ProfileImg: response.data.ProfileImg,
+            //   Type: response.data.Type,
+            //   Revenue: response.data.Revenue,
+            //   Headquarter: response.data.Headquarter,
+            //   Industry: response.data.Industry,
+            //   Founded: response.data.Founded,
+            //   CompanyDescription: response.data.CompanyDescription,
+            //   CompanyMission: response.data.CompanyMission,
+            //   CEO: response.data.CEO,
+            //   City: response.data.City,
+            //   State: response.data.State,
+            // };
+            // console.log('payload', payload);
+            // this.props.updateCompanyProfile(payload);
+            this.setState({
+              CompanyName: response.data.CompanyName,
+              Website: response.data.Website,
+              Size: response.data.Size,
+              ProfileImg: response.data.ProfileImg,
+              Type: response.data.Type,
+              Revenue: response.data.Revenue,
+              Headquarter: response.data.Headquarter,
+              Industry: response.data.Industry,
+              Founded: response.data.Founded,
+              CompanyDescription: response.data.CompanyDescription,
+              CompanyMission: response.data.CompanyMission,
+              CEO: response.data.CEO,
+              City: response.data.City,
+              State: response.data.State,              
+            });
+          }
+        },
+        (error) => {
+          this.setState({
+            errorMessage: error.response.data,
+          });
+        }
+      );
+  }
   onChangeCommonHandler = (e) => {
     this.setState({
       errorMessage: '',      
@@ -38,6 +99,7 @@ class RightBlock extends Component {
       [e.target.name]: e.target.value,
     });
   };
+  
 
   handleSubmit = (e) => {
     
@@ -67,11 +129,29 @@ class RightBlock extends Component {
     axios.post(serverUrl + 'company/profileupdate', data).then(
       (response) => {
         console.log(response);
-        if (response.status === 201) {
+        if (response.status === 200) {
           console.log(response);        
           this.setState({
             authFlag: true,
           });
+           let payload = {
+              CompanyName: this.state.CompanyName,
+              Website: this.state.Website,
+              Size: this.state.Size,
+              ProfileImg: this.state.ProfileImg,
+              Type: this.state.Type,
+              Revenue: this.state.Revenue,
+              Headquarter: this.state.Headquarter,
+              Industry: this.state.Industry,
+              Founded: this.state.Founded,
+              CompanyDescription: this.state.CompanyDescription,
+              CompanyMission: this.state.CompanyMission,
+              CEO: this.state.CEO,
+              City: this.state.City,
+              State: this.state.State,
+            };
+            console.log('payload', payload);
+            this.props.updateCompanyProfile(payload);
           console.log(this.state.authFlag);          
         }
       },

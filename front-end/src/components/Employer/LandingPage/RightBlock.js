@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router';
-import axios from 'axios';
-import serverUrl from '../../../config.js';
-import { updateCompanyProfile } from '../../../constants/action-types';
+// import axios from 'axios';
+// import serverUrl from '../../../config.js';
+// import { updateCompanyProfile } from '../../../constants/action-types';
 import { connect } from 'react-redux';
 import './Body.css';
 
@@ -14,53 +14,54 @@ class RightBlock extends Component {
       updateProfile: false,
     };
   }
-  componentDidMount() {
-    //set the with credentials to true
-    const data = localStorage.getItem('userId');
-    console.log(data);
-    axios.defaults.withCredentials = true;
-    //make a post request with the user data')
-    axios
-      .get(serverUrl + 'company/profile', {
-        params: {
-          CompanyID: data,
-        },
-      })
-      .then(
-        (response) => {
-          if (response.status === 200) {
-            console.log(response);
-            localStorage.setItem('companyName',response.data.CompanyName);
-            let payload = {
-              CompanyName: response.data.CompanyName,
-              Website: response.data.Website,
-              Size: response.data.Size,
-              ProfileImg: response.data.ProfileImg,
-              Type: response.data.Type,
-              Revenue: response.data.Revenue,
-              Headquarter: response.data.Headquarter,
-              Industry: response.data.Industry,
-              Founded: response.data.Founded,
-              CompanyDescription: response.data.CompanyDescription,
-              CompanyMission: response.data.CompanyMission,
-              CEO: response.data.CEO,
-              City: response.data.City,
-              State: response.data.State,
-            };
-            console.log('payload', payload);
-            this.props.updateCompanyProfile(payload);
-            this.setState({
-              authFlag: true,
-            });
-          }
-        },
-        (error) => {
-          this.setState({
-            errorMessage: error.response.data,
-          });
-        }
-      );
-  }
+  // componentDidMount() {
+  //   //set the with credentials to true
+  //   const data = localStorage.getItem('userId');
+  //   console.log(data);
+  //   axios.defaults.withCredentials = true;
+  //   axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+  //   //make a post request with the user data')
+  //   axios
+  //     .get(serverUrl + 'company/profile', {
+  //       params: {
+  //         CompanyID: data,
+  //       },
+  //     })
+  //     .then(
+  //       (response) => {
+  //         if (response.status === 200) {
+  //           console.log(response);
+  //           localStorage.setItem('companyName',response.data.CompanyName);
+  //           let payload = {
+  //             CompanyName: response.data.CompanyName,
+  //             Website: response.data.Website,
+  //             Size: response.data.Size,
+  //             ProfileImg: response.data.ProfileImg,
+  //             Type: response.data.Type,
+  //             Revenue: response.data.Revenue,
+  //             Headquarter: response.data.Headquarter,
+  //             Industry: response.data.Industry,
+  //             Founded: response.data.Founded,
+  //             CompanyDescription: response.data.CompanyDescription,
+  //             CompanyMission: response.data.CompanyMission,
+  //             CEO: response.data.CEO,
+  //             City: response.data.City,
+  //             State: response.data.State,
+  //           };
+  //           console.log('payload', payload);
+  //           this.props.updateCompanyProfile(payload);
+  //           this.setState({
+  //             authFlag: true,
+  //           });
+  //         }
+  //       },
+  //       (error) => {
+  //         this.setState({
+  //           errorMessage: error.response.data,
+  //         });
+  //       }
+  //     );
+  // }
 
   handleUpdateProfile = () => {
     console.log('Inside update profile');
@@ -299,16 +300,16 @@ const mapStateToProps = (state) => {
     companyInfo,
   };
 };
-const mapDispatchToProps = (dispatch) => {
-  return {
-    updateCompanyProfile: (payload) => {
-      dispatch({
-        type: updateCompanyProfile,
-        payload,
-      });
-    },
-  };
-};
+// const mapDispatchToProps = (dispatch) => {
+//   return {
+//     updateCompanyProfile: (payload) => {
+//       dispatch({
+//         type: updateCompanyProfile,
+//         payload,
+//       });
+//     },
+//   };
+// };
 
 // export default LoginBody;
-export default connect(mapStateToProps, mapDispatchToProps)(RightBlock);
+export default connect(mapStateToProps, null)(RightBlock);

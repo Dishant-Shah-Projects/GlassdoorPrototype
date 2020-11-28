@@ -32,8 +32,7 @@ class JobsHome extends Component {
             PageCount: Math.ceil(response.data.count / 10),
             Totalcount: response.data.count,
             // PageCount: Math.ceil(response.data.Totalcount / 3),
-          };
-          console.log('payload', payload1);
+          };          
           this.props.updateJobList(payload1);
 
           if (response.data.jobs.length > 0) {

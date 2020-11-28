@@ -45,12 +45,18 @@ const defaultState = {
     PageNo: 0,
     Totalcount: 0,
     PageCount: 0,
+    PendingTab: false,
+    ApprovedTab: false,
+    DisapprovedTab: false,
   },
   companyPhotosStore: {
     PhotoList: [],
     PageNo: 0,
     Totalcount: 0,
     PageCount: 0,
+    PendingTab: false,
+    ApprovedTab: false,
+    DisapprovedTab: false,
   },
 };
 

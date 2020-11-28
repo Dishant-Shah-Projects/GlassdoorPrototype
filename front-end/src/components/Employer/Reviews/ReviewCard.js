@@ -8,16 +8,41 @@ import { connect } from 'react-redux';
 class ReviewCard extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      popSeen: false,
+      Favorite: 0,
+      Feature: 0
+    };
   }
 
+  
+  saveFavorite(ID) {
+    this.setState((prevState) => ({
+      Favorite: !prevState.Favorite,
+    }));
+    this.props.handleSaveFavorite(ID)
+  }
+
+  saveFeatured(ID, companyID){
+    console.log('inside save featured');
+    this.setState((prevState) => ({
+      Feature: !prevState.Feature,
+    }));
+    this.props.handleFeatured(ID, companyID)
+  }
   showReply = (Id) => {
-    localStorage.setItem('currentId', Id);
-    this.props.showReplyModal();
+    // localStorage.setItem('currentId', Id);
+    // this.props.showReplyModal();
+    this.setState ({
+      popSeen: true
+    });
   };
 
   closeReplyModal = () => {
-    this.props.hideReplyModal();
+    // this.props.hideReplyModal();
+    this.setState ({
+      popSeen: false
+    });
   };
 
   render() {
@@ -91,7 +116,7 @@ class ReviewCard extends Component {
                 <div class="row reviewBodyCell recommends">
                   <div class="col-sm-4 d-flex align-items-center">
                     <i
-                      class="sqLed middle sm mr-xsm"
+                      class="sqLed middle sm mr-xsm"                      
                       style={{
                         backgroundColor: review.Recommended ? 'r#0CAA41' : '#ececec',
                       }}
@@ -102,9 +127,9 @@ class ReviewCard extends Component {
                   <div class="col-sm-4 d-flex align-items-center">
                     <i
                       class="sqLed sm mr-xsm"
-                      onClick={() => this.props.handleSaveFavorite(review.ID)}
+                      onClick={() => this.saveFavorite(review.ID)}
                       style={{
-                        backgroundColor: this.props.reviewFavoriteStore.reviewFavorite ? '#1861bf' : '#ececec',
+                        backgroundColor: this.state.Favorite ? '#1861bf' : '#ececec',
                       }}
                     ></i>
                     <span>Save Favorite</span>
@@ -112,9 +137,9 @@ class ReviewCard extends Component {
                   <div class="col-sm-4 d-flex align-items-center">
                     <i
                       class="sqLed sm mr-xsm"
-                      onClick={() => this.props.handleFeatured(review.ID, review.CompanyID)}
+                      onClick={() => this.saveFeatured(review.ID, review.CompanyID)}
                       style={{
-                        backgroundColor: this.props.reviewFeatureStore.reviewFeature ? '#1861bf' : '#ececec',
+                        backgroundColor: this.state.Feature ? '#1861bf' : '#ececec',
                       }}
                     ></i>
                     <span>Make Featured</span>
@@ -150,8 +175,8 @@ class ReviewCard extends Component {
                 </div>
               </div>
               <div>
-                {this.props.replyModalStore.popSeen ? (
-                  <ReplyModal toggle={this.closeReplyModal} />
+                {this.state.popSeen ? (
+                  <ReplyModal toggle={this.closeReplyModal} reviewID={review.ID}/>
                 ) : null}
               </div>
             </div>
@@ -169,11 +194,13 @@ const mapStateToProps = (state) => {
     reviewFeatureStore,
     reviewFavoriteStore,
   } = state.ReviewReplyReducer;
+  const {companyInfo} = state.CompaniesProfileReducer;
   return {
     replyModalStore: replyModalStore,
     reviewListStore: reviewListStore,
     reviewFeatureStore: reviewFeatureStore,
     reviewFavoriteStore: reviewFavoriteStore,
+    companyInfo: companyInfo
   };
 };
 const mapDispatchToProps = (dispatch) => {
