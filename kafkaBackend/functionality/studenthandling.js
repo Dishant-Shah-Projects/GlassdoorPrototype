@@ -182,7 +182,7 @@ async function handle_request(msg, callback) {
               res.end = 'No data found';
               callback(null, res);
             }
-          }
+          },
         )
           .limit(10)
           .skip(PageNo * 10);
@@ -205,7 +205,9 @@ async function handle_request(msg, callback) {
     case 'addCompanyPhotos': {
       const res = {};
       try {
-        const { StudentID, CompanyID, Photos, CompanyName } = msg.body;
+        const {
+          StudentID, CompanyID, Photos, CompanyName,
+        } = msg.body;
         const count2 = await Photo.countDocuments();
         let ID = count2 + 1;
         let PhotoURL = null;
@@ -240,7 +242,7 @@ async function handle_request(msg, callback) {
               res.end = 'Photos Review Added';
               callback(null, res);
             }
-          }
+          },
         );
       } catch (error) {
         console.log(error);
@@ -476,7 +478,7 @@ async function handle_request(msg, callback) {
             CoverPhoto: 1,
             ProfileImg: 1,
             Size: 1,
-          }
+          },
         );
         const result = { Job: jobData, Company: CompanyData };
         res.status = 200;
@@ -518,7 +520,9 @@ async function handle_request(msg, callback) {
     case 'companyJobs': {
       const res = {};
       try {
-        const { CompanyID, Title, City, PageNo } = msg.query;
+        const {
+          CompanyID, Title, City, PageNo,
+        } = msg.query;
         const filterArray = [];
         if (Title.length !== 0) {
           filterArray.push({ Title: { $regex: `${Title}`, $options: 'i' } });
@@ -566,14 +570,14 @@ async function handle_request(msg, callback) {
               } else {
                 await Student.update(
                   { StudentID },
-                  { HelpfullInterviewReviews: stud.HelpfullInterviewReviews }
+                  { HelpfullInterviewReviews: stud.HelpfullInterviewReviews },
                 );
 
                 res.status = 200;
                 res.end = JSON.stringify({ message: 'helpfull removed' });
                 callback(null, res);
               }
-            }
+            },
           );
         } else {
           Interview.findOneAndUpdate(
@@ -591,7 +595,7 @@ async function handle_request(msg, callback) {
                 res.end = JSON.stringify({ message: 'helpfull added' });
                 callback(null, res);
               }
-            }
+            },
           );
         }
       } catch {
@@ -619,11 +623,11 @@ async function handle_request(msg, callback) {
                 res.end = 'Network Error';
                 callback(null, res);
               }
-            }
+            },
           );
           await Student.update(
             { StudentID },
-            { HelpfullGeneralReviews: stud.HelpfullGeneralReviews }
+            { HelpfullGeneralReviews: stud.HelpfullGeneralReviews },
           );
           const company = await Company.findOne({ CompanyID }).select('FeaturedReview');
           if (company.FeaturedReview.ID === ID) {
@@ -643,7 +647,7 @@ async function handle_request(msg, callback) {
                   res.end = JSON.stringify({ message: 'helpfull removed' });
                   callback(null, res);
                 }
-              }
+              },
             );
           } else {
             res.status = 200;
@@ -661,7 +665,7 @@ async function handle_request(msg, callback) {
                 res.end = 'Network Error';
                 callback(null, res);
               }
-            }
+            },
           );
           await Student.update({ StudentID }, { $push: { HelpfullGeneralReviews: ID } });
           const company = await Company.findOne({ CompanyID }).select('FeaturedReview');
@@ -682,7 +686,7 @@ async function handle_request(msg, callback) {
                   res.end = JSON.stringify({ message: 'helpfull added' });
                   callback(null, res);
                 }
-              }
+              },
             );
           } else {
             res.status = 200;
@@ -730,7 +734,7 @@ async function handle_request(msg, callback) {
               res.end = 'Salary Review Added';
               callback(null, res);
             }
-          }
+          },
         );
       } catch (error) {
         res.status = 500;
@@ -743,7 +747,9 @@ async function handle_request(msg, callback) {
     case 'addCompanyReview': {
       const res = {};
       try {
-        const { CompanyID, Rating, CEOApproval, Recommended } = msg.body;
+        const {
+          CompanyID, Rating, CEOApproval, Recommended,
+        } = msg.body;
         const rev = await General.findOne({}).sort({ ID: -1 }).select('ID');
         let ID = null;
         if (rev) {
@@ -801,10 +807,10 @@ async function handle_request(msg, callback) {
                     res.end = 'Company Review Added';
                     callback(null, res);
                   }
-                }
+                },
               );
             }
-          }
+          },
         );
       } catch {
         res.status = 500;
@@ -904,7 +910,7 @@ async function handle_request(msg, callback) {
               res.end = 'Interview Review Added';
               callback(null, res);
             }
-          }
+          },
         );
       } catch {
         res.status = 500;
@@ -1132,7 +1138,7 @@ async function handle_request(msg, callback) {
           { StudentID },
           {
             $push: { AppliedJobs: JobID },
-          }
+          },
         );
         res.status = 200;
         res.end = 'Applied Successfully';
@@ -1212,7 +1218,7 @@ async function handle_request(msg, callback) {
         for (let i = 0; i < results.length; i += 1) {
           // eslint-disable-next-line no-await-in-loop
           const company = await Company.findOne({ CompanyID: results[i].CompanyID }).select(
-            'ProfileImg'
+            'ProfileImg',
           );
           if (company.ProfileImg) {
             returns.push({ Interview: results[i], ProfileImg: company.ProfileImg });
@@ -1542,8 +1548,7 @@ async function handle_request(msg, callback) {
             callback(null, res);
           } else {
             try {
-              const searchQuery =
-                'SELECT Descriptions FROM GENERAL_REVIEW WHERE CompanyID=? LIMIT 2000;';
+              const searchQuery = 'SELECT Descriptions FROM GENERAL_REVIEW WHERE CompanyID=? LIMIT 2000;';
               con = await mysqlConnection();
               const [results2] = await con.query(searchQuery, CompanyID);
               con.end();

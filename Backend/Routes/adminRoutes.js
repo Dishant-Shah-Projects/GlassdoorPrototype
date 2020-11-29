@@ -22,7 +22,7 @@ const { checkAuth } = require('../SharedFuntionalities/passport');
 //   getCompanyGeneralReviews,
 //   getCompanySalaryReviews,
 //   getCompanyInterviewReviews,
-//   getCompanyPhotos,  
+//   getCompanyPhotos,
 // } = require('../Admin/adminFunctionality');
 
 Router.get('/reviews', checkAuth, async (req, res) => {
