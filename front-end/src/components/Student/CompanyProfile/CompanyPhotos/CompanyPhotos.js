@@ -53,9 +53,9 @@ class CompanyPhotos extends Component {
   render() {
     return (
       <article id="MainCol">
-        <div id="NodeReplace" class="gdGrid">
+        <div id="NodeReplace" className="gdGrid">
           <div>
-            <div class=" gd-ui-module css-1mzux4t">
+            <div className=" gd-ui-module css-1mzux4t">
               {this.props.companyPhotosStore.PhotoList.length === 0 ? (
                 <tr>
                   <td colspan="4">
@@ -65,20 +65,20 @@ class CompanyPhotos extends Component {
               ) : (
                 ''
               )}
-              <div class="mb row d-flex flex-wrap">
+              <div className="mb row d-flex flex-wrap">
                 {this.props.companyPhotosStore.PhotoList.map((photo) => (
                   <button
                     style={{ paddingLeft: '0', height: '100%', paddingRight: '0' }}
-                    class="eiPhoto css-15w2ie1 e25p3zc0"
+                    className="eiPhoto css-15w2ie1 e25p3zc0"
                     data-id="12643486"
                     data-slide-num="1"
                     data-slide-num-on-page="18"
                   >
-                    <img class="p-xsm" src={photo.PhotoURL} alt={photo.CompanyName} />
+                    <img className="p-xsm" src={photo.PhotoURL} alt={photo.CompanyName} />
                   </button>
                 ))}
               </div>
-              <div class="gd-ui-pagination css-k5362a css-1rvdm42" data-test="">
+              <div className="gd-ui-pagination css-k5362a css-1rvdm42" data-test="">
                 {this.props.companyPhotosStore.PhotoList.length > 0 ? (
                   <PaginationComponent
                     PageCount={this.props.companyPhotosStore.PageCount}
@@ -90,13 +90,17 @@ class CompanyPhotos extends Component {
                 ) : (
                   ''
                 )}
-                <div class="paginationFooter">
-                  Viewing {this.props.companyPhotosStore.PageNo * 10 + 1} -{' '}
-                  {this.props.companyPhotosStore.PhotoList.length +
-                    this.props.companyPhotosStore.PageNo * 10}{' '}
-                  of {this.props.companyPhotosStore.Totalcount} <span class="filterLabel"></span>{' '}
-                  Photos
-                </div>
+                {this.props.companyPhotosStore.PhotoList.length > 0 ? (
+                  <div className="paginationFooter">
+                    Viewing {this.props.companyPhotosStore.PageNo * 10 + 1} -{' '}
+                    {this.props.companyPhotosStore.PhotoList.length +
+                      this.props.companyPhotosStore.PageNo * 10}{' '}
+                    of {this.props.companyPhotosStore.Totalcount}{' '}
+                    <span className="filterLabel"></span> Photos
+                  </div>
+                ) : (
+                  ''
+                )}
               </div>
             </div>
           </div>

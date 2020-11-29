@@ -157,29 +157,29 @@ class CompanyInterviews extends Component {
     let styledifficulty = { height: avgRatingGreenColor * 10 };
     return (
       <article id="MainCol">
-        <div class="module interviewsWithSgocFiltersv1">
+        <div className="module interviewsWithSgocFiltersv1">
           {' '}
-          <div class="module interviewStats ">
+          <div className="module interviewStats ">
             <header>
               <h2>Interviews at {this.props.companyOverviewStore.companyOverview.CompanyName}</h2>
-              <div class="fill tbl minor showHH">
-                <div class=" cell middle minor">
+              <div className="fill tbl minor showHH">
+                <div className=" cell middle minor">
                   {' '}
                   {this.props.companyInterviewStore.Totalcount} Interview Reviews
                 </div>
               </div>
             </header>
-            <div class="interviewStatsBody">
-              <div class="flexbox fl-between" id="AllStats">
-                <div class="cell chartWrapper experience">
-                  <h3 class="tightTop hideHH" style={{ height: '24px' }}>
+            <div className="interviewStatsBody">
+              <div className="flexbox fl-between" id="AllStats">
+                <div className="cell chartWrapper experience">
+                  <h3 className="tightTop hideHH" style={{ height: '24px' }}>
                     {' '}
-                    Experience<span class="subtle normal hidden"> &nbsp; 24,977 Ratings</span>
+                    Experience<span className="subtle normal hidden"> &nbsp; 24,977 Ratings</span>
                   </h3>
-                  <div class="tbl fill">
-                    <div class="row">
-                      <div class="cell">
-                        <div class="chart" id="ExperienceChart">
+                  <div className="tbl fill">
+                    <div className="row">
+                      <div className="cell">
+                        <div className="chart" id="ExperienceChart">
                           <svg>
                             {' '}
                             <circle cx="30" cy="30" r="30" fill="#eaeaea"></circle>
@@ -221,51 +221,51 @@ class CompanyInterviews extends Component {
                           </svg>{' '}
                         </div>
                       </div>
-                      <div class="cell">
-                        <div class="tbl dataTbl fill">
-                          <div class="showHH margBotSm">
-                            <div class="cell tightTop">
-                              <div class="h3 tightVert"> Experience</div>
+                      <div className="cell">
+                        <div className="tbl dataTbl fill">
+                          <div className="showHH margBotSm">
+                            <div className="cell tightTop">
+                              <div className="h3 tightVert"> Experience</div>
                             </div>
-                            <div class="cell"></div>
+                            <div className="cell"></div>
                           </div>
-                          <div class="row" style={{}}>
-                            <div class="cell heading">
+                          <div className="row" style={{}}>
+                            <div className="cell heading">
                               <i
-                                class="sqLed middle sm pros top "
+                                className="sqLed middle sm pros top "
                                 style={{ backgroundColor: 'rgb(147, 218, 103)' }}
                               ></i>
-                              <label class=" pros pct">Positive</label>
+                              <label className=" pros pct">Positive</label>
                             </div>
-                            <div class="cell pct alignRt">
-                              <span class="strong num pros pct">{positive_percent}</span>
-                              <span class=" pros pct">%</span>
+                            <div className="cell pct alignRt">
+                              <span className="strong num pros pct">{positive_percent}</span>
+                              <span className=" pros pct">%</span>
                             </div>
                           </div>
-                          <div class="row" style={{}}>
-                            <div class="cell heading">
+                          <div className="row" style={{}}>
+                            <div className="cell heading">
                               <i
-                                class="sqLed middle sm pros top "
+                                className="sqLed middle sm pros top "
                                 style={{ backgroundColor: 'rgb(12, 170, 65)' }}
                               ></i>
-                              <label class=" pros pct">Neutral</label>
+                              <label className=" pros pct">Neutral</label>
                             </div>
-                            <div class="cell pct alignRt">
-                              <span class="strong num pros pct">{neutral_percent}</span>
-                              <span class=" pros pct">%</span>
+                            <div className="cell pct alignRt">
+                              <span className="strong num pros pct">{neutral_percent}</span>
+                              <span className=" pros pct">%</span>
                             </div>
                           </div>
-                          <div class="row" style={{}}>
-                            <div class="cell heading">
+                          <div className="row" style={{}}>
+                            <div className="cell heading">
                               <i
-                                class="sqLed middle sm pros top "
+                                className="sqLed middle sm pros top "
                                 style={{ backgroundColor: 'rgb(25, 67, 131)' }}
                               ></i>
-                              <label class=" pros pct">Negative</label>
+                              <label className=" pros pct">Negative</label>
                             </div>
-                            <div class="cell pct alignRt">
-                              <span class="strong num pros pct">{negative_percent}</span>
-                              <span class=" pros pct">%</span>
+                            <div className="cell pct alignRt">
+                              <span className="strong num pros pct">{negative_percent}</span>
+                              <span className=" pros pct">%</span>
                             </div>
                           </div>
                         </div>
@@ -273,51 +273,51 @@ class CompanyInterviews extends Component {
                     </div>
                   </div>
                 </div>{' '}
-                <div class="cell chartWrapper difficulty">
-                  <h3 class="tightTop hideHH" style={{ height: '24px' }}>
+                <div className="cell chartWrapper difficulty">
+                  <h3 className="tightTop hideHH" style={{ height: '24px' }}>
                     {' '}
-                    Difficulty<span class="subtle normal hidden"> &nbsp; 24,977 Ratings</span>
+                    Difficulty<span className="subtle normal hidden"> &nbsp; 24,977 Ratings</span>
                   </h3>{' '}
-                  <div class="tbl dataTbl">
-                    <div class="row">
-                      <div class="cell middle center subtle difficultyLabelWrapper">
-                        <div class="difficultyLabel subtle">{avg}</div> Average
+                  <div className="tbl dataTbl">
+                    <div className="row">
+                      <div className="cell middle center subtle difficultyLabelWrapper">
+                        <div className="difficultyLabel subtle">{avg}</div> Average
                       </div>
-                      <div class="cell ratingBar">
-                        <h3 class="tightTop" style={{ height: '24px' }}>
+                      <div className="cell ratingBar">
+                        <h3 className="tightTop" style={{ height: '24px' }}>
                           {' '}
                           Difficulty
                         </h3>
-                        <span class="gdBars gdRatings sm vertical " title="3.0">
-                          <div class="row">
+                        <span className="gdBars gdRatings sm vertical " title="3.0">
+                          <div className="row">
                             <i>
                               {avg > 4 ? avg === 5 ? <i></i> : <i style={styledifficulty}></i> : ''}
                             </i>
-                            <span class="label pct">Hard</span>
+                            <span className="label pct">Hard</span>
                           </div>
-                          <div class="row">
+                          <div className="row">
                             <i>
                               {avg > 3 ? avg < 4 ? <i style={styledifficulty}></i> : <i></i> : ''}
                             </i>
-                            <span class="label pct"></span>
+                            <span className="label pct"></span>
                           </div>
-                          <div class="row">
+                          <div className="row">
                             <i>
                               {avg > 2 ? avg < 3 ? <i style={styledifficulty}></i> : <i></i> : ''}
                             </i>
-                            <span class="label pct">Average</span>
+                            <span className="label pct">Average</span>
                           </div>
-                          <div class="row">
+                          <div className="row">
                             <i>
                               {avg > 1 ? avg < 2 ? <i style={styledifficulty}></i> : <i></i> : ''}
                             </i>
-                            <span class="label pct"></span>
+                            <span className="label pct"></span>
                           </div>
-                          <div class="row">
+                          <div className="row">
                             <i>
                               {avg > 0 ? avg < 1 ? <i style={styledifficulty}></i> : <i></i> : ''}
                             </i>
-                            <span class="label pct">Easy</span>
+                            <span className="label pct">Easy</span>
                           </div>
                         </span>
                       </div>
@@ -327,9 +327,9 @@ class CompanyInterviews extends Component {
               </div>
             </div>
           </div>
-          <div class="module interviewsAndFilter">
+          <div className="module interviewsAndFilter">
             <div id="EmployerInterviews">
-              <ol class="empReviews tightLt">
+              <ol className="empReviews tightLt">
                 {this.props.companyInterviewStore.InterViewList.map((interview) => (
                   <CompanyInterviewCard
                     helpfulClicked={(event) =>
@@ -338,14 +338,14 @@ class CompanyInterviews extends Component {
                     interview={interview}
                   />
                 ))}
-                {/* <div class="hr">
+                {/* <div className="hr">
                   <hr />
                 </div>*/}
               </ol>
-              <div class="margTop">
-                <div class="breadcrumbList margTop">
+              <div className="margTop">
+                <div className="breadcrumbList margTop">
                   <div
-                    class="breadcrumb ib "
+                    className="breadcrumb ib "
                     itemscope=""
                     itemtype="http://data-vocabulary.org/Breadcrumb"
                   >
@@ -354,7 +354,7 @@ class CompanyInterviews extends Component {
                     </a>
                   </div>
                   <div
-                    class="breadcrumb ib "
+                    className="breadcrumb ib "
                     itemprop="child"
                     itemscope=""
                     itemtype="http://data-vocabulary.org/Breadcrumb"
@@ -371,13 +371,17 @@ class CompanyInterviews extends Component {
                   </div>
                 </div>
               </div>
-              <PaginationComponent
-                PageCount={this.props.companyInterviewStore.PageCount}
-                PageNo={this.props.companyInterviewStore.PageNo}
-                onPageClick={(e) => {
-                  this.onPageClick(e);
-                }}
-              />{' '}
+              {this.props.companyInterviewStore.InterViewList.length > 0 ? (
+                <PaginationComponent
+                  PageCount={this.props.companyInterviewStore.PageCount}
+                  PageNo={this.props.companyInterviewStore.PageNo}
+                  onPageClick={(e) => {
+                    this.onPageClick(e);
+                  }}
+                />
+              ) : (
+                ''
+              )}
             </div>
           </div>
         </div>
