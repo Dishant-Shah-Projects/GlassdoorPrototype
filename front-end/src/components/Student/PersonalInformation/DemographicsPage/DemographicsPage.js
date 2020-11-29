@@ -26,14 +26,12 @@ class DemographicsPage extends Component {
 
   updateStudentProfile = (event, student) => {
     event.preventDefault();
-    console.log(student);
 
     // event.preventDefault();
     axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
 
     axios.post(serverUrl + 'student/profileUpdate', student).then(
       (response) => {
-        console.log('Status Code : ', response.status);
         if (response.status === 200) {
           // let studentProfile = { ...this.props.studentInfoStore.studentProfile };
           // studentProfile.AppliedJobs.push(this.props.selectedJob._id);
@@ -46,9 +44,7 @@ class DemographicsPage extends Component {
           });
         }
       },
-      (error) => {
-        console.log('error:', error.response);
-      }
+      (error) => {}
     );
   };
 

@@ -63,7 +63,6 @@ const defaultState = {
 const CompanyPageReducer = (state = defaultState, action) => {
   switch (action.type) {
     case updateCompanyOverview: {
-      console.log('inside company profile reducer');
       return {
         ...state,
         companyOverviewStore: { ...state.companyOverviewStore, ...action.payload },
@@ -72,7 +71,6 @@ const CompanyPageReducer = (state = defaultState, action) => {
       };
     }
     case updatespecialReviews: {
-      console.log('inside company profile reducer');
       return {
         ...state,
         companyOverviewStore: { ...state.companyOverviewStore, ...action.payload },
@@ -81,7 +79,6 @@ const CompanyPageReducer = (state = defaultState, action) => {
       };
     }
     case updateCompanyReviewsStore: {
-      console.log('inside company review store');
       return {
         ...state,
         companyReviewsStore: { ...state.companyReviewsStore, ...action.payload },
@@ -90,7 +87,6 @@ const CompanyPageReducer = (state = defaultState, action) => {
       };
     }
     case updateCompanyJobStore: {
-      console.log('inside company review store');
       return {
         ...state,
         companyJobStore: { ...state.companyJobStore, ...action.payload },
@@ -99,7 +95,6 @@ const CompanyPageReducer = (state = defaultState, action) => {
       };
     }
     case updateCompanyInterviewStore: {
-      console.log('inside company interview store');
       return {
         ...state,
         companyInterviewStore: { ...state.companyInterviewStore, ...action.payload },
@@ -108,7 +103,6 @@ const CompanyPageReducer = (state = defaultState, action) => {
       };
     }
     case updateCompanySalariesStore: {
-      console.log('inside company interview store');
       return {
         ...state,
         companySalariesStore: { ...state.companySalariesStore, ...action.payload },

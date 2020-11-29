@@ -1,24 +1,28 @@
-import { showApplicantsModal, hideApplicantsModal, updateApplicantsList, updateApplicantStatus } from '../constants/action-types';
+import {
+  showApplicantsModal,
+  hideApplicantsModal,
+  updateApplicantsList,
+  updateApplicantStatus,
+} from '../constants/action-types';
 
 const defaultState = {
   applicantsListStore: {
     applicantsList: [],
     PageNo: 0,
     PageCount: 5,
-    Totalcount: 10, 
+    Totalcount: 10,
   },
   applicantsModalStore: {
     popSeen: false,
   },
   applicantStatusStore: {
-    applicantStatusDropDown: 'Submitted'
-  }
+    applicantStatusDropDown: 'Submitted',
+  },
 };
 
 const ApplicantsListModalReducer = (state = defaultState, action) => {
   switch (action.type) {
     case showApplicantsModal: {
-      console.log('nside applicant modal');
       return {
         ...state,
         applicantsModalStore: { ...state.applicantsModalStore, popSeen: true },

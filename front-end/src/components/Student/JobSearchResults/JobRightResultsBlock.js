@@ -23,7 +23,6 @@ class JobRightResultsBlock extends Component {
 
   withdrawJob = (event) => {
     event.preventDefault();
-    console.log('withdraw job, jobid:', this.props.jobOonFocusStore.jobOonFocus._id);
 
     // event.preventDefault();
     axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
@@ -33,7 +32,6 @@ class JobRightResultsBlock extends Component {
     };
     axios.post(serverUrl + 'student/jobWithdraw', data).then(
       (response) => {
-        console.log('Status Code : ', response.status);
         if (response.status === 200) {
           // this.props.toggle(event);
           let studentProfile = { ...this.props.studentInfoStore.studentProfile };
@@ -49,9 +47,7 @@ class JobRightResultsBlock extends Component {
           this.props.updateStudentProfile(payload);
         }
       },
-      (error) => {
-        console.log('error:', error.response);
-      }
+      (error) => {}
     );
   };
 
@@ -100,11 +96,7 @@ class JobRightResultsBlock extends Component {
       showBlock = <JobFeaturedReview selectedJob={selectedJob} />;
     }
     let alreadyApplied = false;
-    console.log(
-      'this.props.studentInfoStore.studentProfile.AppliedJobs',
-      this.props.studentInfoStore.studentProfile.AppliedJobs[0]
-    );
-    console.log('selectedJob._id:', selectedJob._id);
+
     if (this.props.studentInfoStore.studentProfile.AppliedJobs.includes(selectedJob._id)) {
       alreadyApplied = true;
     }

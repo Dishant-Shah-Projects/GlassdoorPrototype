@@ -41,7 +41,6 @@ class JobLeftResultsBlock extends Component {
       this.props.jobListStore.SalEnd,
       e.selected
     );
-    // console.log('Page Clicked:', e.selected);
     // this.commonFetch(e.selected);
   };
   render() {
@@ -68,7 +67,7 @@ class JobLeftResultsBlock extends Component {
                         <path
                           d="M21 5a1 1 0 010 2H3a1 1 0 010-2zm-6 6a1 1 0 010 2H3a1 1 0 010-2zm-4 6a1 1 0 010 2H3a1 1 0 010-2z"
                           fill="currentColor"
-                          fill-rule="evenodd"
+                          fillRule="evenodd"
                         ></path>
                       </svg>
                     </span>
@@ -84,7 +83,7 @@ class JobLeftResultsBlock extends Component {
           </div>
           <ul className="jlGrid hover p-0 ">
             {this.props.jobListStore.jobList.length === 0 ? (
-              <h2 class="block" style={{ fontWeight: '400' }}>
+              <h2 className="block" style={{ fontWeight: '400' }}>
                 No Jobs Found, try different search criteria.
               </h2>
             ) : (

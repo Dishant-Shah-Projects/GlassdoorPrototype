@@ -133,11 +133,11 @@ class JobNavBar extends Component {
                   <div
                     onClick={this.changeFavJobTab}
                     className={this.props.jobListStore.favJobSelected ? 'selected' : ''}
-                    tabindex="0"
+                    tabIndex="0"
                   >
                     <label
                       style={{ height: '40px' }}
-                      for="employerUIData.state.employerReview.currentJob_true"
+                      htmlFor="employerUIData.state.employerReview.currentJob_true"
                     >
                       Favourite Jobs
                     </label>
@@ -153,11 +153,11 @@ class JobNavBar extends Component {
                   <div
                     onClick={this.changeAppliedJobTab}
                     className={this.props.jobListStore.appliedJobSelected ? 'selected' : ''}
-                    tabindex="0"
+                    tabIndex="0"
                   >
                     <label
                       style={{ height: '40px' }}
-                      for="employerUIData.state.employerReview.currentJob_false"
+                      htmlFor="employerUIData.state.employerReview.currentJob_false"
                     >
                       Applied Jobs
                     </label>

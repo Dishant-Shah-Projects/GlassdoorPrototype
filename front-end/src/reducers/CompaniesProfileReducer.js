@@ -16,14 +16,13 @@ const defaultState = {
     CEO: '',
     City: '',
     State: '',
-    FeaturedReview: '',    
+    FeaturedReview: '',
   },
 };
 
 const CompaniesProfileReducer = (state = defaultState, action) => {
   switch (action.type) {
     case updateCompanyProfile: {
-        console.log('inside company profile reducer');
       return {
         ...state,
         companyInfo: { ...state.companyInfo, ...action.payload },

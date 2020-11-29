@@ -21,7 +21,6 @@ class JobResultCard extends Component {
       jobOonFocus,
     };
     this.props.updateOnFocusJob(payload3);
-    console.log('jobId:', jobId);
   }
   render() {
     const job = this.props.job;
@@ -31,15 +30,10 @@ class JobResultCard extends Component {
     // const diffDuration = moment.duration(diff);
     const date1 = new Date(job.PostedDate);
     const date2 = new Date();
-    // console.log('date1:', date1);
-    // console.log('date2:', date2);
     const diffTime = Math.abs(date2 - date1);
     const hours = Math.floor(diffTime / (1000 * 60 * 60));
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    // console.log('diffDuration milliseconds:', diffTime);
 
-    // console.log('hours:', hours);
-    // console.log('diffDays:', diffDays);
     const postedSince = hours < 24 ? hours : diffDays;
     const h_d = hours < 24 ? 'h' : 'd';
 
