@@ -173,6 +173,7 @@ class RightBlock extends Component {
             {localStorage.getItem('companyName')} Reviews
           </h1>
         </header>
+        {this.props.reviewListStore.reviewList && this.props.reviewListStore.reviewList.length > 0 ? (
         <div class="ReviewsRef">
           <div id="ReviewsFeed" class="mt">
             <ol class=" empReviews emp-reviews-feed pl-0">
@@ -202,6 +203,7 @@ class RightBlock extends Component {
             </div>
           </div>
         </div>
+        ): (<p>No Reviews added yet!</p>)}
       </div>
     );
   }

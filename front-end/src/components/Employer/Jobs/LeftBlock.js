@@ -44,7 +44,9 @@ class LeftBlock extends Component {
   };
 
   render() {
+    console.log('joblist',this.props.jobsStore.jobsList.length);
     return (
+      
       <section class="flexbox" id="PanesWrap">
       <article id="MainCol" class="noPad">
         <ul class="jlGrid hover p-0 ">
@@ -72,7 +74,7 @@ class LeftBlock extends Component {
             </li>
           ))}
         </ul>
-
+        {this.props.jobsStore.jobsList && (this.props.jobsStore.jobsList.length > 0) ? (
         <div className="tbl fill padHorz margVert" id="ResultsFooter">
           <div className="cell middle hideMob padVertSm" data-test="page-x-of-y">
             Page {this.props.jobsStore.PageNo + 1} of {this.props.jobsStore.PageCount}
@@ -87,6 +89,7 @@ class LeftBlock extends Component {
             />
           </div>
         </div>
+    ) : ('')}
         <div class="justify-content-around justify-content-md-between mt-lg row">
           <div class="d-flex">
             <div class="mr-md">
