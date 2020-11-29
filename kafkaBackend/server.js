@@ -8,7 +8,8 @@ const mongoose = require('mongoose');
 const { mongoDB } = require('./config');
 const company = require('./functionality/companyHandling');
 const student = require('./functionality/studenthandling');
-const general = require('./functionality/generalHandling')
+const general = require('./functionality/generalHandling');
+const admin = require('./functionality/adminHandling');
 
 const options = {
   useNewUrlParser: true,
@@ -63,3 +64,4 @@ function handleTopicRequest(topic_name, fname) {
 handleTopicRequest('company2', company);
 handleTopicRequest('student2', student);
 handleTopicRequest('general2', general);
+handleTopicRequest('admin2', admin);

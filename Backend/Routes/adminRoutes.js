@@ -1,117 +1,352 @@
 const express = require('express');
 
 const Router = express.Router();
+const kafka = require('../kafka/client');
 const { checkAuth } = require('../SharedFuntionalities/passport');
 
-const {
-  reviews,
-  updateGeneralReviews,
-  updateInterviewReviews,
-  updateSalaryReviews,
-  companyList,
-  companyReviewList,
-  pictures,
-  updatePictures,
-  jobStats,
-  analytics,
-  getGeneralReviews,
-  getSalaryReviews,
-  getInterviewReviews,
-  getPhotos,
-  getCompanyGeneralReviews,
-  getCompanySalaryReviews,
-  getCompanyInterviewReviews,
-  getCompanyPhotos,
-} = require('../Admin/adminFunctionality');
+// const {
+//   reviews,
+//   updateGeneralReviews,
+//   updateInterviewReviews,
+//   updateSalaryReviews,
+//   companyList,
+//   companyReviewList,
+//   pictures,
+//   updatePictures,
+//   jobStats,
+//   analytics,
+//   getGeneralReviews,
+//   getSalaryReviews,
+//   getInterviewReviews,
+//   getPhotos,
+//   getCompanyGeneralReviews,
+//   getCompanySalaryReviews,
+//   getCompanyInterviewReviews,
+//   getCompanyPhotos,  
+// } = require('../Admin/adminFunctionality');
 
 Router.get('/reviews', checkAuth, async (req, res) => {
-  const value = await reviews(req, res);
-  return value;
+  const data = {
+    api: 'reviews',
+    query: req.query,
+  };
+  kafka.make_request('admin2', data, (err, results) => {
+    // console.log('in result');
+    // console.log(results);
+    if (err) {
+      res.status(500);
+      res.end('Network Error');
+    } else {
+      res.status(results.status);
+      res.end(results.end);
+    }
+  });
 });
 
 Router.post('/updateGeneralReviews', checkAuth, async (req, res) => {
-  const value = await updateGeneralReviews(req, res);
-  return value;
+  const data = {
+    api: 'updateGeneralReviews',
+    body: req.body,
+  };
+  kafka.make_request('admin2', data, (err, results) => {
+    // console.log('in result');
+    // console.log(results);
+    if (err) {
+      res.status(500);
+      res.end('Network Error');
+    } else {
+      res.status(results.status);
+      res.end(results.end);
+    }
+  });
 });
 
 Router.post('/updateInterviewReviews', checkAuth, async (req, res) => {
-  const value = await updateInterviewReviews(req, res);
-  return value;
+  const data = {
+    api: 'updateInterviewReviews',
+    body: req.body,
+  };
+  kafka.make_request('admin2', data, (err, results) => {
+    // console.log('in result');
+    // console.log(results);
+    if (err) {
+      res.status(500);
+      res.end('Network Error');
+    } else {
+      res.status(results.status);
+      res.end(results.end);
+    }
+  });
 });
 
 Router.post('/updateSalaryReviews', checkAuth, async (req, res) => {
-  const value = await updateSalaryReviews(req, res);
-  return value;
+  const data = {
+    api: 'updateSalaryReviews',
+    body: req.body,
+  };
+  kafka.make_request('admin2', data, (err, results) => {
+    // console.log('in result');
+    // console.log(results);
+    if (err) {
+      res.status(500);
+      res.end('Network Error');
+    } else {
+      res.status(results.status);
+      res.end(results.end);
+    }
+  });
 });
 
 Router.get('/companyList', checkAuth, async (req, res) => {
-  const value = await companyList(req, res);
-  return value;
+  const data = {
+    api: 'companyList',
+    query: req.query,
+  };
+  kafka.make_request('admin2', data, (err, results) => {
+    // console.log('in result');
+    // console.log(results);
+    if (err) {
+      res.status(500);
+      res.end('Network Error');
+    } else {
+      res.status(results.status);
+      res.end(results.end);
+    }
+  });
 });
 
 Router.get('/companyReviewList', checkAuth, async (req, res) => {
-  const value = await companyReviewList(req, res);
-  return value;
+  const data = {
+    api: 'companyReviewList',
+    query: req.query,
+  };
+  kafka.make_request('admin2', data, (err, results) => {
+    // console.log('in result');
+    // console.log(results);
+    if (err) {
+      res.status(500);
+      res.end('Network Error');
+    } else {
+      res.status(results.status);
+      res.end(results.end);
+    }
+  });
 });
 
 Router.get('/pictures', checkAuth, async (req, res) => {
-  const value = await pictures(req, res);
-  return value;
+  const data = {
+    api: 'pictures',
+    query: req.query,
+  };
+  kafka.make_request('admin2', data, (err, results) => {
+    // console.log('in result');
+    // console.log(results);
+    if (err) {
+      res.status(500);
+      res.end('Network Error');
+    } else {
+      res.status(results.status);
+      res.end(results.end);
+    }
+  });
 });
 
 Router.post('/updatePictures', checkAuth, async (req, res) => {
-  const value = await updatePictures(req, res);
-  return value;
+  const data = {
+    api: 'updatePictures',
+    body: req.body,
+  };
+  kafka.make_request('admin2', data, (err, results) => {
+    // console.log('in result');
+    // console.log(results);
+    if (err) {
+      res.status(500);
+      res.end('Network Error');
+    } else {
+      res.status(results.status);
+      res.end(results.end);
+    }
+  });
 });
 
 Router.get('/jobStats', checkAuth, async (req, res) => {
-  const value = await jobStats(req, res);
-  return value;
+  const data = {
+    api: 'jobStats',
+    query: req.query,
+  };
+  kafka.make_request('admin2', data, (err, results) => {
+    // console.log('in result');
+    // console.log(results);
+    if (err) {
+      res.status(500);
+      res.end('Network Error');
+    } else {
+      res.status(results.status);
+      res.end(results.end);
+    }
+  });
 });
 
 Router.get('/analytics', checkAuth, async (req, res) => {
-  const value = await analytics(req, res);
-  return value;
+  const data = {
+    api: 'analytics',
+    query: req.query,
+  };
+  kafka.make_request('admin2', data, (err, results) => {
+    // console.log('in result');
+    // console.log(results);
+    if (err) {
+      res.status(500);
+      res.end('Network Error');
+    } else {
+      res.status(results.status);
+      res.end(results.end);
+    }
+  });
 });
 
 Router.get('/getGeneralReviews', checkAuth, async (req, res) => {
-  const value = await getGeneralReviews(req, res);
-  return value;
+  const data = {
+    api: 'getGeneralReviews',
+    query: req.query,
+  };
+  kafka.make_request('admin2', data, (err, results) => {
+    // console.log('in result');
+    // console.log(results);
+    if (err) {
+      res.status(500);
+      res.end('Network Error');
+    } else {
+      res.status(results.status);
+      res.end(results.end);
+    }
+  });
 });
 
 Router.get('/getSalaryReviews', checkAuth, async (req, res) => {
-  const value = await getSalaryReviews(req, res);
-  return value;
+  const data = {
+    api: 'getSalaryReviews',
+    query: req.query,
+  };
+  kafka.make_request('admin2', data, (err, results) => {
+    // console.log('in result');
+    // console.log(results);
+    if (err) {
+      res.status(500);
+      res.end('Network Error');
+    } else {
+      res.status(results.status);
+      res.end(results.end);
+    }
+  });
 });
 
 Router.get('/getInterviewReviews', checkAuth, async (req, res) => {
-  const value = await getInterviewReviews(req, res);
-  return value;
+  const data = {
+    api: 'getInterviewReviews',
+    query: req.query,
+  };
+  kafka.make_request('admin2', data, (err, results) => {
+    // console.log('in result');
+    // console.log(results);
+    if (err) {
+      res.status(500);
+      res.end('Network Error');
+    } else {
+      res.status(results.status);
+      res.end(results.end);
+    }
+  });
 });
 
 Router.get('/getPhotos', checkAuth, async (req, res) => {
-  const value = await getPhotos(req, res);
-  return value;
+  const data = {
+    api: 'getPhotos',
+    query: req.query,
+  };
+  kafka.make_request('admin2', data, (err, results) => {
+    // console.log('in result');
+    // console.log(results);
+    if (err) {
+      res.status(500);
+      res.end('Network Error');
+    } else {
+      res.status(results.status);
+      res.end(results.end);
+    }
+  });
 });
 
 Router.get('/getCompanyGeneralReviews', checkAuth, async (req, res) => {
-  const value = await getCompanyGeneralReviews(req, res);
-  return value;
+  const data = {
+    api: 'getCompanyGeneralReviews',
+    query: req.query,
+  };
+  kafka.make_request('admin2', data, (err, results) => {
+    // console.log('in result');
+    // console.log(results);
+    if (err) {
+      res.status(500);
+      res.end('Network Error');
+    } else {
+      res.status(results.status);
+      res.end(results.end);
+    }
+  });
 });
 
 Router.get('/getCompanySalaryReviews', checkAuth, async (req, res) => {
-  const value = await getCompanySalaryReviews(req, res);
-  return value;
+  const data = {
+    api: 'getCompanySalaryReviews',
+    query: req.query,
+  };
+  kafka.make_request('admin2', data, (err, results) => {
+    // console.log('in result');
+    // console.log(results);
+    if (err) {
+      res.status(500);
+      res.end('Network Error');
+    } else {
+      res.status(results.status);
+      res.end(results.end);
+    }
+  });
 });
 
 Router.get('/getCompanyInterviewReviews', checkAuth, async (req, res) => {
-  const value = await getCompanyInterviewReviews(req, res);
-  return value;
+  const data = {
+    api: 'getCompanyInterviewReviews',
+    query: req.query,
+  };
+  kafka.make_request('admin2', data, (err, results) => {
+    // console.log('in result');
+    // console.log(results);
+    if (err) {
+      res.status(500);
+      res.end('Network Error');
+    } else {
+      res.status(results.status);
+      res.end(results.end);
+    }
+  });
 });
 
 Router.get('/getCompanyPhotos', checkAuth, async (req, res) => {
-  const value = await getCompanyPhotos(req, res);
-  return value;
+  const data = {
+    api: 'getCompanyPhotos',
+    query: req.query,
+  };
+  kafka.make_request('admin2', data, (err, results) => {
+    // console.log('in result');
+    // console.log(results);
+    if (err) {
+      res.status(500);
+      res.end('Network Error');
+    } else {
+      res.status(results.status);
+      res.end(results.end);
+    }
+  });
 });
 
 module.exports = Router;
