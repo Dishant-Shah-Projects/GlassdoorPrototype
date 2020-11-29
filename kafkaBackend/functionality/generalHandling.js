@@ -154,7 +154,7 @@ async function handle_request(msg, callback) {
                   callback(null, res);
                 }
               });
-            } else {
+            } else if (Role === 'student') {
               const student = new Student({
                 StudentID: userID,
                 Email: UserName,
@@ -170,6 +170,10 @@ async function handle_request(msg, callback) {
                   callback(null, res);
                 }
               });
+            } else {
+              res.status = 201;
+              res.end = 'Profile Created';
+              callback(null, res);
             }
           } else {
             res.status = 401;

@@ -172,7 +172,7 @@ async function handle_request(msg, callback) {
               callback(null, res);
             }
             if (result) {
-              res.writeHead(200, { 'content-type': 'text/json' });
+              // res.writeHead(200, { 'content-type': 'text/json' });
               resultData.result = { result };
             } else {
               res.status = 404;

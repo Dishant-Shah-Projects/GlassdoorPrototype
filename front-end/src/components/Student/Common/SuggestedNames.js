@@ -30,13 +30,14 @@ class SuggestedNames extends Component {
       <div className="autocomplete-suggestions " style={activeStyle}>
         {this.props.searchStrings.map((string) => (
           <div
+            key={string}
             onClick={(event) => this.props.selectString(event, string)}
-            class="autocomplete-suggestion fullFormat "
+            className="autocomplete-suggestion fullFormat "
             data-val={string}
           >
-            <div class="suggestion-content">
+            <div className="suggestion-content">
               <span>
-                <span class="suggestion-content">{string}</span>
+                <span className="suggestion-content">{string}</span>
               </span>
             </div>
           </div>

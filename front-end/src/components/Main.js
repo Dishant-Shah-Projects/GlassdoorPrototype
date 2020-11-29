@@ -47,7 +47,6 @@ class Main extends Component {
   // }
   componentDidMount() {
     axios.get(serverUrl + 'glassdoor/staticdata').then((response) => {
-      console.log('data:', response.data);
       let Countries = response.data[0].Country.map((country) => {
         return country;
       });

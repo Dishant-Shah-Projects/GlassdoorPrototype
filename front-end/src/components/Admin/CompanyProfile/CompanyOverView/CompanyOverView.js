@@ -98,9 +98,11 @@ class CompanyOverView extends Component {
                   <li class="d-flex align-items-center col-12 col-sm-6 p-0 m-0 pb-sm pl-sm-xxsm">
                     <label class="css-1f0lhlt ecl3kjh0">Founded:</label>
                     <div data-test="employer-founded">
-                      {moment(this.props.companyOverviewStore.companyOverview.Founded).format(
-                        'YYYY'
-                      )}
+                      {this.props.companyOverviewStore.companyOverview.Founded
+                        ? moment(this.props.companyOverviewStore.companyOverview.Founded).format(
+                            'YYYY'
+                          )
+                        : ''}
                     </div>
                   </li>
                   <li class="d-flex align-items-center col-12 col-sm-6 p-0 m-0 pb-sm pr-sm-xxsm">

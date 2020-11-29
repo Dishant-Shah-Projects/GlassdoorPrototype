@@ -200,7 +200,6 @@ class Navbar extends Component {
     history.push('/Home');
   };
   selectString = (event, string) => {
-    console.log(string);
     event.preventDefault();
     const payload = {
       SearchString: string,
@@ -252,7 +251,6 @@ class Navbar extends Component {
   };
 
   render() {
-    console.log('Student navbar selected');
     // if (this.state.redirect) {
     //   return <Redirect to={this.state.redirect} />;
     // }
@@ -609,7 +607,7 @@ class Navbar extends Component {
                         id="scBar"
                         // method="GET"
                         // target="_top"
-                        novalidate=""
+                        noValidate=""
                         className="col search__SearchStyles__searchForm"
                         data-test="search-bar-form"
                       >
@@ -684,7 +682,7 @@ class Navbar extends Component {
                               <option value="3"></option>
                             </select>
                             <div
-                              tabindex="0"
+                              tabIndex="0"
                               style={{ width: '132px' }}
                               direction="auto"
                               aria-expanded="false"

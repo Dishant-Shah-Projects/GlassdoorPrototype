@@ -128,11 +128,11 @@ class JobNavBar extends Component {
                   </div>
                 </div>
               )}
-              <div class="button-set ">
+              <div style={{ minWidth: '284px' }} className="button-set ">
                 <div>
                   <div
                     onClick={this.changeFavJobTab}
-                    class={this.props.jobListStore.favJobSelected ? 'selected' : ''}
+                    className={this.props.jobListStore.favJobSelected ? 'selected' : ''}
                     tabindex="0"
                   >
                     <label
@@ -142,7 +142,7 @@ class JobNavBar extends Component {
                       Favourite Jobs
                     </label>
                     <input
-                      class="hidden"
+                      className="hidden"
                       type="radio"
                       name="employerUIData.state.employerReview.currentJob"
                       id="employerUIData.state.employerReview.currentJob_true"
@@ -152,7 +152,7 @@ class JobNavBar extends Component {
                   </div>
                   <div
                     onClick={this.changeAppliedJobTab}
-                    class={this.props.jobListStore.appliedJobSelected ? 'selected' : ''}
+                    className={this.props.jobListStore.appliedJobSelected ? 'selected' : ''}
                     tabindex="0"
                   >
                     <label
@@ -162,7 +162,7 @@ class JobNavBar extends Component {
                       Applied Jobs
                     </label>
                     <input
-                      class="hidden"
+                      className="hidden"
                       type="radio"
                       name="employerUIData.state.employerReview.currentJob"
                       id="employerUIData.state.employerReview.currentJob_false"
@@ -177,6 +177,7 @@ class JobNavBar extends Component {
               </div>
               <div className="filter expandable right containerLess createBtnContainer">
                 <a
+                  style={{ color: '#1861bf', border: '1px solid #1861bf' }}
                   href="#"
                   onClick={(event) => {
                     this.openProfile(event, 'Profile');

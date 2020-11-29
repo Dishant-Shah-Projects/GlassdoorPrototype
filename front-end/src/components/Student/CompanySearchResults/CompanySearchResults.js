@@ -29,7 +29,6 @@ class CompanySearchResults extends Component {
       })
       .then(
         (response) => {
-          console.log('searchCompany', response);
           let payload = {
             companyList: response.data[0],
             PageNo,
@@ -40,9 +39,7 @@ class CompanySearchResults extends Component {
           };
           this.props.updateCompanyList(payload);
         },
-        (error) => {
-          console.log('error', error);
-        }
+        (error) => {}
       );
   };
 
@@ -52,7 +49,6 @@ class CompanySearchResults extends Component {
   }
 
   onPageClick = (e) => {
-    // console.log('Page Clicked:', e.selected);
     this.commonFetch(e.selected);
   };
 
@@ -63,12 +59,8 @@ class CompanySearchResults extends Component {
     axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
     const data = { CompanyID };
     axios.post(serverUrl + 'student/companyViewCount', data).then(
-      (response) => {
-        console.log('View incremented');
-      },
-      (error) => {
-        console.log('error', error);
-      }
+      (response) => {},
+      (error) => {}
     );
   };
 
@@ -147,6 +139,7 @@ class CompanySearchResults extends Component {
                           )}
                           {this.props.companyListStore.companyList.map((company) => (
                             <div
+                              key={company.CompanyID}
                               className="single-company-result module "
                               id=""
                               data-track-serp-click="true"

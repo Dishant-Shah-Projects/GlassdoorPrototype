@@ -17,19 +17,19 @@ class Questions extends Component {
     const interview = this.props.interview;
 
     return (
-      <div id="InterviewQuestionResult_1" class="interviewQuestionWrapper padVertLg">
+      <div id="InterviewQuestionResult_1" className="interviewQuestionWrapper padVertLg">
         <div
-          class="interviewQuestion noPad "
+          className="interviewQuestion noPad "
           data-brandviews="BRAND:n=hub-interviewQuestion:eid=6036:uid=94575"
         >
-          <div class="tbl fill">
-            <div id="interview" class="row">
-              <div class="cell logo padRtLg hideHH" style={{ paddingRight: '20px' }}>
-                <a href="/Interview/Amazon-Interview-Questions-E6036.htm" class="sqLogoLink">
-                  <span class="sqLogo tighten smSqLogo">
+          <div className="tbl fill">
+            <div id="interview" className="row">
+              <div className="cell logo padRtLg hideHH" style={{ paddingRight: '20px' }}>
+                <a href="/Interview/Amazon-Interview-Questions-E6036.htm" className="sqLogoLink">
+                  <span className="sqLogo tighten smSqLogo">
                     <img
                       src={interview.ProfileImg ? interview.ProfileImg : defaultplaceholder}
-                      class="lazy lazy-loaded"
+                      className="lazy lazy-loaded"
                       data-retina-ok="true"
                       alt=" Logo"
                       title=""
@@ -38,49 +38,51 @@ class Questions extends Component {
                   </span>
                 </a>
               </div>
-              <div class="cell">
-                <div class="tbl fill margBotSm">
-                  <div id="interview" class="row">
-                    <h3 class="cell p">
-                      <span class="authorInfo">
+              <div className="cell">
+                <div className="tbl fill margBotSm">
+                  <div id="interview" className="row">
+                    <h3 className="cell p">
+                      <span className="authorInfo">
                         <a>
                           {interview.JobTitle} at {interview.CompanyName} was asked...
                         </a>
                       </span>
                     </h3>
-                    <div class="cell alignRt noWrap minor hideHH">
+                    <div className="cell alignRt noWrap minor hideHH">
                       {' '}
                       {moment(interview.DatePosted).format('ll')}
                     </div>
                   </div>
                 </div>
-                <div class="question margTopSm">
-                  <table class="interviewQuestionText">
+                <div className="question margTopSm">
+                  <table className="interviewQuestionText">
                     <tbody>
                       <tr>
                         <td>
-                          <p class="questionText h3" style={{ marginBottom: '10px' }}>
+                          <p className="questionText h3" style={{ marginBottom: '10px' }}>
                             {' '}
                             {interview.InterviewQuestions}
                           </p>
                           <a
                             onClick={this.showAnswers}
-                            class="userResponseLink margTop block hiddenLink mmLink "
+                            className="userResponseLink margTop block hiddenLink mmLink "
                             href="#"
                           >
                             Answer
                             <i
-                              class={`caret-blue margLtSm ${
+                              className={`caret-blue margLtSm ${
                                 this.state.showanswer ? 'rotate180' : ''
                               }`}
                             ></i>
                           </a>
                           <div
-                            class="userResponses margTopLg borderTop"
+                            className="userResponses margTopLg borderTop"
                             style={{ display: this.state.showanswer ? 'block' : 'none' }}
                           >
-                            <div class="responseText padTopSm tbl fill">
-                              <p class="cell noMargVert padVert borderBot">{interview.Answers}</p>
+                            <div className="responseText padTopSm tbl fill">
+                              <p className="cell noMargVert padVert borderBot">
+                                {interview.Answers}
+                              </p>
                             </div>
                           </div>
                         </td>

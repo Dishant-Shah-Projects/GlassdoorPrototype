@@ -29,20 +29,17 @@ class salaryList extends Component {
       })
       .then(
         (response) => {
-          console.log('salary', response);
           let payload = {
             SalarySearchList: response.data.result.result,
             PageNo,
-            PageCount: Math.ceil(response.data.count / 10),
-            Totalcount: response.count,
+            PageCount: Math.ceil(response.data.count.count / 10),
+            Totalcount: response.data.count.count,
 
             // PageCount: Math.ceil(response.data.Totalcount / 3),
           };
           this.props.updateSalaryList(payload);
         },
-        (error) => {
-          console.log('error', error);
-        }
+        (error) => {}
       );
 
     // let payload = {
@@ -61,7 +58,6 @@ class salaryList extends Component {
   }
 
   onPageClick = (e) => {
-    // console.log('Page Clicked:', e.selected);
     this.commonFetch(e.selected);
   };
 
@@ -72,12 +68,8 @@ class salaryList extends Component {
     axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
     const data = { CompanyID };
     axios.post(serverUrl + 'student/companyViewCount', data).then(
-      (response) => {
-        console.log('View incremented');
-      },
-      (error) => {
-        console.log('error', error);
-      }
+      (response) => {},
+      (error) => {}
     );
   };
 
@@ -95,40 +87,40 @@ class salaryList extends Component {
     return (
       <body className="main flex loggedIn lang-en en-US hollywood  _initOk noTouch desktop">
         {/*<Navbar />*/}
-        <div class="pageContentWrapperStudent ">
+        <div className="pageContentWrapperStudent ">
           <div id="PageContent">
-            <div id="PageBodyContents" class="meat">
-              <div class="pageInsideContent cf">
+            <div id="PageBodyContents" className="meat">
+              <div className="pageInsideContent cf">
                 <div id="nodeReplace">
-                  <main class="gdGrid">
+                  <main className="gdGrid">
                     <div id="EI-Srch">
                       <div
                         id="SalarySearchResults"
-                        class="d-flex flex-column flex-md-row mx-md-std mt-std"
+                        className="d-flex flex-column flex-md-row mx-md-std mt-std"
                       >
                         <article
                           style={{ width: '67%' }}
-                          class="mr-0 mr-md-std css-8atqhb ep6ayhb0"
+                          className="mr-0 mr-md-std css-8atqhb ep6ayhb0"
                         >
                           <div data-test="employer-salaries">
-                            <div class=" gd-ui-module css-1mzux4t">
+                            <div className=" gd-ui-module css-1mzux4t">
                               {localStorage.getItem('SearchString') ? (
                                 <h1>{localStorage.getItem('SearchString')} Salaries</h1>
                               ) : (
                                 ''
                               )}
-                              <div data-test="" class=" e1liezln0 css-1gjvczy">
-                                <div class="textAndIconContainer">
-                                  <div class="iconContainer">
-                                    <span alt="btn-icon" class="SVGInline">
+                              <div data-test="" className=" e1liezln0 css-1gjvczy">
+                                <div className="textAndIconContainer">
+                                  <div className="iconContainer">
+                                    <span alt="btn-icon" className="SVGInline">
                                       <svg
-                                        class="SVGInline-svg"
+                                        className="SVGInline-svg"
                                         xmlns="http://www.w3.org/2000/svg"
                                         width="32"
                                         height="32"
                                         viewBox="0 0 32 32"
                                       >
-                                        <g fill="none" fill-rule="evenodd">
+                                        <g fill="none" fillRule="evenodd">
                                           <circle
                                             cx="16"
                                             cy="16"
@@ -143,28 +135,28 @@ class salaryList extends Component {
                                       </svg>
                                     </span>
                                   </div>
-                                  <div class="text">
+                                  <div className="text">
                                     {this.props.salaryListStore.SalarySearchList.length > 0 ? (
                                       localStorage.getItem('SearchString') ? (
-                                        <strong class="title">
+                                        <strong className="title">
                                           Did you mean job titles matching{' '}
                                           {localStorage.getItem('SearchString')}?
                                         </strong>
                                       ) : (
-                                        <strong class="title">Top salary searches </strong>
+                                        <strong className="title">Top salary searches </strong>
                                       )
                                     ) : (
-                                      <strong class="title">
+                                      <strong className="title">
                                         No Data found, try changing search criteria{' '}
                                       </strong>
                                     )}
                                     {/*localStorage.getItem('SearchString') ? (
-                                      <strong class="title">
+                                      <strong className="title">
                                         Did you mean job titles matching{' '}
                                         {localStorage.getItem('SearchString')}?
                                       </strong>
                                     ) : (
-                                      <strong class="title">Top salary searches </strong>
+                                      <strong className="title">Top salary searches </strong>
                                     )*/}
                                   </div>
                                 </div>
