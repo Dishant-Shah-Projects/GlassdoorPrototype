@@ -71,8 +71,9 @@ class RightBlock extends Component {
   };
 
   render() {    
-    console.log(this.props);
+    console.log('jobstore',this.props.jobSelectStore.jobsInfo);
     return (
+      
       <div id="JDCol" className="noPad opened transformNone">
         {this.props.applicantsModalStore.popSeen ? (
           <ApplicantsList
@@ -81,6 +82,7 @@ class RightBlock extends Component {
           />
         ) : (
           <div id="JDWrapper">
+            {JSON.stringify(this.props.jobSelectStore.jobsInfo) === '{}' ? ('') : (
             <article className="jobDetails scrollable active" id="3708699629">
               <div className="jobViewMinimal">
                 <div class="intersection-visible-wrapper">
@@ -171,6 +173,7 @@ class RightBlock extends Component {
                 </div>
               </div>
             </article>
+            )}
           </div>
         )}
       </div>

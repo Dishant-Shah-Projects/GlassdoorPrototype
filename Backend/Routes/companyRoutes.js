@@ -243,7 +243,7 @@ Router.get('/report', checkAuth, async (req, res) => {
 });
 
 // To get the demographics of applicants
-Router.get('/demographicsJob', checkAuth, async (req, res) => {
+Router.get('/demographicsJob', async (req, res) => {
   const data = {
     api: 'demographicsJob',
     query: req.query,
