@@ -116,6 +116,15 @@ class ResumeUploadPage extends Component {
   };
 
   render() {
+    if (localStorage.getItem('token')) {
+      if (localStorage.getItem('userrole') === 'company') {
+        return <Redirect to="/Employer" />;
+      } else if (localStorage.getItem('userrole') === 'admin') {
+        return <Redirect to="/AdminHomePage" />;
+      }
+    } else {
+      return <Redirect to="/login" />;
+    }
     if (this.state.redirect) {
       return <Redirect to={this.state.redirect} />;
     }
@@ -278,9 +287,7 @@ class ResumeUploadPage extends Component {
                                                     ></path>
                                                   </svg>
                                                 </span>
-                                                <div class="mt-0 mb-xl mx-0 undefined">
-                                                  Drag and drop or select a file to upload
-                                                </div>
+                                                <div class="mt-0 mb-xl mx-0 undefined"></div>
                                                 <div
                                                   class="m-0 FileSelectStyle__replaceBtn___1budq"
                                                   data-test="selectFileBtn"

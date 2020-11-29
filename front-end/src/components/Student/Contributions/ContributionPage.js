@@ -8,6 +8,7 @@ import Reviews from './Review/Reviews';
 import Interview from './InterView/Interview';
 import Photos from './Photos/Photos';
 import { history } from '../../../App';
+import { Redirect } from 'react-router-dom';
 
 class ContributionPage extends Component {
   constructor(props) {
@@ -29,6 +30,15 @@ class ContributionPage extends Component {
   // };
 
   render() {
+    if (localStorage.getItem('token')) {
+      if (localStorage.getItem('userrole') === 'company') {
+        return <Redirect to="/Employer" />;
+      } else if (localStorage.getItem('userrole') === 'admin') {
+        return <Redirect to="/AdminHomePage" />;
+      }
+    } else {
+      return <Redirect to="/login" />;
+    }
     this.props.LowerNavBarOther();
 
     return (

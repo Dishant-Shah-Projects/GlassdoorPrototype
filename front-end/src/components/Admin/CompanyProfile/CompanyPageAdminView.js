@@ -11,6 +11,7 @@ import CompanyInterviews from './CompanyInterviews/CompanyInterviews';
 import CompanyPhotos from './CompanyPhotos/CompanyPhotos';
 import { history } from '../../../App';
 import CompanySalaries from './CompanySalaries/CompanySalaries';
+import { Redirect } from 'react-router';
 
 class CompanyPageAdminView extends Component {
   constructor(props) {
@@ -18,23 +19,26 @@ class CompanyPageAdminView extends Component {
     this.state = {};
   }
   componentDidMount() {
-    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
-    axios
-      .get(serverUrl + 'student/companyProfile', {
-        params: { CompanyID: localStorage.getItem('companyID') },
-        withCredentials: true,
-      })
-      .then((response) => {
-        console.log('compsnyData:', response.data);
-        const payload = {
-          companyOverview: { ...response.data },
-        };
-        this.props.updateCompanyOverview(payload);
-      });
-    localStorage.setItem('form_company_name', '');
-    localStorage.setItem('form_ceo_name', '');
-    localStorage.setItem('application_job_id', '');
+    if (localStorage.getItem('companyID')) {
+      axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+      axios
+        .get(serverUrl + 'student/companyProfile', {
+          params: { CompanyID: localStorage.getItem('companyID') },
+          withCredentials: true,
+        })
+        .then((response) => {
+          console.log('compsnyData:', response.data);
+          const payload = {
+            companyOverview: { ...response.data },
+          };
+          this.props.updateCompanyOverview(payload);
+        });
+      localStorage.setItem('form_company_name', '');
+      localStorage.setItem('form_ceo_name', '');
+      localStorage.setItem('application_job_id', '');
+    }
   }
+
   openForm = (form) => {
     localStorage.setItem(
       'form_company_name',
@@ -44,6 +48,17 @@ class CompanyPageAdminView extends Component {
     history.push('/' + form);
   };
   render() {
+    if (localStorage.getItem('token')) {
+      if (localStorage.getItem('userrole') === 'company') {
+        return <Redirect to="/Employer" />;
+      } else if (localStorage.getItem('userrole') === 'student') {
+        return <Redirect to="/Home" />;
+      } else if (!localStorage.getItem('companyID')) {
+        return <Redirect to="/AdminHomePage" />;
+      }
+    } else {
+      return <Redirect to="/login" />;
+    }
     this.props.LowerNavBarOther();
 
     return (

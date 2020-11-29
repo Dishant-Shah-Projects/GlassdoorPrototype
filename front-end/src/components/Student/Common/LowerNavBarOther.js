@@ -97,7 +97,7 @@ class LowerNavBarOther extends Component {
                           <li className="p-0 m-0">
                             <a
                               className="d-flex align-items-center px-std MenuItemStyles__menuItem MenuItemStyles__menuItemHoverEffect header-menu-item"
-                              href="/Job/Home/savedJobs.htm"
+                              href=""
                               target="_top"
                               rel=""
                               data-ga-lbl="Saved"

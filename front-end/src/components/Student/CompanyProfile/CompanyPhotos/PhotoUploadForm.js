@@ -3,6 +3,7 @@ import './PhotoUploadForm.css';
 import axios from 'axios';
 import serverUrl from '../../../../config';
 import { history } from '../../../../App';
+import { Redirect } from 'react-router';
 
 class PhotoUploadForm extends Component {
   constructor(props) {
@@ -86,6 +87,17 @@ class PhotoUploadForm extends Component {
   };
 
   render() {
+    if (localStorage.getItem('token')) {
+      if (localStorage.getItem('userrole') === 'company') {
+        return <Redirect to="/Employer" />;
+      } else if (localStorage.getItem('userrole') === 'admin') {
+        return <Redirect to="/AdminHomePage" />;
+      } else if (!localStorage.getItem('companyID') || !localStorage.getItem('form_company_name')) {
+        return <Redirect to="/Home" />;
+      }
+    } else {
+      return <Redirect to="/login" />;
+    }
     return (
       <main id="mount">
         <div>

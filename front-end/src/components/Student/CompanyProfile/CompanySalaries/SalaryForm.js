@@ -5,6 +5,7 @@ import serverUrl from '../../../../config';
 import { connect } from 'react-redux';
 import { history } from '../../../../App';
 import { Link } from 'react-router-dom';
+import { Redirect } from 'react-router';
 
 class SalaryForm extends Component {
   constructor(props) {
@@ -135,6 +136,17 @@ class SalaryForm extends Component {
   };
 
   render() {
+    if (localStorage.getItem('token')) {
+      if (localStorage.getItem('userrole') === 'company') {
+        return <Redirect to="/Employer" />;
+      } else if (localStorage.getItem('userrole') === 'admin') {
+        return <Redirect to="/AdminHomePage" />;
+      } else if (!localStorage.getItem('companyID') || !localStorage.getItem('form_company_name')) {
+        return <Redirect to="/Home" />;
+      }
+    } else {
+      return <Redirect to="/login" />;
+    }
     // document.location.href = String(document.location.href).replace('#', '');
     return (
       <main id="mount">

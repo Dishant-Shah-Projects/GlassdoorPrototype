@@ -9,6 +9,7 @@ import './JobApplicationPage.css';
 import defaultplaceholder from '../CompanyNavbar/default-placeholder.png';
 import axios from 'axios';
 import serverUrl from '../../../../config';
+import { Redirect } from 'react-router';
 
 class JobApplicationPage extends Component {
   constructor(props) {
@@ -24,23 +25,25 @@ class JobApplicationPage extends Component {
   }
 
   componentDidMount() {
-    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
-    axios
-      .get(serverUrl + 'student/fillJobApplication', {
-        params: {
-          JobID: localStorage.getItem('application_job_id'),
-          CompanyID: localStorage.getItem('companyID'),
-        },
-        withCredentials: true,
-      })
-      .then((response) => {
-        console.log('fill aplication: ', response.data);
-        this.setState({
-          Company: response.data.Company[0],
-          Job: response.data.Job[0],
-          name: this.props.studentInfoStore.studentProfile.Name,
+    if (localStorage.getItem('application_job_id') && localStorage.getItem('companyID')) {
+      axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+      axios
+        .get(serverUrl + 'student/fillJobApplication', {
+          params: {
+            JobID: localStorage.getItem('application_job_id'),
+            CompanyID: localStorage.getItem('companyID'),
+          },
+          withCredentials: true,
+        })
+        .then((response) => {
+          console.log('fill aplication: ', response.data);
+          this.setState({
+            Company: response.data.Company[0],
+            Job: response.data.Job[0],
+            name: this.props.studentInfoStore.studentProfile.Name,
+          });
         });
-      });
+    }
   }
 
   onChangeResumeHandler = (event) => {
@@ -262,6 +265,20 @@ class JobApplicationPage extends Component {
   };
 
   render() {
+    if (localStorage.getItem('token')) {
+      if (localStorage.getItem('userrole') === 'company') {
+        return <Redirect to="/Employer" />;
+      } else if (localStorage.getItem('userrole') === 'admin') {
+        return <Redirect to="/AdminHomePage" />;
+      } else if (
+        !localStorage.getItem('companyID') ||
+        !localStorage.getItem('application_job_id')
+      ) {
+        return <Redirect to="/Home" />;
+      }
+    } else {
+      return <Redirect to="/login" />;
+    }
     let avgRating = 0;
     if (this.state.Company.GeneralReviewCount > 0) {
       avgRating = Number(

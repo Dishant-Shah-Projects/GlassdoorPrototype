@@ -8,6 +8,7 @@ import serverUrl from '../../../config';
 import { history } from '../../../App';
 import SalaryReviewCard from './SalaryReviewCard';
 import '../../Student/CompanyProfile/CompanyInterviews/CompanyInterviews.css';
+import { Redirect } from 'react-router';
 
 class SalaryListAdmin extends Component {
   constructor(props) {
@@ -141,6 +142,15 @@ class SalaryListAdmin extends Component {
   };
 
   render() {
+    if (localStorage.getItem('token')) {
+      if (localStorage.getItem('userrole') === 'company') {
+        return <Redirect to="/Employer" />;
+      } else if (localStorage.getItem('userrole') === 'student') {
+        return <Redirect to="/Home" />;
+      }
+    } else {
+      return <Redirect to="/login" />;
+    }
     return (
       <body className="main flex loggedIn lang-en en-US hollywood  _initOk noTouch desktop">
         {/*<Navbar />*/}

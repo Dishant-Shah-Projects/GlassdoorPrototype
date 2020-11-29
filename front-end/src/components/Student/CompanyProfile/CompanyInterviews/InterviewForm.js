@@ -4,6 +4,7 @@ import axios from 'axios';
 import serverUrl from '../../../../config';
 import { history } from '../../../../App';
 import { connect } from 'react-redux';
+import { Redirect } from 'react-router';
 
 class InterviewForm extends Component {
   constructor(props) {
@@ -192,6 +193,17 @@ class InterviewForm extends Component {
   };
 
   render() {
+    if (localStorage.getItem('token')) {
+      if (localStorage.getItem('userrole') === 'company') {
+        return <Redirect to="/Employer" />;
+      } else if (localStorage.getItem('userrole') === 'admin') {
+        return <Redirect to="/AdminHomePage" />;
+      } else if (!localStorage.getItem('companyID') || !localStorage.getItem('form_company_name')) {
+        return <Redirect to="/Home" />;
+      }
+    } else {
+      return <Redirect to="/login" />;
+    }
     return (
       <div class="pageContentWrapper ">
         <div id="PageContent" style={{ backgroundColor: 'white', width: '100%' }}>

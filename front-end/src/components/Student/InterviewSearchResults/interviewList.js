@@ -7,6 +7,7 @@ import Questions from './Questions';
 import axios from 'axios';
 import serverUrl from '../../../config';
 import { history } from '../../../App';
+import { Redirect } from 'react-router';
 
 class interviewList extends Component {
   constructor(props) {
@@ -74,6 +75,15 @@ class interviewList extends Component {
   };
 
   render() {
+    if (localStorage.getItem('token')) {
+      if (localStorage.getItem('userrole') === 'company') {
+        return <Redirect to="/Employer" />;
+      } else if (localStorage.getItem('userrole') === 'admin') {
+        return <Redirect to="/AdminHomePage" />;
+      }
+    } else {
+      return <Redirect to="/login" />;
+    }
     this.props.LowerNavBarOther();
     return (
       <body className="main flex loggedIn lang-en en-US hollywood  _initOk noTouch desktop">

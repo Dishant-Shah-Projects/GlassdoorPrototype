@@ -8,6 +8,7 @@ import './Home.css';
 import { history } from '../../../App';
 import { openProfileTabOnClick } from '../../../constants/action-types';
 import { connect } from 'react-redux';
+import { Redirect } from 'react-router';
 
 class Home extends Component {
   constructor(props) {
@@ -38,6 +39,15 @@ class Home extends Component {
   };
 
   render() {
+    if (localStorage.getItem('token')) {
+      if (localStorage.getItem('userrole') === 'company') {
+        return <Redirect to="/Employer" />;
+      } else if (localStorage.getItem('userrole') === 'admin') {
+        return <Redirect to="/AdminHomePage" />;
+      }
+    } else {
+      return <Redirect to="/login" />;
+    }
     return (
       <div style={{ background: '#fff' }}>
         {/*<Navbar />*/}

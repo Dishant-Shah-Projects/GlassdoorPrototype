@@ -12,6 +12,8 @@ import jwt_decode from 'jwt-decode';
 class LoginBody extends Component {
   constructor(props) {
     super(props);
+    this.inputElement = React.createRef();
+
     this.state = {
       errorMessage: '',
       loginFailed: false,
@@ -51,7 +53,7 @@ class LoginBody extends Component {
 
   submitLogin = (e) => {
     //prevent page from refresh
-    e.preventDefault();
+    // e.preventDefault();
     const data = {
       UserName: this.state.Email,
       Password: this.state.Password,
@@ -71,9 +73,15 @@ class LoginBody extends Component {
           localStorage.setItem('useremail', decoded.Name);
           localStorage.setItem('selectedDropDown', 'Jobs');
 
-          this.setState({
-            authFlag: true,
-          });
+          this.props.LoginAccount();
+          this.setState(
+            {
+              authFlag: true,
+            },
+            function () {
+              this.handleClick();
+            }
+          );
         }
       },
       (error) => {
@@ -85,17 +93,20 @@ class LoginBody extends Component {
     );
   };
 
+  handleClick = (event) => {
+    this.inputElement.current.click();
+  };
   render() {
     let redirectVar = null;
-    if (localStorage.getItem('token')) {
-      if (localStorage.getItem('userrole') === 'company') {
-        redirectVar = <Redirect to="/Employer" />;
-      } else if (localStorage.getItem('userrole') === 'student') {
-        redirectVar = <Redirect to="/home" />;
-      } else if (localStorage.getItem('userrole') === 'admin') {
-        redirectVar = <Redirect to="/AdminHomePage" />;
-      }
-    }
+    // if (localStorage.getItem('token')) {
+    //   if (localStorage.getItem('userrole') === 'company') {
+    //     redirectVar = <Redirect to="/Employer" />;
+    //   } else if (localStorage.getItem('userrole') === 'student') {
+    //     redirectVar = <Redirect to="/home" />;
+    //   } else if (localStorage.getItem('userrole') === 'admin') {
+    //     redirectVar = <Redirect to="/AdminHomePage" />;
+    //   }
+    // }
     return (
       <section className="wide lockedHero">
         {redirectVar}
@@ -119,21 +130,11 @@ class LoginBody extends Component {
                     <div className="mx-auto my-0  maxw-sm-authInlineInner  mw-400">
                       <p className="my-0 legalText">
                         By continuing, you agree to our{' '}
-                        <a
-                          href="/about/terms.htm"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="link"
-                        >
+                        <a href="#" target="_blank" rel="noopener noreferrer" className="link">
                           Terms of Use
                         </a>{' '}
                         and{' '}
-                        <a
-                          href="https://hrtechprivacy.com/brands/glassdoor#privacypolicy"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="link"
-                        >
+                        <a href="#" target="_blank" rel="noopener noreferrer" className="link">
                           Privacy Policy
                         </a>
                         .
@@ -299,16 +300,21 @@ class LoginBody extends Component {
                             ''
                           )}
                           <div className="mt-std d-flex justify-content-center">
-                            <button
-                              className="gd-ui-button minWidthBtn signupSubmit css-8i7bc2"
-                              type="submit"
-                              disabled={this.state.inValidEmail ? true : false}
-                              style={{
-                                cursor: this.state.inValidEmail ? 'not-allowed' : '',
-                              }}
-                            >
-                              Continue with Email
-                            </button>
+                            <a ref={this.inputElement} href="#">
+                              {' '}
+                              <button
+                                onClick={this.submitLogin}
+                                className="gd-ui-button minWidthBtn signupSubmit css-8i7bc2"
+                                // type="submit"
+                                type="button"
+                                disabled={this.state.inValidEmail ? true : false}
+                                style={{
+                                  cursor: this.state.inValidEmail ? 'not-allowed' : '',
+                                }}
+                              >
+                                Continue with Email
+                              </button>
+                            </a>
                           </div>
                         </form>
                       </div>
@@ -322,7 +328,7 @@ class LoginBody extends Component {
             {' '}
             Are You Hiring?&nbsp;
             <a
-              href="/post-job"
+              href="#"
               className="track-click strong"
               data-track-cmpgn="home"
               data-track-source="below-form-locked-b2c"

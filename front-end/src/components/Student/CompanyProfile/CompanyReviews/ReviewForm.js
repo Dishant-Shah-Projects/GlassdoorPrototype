@@ -27,7 +27,10 @@ class ReviewForm extends Component {
   }
 
   componentDidMount() {
-    localStorage.setItem('companyID', '');
+    // if (!localStorage.getItem('companyID')) {
+    //   return <Redirect to="/Home" />;
+    // }
+    // localStorage.setItem('companyID', '');
     // this.commonFetch();
   }
 
@@ -212,14 +215,18 @@ class ReviewForm extends Component {
 
   render() {
     let redirectVar = null;
-    if (localStorage.getItem('userrole') !== 'student') {
-      return <Redirect to="/" />;
-      //   if (localStorage.getItem('userrole') === 'student') {
-      //     redirectVar = null;
-      //   } else if (localStorage.getItem('userrole') === 'company') {
-      //     redirectVar = <Redirect to="/Employer" />;
-      //   }
+    if (localStorage.getItem('token')) {
+      if (localStorage.getItem('userrole') === 'company') {
+        return <Redirect to="/Employer" />;
+      } else if (localStorage.getItem('userrole') === 'admin') {
+        return <Redirect to="/AdminHomePage" />;
+      } else if (!localStorage.getItem('companyID') || !localStorage.getItem('form_company_name')) {
+        return <Redirect to="/Home" />;
+      }
+    } else {
+      return <Redirect to="/login" />;
     }
+
     return (
       <main id="mount">
         {redirectVar}

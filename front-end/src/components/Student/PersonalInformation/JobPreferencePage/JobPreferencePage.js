@@ -25,11 +25,11 @@ class JobPreferencePage extends Component {
     };
   }
 
-  sleep(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
+  // sleep(ms) {
+  //   return new Promise((resolve) => setTimeout(resolve, ms));
+  // }
   componentDidMount() {
-    this.sleep(20000);
+    // this.sleep(20000);
     const JobType = [...this.props.studentInfoStore.studentProfile.JobType];
     const Range = this.props.studentInfoStore.studentProfile.TargetSalary;
     console.log('JobType component', JobType);

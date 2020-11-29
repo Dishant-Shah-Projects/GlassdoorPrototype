@@ -13,6 +13,7 @@ import JobNavBar from './JobNavBar';
 import JobResults from './JobResults';
 import axios from 'axios';
 import serverUrl from '../../../config';
+import { Redirect } from 'react-router';
 
 class JobList extends Component {
   constructor(props) {
@@ -211,6 +212,15 @@ class JobList extends Component {
   };
 
   render() {
+    if (localStorage.getItem('token')) {
+      if (localStorage.getItem('userrole') === 'company') {
+        return <Redirect to="/Employer" />;
+      } else if (localStorage.getItem('userrole') === 'admin') {
+        return <Redirect to="/AdminHomePage" />;
+      }
+    } else {
+      return <Redirect to="/login" />;
+    }
     this.props.LowerNavBarOther();
     return (
       <div className="gdGrid pageContentWrapperStudent ">

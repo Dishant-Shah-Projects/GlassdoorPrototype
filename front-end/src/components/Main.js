@@ -116,7 +116,6 @@ class Main extends Component {
         <Route path="/Profile" component={Profile} />
         <Route path="/ResumeUploadPage" component={ResumeUploadPage} />
         <Route path="/ContributionPage" component={ContributionPage} />
-        <Route path="/CommonContribute" component={CommonContribute} />
         <Route path="/CompanyPage" component={CompanyPage} />
         <Route path="/AdminHomePage" component={AdminHomePage} />
         <Route path="/CompanySearchResultsAdmin" component={CompanySearchResultsAdmin} />

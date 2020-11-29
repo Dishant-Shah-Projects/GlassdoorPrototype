@@ -62,10 +62,15 @@ class CompanySearchResultsAdmin extends Component {
   };
 
   render() {
-    // let redirectVar = null;
-    // if (this.state.redirect) {
-    //   redirectVar = <Redirect to={this.state.redirect} />;
-    // }
+    if (localStorage.getItem('token')) {
+      if (localStorage.getItem('userrole') === 'company') {
+        return <Redirect to="/Employer" />;
+      } else if (localStorage.getItem('userrole') === 'student') {
+        return <Redirect to="/Home" />;
+      }
+    } else {
+      return <Redirect to="/login" />;
+    }
     return (
       <body className="main flex loggedIn lang-en en-US hollywood  _initOk noTouch desktop">
         {/*redirectVar*/}

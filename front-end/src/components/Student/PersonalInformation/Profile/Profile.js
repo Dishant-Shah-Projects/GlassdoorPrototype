@@ -9,6 +9,7 @@ import PersonalDetails from '../PersonalDetails/PersonalDetails';
 import ResumeList from '../ResumePage/ResumeList';
 import './Profile.css';
 import { history } from '../../../../App';
+import { Redirect } from 'react-router';
 
 class Profile extends Component {
   constructor(props) {
@@ -25,6 +26,15 @@ class Profile extends Component {
     history.push('/ResumeUploadPage');
   };
   render() {
+    if (localStorage.getItem('token')) {
+      if (localStorage.getItem('userrole') === 'company') {
+        return <Redirect to="/Employer" />;
+      } else if (localStorage.getItem('userrole') === 'admin') {
+        return <Redirect to="/AdminHomePage" />;
+      }
+    } else {
+      return <Redirect to="/login" />;
+    }
     this.props.LowerNavBarOther();
     let tabOpened = <PersonalDetails />;
     switch (this.props.leftPannelStore.openTab) {

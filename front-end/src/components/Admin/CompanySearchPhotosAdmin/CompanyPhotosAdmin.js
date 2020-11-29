@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import PaginationComponent from '../../Student/Common/PaginationComponent';
 import { history } from '../../../App';
+import { Redirect } from 'react-router';
 
 class CompanyPhotosAdmin extends Component {
   constructor(props) {
@@ -142,7 +143,15 @@ class CompanyPhotosAdmin extends Component {
   };
 
   render() {
-    // this.props.LowerNavBarOther();
+    if (localStorage.getItem('token')) {
+      if (localStorage.getItem('userrole') === 'company') {
+        return <Redirect to="/Employer" />;
+      } else if (localStorage.getItem('userrole') === 'student') {
+        return <Redirect to="/Home" />;
+      }
+    } else {
+      return <Redirect to="/login" />;
+    }
     return (
       <body className="main flex loggedIn lang-en en-US hollywood  _initOk noTouch desktop">
         {/*<Navbar />*/}
