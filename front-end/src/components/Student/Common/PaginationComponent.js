@@ -12,8 +12,8 @@ class PaginationComponent extends Component {
   };
   render() {
     return (
-      <div id="FooterPageNav" class="pageNavBar tbl fill noMargBot">
-        <div class="pagingControls cell middle">
+      <div id="FooterPageNav" className="pageNavBar tbl fill noMargBot">
+        <div className="pagingControls cell middle">
           <ReactPaginate
             previousLabel={'<'}
             nextLabel={'>'}

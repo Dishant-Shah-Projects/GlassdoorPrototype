@@ -28,7 +28,6 @@ class interviewList extends Component {
       })
       .then(
         (response) => {
-          console.log('interview list', response);
           let interviewSearchList = response.data.returns.map((inter) => {
             return { ...inter.Interview, ProfileImg: inter.ProfileImg };
           });
@@ -42,9 +41,7 @@ class interviewList extends Component {
           };
           this.props.updateInterviewList(payload);
         },
-        (error) => {
-          console.log('error', error);
-        }
+        (error) => {}
       );
   };
 
@@ -54,7 +51,6 @@ class interviewList extends Component {
   }
 
   onPageClick = (e) => {
-    // console.log('Page Clicked:', e.selected);
     this.commonFetch(e.selected);
   };
 
@@ -65,12 +61,8 @@ class interviewList extends Component {
     axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
     const data = { CompanyID };
     axios.post(serverUrl + 'student/companyViewCount', data).then(
-      (response) => {
-        console.log('View incremented');
-      },
-      (error) => {
-        console.log('error', error);
-      }
+      (response) => {},
+      (error) => {}
     );
   };
 
@@ -88,35 +80,40 @@ class interviewList extends Component {
     return (
       <body className="main flex loggedIn lang-en en-US hollywood  _initOk noTouch desktop">
         {/*<Navbar />*/}
-        <div class="pageContentWrapperStudent ">
+        <div className="pageContentWrapperStudent ">
           <div id="PageContent">
-            <div id="PageBodyContents" class="meat">
-              <div class="pageInsideContent cf">
+            <div id="PageBodyContents" className="meat">
+              <div className="pageInsideContent cf">
                 <div id="nodeReplace">
-                  <main class="gdGrid">
+                  <main className="gdGrid">
                     <div id="EI-Srch">
                       <div id="SearchResults">
                         <div id="InterviewsSearchResults">
-                          <div class="flex-aside">
-                            <article style={{ position: 'relative' }} id="MainCol" class="mainCol">
-                              <div class="module padHorzLg padVertLg">
-                                <div id="InterviewQuestionList" class="module">
-                                  <header class="lined">
+                          <div className="flex-aside">
+                            <article
+                              style={{ position: 'relative' }}
+                              id="MainCol"
+                              className="mainCol"
+                            >
+                              <div className="module padHorzLg padVertLg">
+                                <div id="InterviewQuestionList" className="module">
+                                  <header className="lined">
                                     {this.props.interviewListStore.interviewSearchList.length ===
                                     0 ? (
-                                      <h2 class="block" style={{ fontWeight: '400' }}>
+                                      <h2 className="block" style={{ fontWeight: '400' }}>
                                         No interviews found, try different seach criteria
                                       </h2>
                                     ) : (
-                                      <h2 class="block" style={{ fontWeight: '400' }}>
+                                      <h2 className="block" style={{ fontWeight: '400' }}>
                                         {localStorage.getItem('SearchString')} Interview Questions
                                       </h2>
                                     )}
                                   </header>
-                                  <div class="interviewQuestionsList lockedInterviewQuestions">
+                                  <div className="interviewQuestionsList lockedInterviewQuestions">
                                     {this.props.interviewListStore.interviewSearchList.map(
                                       (interview) => (
                                         <Questions
+                                          key={interview._id}
                                           interview={interview}
                                           openCompanyProfile={(event) =>
                                             this.openCompanyProfile(event, interview.CompanyID)
@@ -125,12 +122,12 @@ class interviewList extends Component {
                                       )
                                     )}
                                   </div>
-                                  <div class="tbl fill margTopSm">
-                                    <div class="row alignMid">
-                                      <div class="cell span-1-2 drop noWrap middle">
+                                  <div className="tbl fill margTopSm">
+                                    <div className="row alignMid">
+                                      <div className="cell span-1-2 drop noWrap middle">
                                         {this.props.interviewListStore.interviewSearchList.length >
                                         0 ? (
-                                          <div class="margTopSm">
+                                          <div className="margTopSm">
                                             <strong>
                                               {this.props.interviewListStore.PageNo * 10 + 1}
                                             </strong>

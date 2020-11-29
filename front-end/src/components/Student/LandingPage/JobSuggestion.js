@@ -21,10 +21,7 @@ class JobSuggestion extends Component {
     };
     axios.post(serverUrl + 'student/companyFavouriteJobs', data).then(
       (response) => {
-        console.log('Status Code : ', response.status);
         if (response.status === 200) {
-          console.log(response.data);
-
           let studentProfile = { ...this.props.studentInfoStore.studentProfile };
           studentProfile.FavouriteJobs.push(JobID);
           const payload = {
@@ -33,9 +30,7 @@ class JobSuggestion extends Component {
           this.props.updateStudentProfile(payload);
         }
       },
-      (error) => {
-        console.log(error);
-      }
+      (error) => {}
     );
   };
 
@@ -47,10 +42,7 @@ class JobSuggestion extends Component {
     };
     axios.post(serverUrl + 'student/removeFavouriteJobs', data).then(
       (response) => {
-        console.log('Status Code : ', response.status);
         if (response.status === 200) {
-          console.log(response.data);
-
           let studentProfile = { ...this.props.studentInfoStore.studentProfile };
           var index = studentProfile.FavouriteJobs.indexOf(JobID);
           if (index !== -1) {
@@ -63,9 +55,7 @@ class JobSuggestion extends Component {
           this.props.updateStudentProfile(payload);
         }
       },
-      (error) => {
-        console.log(error);
-      }
+      (error) => {}
     );
   };
 
@@ -73,10 +63,7 @@ class JobSuggestion extends Component {
     const job = this.props.job;
     const date1 = new Date(job.PostedDate);
     const date2 = new Date();
-    // console.log('date1:', date1);
-    // console.log('date2:', date2);
     const diffTime = Math.abs(date2 - date1);
-    // console.log('diffTime:', diffTime);
     const hours = Math.floor(diffTime / (1000 * 60 * 60));
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     const postedSince = hours < 24 ? hours : diffDays;
@@ -96,7 +83,7 @@ class JobSuggestion extends Component {
       <path
         d="M12 5.11l.66-.65a5.56 5.56 0 017.71.19 5.63 5.63 0 010 7.92L12 21l-8.37-8.43a5.63 5.63 0 010-7.92 5.56 5.56 0 017.71-.19zm7.66 6.75a4.6 4.6 0 00-6.49-6.51L12 6.53l-1.17-1.18a4.6 4.6 0 10-6.49 6.51L12 19.58z"
         fill="currentColor"
-        fill-rule="evenodd"
+        fillRule="evenodd"
       ></path>
     );
 
@@ -105,7 +92,7 @@ class JobSuggestion extends Component {
         <path
           d="M20.37 4.65a5.57 5.57 0 00-7.91 0l-.46.46-.46-.46a5.57 5.57 0 00-7.91 0 5.63 5.63 0 000 7.92L12 21l8.37-8.43a5.63 5.63 0 000-7.92z"
           fill="currentColor"
-          fill-rule="evenodd"
+          fillRule="evenodd"
         ></path>
       );
       alreadyFav = true;
@@ -162,7 +149,7 @@ class JobSuggestion extends Component {
                         {/*<path
                           d="M12 5.11l.66-.65a5.56 5.56 0 017.71.19 5.63 5.63 0 010 7.92L12 21l-8.37-8.43a5.63 5.63 0 010-7.92 5.56 5.56 0 017.71-.19zm7.66 6.75a4.6 4.6 0 00-6.49-6.51L12 6.53l-1.17-1.18a4.6 4.6 0 10-6.49 6.51L12 19.58z"
                           fill="currentColor"
-                          fill-rule="evenodd"
+                          fillRule="evenodd"
                         ></path>*/}
                         {heartIcon}
                       </svg>
@@ -194,7 +181,7 @@ class JobSuggestion extends Component {
                           <path
                             d="M12 9a1 1 0 101 1 1 1 0 00-1-1zm0 3a1 1 0 00-1 1v2a1 1 0 002 0v-2a1 1 0 00-1-1zm0-6a6 6 0 11-6 6 6 6 0 016-6zm0 11a5 5 0 10-5-5 5 5 0 005 5z"
                             fill="currentColor"
-                            fill-rule="evenodd"
+                            fillRule="evenodd"
                           ></path>
                         </svg>
                       </span>

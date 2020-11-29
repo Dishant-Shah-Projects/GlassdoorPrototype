@@ -25,7 +25,7 @@ class RightBlock extends Component {
             </div>
             <div className="mt-std css-1i303cs egi2yce0">
               {this.props.jobList.map((job) => (
-                <JobSuggestion job={job} />
+                <JobSuggestion key={job._id} job={job} />
               ))}
             </div>
           </div>
