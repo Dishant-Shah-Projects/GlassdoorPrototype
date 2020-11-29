@@ -196,7 +196,7 @@ class CompanyNavbar extends Component {
                         href="#"
                         data-label="Reviews"
                       >
-                        <span class="num h2"> {GeneralReviewCount}</span>
+                        <span class="num h2"> {/*GeneralReviewCount*/}</span>
                         <span class="subtle"> Reviews</span>
                       </a>
                       <div class="vline cell">
@@ -230,7 +230,7 @@ class CompanyNavbar extends Component {
                         href="#"
                         data-label="Salaries"
                       >
-                        <span class="num h2"> {SalaryReviewCount}</span>
+                        <span class="num h2"> {/*SalaryReviewCount*/}</span>
                         <span class="subtle"> Salaries</span>
                       </a>
                       <div class="vline cell">
@@ -247,7 +247,7 @@ class CompanyNavbar extends Component {
                         href="#"
                         data-label="Inter­views"
                       >
-                        <span class="num h2"> {InterviewReviewCount}</span>
+                        <span class="num h2"> {/*InterviewReviewCount*/}</span>
                         <span class="subtle"> Inter­views</span>
                       </a>
                       <div class="vline cell">
@@ -264,7 +264,7 @@ class CompanyNavbar extends Component {
                         href="#"
                         data-label="Photos"
                       >
-                        <span class="num h2"> {PhotoCount}</span>
+                        <span class="num h2"> {/*PhotoCount*/}</span>
                         <span class="subtle"> Photos</span>
                       </a>
                     </div>
