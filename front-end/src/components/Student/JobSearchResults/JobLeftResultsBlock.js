@@ -101,15 +101,17 @@ class JobLeftResultsBlock extends Component {
           </ul>
         </div>
         <div className="tbl fill padHorz margVert" id="ResultsFooter">
-          <div className="cell middle hideMob padVertSm" data-test="page-x-of-y">
-            Page {this.props.jobListStore.PageNo + 1} of {this.props.jobListStore.PageCount}
-          </div>
+          {this.props.jobListStore.jobList.length > 0 ? (
+            <div className="cell middle hideMob padVertSm" data-test="page-x-of-y">
+              Page {this.props.jobListStore.PageNo + 1} of {this.props.jobListStore.PageCount}
+            </div>
+          ) : (
+            ''
+          )}
           <div className="cell alignRt middle">
             {(this.props.jobListStore.appliedJobSelected ||
               this.props.jobListStore.favJobSelected) &&
             this.props.jobListStore.jobList.length > 0 ? (
-              ''
-            ) : (
               <PaginationComponent
                 PageCount={this.props.jobListStore.PageCount}
                 PageNo={this.props.jobListStore.PageNo}
@@ -117,6 +119,8 @@ class JobLeftResultsBlock extends Component {
                   this.onPageClick(e);
                 }}
               />
+            ) : (
+              ''
             )}
             {this.props.jobListStore.appliedJobSelected &&
             this.props.jobListStore.jobList.length > 0 ? (
