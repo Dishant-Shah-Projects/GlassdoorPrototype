@@ -317,15 +317,19 @@ class CompanyReviews extends Component {
                     </ol>
                   </div>
                 </div>
-                <div class="eiReviews__EIReviewsPageStyles__pagination noTabover mt">
-                  <PaginationComponent
-                    PageCount={this.props.companyReviewsStore.PageCount}
-                    PageNo={this.props.companyReviewsStore.PageNo}
-                    onPageClick={(e) => {
-                      this.onPageClick(e);
-                    }}
-                  />
-                </div>
+                {this.props.companyReviewsStore.ReviewList.length > 0 ? (
+                  <div class="eiReviews__EIReviewsPageStyles__pagination noTabover mt">
+                    <PaginationComponent
+                      PageCount={this.props.companyReviewsStore.PageCount}
+                      PageNo={this.props.companyReviewsStore.PageNo}
+                      onPageClick={(e) => {
+                        this.onPageClick(e);
+                      }}
+                    />
+                  </div>
+                ) : (
+                  ''
+                )}
               </div>
             </div>
           </main>

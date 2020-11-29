@@ -132,13 +132,17 @@ class CompanyPhotos extends Component {
                 ) : (
                   ''
                 )}
-                <div class="paginationFooter">
-                  Viewing {this.props.companyPhotosStore.PageNo * 10 + 1} -{' '}
-                  {this.props.companyPhotosStore.PhotoList.length +
-                    this.props.companyPhotosStore.PageNo * 10}{' '}
-                  of {this.props.companyPhotosStore.Totalcount} <span class="filterLabel"></span>{' '}
-                  Photos
-                </div>
+                {this.props.companyPhotosStore.Totalcount === 0 ? (
+                  ''
+                ) : (
+                  <div class="paginationFooter">
+                    Viewing {this.props.companyPhotosStore.PageNo * 10 + 1} -{' '}
+                    {this.props.companyPhotosStore.PhotoList.length +
+                      this.props.companyPhotosStore.PageNo * 10}{' '}
+                    of {this.props.companyPhotosStore.Totalcount} <span class="filterLabel"></span>{' '}
+                    Photos
+                  </div>
+                )}
               </div>
             </div>
           </div>

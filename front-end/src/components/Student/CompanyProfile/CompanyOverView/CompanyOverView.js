@@ -300,7 +300,7 @@ class CompanyOverView extends Component {
                     </div>
                   </div>
                 </div>
-                {this.props.companyOverviewStore.featuredReview ? (
+                {JSON.stringify(this.props.companyOverviewStore.featuredReview) !== '{}' ? (
                   <SpecialReview
                     review={this.props.companyOverviewStore.featuredReview}
                     reviewType={'Featured Review'}
@@ -308,7 +308,7 @@ class CompanyOverView extends Component {
                 ) : (
                   ''
                 )}
-                {this.props.companyOverviewStore.positiveReview ? (
+                {JSON.stringify(this.props.companyOverviewStore.positiveReview) !== '{}' ? (
                   <SpecialReview
                     review={this.props.companyOverviewStore.positiveReview}
                     reviewType={'Most Helpufl Positive Review'}
@@ -316,7 +316,7 @@ class CompanyOverView extends Component {
                 ) : (
                   ''
                 )}
-                {this.props.companyOverviewStore.negatieReview ? (
+                {JSON.stringify(this.props.companyOverviewStore.negatieReview) !== '{}' ? (
                   <SpecialReview
                     review={this.props.companyOverviewStore.negatieReview}
                     reviewType={'Most Helpufl Negative Review'}

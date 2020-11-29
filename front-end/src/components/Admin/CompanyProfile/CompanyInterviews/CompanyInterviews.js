@@ -353,13 +353,17 @@ class CompanyInterviews extends Component {
                   </div>
                 </div>
               </div>
-              <PaginationComponent
-                PageCount={this.props.companyInterviewStore.PageCount}
-                PageNo={this.props.companyInterviewStore.PageNo}
-                onPageClick={(e) => {
-                  this.onPageClick(e);
-                }}
-              />{' '}
+              {this.props.companyInterviewStore.InterViewList.length > 0 ? (
+                <PaginationComponent
+                  PageCount={this.props.companyInterviewStore.PageCount}
+                  PageNo={this.props.companyInterviewStore.PageNo}
+                  onPageClick={(e) => {
+                    this.onPageClick(e);
+                  }}
+                />
+              ) : (
+                ''
+              )}
             </div>
           </div>
         </div>
