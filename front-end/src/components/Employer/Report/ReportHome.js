@@ -6,7 +6,7 @@ import RightBlock from './RightBlock.js';
 import axios from 'axios';
 import serverUrl from '../../../config.js';
 import { connect } from 'react-redux';
-import { updateEmployerStatsStore } from '../../../constants/action-types';
+import { updateEmployerStats } from '../../../constants/action-types';
 
 class ReportHome extends Component {
   constructor(props) {
@@ -14,31 +14,7 @@ class ReportHome extends Component {
     this.state = {     
     };
   }
-  fetchReport = (PageNo =  0) => {   
-    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
-    axios
-      .get(serverUrl + 'company/report', {
-        params: { CompanyID: localStorage.getItem('userId'), PageNo: 0 },
-        withCredentials: true,
-      })
-      .then((response) => {
-        if (response.status == 200) {
-          console.log('response', response.data.statsData);
-          let payload = {
-            statsList : response.data.statsData,
-            PageNo,
-            PageCount: Math.ceil(response.data.count / 10),
-            Totalcount: response.data.count,
-          }
-          this.props.updateEmployerStatsStore(payload);
-        }
-      })
-      .catch((error) => {
-        this.setState({
-          errorMessage: 'No Statistics Found',
-        });
-      });
-  }
+  
 
   render() {
     return (
@@ -49,7 +25,7 @@ class ReportHome extends Component {
               <div class="applicationStyle__profileApplication___Jyu4n" style={{"max-width": "1280px"}}>
                 <div class="row flex-md-row p-0 px-md-lg py-md-xxl" style={{display: "flex !important"}}>
                   {<LeftBlock />}
-                  {<RightBlock />}
+                  {<RightBlock fetchReport={this.fetchReport}/>}
                   </div>
                 </div>
               </div>
@@ -60,16 +36,16 @@ class ReportHome extends Component {
   }
 }
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    updateEmployerStatsStore: (payload1) => {
-      dispatch({
-        type: updateEmployerStatsStore,
-        payload1,
-      });
-    },    
-  };
-};
+// const mapDispatchToProps = (dispatch) => {
+//   return {
+//     updateEmployerStats: (payload) => {
+//       dispatch({
+//         type: updateEmployerStats,
+//         payload,
+//       });
+//     },    
+//   };
+// };
 
-export default connect(null, mapDispatchToProps)(ReportHome);
-//export default ReportHome;
+//export default connect(null, mapDispatchToProps)(ReportHome);
+export default ReportHome;
