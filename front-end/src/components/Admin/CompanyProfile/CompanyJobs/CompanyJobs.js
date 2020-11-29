@@ -115,8 +115,9 @@ class CompanyJobs extends Component {
           this.setState({
             disabilityData: [...this.state.disabilityData, disability],
           })
-          let disability1 = []
+          
           for(var i = 0; i < demoInfo.Disability.length; i++) {
+            let disability1 = [];
             disability1.push(demoInfo.Disability[i].Disability);
             disability1.push(demoInfo.Disability[i].Count);
             Disability.push(disability1);
@@ -133,8 +134,9 @@ class CompanyJobs extends Component {
           this.setState({
             genderData: [...this.state.genderData, gender],
           })
-          let gender1 = []
-          for(var i = 0; i < demoInfo.Gender.length; i++) {
+         
+    for (var i = 0; i < demoInfo.Gender.length; i++) {
+             let gender1 = []
             gender1.push(demoInfo.Gender[i].Gender);
             gender1.push(demoInfo.Gender[i].Count);
             Gender.push(gender1);
@@ -152,8 +154,9 @@ class CompanyJobs extends Component {
           this.setState({
             veteranData: [...this.state.veteranData, veteran],
           })
-          let veteran1 = []
-          for(var i = 0; i < demoInfo.VeteranStatus.length; i++) {
+          
+    for (var i = 0; i < demoInfo.VeteranStatus.length; i++) {
+            let veteran1 = [];
             veteran1.push(demoInfo.VeteranStatus[i].VeteranStatus);
             veteran1.push(demoInfo.VeteranStatus[i].Count);
             Veteran.push(veteran1);
