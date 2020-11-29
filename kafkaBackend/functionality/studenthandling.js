@@ -1014,22 +1014,17 @@ async function handle_request(msg, callback) {
       try {
         const { CompanyID } = msg.query;
         const company = await Company.findOne({ CompanyID });
-        Company.findOneAndUpdate(
-          { CompanyID },
-          { $inc: { ViewCount: 1 } },
-
-          (err) => {
-            if (err) {
-              res.status = 500;
-              res.end = 'Network Error';
-              callback(null, res);
-            } else {
-              res.status = 200;
-              res.end = JSON.stringify(company);
-              callback(null, res);
-            }
+        Company.findOne({ CompanyID }, (err) => {
+          if (err) {
+            res.status = 500;
+            res.end = 'Network Error';
+            callback(null, res);
+          } else {
+            res.status = 200;
+            res.end = JSON.stringify(company);
+            callback(null, res);
           }
-        );
+        });
       } catch (error) {
         res.status = 500;
         res.end = 'Network Error';
