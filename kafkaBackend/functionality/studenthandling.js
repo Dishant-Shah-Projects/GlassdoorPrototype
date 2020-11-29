@@ -130,14 +130,17 @@ async function handle_request(msg, callback) {
       const res = {};
       try {
         const { CompanyID } = msg.body;
-        const companyModel = await Company.find({ CompanyID }, { ViewCount: 1 });
-        let ViewCount = null;
-        if (companyModel[0].ViewCount) {
-          ViewCount = companyModel[0].ViewCount + 1;
-        } else {
-          ViewCount = 1;
-        }
-        Company.updateOne({ CompanyID }, { ViewCount });
+        const companyModel = await Company.findOneAndUpdate(
+          { CompanyID },
+          { $inc: { ViewCount: 1 } }
+        );
+        // let ViewCount = null;
+        // if (companyModel[0].ViewCount) {
+        //   ViewCount = companyModel[0].ViewCount + 1;
+        // } else {
+        //   ViewCount = 1;
+        // }
+        // Company.updateOne({ CompanyID }, { ViewCount });
         res.status = 200;
         res.end = 'Updated the view count of the company';
         callback(null, res);
