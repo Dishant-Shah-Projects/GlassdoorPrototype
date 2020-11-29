@@ -182,7 +182,7 @@ class RightBlock extends Component {
                         </li>
                         <li class="d-flex align-items-center col-12 col-sm-6 p-0 m-0 pb-sm pl-sm-xxsm">
                           <label class="css-1f0lhlt ecl3kjh0">Founded:</label>
-                          <div data-test="employer-founded">{this.props.companyInfo.Founded.substring(0,4)} </div>
+                          <div data-test="employer-founded">{this.props.companyInfo.Founded && (this.props.companyInfo.Founded.length > 0) ? this.props.companyInfo.Founded.substring(0,4) : ' '} </div>
                         </li>
                         <li class="d-flex align-items-center col-12 col-sm-6 p-0 m-0 pb-sm pr-sm-xxsm">
                           <label class="css-1f0lhlt ecl3kjh0">Type:</label>
