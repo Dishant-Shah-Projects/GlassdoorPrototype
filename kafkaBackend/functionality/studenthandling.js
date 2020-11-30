@@ -225,23 +225,9 @@ async function handle_request(msg, callback) {
           await photo.save();
           ID += 1;
         }
-        Company.findOneAndUpdate(
-          { CompanyID },
-          { $inc: { PhotoCount: Photos.length } },
-
-          (err, results) => {
-            if (err) {
-              res.status = 500;
-              res.end = 'Network Error';
-              callback(null, res);
-            }
-            if (results) {
-              res.status = 200;
-              res.end = 'Photos Review Added';
-              callback(null, res);
-            }
-          }
-        );
+        res.status = 200;
+        res.end = 'Photos Review Added';
+        callback(null, res);
       } catch (error) {
         console.log(error);
         res.status = 500;
@@ -779,30 +765,9 @@ async function handle_request(msg, callback) {
               res.end = 'Network Error';
               callback(null, res);
             } else {
-              Company.findOneAndUpdate(
-                { CompanyID },
-                {
-                  $inc: {
-                    GeneralReviewCount: 1,
-                    TotalGeneralReviewRating: Rating,
-                    approveCEOcount: CEOApproval,
-                    recommendedcount: Recommended,
-                  },
-                },
-
-                (error, results) => {
-                  if (error) {
-                    res.status = 500;
-                    res.end = 'Network Error';
-                    callback(null, res);
-                  }
-                  if (results) {
-                    res.status = 200;
-                    res.end = 'Company Review Added';
-                    callback(null, res);
-                  }
-                }
-              );
+              res.status = 200;
+              res.end = 'Company Review Added';
+              callback(null, res);
             }
           }
         );
@@ -888,24 +853,9 @@ async function handle_request(msg, callback) {
           Zip,
         });
         await review.save();
-
-        Company.findOneAndUpdate(
-          { CompanyID },
-          { $inc: { InterviewReviewCount: 1 } },
-
-          (error, results) => {
-            if (error) {
-              res.status = 500;
-              res.end = 'Network Error';
-              callback(null, res);
-            }
-            if (results) {
-              res.status = 200;
-              res.end = 'Interview Review Added';
-              callback(null, res);
-            }
-          }
-        );
+        res.status = 200;
+        res.end = 'Interview Review Added';
+        callback(null, res);
       } catch {
         res.status = 500;
         res.end = 'Network Error';
@@ -1072,7 +1022,7 @@ async function handle_request(msg, callback) {
       let con = null;
       try {
         const { JobID, StudentID } = msg.body;
-        const applicationWithdrawProcedure = 'CALL applicationWithDraw(?,?)';
+        const applicationWithdrawProcedure = 'DELETE FROM APPLICATION_RECEIVED WHERE JobID=? AND StudentID=?;';
         con = await mysqlConnection();
         // eslint-disable-next-line no-unused-vars
         const [results, fields] = await con.query(applicationWithdrawProcedure, [JobID, StudentID]);
