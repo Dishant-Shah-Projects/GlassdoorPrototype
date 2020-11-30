@@ -49,15 +49,26 @@ async function handle_request(msg, callback) {
           const companyData = await Company.find({ CompanyID });
           let GeneralReviewCount = 0;
           let approveCEOcount = 0;
+          let recommendedcount = 0;
+          const TotalGeneralReviewRating = companyData[0].TotalGeneralReviewRating + result.Rating;
           if (result.CEOApproval === true) {
             approveCEOcount = companyData[0].approveCEOcount + 1;
           } else {
             approveCEOcount = companyData[0].approveCEOcount;
           }
+
+          if (result.Recommended === true) {
+            recommendedcount = companyData[0].recommendedcount + 1;
+          } else {
+            recommendedcount = companyData[0].recommendedcount;
+          }
           if (companyData[0].GeneralReviewCount >= 0) {
             GeneralReviewCount = companyData[0].GeneralReviewCount + 1;
           }
-          await Company.updateOne({ CompanyID }, { GeneralReviewCount, approveCEOcount });
+          await Company.updateOne(
+            { CompanyID },
+            { GeneralReviewCount, approveCEOcount, recommendedcount, TotalGeneralReviewRating }
+          );
         }
         res.end = JSON.stringify(result);
         callback(null, res);
@@ -78,12 +89,18 @@ async function handle_request(msg, callback) {
         // eslint-disable-next-line array-callback-return
         res.status = 200;
         if (Status === 'Approved') {
-          const companyData = await Company.find({ CompanyID });
-          let InterviewReviewCount = 0;
-          if (companyData[0].InterviewReviewCount >= 0) {
-            InterviewReviewCount = companyData[0].InterviewReviewCount + 1;
-          }
-          await Company.updateOne({ CompanyID }, { InterviewReviewCount });
+          await Company.findOneAndUpdate(
+            { CompanyID },
+            { $inc: { InterviewReviewCount: 0.5 } },
+
+            (error, results) => {
+              if (error) {
+                res.status = 500;
+                res.end = 'Network Error';
+                callback(null, res);
+              }
+            }
+          );
         }
         res.end = JSON.stringify(result);
         callback(null, res);
@@ -104,13 +121,18 @@ async function handle_request(msg, callback) {
         // eslint-disable-next-line array-callback-return
         res.status = 200;
         if (Status === 'Approved') {
-          const companyData = await Company.find({ CompanyID });
-          let SalaryReviewCount = 0;
+          await Company.findOneAndUpdate(
+            { CompanyID },
+            { $inc: { SalaryReviewCount: 0.5 } },
 
-          if (companyData[0].SalaryReviewCount >= 0) {
-            SalaryReviewCount = companyData[0].SalaryReviewCount + 1;
-          }
-          await Company.updateOne({ CompanyID }, { SalaryReviewCount });
+            (error, results) => {
+              if (error) {
+                res.status = 500;
+                res.end = 'Network Error';
+                callback(null, res);
+              }
+            }
+          );
         }
         res.end = JSON.stringify(result);
         callback(null, res);
@@ -187,12 +209,18 @@ async function handle_request(msg, callback) {
         // eslint-disable-next-line array-callback-return
         res.status = 200;
         if (Status === 'Approved') {
-          const companyData = await Company.find({ CompanyID });
-          let PhotoCount = 0;
-          if (companyData[0].PhotoCount >= 0) {
-            PhotoCount = companyData[0].PhotoCount + 1;
-          }
-          await Company.updateOne({ CompanyID }, { PhotoCount });
+          await Company.findOneAndUpdate(
+            { CompanyID },
+            { $inc: { PhotoCount: 0.5 } },
+
+            (error, results) => {
+              if (error) {
+                res.status = 500;
+                res.end = 'Network Error';
+                callback(null, res);
+              }
+            }
+          );
         }
         res.end = JSON.stringify(result);
         callback(null, res);
