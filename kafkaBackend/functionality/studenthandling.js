@@ -1132,6 +1132,15 @@ async function handle_request(msg, callback) {
           { StudentID },
           {
             $push: { AppliedJobs: JobID },
+          },
+          (err, data) => {
+            if (err) {
+              console.log(err);
+            } else if (data) {
+              console.log(data);
+            } else {
+              console.log('something');
+            }
           }
         );
         res.status = 200;
@@ -1252,7 +1261,7 @@ async function handle_request(msg, callback) {
             res.end = 'Network Error';
             callback(null, res);
           } else {
-            res.status = 500;
+            res.status = 200;
             res.end = 'Removed';
             callback(null, res);
           }
@@ -1274,7 +1283,7 @@ async function handle_request(msg, callback) {
             res.end = 'Network Error';
             callback(null, res);
           } else {
-            res.status = 500;
+            res.status = 200;
             res.end = 'Added';
             callback(null, res);
           }
@@ -1293,7 +1302,7 @@ async function handle_request(msg, callback) {
         const { SearchString, JobType, State, SalStart, SalEnd, PageNo } = msg.query;
         const filterObj = {};
         if (SearchString.length !== 0) {
-          filterObj.CompanyName = { $regex: `${SearchString}`, $options: 'i' };
+          filterObj.Title = { $regex: `${SearchString}`, $options: 'i' };
         }
         if (JobType.length !== 0) {
           filterObj.JobType = JobType;
