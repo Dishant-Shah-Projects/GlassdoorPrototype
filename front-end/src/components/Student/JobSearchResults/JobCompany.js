@@ -24,7 +24,6 @@ class JobCompany extends Component {
       })
       .then(
         (response) => {
-          console.log('Photos', response.data);
           let payload = {
             PhotoList: response.data.results,
             PageNo: 0,
@@ -35,9 +34,7 @@ class JobCompany extends Component {
           };
           this.props.updateCompanyPhotosStore(payload);
         },
-        (error) => {
-          console.log('error', error);
-        }
+        (error) => {}
       );
   }
 

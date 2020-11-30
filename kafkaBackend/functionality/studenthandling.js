@@ -130,14 +130,17 @@ async function handle_request(msg, callback) {
       const res = {};
       try {
         const { CompanyID } = msg.body;
-        const companyModel = await Company.find({ CompanyID }, { ViewCount: 1 });
-        let ViewCount = null;
-        if (companyModel[0].ViewCount) {
-          ViewCount = companyModel[0].ViewCount + 1;
-        } else {
-          ViewCount = 1;
-        }
-        Company.updateOne({ CompanyID }, { ViewCount });
+        const companyModel = await Company.findOneAndUpdate(
+          { CompanyID },
+          { $inc: { ViewCount: 1 } }
+        );
+        // let ViewCount = null;
+        // if (companyModel[0].ViewCount) {
+        //   ViewCount = companyModel[0].ViewCount + 1;
+        // } else {
+        //   ViewCount = 1;
+        // }
+        // Company.updateOne({ CompanyID }, { ViewCount });
         res.status = 200;
         res.end = 'Updated the view count of the company';
         callback(null, res);
@@ -1073,7 +1076,7 @@ async function handle_request(msg, callback) {
         con = await mysqlConnection();
         // eslint-disable-next-line no-unused-vars
         const [results, fields] = await con.query(applicationWithdrawProcedure, [JobID, StudentID]);
-        con.end();
+        con.release();
         await Student.update({ StudentID }, { $pull: { AppliedJobs: JobID } }, (err) => {
           if (err) {
             res.status = 500;
@@ -1090,7 +1093,7 @@ async function handle_request(msg, callback) {
         callback(null, res);
       } finally {
         if (con) {
-          con.end();
+          con.release();
         }
       }
       break;
@@ -1124,7 +1127,7 @@ async function handle_request(msg, callback) {
           Disability,
           VeteranStatus,
         ]);
-        con.end();
+        con.release();
         Student.update(
           { StudentID },
           {
@@ -1140,7 +1143,7 @@ async function handle_request(msg, callback) {
         callback(null, res);
       } finally {
         if (con) {
-          con.end();
+          con.release();
         }
       }
       break;
@@ -1543,7 +1546,7 @@ async function handle_request(msg, callback) {
                 'SELECT Descriptions FROM GENERAL_REVIEW WHERE CompanyID=? LIMIT 2000;';
               con = await mysqlConnection();
               const [results2] = await con.query(searchQuery, CompanyID);
-              con.end();
+              con.release();
               // Add to redis
               redisClient.set(redisKey, JSON.stringify(results2));
               res.status = 200;
@@ -1562,7 +1565,7 @@ async function handle_request(msg, callback) {
         callback(null, res);
       } finally {
         if (con) {
-          con.end();
+          con.release();
         }
       }
     }

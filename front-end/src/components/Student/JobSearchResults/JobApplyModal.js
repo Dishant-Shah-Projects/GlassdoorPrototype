@@ -63,17 +63,13 @@ class JobApplyModal extends Component {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
         .then((response) => {
-          // console.log('Status Code : ', response.status);
           if (response.status === 200) {
-            // console.log('Product Saved');
-
             this.setState({
               uploadedResume: response.data,
               selectedResume: '',
               errormsg: false,
             });
           } else if (parseInt(response.status) === 400) {
-            // console.log(response.data);
           }
         })
         .catch((error) => {
@@ -98,16 +94,12 @@ class JobApplyModal extends Component {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
         .then((response) => {
-          // console.log('Status Code : ', response.status);
           if (response.status === 200) {
-            // console.log('Product Saved');
-
             this.setState({
               uploadCoverLetter: response.data,
               errormsg: false,
             });
           } else if (parseInt(response.status) === 400) {
-            // console.log(response.data);
           }
         })
         .catch((error) => {
@@ -147,7 +139,6 @@ class JobApplyModal extends Component {
       };
       axios.post(serverUrl + 'student/companyApplyJob', data).then(
         (response) => {
-          console.log('Status Code : ', response.status);
           if (response.status === 200) {
             this.props.toggle(event);
             let studentProfile = { ...this.props.studentInfoStore.studentProfile };
@@ -158,9 +149,7 @@ class JobApplyModal extends Component {
             this.props.updateStudentProfile(payload);
           }
         },
-        (error) => {
-          console.log('error:', error.response);
-        }
+        (error) => {}
       );
     }
   };

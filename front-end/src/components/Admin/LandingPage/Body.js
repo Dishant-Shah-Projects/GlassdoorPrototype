@@ -138,7 +138,7 @@ class Body extends Component {
         const topCEOCompanyListBorderColor = [];
         i = 0;
         for (let company of response.data.topCEOCompanyList) {
-          topCEOCompanyListLabels.push(`${company.CompanyName}: ${company.CEO}`);
+          topCEOCompanyListLabels.push(`${company.CompanyName}: ${company.CEO ? company.CEO : ''}`);
           topCEOCompanyListData.push(company.approveCEOcount);
           topCEOCompanyListBackgroundColor.push(backgroundColor[i]);
           topCEOCompanyListBorderColor.push(borderColor[i]);

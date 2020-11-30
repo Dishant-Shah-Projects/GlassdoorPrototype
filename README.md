@@ -1,7 +1,7 @@
 # GlassdoorPrototype
 Glass Door Prototype Application Group Project
 
-This is a simulation of GlassDoor website covering the below personas
+This is a simulation of GlassDoor website using the MERN stack covering the below personas
 
 1. Student
 * Can search for companies
@@ -22,3 +22,15 @@ This is a simulation of GlassDoor website covering the below personas
 ## Architecture Diagram ##
 
 ![](MySql/ArchitectureDiagram.jpg)
+
+
+## Database Schemas ##
+### MySQL ###
+
+![](GlassDoorMySQLSchema.png)
+
+### MongoDB ###
+
+![](GlassDoorMongoDBschema.png)
+
+

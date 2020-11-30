@@ -37,9 +37,7 @@ class ImageUploadModal extends Component {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
         .then((response) => {
-          // console.log('Status Code : ', response.status);
           if (response.status === 200) {
-            // console.log('Product Saved');
             const imageUrl = response.data;
 
             this.setState({
@@ -47,7 +45,6 @@ class ImageUploadModal extends Component {
               imageUploaded: true,
             });
           } else if (parseInt(response.status) === 400) {
-            // console.log(response.data);
           }
         })
         .catch((error) => {
@@ -68,12 +65,16 @@ class ImageUploadModal extends Component {
 
   render() {
     return (
-      <div class="gd-ui-modal css-tb9ljb">
-        <div class="background-overlay" aria-label="Background Overlay"></div>
-        <div class="modal_main ">
-          <span onClick={this.props.openImageModal} alt="Close" class="SVGInline modal_closeIcon">
+      <div className="gd-ui-modal css-tb9ljb">
+        <div className="background-overlay" aria-label="Background Overlay"></div>
+        <div className="modal_main ">
+          <span
+            onClick={this.props.openImageModal}
+            alt="Close"
+            className="SVGInline modal_closeIcon"
+          >
             <svg
-              class="SVGInline-svg modal_closeIcon-svg"
+              className="SVGInline-svg modal_closeIcon-svg"
               xmlns="http://www.w3.org/2000/svg"
               width="24"
               height="24"
@@ -86,24 +87,24 @@ class ImageUploadModal extends Component {
               ></path>
             </svg>
           </span>
-          <div class="topShadow"></div>
-          <div class="fullContent">
-            <div class="modal_title">Upload profile picture</div>
-            <div class="modal_content">
+          <div className="topShadow"></div>
+          <div className="fullContent">
+            <div className="modal_title">Upload profile picture</div>
+            <div className="modal_content">
               <div style={{ minWidth: '200px', textAlign: 'center' }}>
-                <p class="mt-0 mb-lg _cropmodal__minor___3e2MH">
+                <p className="mt-0 mb-lg _cropmodal__minor___3e2MH">
                   This will replace the current photo if one is already uploaded.
                 </p>
                 <div>
-                  <div class="_cropmodal__flexGrid___34tZB _cropmodal__textAlignCenter___2qOZu mt">
-                    <div class="m-auto p-0" style={{ height: '200px', width: '200px' }}>
+                  <div className="_cropmodal__flexGrid___34tZB _cropmodal__textAlignCenter___2qOZu mt">
+                    <div className="m-auto p-0" style={{ height: '200px', width: '200px' }}>
                       <div
-                        class="_cropmodal__imagePlaceHolder___3oxLX"
+                        className="_cropmodal__imagePlaceHolder___3oxLX"
                         style={{ position: 'relative', width: '200px', height: '200px' }}
                       >
-                        <span class="SVGInline">
+                        <span className="SVGInline">
                           <svg
-                            class="SVGInline-svg"
+                            className="SVGInline-svg"
                             style={{ width: '150px', height: '150px' }}
                             xmlns="http://www.w3.org/2000/svg"
                             width="24"
@@ -118,7 +119,7 @@ class ImageUploadModal extends Component {
                           </svg>
                         </span>
                         <div
-                          class="cropit-preview-image-container"
+                          className="cropit-preview-image-container"
                           style={{
                             position: 'absolute',
                             overflow: 'hidden',
@@ -130,7 +131,7 @@ class ImageUploadModal extends Component {
                         >
                           <img
                             src={this.state.imageUrl ? this.state.imageUrl : ''}
-                            class="cropit-preview-image"
+                            className="cropit-preview-image"
                             alt=""
                             style={{
                               width: '195px',
@@ -142,30 +143,30 @@ class ImageUploadModal extends Component {
                         </div>
                       </div>
                     </div>
-                    <div class="my hidden">
-                      <span class="pr-md">
-                        <i class="icon-rotate pointer"></i>
+                    <div className="my hidden">
+                      <span className="pr-md">
+                        <i className="icon-rotate pointer"></i>
                       </span>
-                      <span class="_cropmodal__sliders___AIJLy">
-                        <i class="mr-sm icon-picture-small"></i>
-                        <input type="range" class="coverZoom" min="0" max="1" step="0.01" />
-                        <i class="ml-sm icon-picture-large"></i>
+                      <span className="_cropmodal__sliders___AIJLy">
+                        <i className="mr-sm icon-picture-small"></i>
+                        <input type="range" className="coverZoom" min="0" max="1" step="0.01" />
+                        <i className="ml-sm icon-picture-large"></i>
                       </span>
                     </div>
                   </div>
-                  <div class="hidden">
-                    <input type="file" class="hidden" accept="image/*" />
+                  <div className="hidden">
+                    <input type="file" className="hidden" accept="image/*" />
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          <div class="bottomShadow"></div>
-          <div class="actionBar">
+          <div className="bottomShadow"></div>
+          <div className="actionBar">
             {!this.state.imageUploaded ? (
               <button
                 onClick={this.handleClick}
-                class="gd-ui-button  css-uk8w9o"
+                className="gd-ui-button  css-uk8w9o"
                 data-test="cropModalPrimary"
               >
                 <input
@@ -178,10 +179,10 @@ class ImageUploadModal extends Component {
                 Upload Image
               </button>
             ) : (
-              <div class="_cropmodal__cancelButton___3efpJ mt-sm">
+              <div className="_cropmodal__cancelButton___3efpJ mt-sm">
                 <button
                   onClick={this.saveImage}
-                  class="gd-ui-button  css-3ybntp"
+                  className="gd-ui-button  css-3ybntp"
                   data-test="cropModalCancel"
                 >
                   Save Image

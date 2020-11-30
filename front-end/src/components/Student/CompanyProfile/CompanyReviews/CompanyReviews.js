@@ -145,37 +145,39 @@ class CompanyReviews extends Component {
     return (
       <article id="MainCol">
         <div id="NodeReplace">
-          <main class="gdGrid">
+          <main className="gdGrid">
             <div>
               <div
                 data-test="EIReviewsPage"
-                class=" eiReviews__EIReviewsPageStyles__EIReviewsPage p-md mb-std"
+                className=" eiReviews__EIReviewsPageStyles__EIReviewsPage p-md mb-std"
                 data-brandviews="PAGE:n=reviews-reviewsPage:eid=6036"
               >
                 <header
                   id="companyReview"
-                  class="row justify-content-between align-items-center mb-std"
+                  className="row justify-content-between align-items-center mb-std"
                 >
-                  <h1 class="eiReviews__EIReviewsPageStyles__pageHeader col-12 col-md-auto m-0">
+                  <h1 className="eiReviews__EIReviewsPageStyles__pageHeader col-12 col-md-auto m-0">
                     {this.props.companyOverviewStore.companyOverview.CompanyName} Reviews
                   </h1>
-                  <p class="col-auto minor mb-0 mt-xxsm mt-md-0">Updated {moment().format('ll')}</p>
+                  <p className="col-auto minor mb-0 mt-xxsm mt-md-0">
+                    Updated {moment().format('ll')}
+                  </p>
                 </header>
                 <div></div>
-                <div class="gdGrid">
-                  <div class="mt-xl" id="EmpStats">
-                    <div class="empStatsBody">
-                      <div class="mb-md-md mb-xsm">
-                        <div class=" v2__EIReviewsRatingsStylesV2__ratingInfoWrapper">
-                          <div class="v2__EIReviewsRatingsStylesV2__ratingInfo" rel="nofollow">
-                            <div class="v2__EIReviewsRatingsStylesV2__ratingNum v2__EIReviewsRatingsStylesV2__large">
+                <div className="gdGrid">
+                  <div className="mt-xl" id="EmpStats">
+                    <div className="empStatsBody">
+                      <div className="mb-md-md mb-xsm">
+                        <div className=" v2__EIReviewsRatingsStylesV2__ratingInfoWrapper">
+                          <div className="v2__EIReviewsRatingsStylesV2__ratingInfo" rel="nofollow">
+                            <div className="v2__EIReviewsRatingsStylesV2__ratingNum v2__EIReviewsRatingsStylesV2__large">
                               {rating}
                             </div>
-                            <span class="gdStars gdRatings common__StarStyles__gdStars">
-                              <span class="rating">
+                            <span className="gdStars gdRatings common__StarStyles__gdStars">
+                              <span className="rating">
                                 <span title="3.9"></span>
                               </span>
-                              <div font-size="md" class={`css-1nka8iu${rating}s`}>
+                              <div font-size="md" className={`css-1nka8iu${rating}s`}>
                                 <span role="button">★</span>
                                 <span role="button">★</span>
                                 <span role="button">★</span>
@@ -186,15 +188,15 @@ class CompanyReviews extends Component {
                           </div>
                         </div>
                       </div>
-                      <div class="common__EIReviewsRatingsStyles__ratingDonuts d-table">
-                        <div class="d-table-cell">
-                          <div class="donut-wrap d-table">
-                            <div class=" donut-chart d-lg-table-cell">
+                      <div className="common__EIReviewsRatingsStyles__ratingDonuts d-table">
+                        <div className="d-table-cell">
+                          <div className="donut-wrap d-table">
+                            <div className=" donut-chart d-lg-table-cell">
                               <div data-percentage="76" id="EmpStats_Recommend">
                                 <svg
                                   width="66"
                                   height="66"
-                                  class="donut__DonutStyle__donutchart d-block"
+                                  className="donut__DonutStyle__donutchart d-block"
                                   style={{ fill: 'transparent' }}
                                 >
                                   <circle
@@ -203,7 +205,7 @@ class CompanyReviews extends Component {
                                     cy="33"
                                     transform="rotate(-90 33,33)"
                                     style={{ stroke: '#DAE2E5', strokeWidth: '8' }}
-                                    class="donut__DonutStyle__donutchart_track"
+                                    className="donut__DonutStyle__donutchart_track"
                                   ></circle>
                                   <circle
                                     r="29"
@@ -217,24 +219,24 @@ class CompanyReviews extends Component {
                                       }, 182.212`,
                                       strokeWidth: '8',
                                     }}
-                                    class="donut__DonutStyle__donutchart_indicator"
+                                    className="donut__DonutStyle__donutchart_indicator"
                                   ></circle>
                                   <text
-                                    class="donut__DonutStyle__donutchart_text"
+                                    className="donut__DonutStyle__donutchart_text"
                                     x="33"
                                     y="33"
                                     text-anchor="middle"
                                     style={{ fill: '#0CAA41' }}
                                   >
                                     <tspan
-                                      class="donut__DonutStyle__donutchart_text_val"
+                                      className="donut__DonutStyle__donutchart_text_val"
                                       alignment-baseline="middle"
                                       style={{ fontSize: '18px' }}
                                     >
                                       {recomendPercentage}
                                     </tspan>
                                     <tspan
-                                      class="donut__DonutStyle__donutchart_text_percent"
+                                      className="donut__DonutStyle__donutchart_text_percent"
                                       alignment-baseline="middle"
                                       baseline-shift="-25%"
                                       style={{ fontSize: '9px' }}
@@ -245,19 +247,19 @@ class CompanyReviews extends Component {
                                 </svg>
                               </div>
                             </div>
-                            <div class="donut-text d-lg-table-cell pt-sm pt-lg-0 px-lg-sm">
+                            <div className="donut-text d-lg-table-cell pt-sm pt-lg-0 px-lg-sm">
                               Recommend to a Friend
                             </div>
                           </div>
                         </div>
-                        <div class="d-table-cell">
-                          <div class="donut-wrap d-table">
-                            <div class="ceoApprove donut-chart d-lg-table-cell">
+                        <div className="d-table-cell">
+                          <div className="donut-wrap d-table">
+                            <div className="ceoApprove donut-chart d-lg-table-cell">
                               <div data-percentage="83" id="EmpStats_Approve">
                                 <svg
                                   width="66"
                                   height="66"
-                                  class="donut__DonutStyle__donutchart d-block"
+                                  className="donut__DonutStyle__donutchart d-block"
                                   style={{ fill: 'transparent' }}
                                 >
                                   <circle
@@ -266,7 +268,7 @@ class CompanyReviews extends Component {
                                     cy="33"
                                     transform="rotate(-90 33,33)"
                                     style={{ stroke: '#DAE2E5', strokeWidth: '8' }}
-                                    class="donut__DonutStyle__donutchart_track"
+                                    className="donut__DonutStyle__donutchart_track"
                                   ></circle>
                                   <circle
                                     r="29"
@@ -280,24 +282,24 @@ class CompanyReviews extends Component {
                                       }, 182.212`,
                                       strokeWidth: '8',
                                     }}
-                                    class="donut__DonutStyle__donutchart_indicator"
+                                    className="donut__DonutStyle__donutchart_indicator"
                                   ></circle>
                                   <text
-                                    class="donut__DonutStyle__donutchart_text"
+                                    className="donut__DonutStyle__donutchart_text"
                                     x="33"
                                     y="33"
                                     text-anchor="middle"
                                     style={{ fill: '#0CAA41' }}
                                   >
                                     <tspan
-                                      class="donut__DonutStyle__donutchart_text_val"
+                                      className="donut__DonutStyle__donutchart_text_val"
                                       alignment-baseline="middle"
                                       style={{ fontSize: '18px' }}
                                     >
                                       {approvCEOPercentage}
                                     </tspan>
                                     <tspan
-                                      class="donut__DonutStyle__donutchart_text_percent"
+                                      className="donut__DonutStyle__donutchart_text_percent"
                                       alignment-baseline="middle"
                                       baseline-shift="-25%"
                                       style={{ fontSize: '9px' }}
@@ -308,17 +310,17 @@ class CompanyReviews extends Component {
                                 </svg>
                               </div>
                             </div>
-                            <div class="donut-text d-lg-table-cell pt-sm pt-lg-0 px-lg-sm">
+                            <div className="donut-text d-lg-table-cell pt-sm pt-lg-0 px-lg-sm">
                               Approve of CEO
                             </div>
                           </div>
-                          <aside class="common__EIReviewsRatingsStyles__lineCEO"></aside>
+                          <aside className="common__EIReviewsRatingsStyles__lineCEO"></aside>
                         </div>
-                        <div class="d-table-cell ">
-                          <div class="donut-wrap d-table">
-                            <div class="donut-text d-lg-table-cell pt-sm pt-lg-0 pl-lg-sm">
+                        <div className="d-table-cell ">
+                          <div className="donut-wrap d-table">
+                            <div className="donut-text d-lg-table-cell pt-sm pt-lg-0 pl-lg-sm">
                               CEO: <div> {this.props.companyOverviewStore.companyOverview.CEO}</div>
-                              <div class="numCEORatings">{/*26,648 Ratings*/}</div>
+                              <div className="numCEORatings">{/*26,648 Ratings*/}</div>
                             </div>
                           </div>
                         </div>
@@ -326,7 +328,7 @@ class CompanyReviews extends Component {
                     </div>
                   </div>
                 </div>
-                {this.props.companyOverviewStore.featuredReview ? (
+                {JSON.stringify(this.props.companyOverviewStore.featuredReview) !== '{}' ? (
                   <SpecialReview
                     review={this.props.companyOverviewStore.featuredReview}
                     reviewType={'Featured Review'}
@@ -334,7 +336,7 @@ class CompanyReviews extends Component {
                 ) : (
                   ''
                 )}
-                {this.props.companyOverviewStore.positiveReview ? (
+                {JSON.stringify(this.props.companyOverviewStore.positiveReview) !== '{}' ? (
                   <SpecialReview
                     review={this.props.companyOverviewStore.positiveReview}
                     reviewType={'Most Helpufl Positive Review'}
@@ -342,7 +344,7 @@ class CompanyReviews extends Component {
                 ) : (
                   ''
                 )}
-                {this.props.companyOverviewStore.negatieReview ? (
+                {JSON.stringify(this.props.companyOverviewStore.negatieReview) !== '{}' ? (
                   <SpecialReview
                     review={this.props.companyOverviewStore.negatieReview}
                     reviewType={'Most Helpufl Negative Review'}
@@ -351,8 +353,8 @@ class CompanyReviews extends Component {
                   ''
                 )}
                 <div id="ReviewsRef">
-                  <div id="ReviewsFeed" class=" mt">
-                    <ol class=" empReviews emp-reviews-feed pl-0">
+                  <div id="ReviewsFeed" className=" mt">
+                    <ol className=" empReviews emp-reviews-feed pl-0">
                       {this.props.companyReviewsStore.ReviewList.map((review) => (
                         <AllReview
                           helpfulClicked={(event) => this.helpfulClicked(event, review.ID)}
@@ -362,15 +364,19 @@ class CompanyReviews extends Component {
                     </ol>
                   </div>
                 </div>
-                <div class="eiReviews__EIReviewsPageStyles__pagination noTabover mt">
-                  <PaginationComponent
-                    PageCount={this.props.companyReviewsStore.PageCount}
-                    PageNo={this.props.companyReviewsStore.PageNo}
-                    onPageClick={(e) => {
-                      this.onPageClick(e);
-                    }}
-                  />
-                </div>
+                {this.props.companyReviewsStore.ReviewList.length > 0 ? (
+                  <div className="eiReviews__EIReviewsPageStyles__pagination noTabover mt">
+                    <PaginationComponent
+                      PageCount={this.props.companyReviewsStore.PageCount}
+                      PageNo={this.props.companyReviewsStore.PageNo}
+                      onPageClick={(e) => {
+                        this.onPageClick(e);
+                      }}
+                    />
+                  </div>
+                ) : (
+                  ''
+                )}
               </div>
             </div>
           </main>

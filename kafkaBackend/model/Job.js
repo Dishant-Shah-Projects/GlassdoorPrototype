@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const JobsSchema = new mongoose.Schema({
-  JobID: { type: Number, required: true },
+  JobID: { type: Number },
   Title: { type: String, required: true },
   CompanyID: { type: String, required: true },
   CompanyName: { type: String, required: true },
@@ -19,7 +19,10 @@ const JobsSchema = new mongoose.Schema({
   State: { type: String, required: true },
   Country: { type: String, required: true },
   Zip: {
-    type: Number, min: 10000, max: 99999, required: true,
+    type: Number,
+    min: 10000,
+    max: 99999,
+    required: true,
   },
   PostedDate: { type: Date, required: true },
   JobDescription: { type: String, required: true },
@@ -30,6 +33,7 @@ const JobsSchema = new mongoose.Schema({
   JobType: {
     type: String,
     enum: ['Full-time', 'Part-time', 'Contract', 'Internship', 'Temporary'],
+    required: true,
   },
 });
 

@@ -139,57 +139,57 @@ class CompanyJobs extends Component {
       <article id="MainCol">
         <div id="JobsLandingPage">
           <div>
-            <div class="gdGrid">
+            <div className="gdGrid">
               <div>
-                <div class="module gdGrid" data-test="employerJobsModule">
-                  <div class="HeaderAdSlotStyles__headerAdSlot"></div>
-                  <header class="d-flex justify-content-between align-items-start">
-                    <div class="HeaderContainerStyles__h1Container">
-                      <h1 class="h2 mb-0 HeaderContainerStyles__h2">
+                <div className="module gdGrid" data-test="employerJobsModule">
+                  <div className="HeaderAdSlotStyles__headerAdSlot"></div>
+                  <header className="d-flex justify-content-between align-items-start">
+                    <div className="HeaderContainerStyles__h1Container">
+                      <h1 className="h2 mb-0 HeaderContainerStyles__h2">
                         {this.props.companyOverviewStore.companyOverview.CompanyName} Jobs
                       </h1>
                     </div>
                   </header>
-                  <div class="mt mb">
+                  <div className="mt mb">
                     <form action="" id="JobsFilterForm">
-                      <div class="search gdGrid">
-                        <div class="d-flex flex-md-column flex-lg-row">
-                          <label for="JobTitleAC" class="hidden">
+                      <div className="search gdGrid">
+                        <div className="d-flex flex-md-column flex-lg-row">
+                          <label for="JobTitleAC" className="hidden">
                             Search job titles
                           </label>
                           <input
                             onChange={this.commonOnChangeHandler}
                             id="JobTitleAC"
                             name="Title"
-                            class="InputStyles__input EIFilterModuleStyles__eiJobsTitleSearch InputStyles__hasContent"
+                            className="InputStyles__input EIFilterModuleStyles__eiJobsTitleSearch InputStyles__hasContent"
                             placeholder="Search job titles"
                             value={this.state.Title}
                             autocomplete="off"
                           />
-                          <label for="LocationAC" class="hidden">
+                          <label for="LocationAC" className="hidden">
                             City
                           </label>
                           <input
                             onChange={this.commonOnChangeHandler}
                             id="LocationAC"
-                            class="InputStyles__input EIFilterModuleStyles__locationSearchInput  "
+                            className="InputStyles__input EIFilterModuleStyles__locationSearchInput  "
                             name="City"
                             placeholder="City"
                             value={this.state.City}
                           />
-                          <div class="d-flex justify-content-between EIFilterModuleStyles__ctaButtonContainer">
+                          <div className="d-flex justify-content-between EIFilterModuleStyles__ctaButtonContainer">
                             <button
                               onClick={this.commonFetch}
-                              class="gd-ui-button d-none d-md-inline EIFilterModuleStyles__findBtn css-r97zbm"
+                              className="gd-ui-button d-none d-md-inline EIFilterModuleStyles__findBtn css-r97zbm"
                               type="button"
                             >
                               Find Jobs
                             </button>
                           </div>
                         </div>
-                        <div class="margTop d-none d-sm-flex justify-content-between">
-                          <div class="d-flex">
-                            <span class="EIFilterModuleStyles__noFilterText">
+                        <div className="margTop d-none d-sm-flex justify-content-between">
+                          <div className="d-flex">
+                            <span className="EIFilterModuleStyles__noFilterText">
                               Filter your search results by title, or location.
                             </span>
                           </div>
@@ -197,8 +197,8 @@ class CompanyJobs extends Component {
                       </div>
                     </form>
                   </div>
-                  <div class="JobsListStyles__jobListContainer gdGrid">
-                    <ul class="JobsListStyles__jobList">
+                  <div className="JobsListStyles__jobListContainer gdGrid">
+                    <ul className="JobsListStyles__jobList">
                       {this.props.companyJobStore.JobList.map((job) => (
                         <CompanyJobCard
                           job={job}
@@ -209,15 +209,19 @@ class CompanyJobs extends Component {
                       ))}
                     </ul>
                   </div>
-                  <div class="col d-flex mt mx-auto justify-content-center ">
-                    <PaginationComponent
-                      PageCount={this.props.companyJobStore.PageCount}
-                      PageNo={this.props.companyJobStore.PageNo}
-                      onPageClick={(e) => {
-                        this.onPageClick(e);
-                      }}
-                    />
-                  </div>
+                  {this.props.companyJobStore.JobList.length > 0 ? (
+                    <div className="col d-flex mt mx-auto justify-content-center ">
+                      <PaginationComponent
+                        PageCount={this.props.companyJobStore.PageCount}
+                        PageNo={this.props.companyJobStore.PageNo}
+                        onPageClick={(e) => {
+                          this.onPageClick(e);
+                        }}
+                      />
+                    </div>
+                  ) : (
+                    ''
+                  )}
                 </div>
               </div>
             </div>

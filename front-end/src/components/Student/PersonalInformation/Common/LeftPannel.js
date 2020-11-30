@@ -33,14 +33,11 @@ class LeftPannel extends Component {
   };
 
   updateStudentProfileInDB = (student) => {
-    console.log('image uploaded', student);
-
     // event.preventDefault();
     axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
 
     axios.post(serverUrl + 'student/profileUpdate', student).then(
       (response) => {
-        console.log('Status Code : ', response.status);
         if (response.status === 200) {
           // let studentProfile = { ...this.props.studentInfoStore.studentProfile };
           // studentProfile.AppliedJobs.push(this.props.selectedJob._id);
@@ -53,9 +50,7 @@ class LeftPannel extends Component {
           });
         }
       },
-      (error) => {
-        console.log('error:', error.response);
-      }
+      (error) => {}
     );
   };
 
@@ -66,31 +61,31 @@ class LeftPannel extends Component {
     // }
     // console.log('this.props.location.pathname', this.props.location.pathname);
     return (
-      <div class="col-12 col-md-4 pr-md-xxl">
-        <div class="d-none d-md-block">
+      <div className="col-12 col-md-4 pr-md-xxl">
+        <div className="d-none d-md-block">
           <div data-test="profilePhoto" id="ProfilePhoto">
-            <div class="profilePhotoStyle__profilePhoto___CTVQw">
-              <div class="d-inline-flex justify-content-start align-items-center profilePhotoStyle__photoContainer___3itOq">
-                <div class="mr-xsm">
+            <div className="profilePhotoStyle__profilePhoto___CTVQw">
+              <div className="d-inline-flex justify-content-start align-items-center profilePhotoStyle__photoContainer___3itOq">
+                <div className="mr-xsm">
                   {this.props.studentInfoStore.studentProfile.ProfilePicURL &&
                   this.props.studentInfoStore.studentProfile.ProfilePicURL.length > 0 ? (
                     <div
                       id="ProfileImage"
                       data-test="profileImageEditableContainer"
-                      class="profilePhotoStyle__editableContainer___3auRr"
+                      className="profilePhotoStyle__editableContainer___3auRr"
                     >
                       <img
                         src={this.props.studentInfoStore.studentProfile.ProfilePicURL}
                         alt="Profile Image"
                       />
                       <div>
-                        <i class="icon-camera"></i>
+                        <i className="icon-camera"></i>
                       </div>
                     </div>
                   ) : (
-                    <span class="SVGInline profilePhotoStyle__icon___1H_01">
+                    <span className="SVGInline profilePhotoStyle__icon___1H_01">
                       <svg
-                        class="SVGInline-svg profilePhotoStyle__icon___1H_01-svg"
+                        className="SVGInline-svg profilePhotoStyle__icon___1H_01-svg"
                         style={{ width: '55px', height: '55px' }}
                         xmlns="http://www.w3.org/2000/svg"
                         width="24"
@@ -106,8 +101,8 @@ class LeftPannel extends Component {
                     </span>
                   )}
                 </div>
-                <div class="profilePhotoBadge"></div>
-                <div onClick={this.openImageModal} class="profilePhotoStyle__caption___HtLE-">
+                <div className="profilePhotoBadge"></div>
+                <div onClick={this.openImageModal} className="profilePhotoStyle__caption___HtLE-">
                   {this.props.studentInfoStore.studentProfile.ProfilePicURL &&
                   this.props.studentInfoStore.studentProfile.ProfilePicURL.length > 0 ? (
                     <span>Change photo</span>
@@ -127,33 +122,35 @@ class LeftPannel extends Component {
             </div>
           </div>
         </div>
-        <div class="navigationStyle__nav___1PF4F gd-ui-tab css-o9yci5">
+        <div className="navigationStyle__nav___1PF4F gd-ui-tab css-o9yci5">
           <ul role="tablist">
             <li
               onClick={() => this.openPage('Profile')}
               role="tab"
-              class={
+              className={
                 this.props.leftPannelStore.openTab === 'Profile'
                   ? 'active css-1h7a53u'
                   : 'css-1h7a53u'
               }
-              // class={
+              // className={
               // this.props.location.pathname === '/Profile' ? 'active css-1h7a53u' : 'css-1h7a53u'
               // }
               aria-selected="true"
               tabindex="0"
             >
-              <div class="customItem css-wks0vk">
-                <div class="d-flex flex-row justify-content-start align-items-center">Profile</div>
+              <div className="customItem css-wks0vk">
+                <div className="d-flex flex-row justify-content-start align-items-center">
+                  Profile
+                </div>
               </div>
             </li>
             <li
-              // class={
+              // className={
               //   this.props.location.pathname === '/Resume' ? 'active css-1h7a53u' : 'css-1h7a53u'
               // }
               onClick={() => this.openPage('Resumes')}
               role="tab"
-              class={
+              className={
                 this.props.leftPannelStore.openTab === 'Resumes'
                   ? 'active css-1h7a53u'
                   : 'css-1h7a53u'
@@ -161,14 +158,16 @@ class LeftPannel extends Component {
               aria-selected="false"
               tabindex="0"
             >
-              <div class="customItem css-wks0vk">
-                <div class="d-flex flex-row justify-content-start align-items-center">Resumes</div>
+              <div className="customItem css-wks0vk">
+                <div className="d-flex flex-row justify-content-start align-items-center">
+                  Resumes
+                </div>
               </div>
             </li>
             <li
               onClick={() => this.openPage('Job Preferences')}
               role="tab"
-              class={
+              className={
                 this.props.leftPannelStore.openTab === 'Job Preferences'
                   ? 'active css-1h7a53u'
                   : 'css-1h7a53u'
@@ -176,8 +175,8 @@ class LeftPannel extends Component {
               aria-selected="false"
               tabindex="0"
             >
-              <div class="customItem css-wks0vk">
-                <div class="d-flex flex-row justify-content-start align-items-center">
+              <div className="customItem css-wks0vk">
+                <div className="d-flex flex-row justify-content-start align-items-center">
                   Job Preferences
                 </div>
               </div>
@@ -185,7 +184,7 @@ class LeftPannel extends Component {
             <li
               onClick={() => this.openPage('Demographics')}
               role="tab"
-              class={
+              className={
                 this.props.leftPannelStore.openTab === 'Demographics'
                   ? 'active css-1h7a53u'
                   : 'css-1h7a53u'
@@ -193,8 +192,8 @@ class LeftPannel extends Component {
               aria-selected="false"
               tabindex="0"
             >
-              <div class="customItem css-wks0vk">
-                <div class="d-flex flex-row justify-content-start align-items-center">
+              <div className="customItem css-wks0vk">
+                <div className="d-flex flex-row justify-content-start align-items-center">
                   Demographics
                 </div>
               </div>

@@ -9,7 +9,6 @@ const defaultState = {
 const PostJobModalReducer = (state = defaultState, action) => {
   switch (action.type) {
     case showPostJobModal: {
-      console.log('nside applicant modal');
       return {
         ...state,
         postJobModalStore: { ...state.postJobModalStore, popSeen: true },

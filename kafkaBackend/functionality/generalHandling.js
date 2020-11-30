@@ -40,7 +40,7 @@ const checkEmail = async (emailID) => {
     const emailProcedure = 'CALL existingEmail(?)';
     con = await mysqlConnection();
     const [results, fields] = await con.query(emailProcedure, emailID);
-    con.end();
+    con.release();
     if (results[0].length !== 0) {
       return true;
     }
@@ -49,7 +49,7 @@ const checkEmail = async (emailID) => {
     return false;
   } finally {
     if (con) {
-      con.end();
+      con.release();
     }
   }
 };
@@ -60,7 +60,7 @@ const checklogin = async (emailID, Password) => {
     const emailProcedure = 'CALL existingEmail(?)';
     con = await mysqlConnection();
     const [results, fields] = await con.query(emailProcedure, emailID);
-    con.end();
+    con.release();
     if (await bcrypt.compare(Password, results[0][0].Password)) {
       return [results[0][0].Role, results[0][0].UserID];
     }
@@ -69,7 +69,7 @@ const checklogin = async (emailID, Password) => {
     return false;
   } finally {
     if (con) {
-      con.end();
+      con.release();
     }
   }
 };

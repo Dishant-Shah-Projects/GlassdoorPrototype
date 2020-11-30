@@ -32,7 +32,6 @@ class JobList extends Component {
       };
     }
     this.props.updateJobFilterStore(payload);
-    console.log(filter);
   };
   saveJob = (event, JobID) => {
     axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
@@ -42,10 +41,7 @@ class JobList extends Component {
     };
     axios.post(serverUrl + 'student/companyFavouriteJobs', data).then(
       (response) => {
-        console.log('Status Code : ', response.status);
         if (response.status === 200) {
-          console.log(response.data);
-
           let studentProfile = { ...this.props.studentInfoStore.studentProfile };
           studentProfile.FavouriteJobs.push(JobID);
           const payload = {
@@ -54,9 +50,7 @@ class JobList extends Component {
           this.props.updateStudentProfile(payload);
         }
       },
-      (error) => {
-        console.log(error);
-      }
+      (error) => {}
     );
   };
 
@@ -68,10 +62,7 @@ class JobList extends Component {
     };
     axios.post(serverUrl + 'student/removeFavouriteJobs', data).then(
       (response) => {
-        console.log('Status Code : ', response.status);
         if (response.status === 200) {
-          console.log(response.data);
-
           let studentProfile = { ...this.props.studentInfoStore.studentProfile };
           var index = studentProfile.FavouriteJobs.indexOf(JobID);
           if (index !== -1) {
@@ -84,9 +75,7 @@ class JobList extends Component {
           this.props.updateStudentProfile(payload);
         }
       },
-      (error) => {
-        console.log(error);
-      }
+      (error) => {}
     );
   };
 
@@ -105,7 +94,6 @@ class JobList extends Component {
         withCredentials: true,
       })
       .then((response) => {
-        console.log('Jobs:', response.data);
         let payload = {
           jobList: response.data.jobs,
           PageNo,
@@ -144,7 +132,6 @@ class JobList extends Component {
         withCredentials: true,
       })
       .then((response) => {
-        console.log('Favourite Jobs:', response.data);
         let payload = {
           jobList: response.data.job,
           PageNo,
@@ -183,7 +170,6 @@ class JobList extends Component {
         withCredentials: true,
       })
       .then((response) => {
-        console.log('Jobs:', response.data);
         let payload = {
           jobList: response.data.job,
           PageNo,

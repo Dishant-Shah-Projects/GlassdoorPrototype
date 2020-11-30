@@ -41,7 +41,6 @@ class JobLeftResultsBlock extends Component {
       this.props.jobListStore.SalEnd,
       e.selected
     );
-    // console.log('Page Clicked:', e.selected);
     // this.commonFetch(e.selected);
   };
   render() {
@@ -49,10 +48,8 @@ class JobLeftResultsBlock extends Component {
       <article style={{ paddingRight: '1 % !important' }} id="MainCol" className="noPad">
         <div>
           <div id="MainColSummary" className="gdGrid">
-            <h1 id="jobTitle" className="hidden">
-              Software engineer Jobs
-            </h1>
-            <p className="jobsCount hidden">111,956Jobs</p>
+            <h1 id="jobTitle" className="hidden"></h1>
+            <p className="jobsCount hidden"></p>
             <div className="css-8atqhb">
               <div className="d-flex align-items-center justify-content-between css-1530je5 ey9ulmr0">
                 <div className="css-e0vuny e1gtdke62">
@@ -68,7 +65,7 @@ class JobLeftResultsBlock extends Component {
                         <path
                           d="M21 5a1 1 0 010 2H3a1 1 0 010-2zm-6 6a1 1 0 010 2H3a1 1 0 010-2zm-4 6a1 1 0 010 2H3a1 1 0 010-2z"
                           fill="currentColor"
-                          fill-rule="evenodd"
+                          fillRule="evenodd"
                         ></path>
                       </svg>
                     </span>
@@ -84,7 +81,7 @@ class JobLeftResultsBlock extends Component {
           </div>
           <ul className="jlGrid hover p-0 ">
             {this.props.jobListStore.jobList.length === 0 ? (
-              <h2 class="block" style={{ fontWeight: '400' }}>
+              <h2 className="block" style={{ fontWeight: '400' }}>
                 No Jobs Found, try different search criteria.
               </h2>
             ) : (
@@ -101,15 +98,18 @@ class JobLeftResultsBlock extends Component {
           </ul>
         </div>
         <div className="tbl fill padHorz margVert" id="ResultsFooter">
-          <div className="cell middle hideMob padVertSm" data-test="page-x-of-y">
-            Page {this.props.jobListStore.PageNo + 1} of {this.props.jobListStore.PageCount}
-          </div>
+          {this.props.jobListStore.jobList.length > 0 ? (
+            <div className="cell middle hideMob padVertSm" data-test="page-x-of-y">
+              Page {this.props.jobListStore.PageNo + 1} of {this.props.jobListStore.PageCount}
+            </div>
+          ) : (
+            ''
+          )}
           <div className="cell alignRt middle">
-            {(this.props.jobListStore.appliedJobSelected ||
-              this.props.jobListStore.favJobSelected) &&
-            this.props.jobListStore.jobList.length > 0 ? (
+            {this.props.jobListStore.appliedJobSelected ||
+            this.props.jobListStore.favJobSelected ? (
               ''
-            ) : (
+            ) : this.props.jobListStore.jobList.length > 0 ? (
               <PaginationComponent
                 PageCount={this.props.jobListStore.PageCount}
                 PageNo={this.props.jobListStore.PageNo}
@@ -117,6 +117,8 @@ class JobLeftResultsBlock extends Component {
                   this.onPageClick(e);
                 }}
               />
+            ) : (
+              ''
             )}
             {this.props.jobListStore.appliedJobSelected &&
             this.props.jobListStore.jobList.length > 0 ? (

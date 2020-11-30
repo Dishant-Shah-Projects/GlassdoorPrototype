@@ -34,11 +34,11 @@ class LowerNavBarOther extends Component {
         <div className="d-flex align-items-center HeaderStyles__navigationWrapper">
           <div className="px-std px-md-lg col HeaderStyles__navigationScroll">
             <div
-              style={
-                localStorage.getItem('selectedDropDown') === 'Jobs'
-                  ? { borderBottom: '4px solid #0caa41' }
-                  : {}
-              }
+              // style={
+              //   localStorage.getItem('selectedDropDown') === 'Jobs'
+              //     ? { borderBottom: '4px solid #0caa41' }
+              //     : {}
+              // }
               className="d-inline-flex align-items-center mr-xl HeaderStyles__navigationItem "
             >
               <div>
@@ -134,11 +134,11 @@ class LowerNavBarOther extends Component {
               </div>
             </div>
             <div
-              style={
-                localStorage.getItem('selectedDropDown') === 'Companies'
-                  ? { borderBottom: '4px solid #0caa41' }
-                  : {}
-              }
+              // style={
+              //   localStorage.getItem('selectedDropDown') === 'Companies'
+              //     ? { borderBottom: '4px solid #0caa41' }
+              //     : {}
+              // }
               className="d-inline-flex align-items-center mr-xl HeaderStyles__navigationItem HeaderStyles__activeNavigationItem"
             >
               <div>
@@ -218,11 +218,11 @@ class LowerNavBarOther extends Component {
               </div>
             </div>
             <div
-              style={
-                localStorage.getItem('selectedDropDown') === 'Salaries'
-                  ? { borderBottom: '4px solid #0caa41' }
-                  : {}
-              }
+              // style={
+              //   localStorage.getItem('selectedDropDown') === 'Salaries'
+              //     ? { borderBottom: '4px solid #0caa41' }
+              //     : {}
+              // }
               className="d-inline-flex align-items-center mr-xl HeaderStyles__navigationItem "
             >
               <div>
@@ -302,11 +302,11 @@ class LowerNavBarOther extends Component {
               </div>
             </div>
             <div
-              style={
-                localStorage.getItem('selectedDropDown') === 'Interviews'
-                  ? { borderBottom: '4px solid #0caa41' }
-                  : {}
-              }
+              // style={
+              //   localStorage.getItem('selectedDropDown') === 'Interviews'
+              //     ? { borderBottom: '4px solid #0caa41' }
+              //     : {}
+              // }
               className="d-inline-flex align-items-center mr-xl HeaderStyles__navigationItem "
             >
               <div>

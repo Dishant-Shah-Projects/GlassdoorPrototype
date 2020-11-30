@@ -17,7 +17,6 @@ class JobFeaturedReview extends Component {
     const selectedJob = this.props.selectedJob;
     // const Rating = 2.0;
     let Rating = 0;
-    console.log('selectedJob:', selectedJob);
     if (
       selectedJob.jobdetails.length > 0 &&
       selectedJob.jobdetails[0].GeneralReviewCount &&
