@@ -304,6 +304,18 @@ async function handle_request(msg, callback) {
           State,
         ]);
         con.release();
+        await Company.findOneAndUpdate(
+          { CompanyID },
+          { $inc: { JobCount: 0.5 } },
+
+          (error, results) => {
+            if (error) {
+              res.status = 500;
+              res.end = 'Network Error';
+              callback(null, res);
+            }
+          }
+        );
         res.status = 201;
         res.end = JSON.stringify('Job Created');
         callback(null, res);
