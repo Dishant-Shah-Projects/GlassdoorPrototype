@@ -32,12 +32,11 @@ class PostJobModal extends Component {
     });
     if (e.target.name === 'Zip') {
       if (/^(\s*|\d+)$/.test(e.target.value)) {
-         this.setState({
-           ...this.state,
-           [e.target.name]: e.target.type === 'number' ? parseInt(e.target.value) : e.target.value,
-         });
+        this.setState({
+          ...this.state,
+          [e.target.name]: e.target.type === 'number' ? parseInt(e.target.value) : e.target.value,
+        });
       }
-     
     } else {
       this.setState({
         ...this.state,
@@ -65,7 +64,7 @@ class PostJobModal extends Component {
       StreetAddress: this.state.StreetAddress,
       City: this.state.City,
       State: this.state.State,
-      Zip: this.state.Zip
+      Zip: this.state.Zip,
     };
     console.log('state', this.state);
     axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
@@ -85,7 +84,7 @@ class PostJobModal extends Component {
 
   render() {
     return (
-      <div class="modal_main ">       
+      <div class="modal_main ">
         <div class="topShadow"></div>
         <div class="fullContent">
           <div class="modal_title">Add Job</div>
@@ -142,7 +141,7 @@ class PostJobModal extends Component {
                         data-test=""
                         aria-label="Company Name"
                         class="css-ofiv3k"
-                        value={localStorage.getItem('companyName')}                        
+                        value={localStorage.getItem('companyName')}
                       />
                     </div>
                   </div>
@@ -310,7 +309,12 @@ class PostJobModal extends Component {
                 >
                   <div class=" css-1ohf0ui">
                     <div class="input-wrapper css-q444d9">
-                      <input
+                      <select name="Remote" value={this.state.Remote} onChange={(event) => this.handleOnChange(event)}>
+                      <option value=" ">-Select-</option>
+                        <option value="Remote" >Remote</option>
+                        <option value="InPerson">InPerson</option>                       
+                      </select>
+                      {/* <input
                         placeholder="Remote"
                         autocomplete="off"
                         name="Remote"
@@ -320,7 +324,7 @@ class PostJobModal extends Component {
                         class="css-ofiv3k"
                         value={this.state.Remote}
                         onChange={(event) => this.handleOnChange(event)}
-                      />
+                      /> */}
                     </div>
                   </div>
                 </div>
@@ -426,13 +430,13 @@ class PostJobModal extends Component {
                         placeholder="Zip"
                         autocomplete="off"
                         type="text"
-                        maxlength='5'
+                        maxlength="5"
                         name="Zip"
                         id="Autocomplete-b230ed-362-3f5-8c0d-1bb5d0363b71"
                         data-test=""
                         aria-label="Zip"
-                        class="css-ofiv3k"                        
-                        value={this.state.Zip}                        
+                        class="css-ofiv3k"
+                        value={this.state.Zip}
                         onChange={(event) => this.handleOnChange(event)}
                       />
                     </div>
@@ -444,7 +448,7 @@ class PostJobModal extends Component {
         </div>
         <div class="bottomShadow"></div>
         <div class="actionBar">
-          <div class="experienceStyle__actionBar___2lnIS" style={{position:"absolute"}}>
+          <div class="experienceStyle__actionBar___2lnIS" style={{ position: 'absolute' }}>
             <button
               class="gd-ui-button d-none d-md-inline-block mr-md-sm mb-sm css-3ybntp"
               data-test="cancelChanges"

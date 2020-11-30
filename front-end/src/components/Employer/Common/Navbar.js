@@ -60,7 +60,7 @@ class Navbar extends Component {
         },
         (error) => {
           this.setState({
-            errorMessage: error.response.data,
+            errorMessage: "No Profile found",
           });
         }
       );
