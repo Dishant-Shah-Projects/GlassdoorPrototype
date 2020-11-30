@@ -368,9 +368,9 @@ class PostJobModal extends Component {
                           <option value="">-Select-</option>
                           <option value="Full-time">Full-time</option>
                           <option value="Part-time">Part-time</option>
-                          <option value="Part-time">Contract</option>
-                          <option value="Part-time">Internship</option>
-                          <option value="Part-time">Temporary</option>
+                          <option value="Contract">Contract</option>
+                          <option value="Internship">Internship</option>
+                          <option value="Temporary">Temporary</option>
                         </select>
                         {/* <input
                         placeholder="Remote"
