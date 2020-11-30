@@ -7,7 +7,6 @@ import './Body.css';
 import LeftBlock from './LeftBlock.js';
 import RightBlock from './RightBlock.js';
 
-
 class EmployerHome extends Component {
   constructor(props) {
     super(props);
@@ -17,7 +16,7 @@ class EmployerHome extends Component {
   // componentDidMount() {
   //   localStorage.setItem('selectedOption', "Profile");
   // }
-  handleClick = (selectedOption = "Profile") => {
+  handleClick = (selectedOption = 'Profile') => {
     //console.log('selected option', selectedOption);
     //let selectedOption = localStorage.getItem('selectedOption');
     switch (selectedOption) {
@@ -35,13 +34,17 @@ class EmployerHome extends Component {
         break;
       }
     }
-  }
+  };
 
   render() {
     return (
       <div>
         {/*<Navbar />*/}
-        <div class="pageContentWrapper">
+        <div
+          id="employerHome"
+          class="pageContentWrapper"
+          // style={{ background: '#eaeaea none !important ' }}
+        >
           {' '}
                     
           <div id="UserProfilePageContent" class>
@@ -49,7 +52,11 @@ class EmployerHome extends Component {
               <div class="css-1tgr9d eds5rs80">
                 <div class="applicationStyle__profileApplication___Jyu4n">
                   <div class="row  flex-md-row p-0 px-md-lg py-md-xxl">
-                    {<LeftBlock handleClick={(selectedOption) => this.handleClick(selectedOption)} />}
+                    {
+                      <LeftBlock
+                        handleClick={(selectedOption) => this.handleClick(selectedOption)}
+                      />
+                    }
                     {<RightBlock />}
                   </div>
                   {/* {<Body handleClick={this.handleClick()}/>} */}
