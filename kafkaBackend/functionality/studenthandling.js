@@ -806,7 +806,7 @@ async function handle_request(msg, callback) {
             }
           }
         );
-      } catch {
+      } catch(error) {
         res.status = 500;
         res.end = 'Network Error';
         callback(null, res);

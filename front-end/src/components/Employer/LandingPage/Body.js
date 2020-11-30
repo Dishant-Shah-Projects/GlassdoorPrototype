@@ -11,7 +11,7 @@ class Body extends Component {
   render() {
     return (
       <div class="row  flex-md-row p-0 px-md-lg py-md-xxl">
-        {<LeftBlock />}
+        {<LeftBlock handleClick={this.props.handleClick()}/>}
         {<RightBlock />}
       </div>
     );

@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import './Body.css';
 import { history } from '../../../App';
-import axios from 'axios';
-import serverUrl from '../../../config.js';
-import { updateCompanyProfile } from '../../../constants/action-types';
+//import axios from 'axios';
+//import serverUrl from '../../../config.js';
+//import { updateCompanyProfile } from '../../../constants/action-types';
 import { connect } from 'react-redux';
 
 class LeftBlock extends Component {
@@ -12,24 +12,30 @@ class LeftBlock extends Component {
     this.state = {};
   }
 
-  handleClick(selectedOption) {
-    console.log('selected option', selectedOption);
+  // handleClick(selectedOption) {
+  //   console.log('selected option', selectedOption);
+  //   localStorage.setItem('selectedOption', selectedOption);
+  //   switch (selectedOption) {
+  //     case 'Profile': {
+  //       console.log('selected option profile');
+  //       history.push('/Employer');
+  //       break;
+  //     }
+  //     case 'Report': {
+  //       console.log('selected option reports');
+  //       this.props.history.push('/EmployerReport');
+  //       break;
+  //     }
+  //     default: {
+  //       break;
+  //     }
+  //   }
+  // }
+
+  handleSelect(selectedOption){
+    console.log('props',this.props);
     localStorage.setItem('selectedOption', selectedOption);
-    switch (selectedOption) {
-      case 'Profile': {
-        console.log('selected option profile');
-        history.push('/Employer');
-        break;
-      }
-      case 'Report': {
-        console.log('selected option reports');
-        history.push('/EmployerReport');
-        break;
-      }
-      default: {
-        break;
-      }
-    }
+    this.props.handleClick(selectedOption);
   }
   render() {
     return (
@@ -73,32 +79,35 @@ class LeftBlock extends Component {
             <li
               role="tab"
               aria-selected="true"
-              tabindex="0"
-              onClick={() => this.handleClick('Profile')}
+              tabindex="0"              
               class={
                 localStorage.getItem('selectedOption') === 'Profile'
                   ? 'active css-1h7a53u'
                   : 'css-1h7a53u'
               }
             >
+              <a onClick={() => this.handleSelect('Profile')} >
               <div class="customItem css-wks0vk">
                 <div class="d-flex flex-row justify-content-start align-items-center">Profile</div>
               </div>
+              </a>
             </li>
             <li
               role="tab"
               aria-selected="false"
               tabindex="0"
-              onClick={() => this.handleClick('Report')}
+              // onClick={() => this.handleSelect('Report')}
               class={
                 localStorage.getItem('selectedOption') === 'Report'
                   ? 'active css-1h7a53u'
                   : 'css-1h7a53u'
               }
             >
+              <a onClick={() => this.handleSelect('Report')} >
               <div class="customItem css-wks0vk">
                 <div class="d-flex flex-row justify-content-start align-items-center">Reports</div>
               </div>
+              </a>
             </li>
           </ul>
         </div>

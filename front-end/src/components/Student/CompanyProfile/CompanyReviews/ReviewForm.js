@@ -517,9 +517,9 @@ class ReviewForm extends Component {
                           <div class="dropDownOptionsContainer">
                             <ul>
                               <li
-                                onClick={(event) => this.selectEmploymentType(event, 'Full Time')}
+                                onClick={(event) => this.selectEmploymentType(event, 'FullTime')}
                                 class={`dropdownOption  ${
-                                  this.state.employmentType === 'Full Time' ? 'checked' : ''
+                                  this.state.employmentType === 'FullTime' ? 'checked' : ''
                                 } `}
                                 role="option"
                                 aria-selected="true"
@@ -542,12 +542,12 @@ class ReviewForm extends Component {
                                     </svg>
                                   </span>
                                 </div>
-                                <span class="dropdownOptionLabel">Full Time</span>
+                                <span class="dropdownOptionLabel">FullTime</span>
                               </li>
                               <li
-                                onClick={(event) => this.selectEmploymentType(event, 'Part Time')}
+                                onClick={(event) => this.selectEmploymentType(event, 'PartTime')}
                                 class={`dropdownOption  ${
-                                  this.state.employmentType === 'Part Time' ? 'checked' : ''
+                                  this.state.employmentType === 'PartTime' ? 'checked' : ''
                                 } `}
                                 // class="dropdownOption   "
                                 role="option"
@@ -571,7 +571,7 @@ class ReviewForm extends Component {
                                     </svg>
                                   </span>
                                 </div>
-                                <span class="dropdownOptionLabel">Part Time</span>
+                                <span class="dropdownOptionLabel">PartTime</span>
                               </li>
                               <li
                                 onClick={(event) => this.selectEmploymentType(event, 'Contract')}
