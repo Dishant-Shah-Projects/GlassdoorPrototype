@@ -28,7 +28,8 @@ class RightBlock extends Component {
       authFlag: false, 
       cancelUpdate: false,
       redirect: null, 
-      showImageUploadModal: false 
+      showImageUploadModal: false,
+      imageUploaded: false
     };
     
   }
@@ -42,14 +43,11 @@ class RightBlock extends Component {
   handleClick = (event) => {
     this.inputElement.current.click();
   };
-
-  uploadImage = (event) => {
-    if (event.target.files.length === 1) {
-      
-    }}
+  
 
   componentDidMount() {
     //set the with credentials to true
+
     const data = localStorage.getItem('userId');
     console.log(data);
     axios.defaults.withCredentials = true;
@@ -187,6 +185,39 @@ class RightBlock extends Component {
       cancelUpdate: true,
     });    
   }
+
+  uploadImage = (event) => {
+    if (event.target.files.length === 1) {
+      axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+      event.preventDefault();
+      let formData = new FormData();
+      formData.append('file', event.target.files[0], event.target.files[0].name);
+      //   const imageUrl = event.target.files[0].name;
+      axios({
+        method: 'post',
+        url: serverUrl + 'student/upload',
+        data: formData,
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
+        .then((response) => {
+          if (response.status === 200) {
+            const ProfileImg = response.data;
+
+            this.setState({
+              ProfileImg,
+              imageUploaded: true,
+            });
+          } else if (parseInt(response.status) === 400) {
+          }
+        })
+        .catch((error) => {
+          this.setState({
+            errorMsg: error.message,
+            authFlag: false,
+          });
+        });
+    }
+  };
   render() {
     
     let redirectVar = null;
@@ -196,6 +227,7 @@ class RightBlock extends Component {
     if(this.state.cancelUpdate === true) {
       redirectVar = <Redirect to="/Employer" />
     }
+    
     
     return (
       <div className="col-md-8 px-0">
