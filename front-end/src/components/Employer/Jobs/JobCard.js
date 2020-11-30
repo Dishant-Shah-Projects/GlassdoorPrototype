@@ -1,18 +1,20 @@
 import React, { Component } from 'react';
 import './LeftBlock.css';
-
+import moment from 'moment';
 
 class JobCard extends Component {
   constructor(props) {
     super(props);
     this.state = {};
   }
-  
 
   render() {
-      const job = this.props.job;
-    return (             
-        <div class="d-flex flex-column pl-sm css-nq3w9f" onClick={(event) => this.props.openJobDetails(event, job.JobID)}>
+    const job = this.props.job;
+    return (
+      <div
+        class="d-flex flex-column pl-sm css-nq3w9f"
+        onClick={(event) => this.props.openJobDetails(event, job._id)}
+      >
         <div class="jobHeader d-flex justify-content-between align-items-start">
           <a
             href="#"
@@ -26,7 +28,8 @@ class JobCard extends Component {
           </a>
           <div class="saveJobWrap align-self-end d-flex flex-nowrap align-items-start">
             <span class="save-job-button-3708699629 nowrap" data-test="save-job">
-              {job.PostedDate.substring(0, 10)}
+              {/*job.PostedDate.substring(0, 10)*/}
+              {moment(job.PostedDate).format('ll')}
             </span>
           </div>
         </div>
@@ -43,10 +46,9 @@ class JobCard extends Component {
             {job.City}, {job.State}
           </span>
         </div>
-      </div>      
+      </div>
     );
   }
 }
 
 export default JobCard;
-

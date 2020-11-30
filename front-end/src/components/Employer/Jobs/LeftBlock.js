@@ -18,7 +18,7 @@ class LeftBlock extends Component {
   }
   openJobDetails = (event, Jobid) => {
     //event.preventDefault();
-    const index = this.props.jobsStore.jobsList.findIndex((x) => x.JobID === Jobid);
+    const index = this.props.jobsStore.jobsList.findIndex((x) => x._id === Jobid);
     const selectedJob = {
       ...this.props.jobsStore.jobsList[index],
     };
@@ -67,7 +67,7 @@ class LeftBlock extends Component {
                 key={job._id}
               >
                 <JobCard
-                  openJobDetails={(event) => this.openJobDetails(event, job.JobID)}
+                  openJobDetails={(event) => this.openJobDetails(event, job._id)}
                   job={job}
                 />
               </li>

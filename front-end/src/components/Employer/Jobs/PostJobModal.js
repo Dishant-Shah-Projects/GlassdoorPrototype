@@ -509,6 +509,7 @@ class PostJobModal extends Component {
                           autocomplete="off"
                           type="text"
                           maxlength="5"
+                          minLength="5"
                           name="Zip"
                           id="Autocomplete-b230ed-362-3f5-8c0d-1bb5d0363b71"
                           data-test=""

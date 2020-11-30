@@ -234,6 +234,7 @@ async function handle_request(msg, callback) {
     }
     case 'postJob': {
       const res = {};
+      console.log('new Date()', new Date());
       let con = null;
       try {
         const {
@@ -273,7 +274,7 @@ async function handle_request(msg, callback) {
           State,
           Country,
           Zip,
-          PostedDate: Date.now(),
+          PostedDate: new Date(),
           JobDescription,
           Responsibilities,
           Qualifications,
