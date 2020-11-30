@@ -208,7 +208,7 @@ async function handle_request(msg, callback) {
         const fetchApplicationsQuery = 'CALL getApplications(?,?,?)';
         con = await mysqlConnection();
         const [results, fields] = await con.query(fetchApplicationsQuery, [JobID, limit, offset]);
-        con.end();
+        con.release();
         if (results[1][0].TotalCount === 0) {
           res.status = 404;
           res.end = JSON.stringify('No Applications found');
@@ -227,7 +227,7 @@ async function handle_request(msg, callback) {
         callback(null, res);
       } finally {
         if (con) {
-          con.end();
+          con.release();
         }
       }
       break;
@@ -252,15 +252,15 @@ async function handle_request(msg, callback) {
           State,
           Zip,
         } = msg.body;
-        const Jobs = await Job.countDocuments({});
-        let JobID = null;
-        if (Jobs) {
-          JobID = Jobs + 1;
-        } else {
-          JobID = 0;
-        }
+        // const Jobs = await Job.countDocuments({});
+        // let JobID = null;
+        // if (Jobs) {
+        //   JobID = Jobs + 1;
+        // } else {
+        //   JobID = 0;
+        // }
         const job = new Job({
-          JobID,
+          // JobID,
           Title,
           CompanyID,
           CompanyName,
@@ -300,8 +300,8 @@ async function handle_request(msg, callback) {
           City,
           State,
         ]);
-        con.end();
-        res.status = 200;
+        con.release();
+        res.status = 201;
         res.end = JSON.stringify('Job Created');
         callback(null, res);
       } catch (error) {
@@ -310,7 +310,7 @@ async function handle_request(msg, callback) {
         callback(null, res);
       } finally {
         if (con) {
-          con.end();
+          con.release();
         }
       }
       break;
@@ -327,7 +327,7 @@ async function handle_request(msg, callback) {
           StudentID,
           Status,
         ]);
-        con.end();
+        con.release();
 
         res.status = 200;
         res.end = JSON.stringify('Updated the status');
@@ -338,7 +338,7 @@ async function handle_request(msg, callback) {
         callback(null, res);
       } finally {
         if (con) {
-          con.end();
+          con.release();
         }
       }
       break;
@@ -420,7 +420,7 @@ async function handle_request(msg, callback) {
           resultApplication.Rejected = { results };
           finalResult.push(resultApplication);
         }
-        con.end();
+        con.release();
         const count = await Job.find({ CompanyID, PostedDate: { $lt: date } }).countDocuments();
         const noOfPages = Math.ceil(count / 10);
         const output = { statsData: finalResult, count, noOfPages };
@@ -433,7 +433,7 @@ async function handle_request(msg, callback) {
         callback(null, res);
       } finally {
         if (con) {
-          con.end();
+          con.release();
         }
       }
       break;
@@ -471,7 +471,7 @@ async function handle_request(msg, callback) {
         callback(null, res);
       } finally {
         if (con) {
-          con.end();
+          con.release();
         }
       }
       break;

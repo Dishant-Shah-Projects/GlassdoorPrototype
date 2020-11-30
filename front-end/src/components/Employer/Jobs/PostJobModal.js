@@ -53,7 +53,7 @@ class PostJobModal extends Component {
   saveJob = () => {
     let JobDetails = {
       CompanyID: this.state.CompanyID,
-      CompanyName: this.state.CompanyName,
+      CompanyName: localStorage.getItem('companyName'),
       Title: this.state.Title,
       JobDescription: this.state.JobDescription,
       Responsibilities: this.state.Responsibilities,
@@ -537,7 +537,7 @@ const mapStateToProps = (state) => {
   const { masterData } = state.staticDataReducer;
   return {
     postJobModalStore: postJobModalStore,
-    masterData: masterData
+    masterData: masterData,
   };
 };
 const mapDispatchToProps = (dispatch) => {

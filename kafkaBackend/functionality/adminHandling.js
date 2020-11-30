@@ -213,25 +213,32 @@ async function handle_request(msg, callback) {
         let getQuery = 'SELECT COUNT(*) As NumberOfJobs FROM APPLICATION_JOB WHERE CompanyID = ?';
         let [results] = await con.query(getQuery, CompanyID);
         resultData.JobCount = results;
-        getQuery = 'SELECT COUNT(*) As TotalApplicants FROM APPLICATION_RECEIVED AR JOIN APPLICATION_JOB AJ ON AR.JobID = AJ.JobID WHERE CompanyID = ?';
+        getQuery =
+          'SELECT COUNT(*) As TotalApplicants FROM APPLICATION_RECEIVED AR JOIN APPLICATION_JOB AJ ON AR.JobID = AJ.JobID WHERE CompanyID = ?';
         [results] = await con.query(getQuery, CompanyID);
         resultData.TotalApplicants = results;
-        getQuery = 'SELECT COUNT(*) AS SelectedApplicants FROM APPLICATION_RECEIVED AR JOIN APPLICATION_JOB AJ ON AR.JobID = AJ.JobID WHERE CompanyID = ? AND STATUS = ?';
+        getQuery =
+          'SELECT COUNT(*) AS SelectedApplicants FROM APPLICATION_RECEIVED AR JOIN APPLICATION_JOB AJ ON AR.JobID = AJ.JobID WHERE CompanyID = ? AND STATUS = ?';
         [results] = await con.query(getQuery, [CompanyID, 'Hired']);
         resultData.HiredApplicants = results;
-        getQuery = 'SELECT COUNT(*) AS RejectedApplicants FROM APPLICATION_RECEIVED AR JOIN APPLICATION_JOB AJ ON AR.JobID = AJ.JobID WHERE CompanyID = ? AND STATUS = ?';
+        getQuery =
+          'SELECT COUNT(*) AS RejectedApplicants FROM APPLICATION_RECEIVED AR JOIN APPLICATION_JOB AJ ON AR.JobID = AJ.JobID WHERE CompanyID = ? AND STATUS = ?';
         [results] = await con.query(getQuery, [CompanyID, 'Rejected']);
         resultData.RejectedApplicants = results;
-        getQuery = 'SELECT Ethnicity, COUNT(Ethnicity) As Count FROM APPLICATION_RECEIVED AR JOIN APPLICATION_JOB AJ ON AR.JobID = AJ.JobID WHERE CompanyID = ? GROUP BY Ethnicity';
+        getQuery =
+          'SELECT Ethnicity, COUNT(Ethnicity) As Count FROM APPLICATION_RECEIVED AR JOIN APPLICATION_JOB AJ ON AR.JobID = AJ.JobID WHERE CompanyID = ? GROUP BY Ethnicity';
         [results] = await con.query(getQuery, CompanyID);
         resultData.Ethnicity = results;
-        getQuery = 'SELECT Gender, COUNT(Gender) As Count FROM APPLICATION_RECEIVED AR JOIN APPLICATION_JOB AJ ON AR.JobID = AJ.JobID WHERE CompanyID = ? GROUP BY Gender';
+        getQuery =
+          'SELECT Gender, COUNT(Gender) As Count FROM APPLICATION_RECEIVED AR JOIN APPLICATION_JOB AJ ON AR.JobID = AJ.JobID WHERE CompanyID = ? GROUP BY Gender';
         [results] = await con.query(getQuery, CompanyID);
         resultData.Gender = results;
-        getQuery = 'SELECT Disability, COUNT(Disability) As Count FROM APPLICATION_RECEIVED AR JOIN APPLICATION_JOB AJ ON AR.JobID = AJ.JobID WHERE CompanyID = ? GROUP BY Disability';
+        getQuery =
+          'SELECT Disability, COUNT(Disability) As Count FROM APPLICATION_RECEIVED AR JOIN APPLICATION_JOB AJ ON AR.JobID = AJ.JobID WHERE CompanyID = ? GROUP BY Disability';
         [results] = await con.query(getQuery, CompanyID);
         resultData.Disability = results;
-        getQuery = 'SELECT VeteranStatus, COUNT(VeteranStatus) As Count FROM APPLICATION_RECEIVED AR JOIN APPLICATION_JOB AJ ON AR.JobID = AJ.JobID WHERE CompanyID = ? GROUP BY VeteranStatus';
+        getQuery =
+          'SELECT VeteranStatus, COUNT(VeteranStatus) As Count FROM APPLICATION_RECEIVED AR JOIN APPLICATION_JOB AJ ON AR.JobID = AJ.JobID WHERE CompanyID = ? GROUP BY VeteranStatus';
         [results] = await con.query(getQuery, CompanyID);
         resultData.VeteranStatus = results;
 
@@ -244,7 +251,7 @@ async function handle_request(msg, callback) {
         callback(null, res);
       } finally {
         if (con) {
-          con.end();
+          con.release();
         }
       }
       break;
