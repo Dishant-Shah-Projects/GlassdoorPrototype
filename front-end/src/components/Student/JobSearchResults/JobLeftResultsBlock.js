@@ -48,10 +48,8 @@ class JobLeftResultsBlock extends Component {
       <article style={{ paddingRight: '1 % !important' }} id="MainCol" className="noPad">
         <div>
           <div id="MainColSummary" className="gdGrid">
-            <h1 id="jobTitle" className="hidden">
-              Software engineer Jobs
-            </h1>
-            <p className="jobsCount hidden">111,956Jobs</p>
+            <h1 id="jobTitle" className="hidden"></h1>
+            <p className="jobsCount hidden"></p>
             <div className="css-8atqhb">
               <div className="d-flex align-items-center justify-content-between css-1530je5 ey9ulmr0">
                 <div className="css-e0vuny e1gtdke62">
@@ -108,9 +106,10 @@ class JobLeftResultsBlock extends Component {
             ''
           )}
           <div className="cell alignRt middle">
-            {(this.props.jobListStore.appliedJobSelected ||
-              this.props.jobListStore.favJobSelected) &&
-            this.props.jobListStore.jobList.length > 0 ? (
+            {this.props.jobListStore.appliedJobSelected ||
+            this.props.jobListStore.favJobSelected ? (
+              ''
+            ) : this.props.jobListStore.jobList.length > 0 ? (
               <PaginationComponent
                 PageCount={this.props.jobListStore.PageCount}
                 PageNo={this.props.jobListStore.PageNo}
