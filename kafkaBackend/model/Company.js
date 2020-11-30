@@ -47,7 +47,6 @@ const CompanySchema = new mongoose.Schema(
       CEOApproval: { type: Boolean },
       JobType: {
         type: String,
-        enum: ['Full-time', 'Part-time', 'Contract', 'Internship', 'Temporary', 'Entry Level'],
       },
       Recommended: { type: Boolean },
       JobTitle: { type: String },
@@ -60,7 +59,7 @@ const CompanySchema = new mongoose.Schema(
   },
   {
     versionKey: false,
-  },
+  }
 );
 
 mongoose.set('useCreateIndex', true);
