@@ -142,7 +142,7 @@ class PostJobModal extends Component {
                         data-test=""
                         aria-label="Company Name"
                         class="css-ofiv3k"
-                        value={this.state.CompanyName}                        
+                        value={localStorage.getItem('companyName')}                        
                       />
                     </div>
                   </div>
