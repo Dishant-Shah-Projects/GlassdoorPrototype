@@ -220,6 +220,7 @@ class RightBlock extends Component {
         <div class="d-flex justify-content-between flex-wrap">
           <div class="d-flex flex-column">
             <span class="mb-sm">Jobs Statistics</span>
+            {this.props.reportStore.statsList && this.props.reportStore.statsList > 0 ? (
             <div class="d-flex">
               <Chart
                 width={'500px'}
@@ -244,7 +245,9 @@ class RightBlock extends Component {
                 chartEvents={this.state.chartEvents}
               />
             </div>
+            ): 'No Jobs found!'}
           </div>
+          {this.props.reportStore.statsList && this.props.reportStore.statsList > 0 ? (
           <div className="tbl fill padHorz margVert" id="ResultsFooter">
           <div className="cell middle hideMob padVertSm" data-test="page-x-of-y">
             Page {this.props.reportStore.PageNo + 1} of {this.props.reportStore.PageCount}
@@ -259,6 +262,8 @@ class RightBlock extends Component {
             />
           </div>
         </div>
+          ) : ('')}
+           {this.props.reportStore.statsList && this.props.reportStore.statsList > 0 ? (
           <div class="justify-content-around justify-content-md-between mt-lg column">
             <div class="d-flex">
               <span>Click on Job Bar to fetch Demographic and click here</span>
@@ -274,10 +279,12 @@ class RightBlock extends Component {
               </div>
             </div>
           </div>
-          {this.props.demographicsStore.demographics ? (
+           ):('')}
+           {this.props.reportStore.statsList && this.props.reportStore.statsList > 0 ? (
+          // {this.props.demographicsStore.demographics ? (
             <DemographicsCard />
           ) : ('')}
-        </div>
+        </div>          
       </div>
     );
   }
