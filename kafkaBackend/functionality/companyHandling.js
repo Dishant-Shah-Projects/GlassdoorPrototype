@@ -251,6 +251,7 @@ async function handle_request(msg, callback) {
           City,
           State,
           Zip,
+          JobType,
         } = msg.body;
         // const Jobs = await Job.countDocuments({});
         // let JobID = null;
@@ -277,6 +278,7 @@ async function handle_request(msg, callback) {
           Responsibilities,
           Qualifications,
           ExpectedSalary,
+          JobType,
           Votes: 0,
         });
         await job.save((e, data) => {
