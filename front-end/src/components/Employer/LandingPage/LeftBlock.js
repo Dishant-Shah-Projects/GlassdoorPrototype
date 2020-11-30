@@ -32,8 +32,8 @@ class LeftBlock extends Component {
   //   }
   // }
 
-  handleSelect(selectedOption){
-    console.log('props',this.props);
+  handleSelect(selectedOption) {
+    console.log('props', this.props);
     localStorage.setItem('selectedOption', selectedOption);
     this.props.handleClick(selectedOption);
   }
@@ -79,17 +79,19 @@ class LeftBlock extends Component {
             <li
               role="tab"
               aria-selected="true"
-              tabindex="0"              
+              tabindex="0"
               class={
                 localStorage.getItem('selectedOption') === 'Profile'
                   ? 'active css-1h7a53u'
                   : 'css-1h7a53u'
               }
             >
-              <a onClick={() => this.handleSelect('Profile')} >
-              <div class="customItem css-wks0vk">
-                <div class="d-flex flex-row justify-content-start align-items-center">Profile</div>
-              </div>
+              <a href="#" onClick={() => this.handleSelect('Profile')}>
+                <div class="customItem css-wks0vk">
+                  <div class="d-flex flex-row justify-content-start align-items-center">
+                    Profile
+                  </div>
+                </div>
               </a>
             </li>
             <li
@@ -103,10 +105,12 @@ class LeftBlock extends Component {
                   : 'css-1h7a53u'
               }
             >
-              <a onClick={() => this.handleSelect('Report')} >
-              <div class="customItem css-wks0vk">
-                <div class="d-flex flex-row justify-content-start align-items-center">Reports</div>
-              </div>
+              <a href="#" onClick={() => this.handleSelect('Report')}>
+                <div class="customItem css-wks0vk">
+                  <div class="d-flex flex-row justify-content-start align-items-center">
+                    Reports
+                  </div>
+                </div>
               </a>
             </li>
           </ul>
