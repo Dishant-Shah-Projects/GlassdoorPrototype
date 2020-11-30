@@ -30,6 +30,11 @@ class EmployerHome extends Component {
         history.push('/EmployerReport');
         break;
       }
+      case 'updateProfile': {
+        console.log('selected option reports');
+        history.push('/EmployerProfile');
+        break;
+      }
       default: {
         break;
       }
@@ -57,7 +62,11 @@ class EmployerHome extends Component {
                         handleClick={(selectedOption) => this.handleClick(selectedOption)}
                       />
                     }
-                    {<RightBlock />}
+                    {
+                      <RightBlock
+                        handleClick={(selectedOption) => this.handleClick(selectedOption)}
+                      />
+                    }
                   </div>
                   {/* {<Body handleClick={this.handleClick()}/>} */}
                 </div>
