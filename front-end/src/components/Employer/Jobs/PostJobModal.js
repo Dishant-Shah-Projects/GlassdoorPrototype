@@ -15,6 +15,7 @@ class PostJobModal extends Component {
       Responsibilities: '',
       Qualifications: '',
       ExpectedSalary: 0,
+      JobType: '',
       Industry: '',
       Country: '',
       Remote: '',
@@ -299,7 +300,7 @@ class PostJobModal extends Component {
 
               <div class="pb-sm css-1ohf0ui">
                 <label for="Autocomplete-b230ed-362-3f5-8c0d-1bb5d0363b71" class="css-1opum1l">
-                  <span>Remote</span>
+                  <span>Remote/InPerson</span>
                 </label>
                 <div
                   aria-expanded="false"
@@ -309,10 +310,54 @@ class PostJobModal extends Component {
                 >
                   <div class=" css-1ohf0ui">
                     <div class="input-wrapper css-q444d9">
-                      <select name="Remote" value={this.state.Remote} onChange={(event) => this.handleOnChange(event)}>
-                      <option value=" ">-Select-</option>
-                        <option value="Remote" >Remote</option>
-                        <option value="InPerson">InPerson</option>                       
+                      <select
+                        name="Remote"
+                        value={this.state.Remote}
+                        onChange={(event) => this.handleOnChange(event)}
+                      >
+                        <option value=" ">-Select-</option>
+                        <option value="Remote">Remote</option>
+                        <option value="InPerson">InPerson</option>
+                      </select>
+                      {/* <input
+                        placeholder="Remote"
+                        autocomplete="off"
+                        name="Remote"
+                        id="Autocomplete-b230ed-362-3f5-8c0d-1bb5d0363b71"
+                        data-test=""
+                        aria-label="Remote"
+                        class="css-ofiv3k"
+                        value={this.state.Remote}
+                        onChange={(event) => this.handleOnChange(event)}
+                      /> */}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="pb-sm css-1ohf0ui">
+                <label for="Autocomplete-b230ed-362-3f5-8c0d-1bb5d0363b71" class="css-1opum1l">
+                  <span>Job Type</span>
+                </label>
+                <div
+                  aria-expanded="false"
+                  role="combobox"
+                  aria-autocomplete="list"
+                  class="css-1xtvih1"
+                >
+                  <div class=" css-1ohf0ui">
+                    <div class="input-wrapper css-q444d9">
+                      <select
+                        name="JobType"
+                        value={this.state.JobType}
+                        onChange={(event) => this.handleOnChange(event)}
+                      >
+                        <option value=" ">-Select-</option>
+                        <option value="Full-time">Full-time</option>
+                        <option value="Part-time">Part-time</option>
+                        <option value="Part-time">Contract</option>
+                        <option value="Part-time">Internship</option>
+                        <option value="Part-time">Temporary</option>
                       </select>
                       {/* <input
                         placeholder="Remote"
@@ -398,7 +443,23 @@ class PostJobModal extends Component {
                 >
                   <div class=" css-1ohf0ui">
                     <div class="input-wrapper css-q444d9">
-                      <input
+                      <select
+                        style={{ backgroundColor: '#fff' }}
+                        id="stateName"
+                        data-test="state"
+                        maxlength="100"
+                        aria-label=""
+                        class="css-ofiv3k"
+                        onChange={(event) => this.handleOnChange(event)}
+                        value={this.state.State}
+                        name="State"
+                      >
+                        <option value=""></option>
+                        {this.props.masterData.States.map((state) => (
+                          <option value={state}>{state}</option>
+                        ))}
+                      </select>
+                      {/* <input
                         placeholder="State"
                         autocomplete="off"
                         name="State"
@@ -408,7 +469,7 @@ class PostJobModal extends Component {
                         class="css-ofiv3k"
                         value={this.state.State}
                         onChange={(event) => this.handleOnChange(event)}
-                      />
+                      /> */}
                     </div>
                   </div>
                 </div>
@@ -473,8 +534,10 @@ class PostJobModal extends Component {
 //export default ApplicantsList;
 const mapStateToProps = (state) => {
   const { postJobModalStore } = state.ApplicantsListModalReducer;
+  const { masterData } = state.staticDataReducer;
   return {
     postJobModalStore: postJobModalStore,
+    masterData: masterData
   };
 };
 const mapDispatchToProps = (dispatch) => {
