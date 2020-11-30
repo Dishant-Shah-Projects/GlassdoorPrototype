@@ -9,15 +9,15 @@ class LeftBlock extends Component {
     this.state = { redirect: null, showImageUploadModal: false };
   }
 
-  openImageModal = (event) => {
-    this.setState({
-      showImageUploadModal: !this.state.showImageUploadModal,
-    });
-  };
+  // openImageModal = (event) => {
+  //   this.setState({
+  //     showImageUploadModal: !this.state.showImageUploadModal,
+  //   });
+  // };
 
-  handleClick = (event) => {
-    this.inputElement.current.click();
-  };
+  // handleClick = (event) => {
+  //   this.inputElement.current.click();
+  // };
   render() {
     return (
       <div class="col-12 col-md-4 pr-md-xxl">
@@ -52,12 +52,12 @@ class LeftBlock extends Component {
                   </span>
                   )}
                 </div>
-                <div class="profilePhotoBadge">
+                {/* <div class="profilePhotoBadge">
                   <div onClick={this.openImageModal} class="profilePhotoStyle__caption___HtLE-">
                     <span>Add/Update a photo</span>
                   </div>
-                </div>
-                {this.state.showImageUploadModal ? (
+                </div> */}
+                {/* {this.state.showImageUploadModal ? (
                   <div class="gd-ui-modal css-tb9ljb">
                     <div class="background-overlay" aria-label="Background Overlay"></div>
                     <div class="modal_main ">
@@ -128,6 +128,7 @@ class LeftBlock extends Component {
                                       }}
                                     >
                                       <img
+                                        src={this.props.companyInfo.ProfileImg ? this.props.companyInfo.ProfileImg : ''}
                                         class="cropit-preview-image"
                                         alt=""
                                         style={{
@@ -174,6 +175,7 @@ class LeftBlock extends Component {
                             ref={this.inputElement}
                             style={{ display: 'none' }}
                             accept=".jpg,.png"
+                            onChange={this.uploadImage}
                           />
                           Choose Photo
                         </button>
@@ -187,7 +189,7 @@ class LeftBlock extends Component {
                   </div>
                 ) : (
                   ''
-                )}
+                )} */}
               </div>
             </div>
           </div>

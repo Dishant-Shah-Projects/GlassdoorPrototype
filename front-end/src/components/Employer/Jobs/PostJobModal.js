@@ -14,14 +14,14 @@ class PostJobModal extends Component {
       JobDescription: '',
       Responsibilities: '',
       Qualifications: '',
-      ExpectedSalary: '',
+      ExpectedSalary: 0,
       Industry: '',
       Country: '',
       Remote: '',
       StreetAddress: '',
       City: '',
       State: '',
-      Zip: 0,
+      Zip: '',
       errorMessage: '',
     };
   }
@@ -30,10 +30,20 @@ class PostJobModal extends Component {
     this.setState({
       errorMessage: '',
     });
-    this.setState({
-      ...this.state, 
-      [e.target.name]: e.target.type === 'number' ? parseInt(e.target.value) : e.target.value,             
-    });
+    if (e.target.name === 'Zip') {
+      if (/^(\s*|\d+)$/.test(e.target.value)) {
+         this.setState({
+           ...this.state,
+           [e.target.name]: e.target.type === 'number' ? parseInt(e.target.value) : e.target.value,
+         });
+      }
+     
+    } else {
+      this.setState({
+        ...this.state,
+        [e.target.name]: e.target.type === 'number' ? parseInt(e.target.value) : e.target.value,
+      });
+    }
   };
 
   cancelChanges = () => {
@@ -75,22 +85,7 @@ class PostJobModal extends Component {
 
   render() {
     return (
-      <div class="modal_main ">
-        <span alt="Close" class="SVGInline modal_closeIcon">
-          <svg
-            class="SVGInline-svg modal_closeIcon-svg"
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-          >
-            <path
-              d="M13.34 12l5.38-5.38a.95.95 0 00-1.34-1.34L12 10.66 6.62 5.28a.95.95 0 00-1.34 1.34L10.66 12l-5.38 5.38a.95.95 0 001.34 1.34L12 13.34l5.38 5.38a.95.95 0 001.34-1.34z"
-              fill="currentColor"
-              fill-rule="evenodd"
-            ></path>
-          </svg>
-        </span>
+      <div class="modal_main ">       
         <div class="topShadow"></div>
         <div class="fullContent">
           <div class="modal_title">Add Job</div>
@@ -147,8 +142,7 @@ class PostJobModal extends Component {
                         data-test=""
                         aria-label="Company Name"
                         class="css-ofiv3k"
-                        value={this.state.CompanyName}
-                        onChange={(event) => this.handleOnChange(event)}
+                        value={this.state.CompanyName}                        
                       />
                     </div>
                   </div>
@@ -231,6 +225,8 @@ class PostJobModal extends Component {
                   <div class=" css-1ohf0ui">
                     <div class="input-wrapper css-q444d9">
                       <input
+                        type="number"
+                        min="0"
                         placeholder="Salary"
                         autocomplete="off"
                         name="ExpectedSalary"
@@ -429,7 +425,8 @@ class PostJobModal extends Component {
                       <input
                         placeholder="Zip"
                         autocomplete="off"
-                        type="number"
+                        type="text"
+                        maxlength='5'
                         name="Zip"
                         id="Autocomplete-b230ed-362-3f5-8c0d-1bb5d0363b71"
                         data-test=""
@@ -447,7 +444,7 @@ class PostJobModal extends Component {
         </div>
         <div class="bottomShadow"></div>
         <div class="actionBar">
-          <div class="experienceStyle__actionBar___2lnIS">
+          <div class="experienceStyle__actionBar___2lnIS" style={{position:"absolute"}}>
             <button
               class="gd-ui-button d-none d-md-inline-block mr-md-sm mb-sm css-3ybntp"
               data-test="cancelChanges"
