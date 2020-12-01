@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './ProfileUpdate.css';
 import Navbar from '../Common/Navbar.js';
 import ProfileUpdateBody from './ProfileUpdateBody.js';
+import { Redirect } from 'react-router';
 
 class ProfileUpdate extends Component {
   constructor(props) {
@@ -9,6 +10,15 @@ class ProfileUpdate extends Component {
     this.state = {};
   }
   render() {
+    if (localStorage.getItem('token')) {
+      if (localStorage.getItem('userrole') === 'student') {
+        return <Redirect to="/Home" />;
+      } else if (localStorage.getItem('userrole') === 'admin') {
+        return <Redirect to="/AdminHomePage" />;
+      }
+    } else {
+      return <Redirect to="/login" />;
+    }
     return (
       <div>
         {/*<Navbar />*/}

@@ -13,6 +13,7 @@ import StarRatings from 'react-star-ratings';
 import { connect } from 'react-redux';
 import PaginationComponent from '../../Student/Common/PaginationComponent';
 import ReviewCard from './ReviewCard';
+import { Redirect } from 'react-router';
 
 class RightBlock extends Component {
   constructor(props) {
@@ -50,6 +51,9 @@ class RightBlock extends Component {
   }  
 
   componentDidMount() {
+    if(!localStorage.getItem('userId')) {
+      return <Redirect to="/Home" />;
+    }
     this.props.fetchReviews();
   }
 

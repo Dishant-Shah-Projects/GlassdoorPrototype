@@ -71,7 +71,9 @@ class RightBlock extends Component {
 
   componentDidMount() {
     //set the with credentials to true
-
+    if(!localStorage.getItem('userId')) {
+      return <Redirect to="/Employer" />;
+    }
     const data = localStorage.getItem('userId');
     console.log(data);
     axios.defaults.withCredentials = true;

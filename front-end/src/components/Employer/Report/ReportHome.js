@@ -8,6 +8,7 @@ import serverUrl from '../../../config.js';
 import { connect } from 'react-redux';
 import { updateEmployerStats } from '../../../constants/action-types';
 import { history } from '../../../App';
+import { Redirect } from 'react-router';
 
 class ReportHome extends Component {
   constructor(props) {
@@ -35,6 +36,15 @@ class ReportHome extends Component {
   };
 
   render() {
+    if (localStorage.getItem('token')) {
+      if (localStorage.getItem('userrole') === 'student') {
+        return <Redirect to="/Home" />;
+      } else if (localStorage.getItem('userrole') === 'admin') {
+        return <Redirect to="/AdminHomePage" />;
+      }
+    } else {
+      return <Redirect to="/login" />;
+    }
     return (
       <div>
         <div id="UserProfilePageContent" class>

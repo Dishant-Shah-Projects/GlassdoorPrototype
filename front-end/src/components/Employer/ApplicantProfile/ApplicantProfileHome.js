@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './ApplicantProfile.css';
 import axios from 'axios';
 import serverUrl from '../../../config.js';
+import { Redirect } from 'react-router';
 
 class ApplicantProfileHome extends Component {
   constructor(props) {
@@ -13,6 +14,9 @@ class ApplicantProfileHome extends Component {
   }
 
   componentDidMount() {
+    if(!localStorage.getItem('StudentId')) {
+      return <Redirect to="/Employer" />;
+    }
     axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
     axios
       .get(serverUrl + 'company/jobsApplicantProfile', {
@@ -37,6 +41,15 @@ class ApplicantProfileHome extends Component {
       });
   }
   render() {
+    if (localStorage.getItem('token')) {
+      if (localStorage.getItem('userrole') === 'student') {
+        return <Redirect to="/Home" />;
+      } else if (localStorage.getItem('userrole') === 'admin') {
+        return <Redirect to="/AdminHomePage" />;
+      }
+    } else {
+      return <Redirect to="/login" />;
+    }
     return (
       <div className="pageContentWrapper ">
         <div id="UserProfilePageContent" class>
