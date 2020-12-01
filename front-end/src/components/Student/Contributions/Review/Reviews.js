@@ -20,7 +20,7 @@ class Reviews extends Component {
   commonFetch = (PageNo = 0) => {
     axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
     axios
-      .get(serverUrl + 'student/studentSalaryReview', {
+      .get(serverUrl + 'student/studentCompanyReview', {
         params: {
           PageNo,
           StudentID: localStorage.getItem('userId'),
@@ -29,12 +29,12 @@ class Reviews extends Component {
       })
       .then(
         (response) => {
-          console.log('studentSalaryReview', response.data);
+          console.log('studentCompanyReview', response.data);
           let payload = {
-            ReviewList: response.data.results,
+            ReviewList: response.data[2],
             PageNo,
-            Totalcount: response.data.count,
-            PageCount: Math.ceil(response.data.count / 10),
+            Totalcount: response.data[0].count,
+            PageCount: Math.ceil(response.data[0].count / 10),
 
             // PageCount: Math.ceil(response.data.Totalcount / 3),
           };
