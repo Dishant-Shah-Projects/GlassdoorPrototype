@@ -69,6 +69,8 @@ class PhotoUploadForm extends Component {
         (response) => {
           console.log('Status Code : ', response.status);
           if (response.status === 200) {
+             this.props.history.goBack();
+             this.props.history.goBack();
             this.setState({
               uploadMessage: 'Photos uploaded Successfully!',
               photos: [],
