@@ -788,10 +788,18 @@ async function handle_request(msg, callback) {
         const resultData = {};
         const company = await Company.findOne({ CompanyID }).select('FeaturedReview');
         resultData.featuredReview = company.FeaturedReview;
-        const posquery = await General.findOne({ CompanyID, Rating: { $gt: 3 } }).sort({
+        const posquery = await General.findOne({
+          CompanyID,
+          Rating: { $gt: 3 },
+          Status: 'Approved',
+        }).sort({
           Helpful: -1,
         });
-        const negquery = await General.findOne({ CompanyID, Rating: { $lte: 3 } }).sort({
+        const negquery = await General.findOne({
+          CompanyID,
+          Rating: { $lte: 3 },
+          Status: 'Approved',
+        }).sort({
           Helpful: -1,
         });
         // eslint-disable-next-line prefer-destructuring
