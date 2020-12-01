@@ -62,16 +62,19 @@ class RightBlock extends Component {
   };
 
   handleFeatured(Id, CompanyId) {
+    console.log('Id,',Id);
     this.setFeature(Id, CompanyId);
   }
 
   saveFeat(Id,CompanyId) {
+    console.log('companyid',CompanyId);
+    console.log('ID',Id);
     axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
     axios
       .post(serverUrl + 'company/reviewFeatured', {
         ID: Id,
         CompanyID: CompanyId,
-        Response: this.state.feature,
+        ID: Id,
       })
       .then((response) => {
         if (response.status === 200) {
@@ -90,6 +93,7 @@ class RightBlock extends Component {
       });
   }
   setFeature(Id,CompanyId) {
+   
     if (this.state.Feature === 0) {
       console.log('inside if 0');
       this.setState(
@@ -97,16 +101,18 @@ class RightBlock extends Component {
           Feature: 1,
         },
         function () {
+
           this.saveFeat(Id,CompanyId);
         }
       );
     } else {
       console.log('inside if 1');
+      console.log('Id,,',Id);
       this.setState(
         {
           Feature: 0,
         },
-        function (Id) {
+        function () {
           this.saveFeat(Id,CompanyId);
         }
       );
@@ -185,7 +191,7 @@ class RightBlock extends Component {
                 <li class="empReview cf  " id="empReview_35973660" key={review.ID}>
                   <ReviewCard
                     handleSaveFavorite={() => this.handleSaveFavorite(review.ID)}
-                    handleFeatured={() => this.handleFeatured(review.ID)}
+                    handleFeatured={() => this.handleFeatured(review.ID,review.CompanyID)}
                     review={review}
                   />
                 </li>

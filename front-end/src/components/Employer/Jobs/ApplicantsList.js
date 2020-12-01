@@ -12,7 +12,7 @@ class ApplicantsList extends Component {
     super(props);
     this.state = {
       filterDropDownOpen: false,
-      applicantStatus: 'Submitted'
+      applicantStatus: 'Submitted',
     };
   }
 
@@ -56,7 +56,7 @@ class ApplicantsList extends Component {
     let appllicantInfo = {
       JobID: JobId,
       StudentID: StudentId,
-      Status: this.state.applicantStatus      
+      Status: this.state.applicantStatus,
     };
     console.log('state', this.state);
     axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
@@ -77,48 +77,64 @@ class ApplicantsList extends Component {
   handleStudentName = (e, studentId) => {
     localStorage.setItem('StudentId', studentId);
     history.push('/ApplicantProfile');
-  }
+  };
   render() {
-    
     const len = this.props.applicantsListStore.applicantsList.length;
-    console.log('len',len);
+    console.log('len', len);
     return (
-      
       <article class="mr-0 mr-md-std css-8atqhb ep6ayhb0">
         <div data-test="employer-salaries">
-        <h1>Applicants Applied</h1>
-        {len > 0 ? (
-             this.props.applicantsListStore.applicantsList.map((listitem) => (
-                <div class=" gd-ui-module css-lcvd8h" key={listitem.StudentID}>                
-                  
+          <h1>Applicants Applied</h1>
+          {len > 0
+            ? this.props.applicantsListStore.applicantsList.map((listitem) => (
+                <div class=" gd-ui-module css-lcvd8h" key={listitem.StudentID}>
                   <div class="row mx-0 py-std css-l8rlna e8dz1vs0" data-test="employer-salary-tile">
                     <div class="col d-flex justify-content-between pl-std">
                       <div>
-                        <a href="" onClick={(event) => {this.handleStudentName(event, listitem.StudentID)}}>
+                        <a
+                          href=""
+                          onClick={(event) => {
+                            this.handleStudentName(event, listitem.StudentID);
+                          }}
+                        >
                           <h3 class="link m-0 css-1v81xpy e8dz1vs2">{listitem.StudentName}</h3>
                         </a>
                       </div>
                       <div>
-                      <div class="css-1uyte9r e8dz1vs1">Resume</div>
+                        <div class="css-1uyte9r e8dz1vs1">Resume</div>
                         <a href="">
-                          <h3 class="link m-0 css-1v81xpy e8dz1vs2" style={{fontSize: "12px"}}>{listitem.ResumeURL}</h3>
+                          <h3 class="link m-0 css-1v81xpy e8dz1vs2" style={{ fontSize: '12px' }}>
+                            {listitem.ResumeURL}
+                          </h3>
                         </a>
-                        
                       </div>
                       <div>
-                      <div class="css-1uyte9r e8dz1vs1"> Cover Letter</div>
+                        <div class="css-1uyte9r e8dz1vs1"> Cover Letter</div>
                         <a href="">
-                          <h3 class="link m-0 css-1v81xpy e8dz1vs2" style={{fontSize: "12px"}}>{listitem.CoverLetterURL}</h3>
+                          <h3 class="link m-0 css-1v81xpy e8dz1vs2" style={{ fontSize: '12px' }}>
+                            {listitem.CoverLetterURL}
+                          </h3>
                         </a>
-                        
-                      </div>    
-                      <div>                 
+                      </div>
+                      <div>
                         <h3 class="m-0 css-1v81xpy e8dz1vs2">Application Status</h3>
                         <div
                           onClick={this.openFilterDropDown}
                           class="ml-xsm search__SearchStyles__searchDropdown css-1ohf0ui"
                         >
                           <select
+                            required="true"
+                            name="applicantStatus"
+                            value={this.state.applicantStatus}
+                            onChange={(event) => this.handleOnChange(event)}
+                          >
+                            <option value="Submitted">Submitted</option>
+                            <option value="Reviewed">Reviewed</option>
+                            <option value="InitialScreening">InitialScreening</option>
+                            <option value="Interviewing">Interviewing</option>
+                            <option value="Hired">Hired</option>                            
+                          </select>
+                          {/* <select
                             data-test="search-bar-context-picker"
                             name="dropdown"
                             style={{ display: 'none' }}
@@ -128,8 +144,8 @@ class ApplicantsList extends Component {
                             <option value="1"></option>
                             <option value="2"></option>
                             <option value="3"></option>
-                          </select>
-                          <div
+                          </select> */}
+                          {/* <div
                             tabindex="0"
                             style={{ width: '132px' }}
                             direction="auto"
@@ -339,41 +355,43 @@ class ApplicantsList extends Component {
                             ) : (
                               ''
                             )}
-                          </div>
+                          </div> */}
                         </div>
-                        </div>                      
+                      </div>
                     </div>
                   </div>
                   <h3
-                  type="button"
-                  class="gd-ui-button d-none d-md-inline-block mr-md-sm mb-sm css-3ybntp"
-              data-test="saveChanges"
-              onClick={() => this.saveChanges(listitem.JobID, listitem.StudentID)}
-            >
-              Save
-            </h3>
+                    type="button"
+                    class="gd-ui-button d-none d-md-inline-block mr-md-sm mb-sm css-3ybntp"
+                    data-test="saveChanges"
+                    onClick={() => this.saveChanges(listitem.JobID, listitem.StudentID)}
+                  >
+                    Save
+                  </h3>
                 </div>
-              ))) : ''}
+              ))
+            : ''}
         </div>
-        { len > 0 ? (
-        <div className="tbl fill padHorz margVert" id="ResultsFooter">
-          <div className="cell middle hideMob padVertSm" data-test="page-x-of-y">
-            Page {this.props.applicantsListStore.PageNo + 1} of{' '}
-            {this.props.applicantsListStore.PageCount}
+        {len > 0 ? (
+          <div className="tbl fill padHorz margVert" id="ResultsFooter">
+            <div className="cell middle hideMob padVertSm" data-test="page-x-of-y">
+              Page {this.props.applicantsListStore.PageNo + 1} of{' '}
+              {this.props.applicantsListStore.PageCount}
+            </div>
+            <div className="module pt-xxsm">
+              <PaginationComponent
+                PageCount={this.props.applicantsListStore.PageCount}
+                PageNo={this.props.applicantsListStore.PageNo}
+                onPageClick={(e) => {
+                  this.onPageClick(e);
+                }}
+              />
+            </div>
           </div>
-          <div className="module pt-xxsm">
-            <PaginationComponent
-              PageCount={this.props.applicantsListStore.PageCount}
-              PageNo={this.props.applicantsListStore.PageNo}
-              onPageClick={(e) => {
-                this.onPageClick(e);
-              }}
-            />
-          </div>
-        </div>
-        ) : (   
-          <p>No Applicants applied yet!</p> )}
-        <div class="bottomShadow"></div>        
+        ) : (
+          <p>No Applicants applied yet!</p>
+        )}
+        <div class="bottomShadow"></div>
         <div class="actionBar">
           <div class="experienceStyle__actionBar___2lnIS">
             <button
@@ -382,9 +400,9 @@ class ApplicantsList extends Component {
               onClick={() => this.cancelChanges()}
             >
               Close applicants
-            </button>            
+            </button>
           </div>
-        </div>                    
+        </div>
       </article>
     );
   }
@@ -392,11 +410,15 @@ class ApplicantsList extends Component {
 
 //export default ApplicantsList;
 const mapStateToProps = (state) => {
-  const { applicantsModalStore, applicantsListStore, applicantStatusStore } = state.ApplicantsListModalReducer;
+  const {
+    applicantsModalStore,
+    applicantsListStore,
+    applicantStatusStore,
+  } = state.ApplicantsListModalReducer;
   return {
     applicantsModalStore: applicantsModalStore,
     applicantsListStore: applicantsListStore,
-    applicantStatusStore: applicantStatusStore
+    applicantStatusStore: applicantStatusStore,
   };
 };
 const mapDispatchToProps = (dispatch) => {

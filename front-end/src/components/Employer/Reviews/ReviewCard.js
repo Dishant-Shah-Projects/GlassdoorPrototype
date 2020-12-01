@@ -24,7 +24,7 @@ class ReviewCard extends Component {
   }
 
   saveFeatured(ID, companyID){
-    console.log('inside save featured');
+    console.log('inside save featured', ID);
     this.setState((prevState) => ({
       Feature: !prevState.Feature,
     }));
