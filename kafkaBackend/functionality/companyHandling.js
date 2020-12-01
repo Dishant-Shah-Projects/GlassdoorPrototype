@@ -413,7 +413,7 @@ async function handle_request(msg, callback) {
         const { CompanyID, PageNo } = msg.query;
         const year = new Date().getFullYear();
         const date = new Date(year, 0, 1);
-        const jobDataFetched = await Job.find({ CompanyID, PostedDate: { $lt: date } })
+        const jobDataFetched = await Job.find({ CompanyID, PostedDate: { $gte: date } })
           .limit(5)
           .skip(PageNo * 5);
         con = await mysqlConnection();
