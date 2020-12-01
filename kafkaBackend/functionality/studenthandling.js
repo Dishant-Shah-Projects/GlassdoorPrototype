@@ -788,10 +788,18 @@ async function handle_request(msg, callback) {
         const resultData = {};
         const company = await Company.findOne({ CompanyID }).select('FeaturedReview');
         resultData.featuredReview = company.FeaturedReview;
-        const posquery = await General.findOne({ CompanyID, Rating: { $gt: 3 } }).sort({
+        const posquery = await General.findOne({
+          CompanyID,
+          Rating: { $gt: 3 },
+          Status: 'Approved',
+        }).sort({
           Helpful: -1,
         });
-        const negquery = await General.findOne({ CompanyID, Rating: { $lte: 3 } }).sort({
+        const negquery = await General.findOne({
+          CompanyID,
+          Rating: { $lte: 3 },
+          Status: 'Approved',
+        }).sort({
           Helpful: -1,
         });
         // eslint-disable-next-line prefer-destructuring
@@ -871,7 +879,7 @@ async function handle_request(msg, callback) {
       try {
         const { CompanyID } = msg.query;
         const pipeline = [
-          { $match: { CompanyID } },
+          { $match: { CompanyID, Status: 'Approved' } },
           {
             $group: {
               _id: '$CompanyID',
@@ -881,9 +889,21 @@ async function handle_request(msg, callback) {
         ];
 
         const result = await Interview.aggregate(pipeline);
-        const pos = await Interview.countDocuments({ CompanyID, OverallExperience: 'Positive' });
-        const neg = await Interview.countDocuments({ CompanyID, OverallExperience: 'Negative' });
-        const neutral = await Interview.countDocuments({ CompanyID, OverallExperience: 'Neutral' });
+        const pos = await Interview.countDocuments({
+          CompanyID,
+          OverallExperience: 'Positive',
+          Status: 'Approved',
+        });
+        const neg = await Interview.countDocuments({
+          CompanyID,
+          OverallExperience: 'Negative',
+          Status: 'Approved',
+        });
+        const neutral = await Interview.countDocuments({
+          CompanyID,
+          OverallExperience: 'Neutral',
+          Status: 'Approved',
+        });
         const resultObj = {};
         // eslint-disable-next-line func-names
         resultObj.negative = neg;

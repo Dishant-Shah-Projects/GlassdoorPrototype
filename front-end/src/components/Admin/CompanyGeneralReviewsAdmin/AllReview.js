@@ -89,12 +89,12 @@ class AllReview extends Component {
                       <i
                         class={`sqLed middle sm mr-xsm ${review.Recommended ? 'green' : 'red'}`}
                       ></i>
-                      <span>Doesn't Recommend</span>
+                      <span>Recommends</span>
                     </div>
 
                     <div class="col-sm-4 d-flex align-items-center">
                       <i
-                        class={`sqLed middle sm mr-xsm ${review.Recommended ? 'green' : 'red'}`}
+                        class={`sqLed middle sm mr-xsm ${review.CEOApproval ? 'green' : 'red'}`}
                       ></i>
                       <span>Approves of CEO</span>
                     </div>

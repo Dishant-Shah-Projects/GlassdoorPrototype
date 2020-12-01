@@ -85,10 +85,10 @@ async function handle_request(msg, callback) {
       const res = {};
       try {
         const { CompanyID, PageNo } = msg.query;
-        const results = await General.find({ CompanyID })
+        const results = await General.find({ CompanyID, Status: 'Approved' })
           .limit(10)
           .skip(PageNo * 10);
-        const count2 = await General.countDocuments({ CompanyID });
+        const count2 = await General.countDocuments({ CompanyID, Status: 'Approved' });
         const count = count2;
         const resultData = { results, count };
         if (results) {
