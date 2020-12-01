@@ -53,13 +53,13 @@ class CompanySalaryCard extends Component {
   };
   render() {
     const salary = this.props.salary;
-    const AverageSalary = this.abbrNum(Number(salary.AverageSalary));
-    const MinSalary = this.abbrNum(salary.MinSalary);
-    const MaxSalary = this.abbrNum(salary.MaxSalary);
+    const AverageSalary = this.abbrNum(Number(salary.average));
+    const MinSalary = this.abbrNum(salary.min);
+    const MaxSalary = this.abbrNum(salary.max);
     let ratingGraphPoint =
       MinSalary === MaxSalary
         ? 119
-        : this.getGraphPoint(Number(salary.AverageSalary), salary.MinSalary, salary.MaxSalary);
+        : this.getGraphPoint(Number(salary.average), salary.min, salary.max);
     console.log('ratingGraphPoint', ratingGraphPoint);
     const styleGraph = { left: ratingGraphPoint };
     return (

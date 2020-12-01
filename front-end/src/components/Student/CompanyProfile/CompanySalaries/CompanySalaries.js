@@ -31,10 +31,10 @@ class CompanySalaries extends Component {
         (response) => {
           console.log('Salaryies', response.data);
           let payload = {
-            SalaryList: response.data.results,
+            SalaryList: response.data.result,
             PageNo,
-            Totalcount: response.data.count,
-            PageCount: Math.ceil(response.data.count / 10),
+            Totalcount: response.data.count[0].JobTitle,
+            PageCount: Math.ceil(response.data.count[0].JobTitle / 10),
 
             // PageCount: Math.ceil(response.data.Totalcount / 3),
           };

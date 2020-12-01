@@ -503,14 +503,13 @@ async function handle_request(msg, callback) {
           ProfileImg = company[0].ProfileImg;
         }
 
-        const count = await Salary.aggregate(pipeline)
-          .limit(10)
-          .skip(PageNo * 10).countDocuments();
+        pipeline.push({ $count: 'JobTitle' });
+        const count = await Salary.aggregate(pipeline);
         const resultData = { result, ProfileImg, count };
         res.status = 200;
         res.end = JSON.stringify(resultData);
         callback(null, res);
-      } catch {
+      } catch (error) {
         res.status = 500;
         res.end = 'Network Error';
         callback(null, res);
