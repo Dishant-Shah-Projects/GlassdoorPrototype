@@ -16,20 +16,22 @@ class Home extends Component {
     this.state = { jobList: [] };
   }
   componentDidMount() {
-    localStorage.setItem('SearchString', '');
-    localStorage.setItem('Location', '');
-    localStorage.setItem('openTab', '');
-    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
-    axios
-      .get(serverUrl + 'student/jobSuggestions', {
-        params: { StudentID: localStorage.getItem('userId') },
-        withCredentials: true,
-      })
-      .then((response) => {
-        this.setState({
-          jobList: response.data,
+    if (localStorage.getItem('userrole') === 'student') {
+      localStorage.setItem('SearchString', '');
+      localStorage.setItem('Location', '');
+      localStorage.setItem('openTab', '');
+      axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+      axios
+        .get(serverUrl + 'student/jobSuggestions', {
+          params: { StudentID: localStorage.getItem('userId') },
+          withCredentials: true,
+        })
+        .then((response) => {
+          this.setState({
+            jobList: response.data,
+          });
         });
-      });
+    }
   }
   openProfile = () => {
     history.push('/Profile');
