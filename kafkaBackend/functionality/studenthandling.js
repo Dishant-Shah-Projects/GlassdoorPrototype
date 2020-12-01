@@ -482,7 +482,19 @@ async function handle_request(msg, callback) {
       try {
         const { PageNo, CompanyID } = msg.query;
         const Status = 'Approved';
-        const results = await Salary.find({ CompanyID, Status })
+        const pipeline = [
+          { $match: { CompanyID, Status: 'Approved' } },
+          {
+            $group: {
+              _id: '$JobTitle',
+              average: { $avg: { $add: ['$BaseSalary', '$Bonuses'] } },
+              min: { $min: { $add: ['$BaseSalary', '$Bonuses'] } },
+              max: { $max: { $add: ['$BaseSalary', '$Bonuses'] } },
+            },
+          },
+        ];
+
+        const result = await Salary.aggregate(pipeline)
           .limit(10)
           .skip(PageNo * 10);
         const company = await Company.find({ CompanyID });
@@ -491,8 +503,10 @@ async function handle_request(msg, callback) {
           ProfileImg = company[0].ProfileImg;
         }
 
-        const count = await Salary.find({ CompanyID, Status }).countDocuments();
-        const resultData = { results, ProfileImg, count };
+        const count = await Salary.aggregate(pipeline)
+          .limit(10)
+          .skip(PageNo * 10).countDocuments();
+        const resultData = { result, ProfileImg, count };
         res.status = 200;
         res.end = JSON.stringify(resultData);
         callback(null, res);
