@@ -6,6 +6,8 @@ import {
   showReplyModal,
   updateReviewFeature,
   updateReviewFavorite,
+  updateCompanyProfile,
+  updateReviewList,
 } from '../../../constants/action-types';
 import './RightBlock.css';
 import ReplyModal from './ReplyModal';
@@ -48,10 +50,10 @@ class RightBlock extends Component {
       feature: 0,
       Favorite: 0,
     };
-  }  
+  }
 
   componentDidMount() {
-    if(!localStorage.getItem('userId')) {
+    if (!localStorage.getItem('userId')) {
       return <Redirect to="/Home" />;
     }
     this.props.fetchReviews();
@@ -62,13 +64,13 @@ class RightBlock extends Component {
   };
 
   handleFeatured(Id, CompanyId) {
-    console.log('Id,',Id);
+    console.log('Id,', Id);
     this.setFeature(Id, CompanyId);
   }
 
-  saveFeat(Id,CompanyId) {
-    console.log('companyid',CompanyId);
-    console.log('ID',Id);
+  saveFeat(Id, CompanyId) {
+    console.log('companyid', CompanyId);
+    console.log('ID', Id);
     axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
     axios
       .post(serverUrl + 'company/reviewFeatured', {
@@ -79,11 +81,16 @@ class RightBlock extends Component {
       .then((response) => {
         if (response.status === 200) {
           console.log('response', response);
-          
-          // let payload2 = {
-          //   reviewFeature: this.state.feature,
-          // };
-          // this.props.updateReviewFeature(payload2);
+          const index = this.props.reviewListStore.reviewList.findIndex((x) => x.ID === Id);
+          if (index >= 0) {
+            const FeaturedReview = { ...this.props.reviewListStore.reviewList[index] };
+            const companyInfo = this.props.companyInfo;
+            companyInfo.FeaturedReview = FeaturedReview;
+            const payload = {
+              companyInfo,
+            };
+            this.props.updateCompanyProfile(payload);
+          }
         }
       })
       .catch((error) => {
@@ -92,8 +99,7 @@ class RightBlock extends Component {
         });
       });
   }
-  setFeature(Id,CompanyId) {
-   
+  setFeature(Id, CompanyId) {
     if (this.state.Feature === 0) {
       console.log('inside if 0');
       this.setState(
@@ -101,46 +107,55 @@ class RightBlock extends Component {
           Feature: 1,
         },
         function () {
-
-          this.saveFeat(Id,CompanyId);
+          this.saveFeat(Id, CompanyId);
         }
       );
     } else {
       console.log('inside if 1');
-      console.log('Id,,',Id);
+      console.log('Id,,', Id);
       this.setState(
         {
           Feature: 0,
         },
         function () {
-          this.saveFeat(Id,CompanyId);
+          this.saveFeat(Id, CompanyId);
         }
       );
     }
-    
   }
 
-  handleSaveFavorite(Id) {
-    this.setFavorite(Id);
-    
+  handleSaveFavorite(Id, Favorite) {
+    this.saveFav(Id, Favorite);
   }
 
-  saveFav(Id) {
-    console.log('Id1',Id);
+  saveFav(Id, Favorite) {
+    console.log('Id1', Id);
     console.log('inside save', this.state.Favorite);
     axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
     axios
       .post(serverUrl + 'company/reviewFavorite', {
         ID: Id,
-        Favorite: this.state.Favorite,
+        Favorite,
       })
       .then((response) => {
         if (response.status == 200) {
           console.log('response', response);
-          // let payload3 = {
-          //   reviewFavorite: this.state.Favorite,
-          // };
-          // this.props.updateReviewFavorite(payload3);
+          const index = this.props.reviewListStore.reviewList.findIndex((x) => x.ID === Id);
+          console.log('index:', index);
+          console.log('Favorite:', Favorite);
+          if (index >= 0) {
+            const reviewList = [...this.props.reviewListStore.reviewList];
+            console.log('reviewList:', reviewList);
+
+            const Review = { ...reviewList[index] };
+            Review.Favorite = Favorite;
+            console.log(' Review.Favorite:', Review);
+            reviewList[index] = Review;
+            const payload1 = {
+              reviewList,
+            };
+            this.props.updateReviewList(payload1);
+          }
         }
       })
       .catch((error) => {
@@ -150,8 +165,8 @@ class RightBlock extends Component {
       });
   }
 
-  setFavorite(Id) {
-    console.log('Id',Id);
+  setFavorite(Id, Favorite) {
+    console.log('Id', Id);
     if (this.state.Favorite === 0) {
       console.log('inside if 0');
       this.setState(
@@ -159,7 +174,7 @@ class RightBlock extends Component {
           Favorite: 1,
         },
         function () {
-          this.saveFav(Id);
+          this.saveFav(Id, Favorite);
         }
       );
     } else {
@@ -169,7 +184,7 @@ class RightBlock extends Component {
           Favorite: 0,
         },
         function (Id) {
-          this.saveFav(Id);
+          this.saveFav(Id, Favorite);
         }
       );
     }
@@ -183,37 +198,41 @@ class RightBlock extends Component {
             {localStorage.getItem('companyName')} Reviews
           </h1>
         </header>
-        {this.props.reviewListStore.reviewList && this.props.reviewListStore.reviewList.length > 0 ? (
-        <div class="ReviewsRef">
-          <div id="ReviewsFeed" class="mt">
-            <ol class=" empReviews emp-reviews-feed pl-0">
-              {this.props.reviewListStore.reviewList.map((review) => (
-                <li class="empReview cf  " id="empReview_35973660" key={review.ID}>
-                  <ReviewCard
-                    handleSaveFavorite={() => this.handleSaveFavorite(review.ID)}
-                    handleFeatured={() => this.handleFeatured(review.ID,review.CompanyID)}
-                    review={review}
-                  />
-                </li>
-              ))}
-            </ol>
-          </div>
-          <div className="tbl fill padHorz margVert" id="ResultsFooter">
-            <div className="cell middle hideMob padVertSm" data-test="page-x-of-y">
-              Page {this.props.reviewListStore.PageNo + 1} of {this.props.reviewListStore.PageCount}
+        {this.props.reviewListStore.reviewList &&
+        this.props.reviewListStore.reviewList.length > 0 ? (
+          <div class="ReviewsRef">
+            <div id="ReviewsFeed" class="mt">
+              <ol class=" empReviews emp-reviews-feed pl-0">
+                {this.props.reviewListStore.reviewList.map((review) => (
+                  <li class="empReview cf  " id="empReview_35973660" key={review.ID}>
+                    <ReviewCard
+                      handleSaveFavorite={(ID, Favorite) => this.saveFav(ID, Favorite)}
+                      handleFeatured={() => this.handleFeatured(review.ID, review.CompanyID)}
+                      review={review}
+                    />
+                  </li>
+                ))}
+              </ol>
             </div>
-            <div className="module pt-xxsm">
-              <PaginationComponent
-                PageCount={this.props.reviewListStore.PageCount}
-                PageNo={this.props.reviewListStore.PageNo}
-                onPageClick={(e) => {
-                  this.onPageClick(e);
-                }}
-              />
+            <div className="tbl fill padHorz margVert" id="ResultsFooter">
+              <div className="cell middle hideMob padVertSm" data-test="page-x-of-y">
+                Page {this.props.reviewListStore.PageNo + 1} of{' '}
+                {this.props.reviewListStore.PageCount}
+              </div>
+              <div className="module pt-xxsm">
+                <PaginationComponent
+                  PageCount={this.props.reviewListStore.PageCount}
+                  PageNo={this.props.reviewListStore.PageNo}
+                  onPageClick={(e) => {
+                    this.onPageClick(e);
+                  }}
+                />
+              </div>
             </div>
           </div>
-        </div>
-        ): (<p>No Reviews added yet!</p>)}
+        ) : (
+          <p>No Reviews added yet!</p>
+        )}
       </div>
     );
   }
@@ -221,9 +240,12 @@ class RightBlock extends Component {
 
 const mapStateToProps = (state) => {
   const { replyModalStore, reviewListStore } = state.ReviewReplyReducer;
+  const { companyInfo } = state.CompaniesProfileReducer;
+
   return {
     replyModalStore: replyModalStore,
     reviewListStore: reviewListStore,
+    companyInfo,
   };
 };
 const mapDispatchToProps = (dispatch) => {
@@ -252,8 +274,19 @@ const mapDispatchToProps = (dispatch) => {
         payload3,
       });
     },
+    updateCompanyProfile: (payload3) => {
+      dispatch({
+        type: updateCompanyProfile,
+        payload3,
+      });
+    },
+    updateReviewList: (payload1) => {
+      dispatch({
+        type: updateReviewList,
+        payload1,
+      });
+    },
   };
 };
-
 export default connect(mapStateToProps, mapDispatchToProps)(RightBlock);
 //export default RightBlock;

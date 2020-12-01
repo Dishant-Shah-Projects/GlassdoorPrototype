@@ -35,7 +35,7 @@ class Navbar extends Component {
       .then(
         (response) => {
           if (response.status === 200) {
-            console.log(response);
+            console.log('company:', response.data);
             localStorage.setItem('companyName', response.data);
             let payload = {
               CompanyName: response.data.CompanyName,

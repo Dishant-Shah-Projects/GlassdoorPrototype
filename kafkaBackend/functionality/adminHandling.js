@@ -12,7 +12,7 @@ const SalaryReview = require('../model/SalaryReview');
 const Company = require('../model/Company');
 const Student = require('../model/Student');
 const Photos = require('../model/Photos');
-
+const redisClient = require('../redisClient');
 // eslint-disable-next-line camelcase
 
 async function handle_request(msg, callback) {
@@ -69,6 +69,13 @@ async function handle_request(msg, callback) {
             { CompanyID },
             { GeneralReviewCount, approveCEOcount, recommendedcount, TotalGeneralReviewRating }
           );
+          const redisKey = `getCompanyProfile-CompanyID=${CompanyID}`;
+          await redisClient.get(redisKey, async (err, data) => {
+            // data is available in Redis
+            if (data) {
+              redisClient.del(redisKey);
+            }
+          });
         }
         res.end = JSON.stringify(result);
         callback(null, res);
@@ -93,11 +100,19 @@ async function handle_request(msg, callback) {
             { CompanyID },
             { $inc: { InterviewReviewCount: 0.5 } },
 
-            (error, results) => {
+          async  (error, results) => {
               if (error) {
                 res.status = 500;
                 res.end = 'Network Error';
                 callback(null, res);
+              } else {
+                const redisKey = `getCompanyProfile-CompanyID=${CompanyID}`;
+            await redisClient.get(redisKey, async (err, data) => {
+              // data is available in Redis
+              if (data) {
+                redisClient.del(redisKey);
+              }
+            });
               }
             }
           );
@@ -125,11 +140,19 @@ async function handle_request(msg, callback) {
             { CompanyID },
             { $inc: { SalaryReviewCount: 0.5 } },
 
-            (error, results) => {
+          async  (error, results) => {
               if (error) {
                 res.status = 500;
                 res.end = 'Network Error';
                 callback(null, res);
+              } else {
+                const redisKey = `getCompanyProfile-CompanyID=${CompanyID}`;
+            await redisClient.get(redisKey, async (err, data) => {
+              // data is available in Redis
+              if (data) {
+                redisClient.del(redisKey);
+              }
+            });
               }
             }
           );
@@ -213,11 +236,19 @@ async function handle_request(msg, callback) {
             { CompanyID },
             { $inc: { PhotoCount: 0.5 } },
 
-            (error, results) => {
+            async (error, results) => {
               if (error) {
                 res.status = 500;
                 res.end = 'Network Error';
                 callback(null, res);
+              } else {
+                const redisKey = `getCompanyProfile-CompanyID=${CompanyID}`;
+                await redisClient.get(redisKey, async (err, data) => {
+                  // data is available in Redis
+                  if (data) {
+                    redisClient.del(redisKey);
+                  }
+                });
               }
             }
           );

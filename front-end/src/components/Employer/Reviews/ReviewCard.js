@@ -4,6 +4,7 @@ import './RightBlock.css';
 import ReplyModal from './ReplyModal';
 import StarRatings from 'react-star-ratings';
 import { connect } from 'react-redux';
+import defaultplaceholder from '../../Student/CompanyProfile/CompanyNavbar/default-placeholder.png';
 
 class ReviewCard extends Component {
   constructor(props) {
@@ -11,37 +12,34 @@ class ReviewCard extends Component {
     this.state = {
       popSeen: false,
       Favorite: 0,
-      Feature: 0
+      Feature: 0,
     };
   }
 
-  
-  saveFavorite(ID) {
-    this.setState((prevState) => ({
-      Favorite: !prevState.Favorite,
-    }));
-    this.props.handleSaveFavorite(ID)
+  saveFavorite(ID, Favorite) {
+    // this.setState((prevState) => ({
+    //   Favorite: !prevState.Favorite,
+    // }));
+    this.props.handleSaveFavorite(ID, Favorite);
   }
 
-  saveFeatured(ID, companyID){
+  saveFeatured(ID, companyID) {
     console.log('inside save featured', ID);
-    this.setState((prevState) => ({
-      Feature: !prevState.Feature,
-    }));
-    this.props.handleFeatured(ID, companyID)
+
+    this.props.handleFeatured(ID, companyID);
   }
   showReply = (Id) => {
     // localStorage.setItem('currentId', Id);
     // this.props.showReplyModal();
-    this.setState ({
-      popSeen: true
+    this.setState({
+      popSeen: true,
     });
   };
 
   closeReplyModal = () => {
     // this.props.hideReplyModal();
-    this.setState ({
-      popSeen: false
+    this.setState({
+      popSeen: false,
     });
   };
 
@@ -65,12 +63,15 @@ class ReviewCard extends Component {
               <img
                 alt="Wipro Logo"
                 class="lazy lazy-loaded"
-                data-original="https://media.glassdoor.com/sql/9936/wipro-squarelogo-1562144900841.png"
-                data-original-2x="https://media.glassdoor.com/sqll/9936/wipro-squarelogo-1562144900841.png"
                 data-retina-ok="true"
-                src="https://media.glassdoor.com/sql/9936/wipro-squarelogo-1562144900841.png"
+                // src="https://media.glassdoor.com/sql/9936/wipro-squarelogo-1562144900841.png"
                 style={{ opacity: '1' }}
                 title=""
+                src={
+                  this.props.companyInfo.ProfileImg
+                    ? this.props.companyInfo.ProfileImg
+                    : defaultplaceholder
+                }
               />
             </span>
           </div>
@@ -116,9 +117,9 @@ class ReviewCard extends Component {
                 <div class="row reviewBodyCell recommends">
                   <div class="col-sm-4 d-flex align-items-center">
                     <i
-                      class="sqLed middle sm mr-xsm"                      
+                      class="sqLed middle sm mr-xsm"
                       style={{
-                        backgroundColor: review.Recommended ? 'r#0CAA41' : '#ececec',
+                        backgroundColor: review.Recommended ? 'green' : 'red',
                       }}
                     ></i>
                     <span>Recommends</span>
@@ -127,9 +128,11 @@ class ReviewCard extends Component {
                   <div class="col-sm-4 d-flex align-items-center">
                     <i
                       class="sqLed sm mr-xsm"
-                      onClick={() => this.saveFavorite(review.ID)}
+                      onClick={() =>
+                        this.props.handleSaveFavorite(review.ID, review.Favorite === 1 ? 0 : 1)
+                      }
                       style={{
-                        backgroundColor: this.state.Favorite ? '#1861bf' : '#ececec',
+                        backgroundColor: review.Favorite === 1 ? '#1861bf' : '#ececec',
                       }}
                     ></i>
                     <span>Save Favorite</span>
@@ -139,7 +142,11 @@ class ReviewCard extends Component {
                       class="sqLed sm mr-xsm"
                       onClick={() => this.saveFeatured(review.ID, review.CompanyID)}
                       style={{
-                        backgroundColor: this.state.Feature ? '#1861bf' : '#ececec',
+                        backgroundColor: this.props.companyInfo.FeaturedReview
+                          ? this.props.companyInfo.FeaturedReview.ID === review.ID
+                            ? '#1861bf'
+                            : '#ececec'
+                          : '#ececec',
                       }}
                     ></i>
                     <span>Make Featured</span>
@@ -176,7 +183,7 @@ class ReviewCard extends Component {
               </div>
               <div>
                 {this.state.popSeen ? (
-                  <ReplyModal toggle={this.closeReplyModal} reviewID={review.ID}/>
+                  <ReplyModal toggle={this.closeReplyModal} reviewID={review.ID} />
                 ) : null}
               </div>
             </div>
@@ -194,13 +201,13 @@ const mapStateToProps = (state) => {
     reviewFeatureStore,
     reviewFavoriteStore,
   } = state.ReviewReplyReducer;
-  const {companyInfo} = state.CompaniesProfileReducer;
+  const { companyInfo } = state.CompaniesProfileReducer;
   return {
     replyModalStore: replyModalStore,
     reviewListStore: reviewListStore,
     reviewFeatureStore: reviewFeatureStore,
     reviewFavoriteStore: reviewFavoriteStore,
-    companyInfo: companyInfo
+    companyInfo: companyInfo,
   };
 };
 const mapDispatchToProps = (dispatch) => {

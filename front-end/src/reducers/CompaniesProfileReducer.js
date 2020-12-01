@@ -16,7 +16,7 @@ const defaultState = {
     CEO: '',
     City: '',
     State: '',
-    FeaturedReview: '',
+    FeaturedReview: {},
     CoverPhoto: '',
   },
 };

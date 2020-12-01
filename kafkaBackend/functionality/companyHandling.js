@@ -156,12 +156,19 @@ async function handle_request(msg, callback) {
       try {
         const { CompanyID, ID } = msg.body;
         const results = await General.findOne({ ID });
-        Company.findOneAndUpdate({ CompanyID }, { FeaturedReview: results }, (e, output) => {
+        Company.findOneAndUpdate({ CompanyID }, { FeaturedReview: results }, async (e, output) => {
           if (e) {
             res.status = 404;
             res.end = 'Entry Not Found';
             callback(null, res);
           } else {
+            const redisKey = `getCompanyProfile-CompanyID=${CompanyID}`;
+            await redisClient.get(redisKey, async (err, data) => {
+              // data is available in Redis
+              if (data) {
+                redisClient.del(redisKey);
+              }
+            });
             res.status = 200;
             res.end = 'Review Updated';
             callback(null, res);
@@ -287,7 +294,7 @@ async function handle_request(msg, callback) {
             res.status = 500;
             res.end = 'Network Error';
             callback(null, res);
-          }
+          } 
         });
         const querynew =
           'INSERT INTO APPLICATION_JOB (JobID,CompanyName, CompanyID, PostedDate,StreetAddress,City,State) VALUES (?,?,?,CURDATE(),?,?,?);';
@@ -308,11 +315,19 @@ async function handle_request(msg, callback) {
           { CompanyID },
           { $inc: { JobCount: 0.5 } },
 
-          (error, results) => {
+        async   (error, results) => {
             if (error) {
               res.status = 500;
               res.end = 'Network Error';
               callback(null, res);
+            } else {  
+              const redisKey = `getCompanyProfile-CompanyID=${CompanyID}`;
+            await redisClient.get(redisKey, async (err, data) => {
+              // data is available in Redis
+              if (data) {
+                redisClient.del(redisKey);
+              }
+            });
             }
           }
         );
