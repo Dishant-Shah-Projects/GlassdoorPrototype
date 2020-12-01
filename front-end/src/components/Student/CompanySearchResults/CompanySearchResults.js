@@ -106,11 +106,13 @@ class CompanySearchResults extends Component {
                               {localStorage.getItem('SearchString') ? (
                                 <h1 className="pt-lg-std py-sm m-0">
                                   {' '}
-                                  Showing results for{' '}
+                                  {localStorage.getItem('SearchString')
+                                    ? 'Showing results for'
+                                    : ''}{' '}
                                   <strong className="capitalize">
                                     {localStorage.getItem('SearchString')}
                                   </strong>{' '}
-                                  in{' '}
+                                  {localStorage.getItem('Location') ? 'in' : ''}{' '}
                                   <strong className="capitalize">
                                     {localStorage.getItem('Location')}{' '}
                                   </strong>
