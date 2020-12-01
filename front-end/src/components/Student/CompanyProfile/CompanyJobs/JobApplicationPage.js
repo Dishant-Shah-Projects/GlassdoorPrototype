@@ -586,7 +586,7 @@ class JobApplicationPage extends Component {
                         <b>Job Responsilities</b>
                         <br />
                         <br />
-                        {this.state.Job.Respobsibilities}
+                        {this.state.Job.Responsibilities}
                         <br />
                         <br />
                         <b>Basic Qualifications</b>

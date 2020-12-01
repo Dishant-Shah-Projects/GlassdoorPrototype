@@ -31,7 +31,6 @@ const CompanySchema = new mongoose.Schema(
       ID: { type: Number },
       Status: {
         type: String,
-        enum: ['NotApproved', 'Approved', 'Disapproved'],
       },
       CompanyName: { type: String },
       StudentID: { type: Number },
