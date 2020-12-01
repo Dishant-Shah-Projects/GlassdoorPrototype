@@ -639,7 +639,7 @@ async function handle_request(msg, callback) {
         } else {
           await General.findOneAndUpdate(
             { ID },
-            { $inc: { Helpful: 1 } },
+            { $inc: { Helpful: 0.5 } },
 
             (error) => {
               if (error) {
