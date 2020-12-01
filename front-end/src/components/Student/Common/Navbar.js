@@ -7,6 +7,12 @@ import {
   updateActiveStringList,
   updateStudentProfile,
   openProfileTabOnClick,
+  updateCompanyList,
+  updateInterviewList,
+  updateSalaryList,
+  updateJobListStore,
+  updateJobFilterStore,
+  updateOnFocusJob,
 } from '../../../constants/action-types';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
@@ -214,24 +220,154 @@ class Navbar extends Component {
     this.props.updateSearcFilter(payload);
   };
 
+  fetchCompanyResult = () => {
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    axios
+      .get(serverUrl + 'student/searchCompany', {
+        params: {
+          SearchString: localStorage.getItem('SearchString'),
+          State: localStorage.getItem('Location'),
+          PageNo: 0,
+        },
+        withCredentials: true,
+      })
+      .then(
+        (response) => {
+          let payload = {
+            companyList: response.data[0],
+            PageNo: 0,
+            PageCount: Math.ceil(response.data[1] / 10),
+            Totalcount: response.data[1],
+
+            // PageCount: Math.ceil(response.data.Totalcount / 3),
+          };
+          this.props.updateCompanyList(payload);
+        },
+        (error) => {}
+      );
+  };
+
+  fetchInterviewReviews = (PageNo = 0) => {
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    axios
+      .get(serverUrl + 'student/searchInterview', {
+        params: {
+          SearchString: localStorage.getItem('SearchString'),
+          State: localStorage.getItem('Location'),
+          PageNo,
+        },
+        withCredentials: true,
+      })
+      .then(
+        (response) => {
+          let interviewSearchList = response.data.returns.map((inter) => {
+            return { ...inter.Interview, ProfileImg: inter.ProfileImg };
+          });
+          let payload = {
+            interviewSearchList: interviewSearchList,
+            PageNo,
+            PageCount: Math.ceil(response.data.count / 10),
+            Totalcount: response.data.count,
+
+            // PageCount: Math.ceil(response.data.Totalcount / 3),
+          };
+          this.props.updateInterviewList(payload);
+        },
+        (error) => {}
+      );
+  };
+
+  fetchSalaryReviews = (PageNo = 0) => {
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    axios
+      .get(serverUrl + 'student/searchSalary', {
+        params: {
+          SearchString: localStorage.getItem('SearchString'),
+          State: localStorage.getItem('Location'),
+          PageNo,
+        },
+        withCredentials: true,
+      })
+      .then(
+        (response) => {
+          let payload = {
+            SalarySearchList: response.data.result.result,
+            PageNo,
+            PageCount: Math.ceil(response.data.count.count / 10),
+            Totalcount: response.data.count.count,
+
+            // PageCount: Math.ceil(response.data.Totalcount / 3),
+          };
+          this.props.updateSalaryList(payload);
+        },
+        (error) => {}
+      );
+  };
+
+  fetchJobResults = (PageNo = 0) => {
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    axios
+      .get(serverUrl + 'student/searchJob', {
+        params: {
+          SearchString: localStorage.getItem('SearchString'),
+          JobType: this.props.jobListStore.JobType,
+          State: localStorage.getItem('Location'),
+          SalStart: this.props.jobListStore.SalStart,
+          SalEnd: this.props.jobListStore.SalEnd,
+          PageNo,
+        },
+        withCredentials: true,
+      })
+      .then((response) => {
+        let payload = {
+          jobList: response.data.jobs,
+          PageNo,
+          PageCount: Math.ceil(response.data.count / 10),
+          Totalcount: response.data.count,
+          JobType: this.props.jobListStore.JobType,
+          State: localStorage.getItem('Location'),
+          SalStart: this.props.jobListStore.SalStart,
+          SalEnd: this.props.jobListStore.SalEnd,
+          appliedJobSelected: false,
+          favJobSelected: false,
+        };
+        this.props.updateJobListStore(payload);
+        let payload2 = {
+          fiterSlected: '',
+        };
+        this.props.updateJobFilterStore(payload2);
+
+        if (response.data.jobs.length > 0) {
+          let payload3 = {
+            jobOonFocus: { ...response.data.jobs[0] },
+          };
+          this.props.updateOnFocusJob(payload3);
+        }
+      });
+  };
+
   searchResult = (event) => {
     localStorage.setItem('selectedDropDown', this.props.searchDropDownStore.selectedDropDown);
     localStorage.setItem('SearchString', this.props.searchDropDownStore.SearchString);
     localStorage.setItem('Location', this.props.searchDropDownStore.Location);
     switch (this.props.searchDropDownStore.selectedDropDown) {
       case 'Jobs': {
+        this.fetchJobResults();
         history.push('/JobList');
         break;
       }
       case 'Companies': {
+        this.fetchCompanyResult();
         history.push('/CompanySearchResults');
         break;
       }
       case 'Salaries': {
+        this.fetchSalaryReviews();
         history.push('/salaryList');
         break;
       }
       case 'Interviews': {
+        this.fetchInterviewReviews();
         history.push('/interviewList');
         break;
       }
@@ -933,10 +1069,13 @@ const mapStateToProps = (state) => {
   const { searchDropDownStore } = state.searchDropDownReducer;
   const { lowerNavbarType } = state.lowerNavBarReducer;
   const { searchStringStore } = state.SearchStringsReducer;
+  const { jobListStore } = state.JobSearchPageReducer;
+
   return {
     searchDropDownStore,
     searchStringStore,
     lowerNavbarType,
+    jobListStore,
   };
 };
 
@@ -972,8 +1111,43 @@ const mapDispatchToProps = (dispatch) => {
         payload,
       });
     },
+    updateCompanyList: (payload) => {
+      dispatch({
+        type: updateCompanyList,
+        payload,
+      });
+    },
+    updateInterviewList: (payload) => {
+      dispatch({
+        type: updateInterviewList,
+        payload,
+      });
+    },
+    updateSalaryList: (payload) => {
+      dispatch({
+        type: updateSalaryList,
+        payload,
+      });
+    },
+    updateOnFocusJob: (payload) => {
+      dispatch({
+        type: updateOnFocusJob,
+        payload,
+      });
+    },
+    updateJobFilterStore: (payload) => {
+      dispatch({
+        type: updateJobFilterStore,
+        payload,
+      });
+    },
+    updateJobListStore: (payload) => {
+      dispatch({
+        type: updateJobListStore,
+        payload,
+      });
+    },
   };
 };
-
 // export default LoginBody;
 export default connect(mapStateToProps, mapDispatchToProps)(Navbar);
