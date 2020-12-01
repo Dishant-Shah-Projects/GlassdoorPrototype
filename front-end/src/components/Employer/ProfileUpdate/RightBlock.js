@@ -4,11 +4,14 @@ import axios from 'axios';
 import serverUrl from '../../../config.js';
 import { connect } from 'react-redux';
 import './RightBody.css';
+import { updateCompanyProfile } from '../../../constants/action-types';
 
 class RightBlock extends Component {
   constructor(props) {
     super(props);
+
     this.inputElement = React.createRef();
+    this.inputElement2 = React.createRef();
     this.state = {
       errorMessage: '',
       CompanyName: '',
@@ -115,7 +118,7 @@ class RightBlock extends Component {
   };
 
   handleSubmit = (e) => {
-    e.preventDefault();
+    // e.preventDefault();
     let CompanyID = localStorage.getItem('userId');
 
     const data = {
@@ -166,6 +169,7 @@ class RightBlock extends Component {
           this.props.updateCompanyProfile(payload);
           console.log(this.state.authFlag);
           this.props.handleClick('Profile');
+          this.inputElement2.current.click();
         }
       },
       (error) => {
@@ -218,10 +222,12 @@ class RightBlock extends Component {
   render() {
     let redirectVar = null;
     if (this.state.authFlag === true) {
-      redirectVar = <Redirect to="/Employer" />;
+      // redirectVar = <Redirect to="/Employer" />;
+      // history.push('/Employer');
     }
     if (this.state.cancelUpdate === true) {
-      redirectVar = <Redirect to="/Employer" />;
+      // redirectVar = <Redirect to="/Employer" />;
+      // history.push('/Employer');
     }
 
     return (
@@ -483,7 +489,8 @@ class RightBlock extends Component {
                             placeholder="Company Size"
                             autocomplete="off"
                             name="Size"
-                            type="text"
+                            type="number"
+                            min="0"
                             id="userEnteredOccupationInput-jobTitleId"
                             data-test=""
                             aria-label=""
@@ -559,7 +566,8 @@ class RightBlock extends Component {
                             placeholder="Revenue"
                             autocomplete="off"
                             name="Revenue"
-                            type="text"
+                            type="number"
+                            min="0"
                             id="userEnteredOccupationInput-jobTitleId"
                             data-test=""
                             aria-label=""
@@ -881,17 +889,18 @@ class RightBlock extends Component {
                   </div>
                 </div>
               </ul>
-              <a href="#" onClick={this.handleSubmit}>
+              <a href="#" ref={this.inputElement2}>
                 <button
                   className="gd-ui-button ml-std col-auto css-iixdfr"
                   type="button"
                   data-test="search-bar-submit"
                   style={{ width: '20%' }}
+                  onClick={this.handleSubmit}
                 >
                   <span>Submit</span>
                 </button>
               </a>
-              <a href="#">
+              <a href="#" onClick={() => this.props.handleClick('Profile')}>
                 <button
                   className="gd-ui-button ml-std col-auto css-iixdfr"
                   type="button"
@@ -903,7 +912,6 @@ class RightBlock extends Component {
                     color: '#0caa41',
                     'margin-left': '10px',
                   }}
-                  onClick={() => this.props.handleClick('Profile')}
                 >
                   <span>Cancel</span>
                 </button>
@@ -923,5 +931,15 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, null)(RightBlock);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    updateCompanyProfile: (payload) => {
+      dispatch({
+        type: updateCompanyProfile,
+        payload,
+      });
+    },
+  };
+};
+export default connect(mapStateToProps, mapDispatchToProps)(RightBlock);
 //export default RightBlock;
