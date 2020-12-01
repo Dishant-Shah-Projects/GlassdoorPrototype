@@ -42,7 +42,7 @@ class RightBlock extends Component {
     });
   };
 
-  handleClick = (event) => {    
+  handleClick = (event) => {
     this.inputElement.current.click();
   };
 
@@ -422,35 +422,9 @@ class RightBlock extends Component {
                           </div>
                         </div>
                       </div>
-<<<<<<< Updated upstream
                     ) : (
                       ''
                     )}
-=======
-                      <div class="bottomShadow"></div>
-                      <div class="actionBar">
-                        <button
-                          onClick={(event)=>this.handleClick(event)}
-                          class="gd-ui-button  css-uk8w9o"
-                          data-test="cropModalPrimary"
-                        >
-                          <input
-                            type="file"
-                            ref={this.inputElement}
-                            style={{ display: 'none' }}
-                            accept=".jpg,.png"
-                            onChange={this.uploadImage}
-                          />
-                          Choose Photo
-                        </button>
-                        <div class="_cropmodal__cancelButton___3efpJ mt-sm">
-                          <button class="gd-ui-button  css-3ybntp" data-test="cropModalCancel">
-                            Cancel
-                          </button>
-                        </div>
-                      </div>
-                    </div>
->>>>>>> Stashed changes
                   </div>
                 </div>
               </div>
@@ -741,24 +715,7 @@ class RightBlock extends Component {
                     <div aria-expanded="false" aria-autocomplete="list" className="css-1xtvih1">
                       <div className=" css-1ohf0ui">
                         <div className="input-wrapper css-q444d9">
-                        <select
-                          required="true"
-                          style={{ backgroundColor: '#fff' }}
-                          id="stateName"
-                          data-test="state"
-                          maxlength="100"
-                          aria-label=""
-                          class="css-ofiv3k"
-                          onChange={(event) => this.handleOnChange(event)}
-                          value={this.state.State}
-                          name="State"
-                        >
-                          <option value=""></option>
-                          {this.props.masterData.States.map((state) => (
-                            <option value={state}>{state}</option>
-                          ))}
-                        </select>
-                          {/* <input
+                          <input
                             placeholder="State"
                             autocomplete="off"
                             name="State"
@@ -769,7 +726,7 @@ class RightBlock extends Component {
                             className="css-1sk6eli"
                             onChange={this.onChangeCommonHandler}
                             value={this.state.State}
-                          /> */}
+                          />
                         </div>
                       </div>
                       <ul className="suggestions down"></ul>
@@ -969,10 +926,8 @@ class RightBlock extends Component {
 
 const mapStateToProps = (state) => {
   const { companyInfo } = state.CompaniesProfileReducer;
-  const { masterData } = state.staticDataReducer;
   return {
     companyInfo,
-    masterData
   };
 };
 
