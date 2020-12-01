@@ -34,9 +34,7 @@ class AllReview extends Component {
                 {moment(review.DatePosted).format('ll')}
               </time>
             </div>
-            <div class="helpfulReviews helpfulCount small subtle">
-              Helpful ({review.Helpful ? review.Helpful : 0})
-            </div>
+            <div class="helpfulReviews helpfulCount small subtle"></div>
           </div>
           <h1 class="h2 summary strong mt-0 mb-xsm">
             <a

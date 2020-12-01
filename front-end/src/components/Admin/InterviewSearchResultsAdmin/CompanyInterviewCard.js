@@ -34,11 +34,7 @@ class CompanyInterviewCard extends Component {
             </time>
           </div>
           <p class="helpfulReviews small tightVert floatRt">
-            <span class="helpfulCount subtle">
-              {' '}
-              Helpful ({interview.Helpful ? interview.Helpful : 0})
-            </span>{' '}
-            &nbsp;{' '}
+            <span class="helpfulCount subtle"> </span> &nbsp;{' '}
           </p>
         </div>
         <div class="tbl fill reviewHdr">
