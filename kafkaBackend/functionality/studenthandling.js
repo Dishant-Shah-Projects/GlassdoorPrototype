@@ -879,7 +879,7 @@ async function handle_request(msg, callback) {
       try {
         const { CompanyID } = msg.query;
         const pipeline = [
-          { $match: { CompanyID } },
+          { $match: { CompanyID, Status: 'Approved' } },
           {
             $group: {
               _id: '$CompanyID',
@@ -889,9 +889,21 @@ async function handle_request(msg, callback) {
         ];
 
         const result = await Interview.aggregate(pipeline);
-        const pos = await Interview.countDocuments({ CompanyID, OverallExperience: 'Positive' });
-        const neg = await Interview.countDocuments({ CompanyID, OverallExperience: 'Negative' });
-        const neutral = await Interview.countDocuments({ CompanyID, OverallExperience: 'Neutral' });
+        const pos = await Interview.countDocuments({
+          CompanyID,
+          OverallExperience: 'Positive',
+          Status: 'Approved',
+        });
+        const neg = await Interview.countDocuments({
+          CompanyID,
+          OverallExperience: 'Negative',
+          Status: 'Approved',
+        });
+        const neutral = await Interview.countDocuments({
+          CompanyID,
+          OverallExperience: 'Neutral',
+          Status: 'Approved',
+        });
         const resultObj = {};
         // eslint-disable-next-line func-names
         resultObj.negative = neg;
