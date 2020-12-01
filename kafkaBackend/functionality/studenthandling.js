@@ -701,23 +701,26 @@ async function handle_request(msg, callback) {
           ...msg.body,
         });
         await review.save();
-        Company.findOneAndUpdate(
-          { CompanyID },
-          { $inc: { SalaryReviewCount: 1 } },
+        res.status = 200;
+        res.end = 'Salary Review Added';
+        callback(null, res);
+        // Company.findOneAndUpdate(
+        //   { CompanyID },
+        //   { $inc: { SalaryReviewCount: 1 } },
 
-          (err, results) => {
-            if (err) {
-              res.status = 500;
-              res.end = 'Network Error';
-              callback(null, res);
-            }
-            if (results) {
-              res.status = 200;
-              res.end = 'Salary Review Added';
-              callback(null, res);
-            }
-          }
-        );
+        //   (err, results) => {
+        //     if (err) {
+        //       res.status = 500;
+        //       res.end = 'Network Error';
+        //       callback(null, res);
+        //     }
+        //     if (results) {
+        //       res.status = 200;
+        //       res.end = 'Salary Review Added';
+        //       callback(null, res);
+        //     }
+        //   }
+        // );
       } catch (error) {
         res.status = 500;
         res.end = 'Network Error';
@@ -771,7 +774,7 @@ async function handle_request(msg, callback) {
             }
           }
         );
-      } catch(error) {
+      } catch (error) {
         res.status = 500;
         res.end = 'Network Error';
         callback(null, res);
@@ -1022,7 +1025,8 @@ async function handle_request(msg, callback) {
       let con = null;
       try {
         const { JobID, StudentID } = msg.body;
-        const applicationWithdrawProcedure = 'DELETE FROM APPLICATION_RECEIVED WHERE JobID=? AND StudentID=?;';
+        const applicationWithdrawProcedure =
+          'DELETE FROM APPLICATION_RECEIVED WHERE JobID=? AND StudentID=?;';
         con = await mysqlConnection();
         // eslint-disable-next-line no-unused-vars
         const [results, fields] = await con.query(applicationWithdrawProcedure, [JobID, StudentID]);
