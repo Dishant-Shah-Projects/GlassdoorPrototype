@@ -154,12 +154,13 @@ async function handle_request(msg, callback) {
     case 'searchSalary': {
       const res = {};
       try {
-        const { searchString, State, PageNo } = msg.query;
+        const { SearchString, State, PageNo } = msg.query;
         const resultData = {};
         await Company.find(
           {
-            CompanyName: { $regex: `${searchString}`, $options: 'i' },
+            CompanyName: { $regex: `${SearchString}`, $options: 'i' },
             State: { $regex: `${State}`, $options: 'i' },
+            SalaryReviewCount: { $gt: 0 },
           },
           {
             CompanyID: 1,
@@ -187,8 +188,9 @@ async function handle_request(msg, callback) {
           .limit(10)
           .skip(PageNo * 10);
         const count = await Company.find({
-          CompanyName: { $regex: `${searchString}`, $options: 'i' },
+          CompanyName: { $regex: `${SearchString}`, $options: 'i' },
           State: { $regex: `${State}`, $options: 'i' },
+          SalaryReviewCount: { $gt: 0 },
         }).countDocuments();
         resultData.count = { count };
         res.status = 200;
