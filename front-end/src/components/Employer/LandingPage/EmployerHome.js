@@ -6,6 +6,7 @@ import Body from './Body.js';
 import './Body.css';
 import LeftBlock from './LeftBlock.js';
 import RightBlock from './RightBlock.js';
+import { Redirect } from 'react-router';
 
 class EmployerHome extends Component {
   constructor(props) {
@@ -13,25 +14,19 @@ class EmployerHome extends Component {
     this.state = {};
   }
 
-  // componentDidMount() {
-  //   localStorage.setItem('selectedOption', "Profile");
-  // }
+  
   handleClick = (selectedOption = 'Profile') => {
-    //console.log('selected option', selectedOption);
-    //let selectedOption = localStorage.getItem('selectedOption');
+    
     switch (selectedOption) {
       case 'Profile': {
-        console.log('selected option profile');
         history.push('/Employer');
         break;
       }
-      case 'Report': {
-        console.log('selected option reports');
+      case 'Report': {        
         history.push('/EmployerReport');
         break;
       }
-      case 'updateProfile': {
-        console.log('selected option reports');
+      case 'updateProfile': {        
         history.push('/EmployerProfile');
         break;
       }
@@ -42,6 +37,15 @@ class EmployerHome extends Component {
   };
 
   render() {
+    if (localStorage.getItem('token')) {
+      if (localStorage.getItem('userrole') === 'student') {
+        return <Redirect to="/Home" />;
+      } else if (localStorage.getItem('userrole') === 'admin') {
+        return <Redirect to="/AdminHomePage" />;
+      }
+    } else {
+      return <Redirect to="/login" />;
+    }
     return (
       <div>
         {/*<Navbar />*/}
