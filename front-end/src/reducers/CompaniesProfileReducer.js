@@ -17,6 +17,7 @@ const defaultState = {
     City: '',
     State: '',
     FeaturedReview: '',
+    CoverPhoto: '',
   },
 };
 

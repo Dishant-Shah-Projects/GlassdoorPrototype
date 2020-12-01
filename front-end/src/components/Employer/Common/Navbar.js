@@ -4,7 +4,11 @@ import { Redirect } from 'react-router';
 import { history } from '../../../App';
 import axios from 'axios';
 import serverUrl from '../../../config';
-import { openProfileTabOnClick, updateSearcFilter, updateCompanyProfile } from '../../../constants/action-types';
+import {
+  openProfileTabOnClick,
+  updateSearcFilter,
+  updateCompanyProfile,
+} from '../../../constants/action-types';
 import { connect } from 'react-redux';
 
 class Navbar extends Component {
@@ -32,7 +36,7 @@ class Navbar extends Component {
         (response) => {
           if (response.status === 200) {
             console.log(response);
-            localStorage.setItem('companyName',response.data);
+            localStorage.setItem('companyName', response.data);
             let payload = {
               CompanyName: response.data.CompanyName,
               Website: response.data.Website,
@@ -48,7 +52,8 @@ class Navbar extends Component {
               CEO: response.data.CEO,
               City: response.data.City,
               State: response.data.State,
-              FeaturedReview: response.data.FeaturedReview,              
+              FeaturedReview: response.data.FeaturedReview,
+              CoverPhoto: response.data.CoverPhoto,
             };
             console.log('payload', payload);
             localStorage.setItem('companyName', response.data.CompanyName);
@@ -60,7 +65,7 @@ class Navbar extends Component {
         },
         (error) => {
           this.setState({
-            errorMessage: "No Profile found",
+            errorMessage: 'No Profile found',
           });
         }
       );
@@ -216,12 +221,12 @@ class Navbar extends Component {
                             }`}
                           >
                             <div class="popup__PopupStyles__popupBackground">
-                              <div class="d-flex flex-column col" style={{width: '100%'}}>
+                              <div class="d-flex flex-column col" style={{ width: '100%' }}>
                                 <div class="accountPopup__AccountPopupStyles__menuContainer">
                                   <div class="accountPopup__AccountPopupStyles__accountMenu accountPopup__AccountPopupStyles__active">
                                     <ul class="p-0 m-0 memberHeader__HeaderStyles__list">
                                       <li
-                                        style={{ cursor: 'pointer'}}
+                                        style={{ cursor: 'pointer' }}
                                         onClick={(event) => {
                                           this.mainMenuClicked(event, 'Profile');
                                         }}
@@ -607,7 +612,7 @@ const mapDispatchToProps = (dispatch) => {
         payload,
       });
     },
-  }
-}
+  };
+};
 export default connect(mapStateToProps, mapDispatchToProps)(Navbar);
 //export default Navbar;
