@@ -160,7 +160,7 @@ class RightBlock extends Component {
                             target="_blank"
                             rel="noopener noreferrer"
                             class="css-1hg9omi"
-                            style={{ fontSize: 'small' }}
+                            // style={{ fontSize: 'small' }}
                             data-test="employer-website"
                           >
                             {this.props.companyInfo.Website}

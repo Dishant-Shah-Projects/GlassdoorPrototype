@@ -715,7 +715,7 @@ class RightBlock extends Component {
                     <div aria-expanded="false" aria-autocomplete="list" className="css-1xtvih1">
                       <div className=" css-1ohf0ui">
                         <div className="input-wrapper css-q444d9">
-                          <input
+                          {/*<input
                             placeholder="State"
                             autocomplete="off"
                             name="State"
@@ -726,7 +726,24 @@ class RightBlock extends Component {
                             className="css-1sk6eli"
                             onChange={this.onChangeCommonHandler}
                             value={this.state.State}
-                          />
+                          />*/}
+                          <select
+                            required="true"
+                            style={{ backgroundColor: '#fff' }}
+                            id="stateName"
+                            data-test="state"
+                            maxlength="100"
+                            aria-label=""
+                            class="css-ofiv3k"
+                            onChange={(event) => this.onChangeCommonHandler(event)}
+                            value={this.state.State}
+                            name="State"
+                          >
+                            <option value=""></option>
+                            {this.props.masterData.States.map((state) => (
+                              <option value={state}>{state}</option>
+                            ))}
+                          </select>
                         </div>
                       </div>
                       <ul className="suggestions down"></ul>
@@ -926,8 +943,10 @@ class RightBlock extends Component {
 
 const mapStateToProps = (state) => {
   const { companyInfo } = state.CompaniesProfileReducer;
+  const { masterData } = state.staticDataReducer;
   return {
     companyInfo,
+    masterData,
   };
 };
 
