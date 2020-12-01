@@ -13,8 +13,8 @@ class InterviewForm extends Component {
       JobTitle: '',
       Description: '',
       OverallExperience: '',
-      Difficulty: 'SELECT',
-      OfferStatus: 'SELECT',
+      Difficulty: 'Select',
+      OfferStatus: 'Select',
       InterviewQuestions: '',
       Answers: '',
       openDifficultyDropDown: false,
@@ -1109,7 +1109,7 @@ class InterviewForm extends Component {
                               class="gd-ui-button css-1dach6o css-8i7bc2"
                               data-test="interview-survey-interview-submit"
                             >
-                              Sumbit
+                              Submit
                             </button>
                           </div>
                           {this.state.invalidData ? (

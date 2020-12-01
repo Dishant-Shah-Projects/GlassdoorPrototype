@@ -11,7 +11,7 @@ const CompanySchema = new mongoose.Schema(
     Revenue: { type: String },
     Headquarter: { type: String },
     Industry: { type: String },
-    Founded: { type: Date },
+    Founded: { type: String },
     CompanyDescription: { type: String },
     City: { type: String },
     State: { type: String },
