@@ -109,6 +109,7 @@ class SalRange extends Component {
           <button
             onClick={this.selectFilter}
             className="applybutton gd-btn gd-btn-link gradient gd-btn-2 gd-btn-sm"
+            style={{ backgroundColor: '#1861bf' }}
           >
             Apply
           </button>

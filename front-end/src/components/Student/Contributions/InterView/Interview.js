@@ -126,6 +126,7 @@ class Interview extends Component {
                 <InterviewCard
                   delete={(event) => this.delete(event, interview.InterviewReviewID)}
                   interview={interview}
+                  openCompanyProfile={(event) => this.props.openCompanyProfile(event)}
                 />
               ))}
             </tbody>

@@ -174,7 +174,7 @@ class ImageUploadModal extends Component {
                   type="file"
                   ref={this.inputElement}
                   style={{ display: 'none' }}
-                  accept=".jpg,.png"
+                  accept=".jpg,.png,.jpeg"
                 />
                 Upload Image
               </button>

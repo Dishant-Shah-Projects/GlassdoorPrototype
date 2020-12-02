@@ -123,8 +123,9 @@ class Reviews extends Component {
               )}
               {this.props.studentReviewsStore.ReviewList.map((review) => (
                 <RevieCard
-                  delete={(event) => this.delete(event, review.GeneralReviewID)}
+                  delete={(event) => this.delete(event, review.ID)}
                   review={review}
+                  openCompanyProfile={(event) => this.props.openCompanyProfile(event)}
                 />
               ))}
             </tbody>

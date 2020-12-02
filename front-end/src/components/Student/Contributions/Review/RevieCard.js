@@ -1,11 +1,26 @@
 import React, { Component } from 'react';
 import moment from 'moment';
+import { switchTab } from '../../../../constants/action-types';
+import { connect } from 'react-redux';
 
 class RevieCard extends Component {
   constructor(props) {
     super(props);
     this.state = {};
   }
+
+  openCompanyTab = (event, tab) => {
+    const payload = {
+      selectedTab: tab,
+    };
+    //CompanySalaries
+    //CompanyInterviews
+    //GeneralReview
+    localStorage.setItem('companyID', this.props.review.CompanyID);
+    this.props.switchTab(payload);
+    this.props.openCompanyProfile(event);
+  };
+
   render() {
     const review = this.props.review;
     const stars = [];
@@ -17,7 +32,7 @@ class RevieCard extends Component {
       <tr>
         <td class="summary">
           <p>
-            <a href="/Reviews/Employee-Review-Tata-Consultancy-Services-RVW37250114.htm">
+            <a onClick={(event) => this.openCompanyTab(event, 'GeneralReview')} href="#">
               <span class="strong">{review.JobTitle}</span> at {review.CompanyName}
             </a>
           </p>
@@ -56,4 +71,16 @@ class RevieCard extends Component {
   }
 }
 
-export default RevieCard;
+// export default RevieCard;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    switchTab: (payload) => {
+      dispatch({
+        type: switchTab,
+        payload,
+      });
+    },
+  };
+};
+
+export default connect(null, mapDispatchToProps)(RevieCard);

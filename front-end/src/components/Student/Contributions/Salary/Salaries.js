@@ -112,6 +112,7 @@ class Salaries extends Component {
                 <SalaryCard
                   delete={(event) => this.delete(event, salary.SalaryReviewID)}
                   salary={salary}
+                  openCompanyProfile={(event) => this.props.openCompanyProfile(event)}
                 />
               ))}
             </tbody>

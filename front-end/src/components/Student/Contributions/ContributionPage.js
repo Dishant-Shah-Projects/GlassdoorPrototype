@@ -9,6 +9,8 @@ import Interview from './InterView/Interview';
 import Photos from './Photos/Photos';
 import { history } from '../../../App';
 import { Redirect } from 'react-router-dom';
+import axios from 'axios';
+import serverUrl from '../../../config';
 
 class ContributionPage extends Component {
   constructor(props) {
@@ -22,12 +24,17 @@ class ContributionPage extends Component {
     });
   };
 
-  // openCommonContributionPage = (event, page) => {
-  //   // event.preventDefault();
+  openCompanyProfile = (event) => {
+    // localStorage.setItem('companyID', CompanyID);
+    history.push('/CompanyPage');
 
-  //   history.push('/CommonContribute');
-  //   // return false;
-  // };
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    const data = { CompanyID: localStorage.getItem('companyID') };
+    axios.post(serverUrl + 'student/companyViewCount', data).then(
+      (response) => {},
+      (error) => {}
+    );
+  };
 
   render() {
     if (localStorage.getItem('token')) {
@@ -54,17 +61,25 @@ class ContributionPage extends Component {
                       switchTab={(event, tab) => this.switchTab(event, tab)}
                     />
                     {this.state.tabOpened === 'Salaries' ? (
-                      <Salaries
-                        openCommonContributionPage={(event, page) => {
-                          this.openCommonContributionPage(event, page);
-                        }}
-                      />
+                      <Salaries openCompanyProfile={(event) => this.openCompanyProfile(event)} />
                     ) : (
                       ''
                     )}
-                    {this.state.tabOpened === 'Reviews' ? <Reviews /> : ''}
-                    {this.state.tabOpened === 'Interviews' ? <Interview /> : ''}
-                    {this.state.tabOpened === 'Photos' ? <Photos /> : ''}
+                    {this.state.tabOpened === 'Reviews' ? (
+                      <Reviews openCompanyProfile={(event) => this.openCompanyProfile(event)} />
+                    ) : (
+                      ''
+                    )}
+                    {this.state.tabOpened === 'Interviews' ? (
+                      <Interview openCompanyProfile={(event) => this.openCompanyProfile(event)} />
+                    ) : (
+                      ''
+                    )}
+                    {this.state.tabOpened === 'Photos' ? (
+                      <Photos openCompanyProfile={(event) => this.openCompanyProfile(event)} />
+                    ) : (
+                      ''
+                    )}
                   </div>
                 </div>
               </div>

@@ -118,7 +118,11 @@ class Photos extends Component {
                 ''
               )}
               {this.props.studentPhotosStore.PhotoList.map((photo) => (
-                <PhotoCard delete={(event) => this.delete(event, photo.ID)} photo={photo} />
+                <PhotoCard
+                  delete={(event) => this.delete(event, photo.ID)}
+                  photo={photo}
+                  openCompanyProfile={(event) => this.props.openCompanyProfile(event)}
+                />
               ))}
             </tbody>
           </table>

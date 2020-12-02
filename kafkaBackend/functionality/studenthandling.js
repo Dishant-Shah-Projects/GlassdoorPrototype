@@ -22,13 +22,22 @@ async function handle_request(msg, callback) {
       const res = {};
       try {
         const { ID } = msg.body;
-        await Photo.deleteOne({ ID }, (err, result) => {
+        const result = Photo.findOne({ ID });
+        await Photo.deleteOne({ ID }, async (err, result2) => {
           if (err) {
             res.status = 500;
             res.end = 'Network Error';
             callback(null, res);
           }
-          if (result) {
+          if (result2) {
+            if (result.Status === 'Approved') {
+              const { CompanyID } = result;
+              const companyModel = await Company.findOneAndUpdate(
+                { CompanyID },
+                { $inc: { PhotoCount: -1 } }
+              );
+            }
+
             res.status = 200;
             res.end = 'Deleted the Photo';
             callback(null, res);
@@ -49,13 +58,37 @@ async function handle_request(msg, callback) {
       const res = {};
       try {
         const { GeneralReviewID } = msg.body;
-        await General.deleteOne({ ID: GeneralReviewID }, (err, result) => {
+        const result = General.findOne({ ID: GeneralReviewID });
+        await General.deleteOne({ ID: GeneralReviewID }, async (err, result2) => {
           if (err) {
             res.status = 500;
             res.end = 'Network Error';
             callback(null, res);
           }
-          if (result) {
+          if (result2) {
+            if (result.Status === 'Approved') {
+              const rating = result.Rating;
+              const { CompanyID } = result;
+              const recommended = result.Recommended ? -1 : 0;
+              const approveCEO = result.CEOApproval ? -1 : 0;
+              const companyModel = await Company.findOneAndUpdate(
+                { CompanyID },
+                {
+                  $inc: {
+                    GeneralReviewCount: -1,
+                    TotalGeneralReviewRating: -rating,
+                    recommendedcount: recommended,
+                    approveCEOcount: approveCEO,
+                  },
+                }
+              );
+              if (
+                companyModel.FeaturedReview &&
+                companyModel.FeaturedReview.ID === GeneralReviewID
+              ) {
+                await Company.findOneAndUpdate({ CompanyID }, { $unset: { FeaturedReview: {} } });
+              }
+            }
             res.status = 200;
             res.end = 'Deleted the General review';
             callback(null, res);
@@ -76,13 +109,22 @@ async function handle_request(msg, callback) {
       const res = {};
       try {
         const { InterviewReviewID } = msg.body;
-        await Interview.deleteOne({ InterviewReviewID }, (err, result) => {
+        const result = Interview.findOne({ InterviewReviewID });
+        await Interview.deleteOne({ InterviewReviewID }, async (err, result2) => {
           if (err) {
             res.status = 500;
             res.end = 'Network Error';
             callback(null, res);
+            const result = Interview.findOne({ InterviewReviewID });
           }
-          if (result) {
+          if (result2) {
+            if (result.Status === 'Approved') {
+              const { CompanyID } = result;
+              const companyModel = await Company.findOneAndUpdate(
+                { CompanyID },
+                { $inc: { InterviewReviewCount: -1 } }
+              );
+            }
             res.status = 200;
             res.end = 'Deleted the Interview review';
             callback(null, res);
@@ -103,13 +145,21 @@ async function handle_request(msg, callback) {
       const res = {};
       try {
         const { SalaryReviewID } = msg.body;
-        await Salary.deleteOne({ SalaryReviewID }, (err, result) => {
+        const result = Salary.findOne({ SalaryReviewID });
+        await Salary.deleteOne({ SalaryReviewID }, async (err, result2) => {
           if (err) {
             res.status = 500;
             res.end = 'Network Error';
             callback(null, res);
           }
-          if (result) {
+          if (result2) {
+            if (result.Status === 'Approved') {
+              const { CompanyID } = result;
+              const companyModel = await Company.findOneAndUpdate(
+                { CompanyID },
+                { $inc: { SalaryReviewCount: -1 } }
+              );
+            }
             res.status = 200;
             res.end = 'Deleted the Salary review';
             callback(null, res);

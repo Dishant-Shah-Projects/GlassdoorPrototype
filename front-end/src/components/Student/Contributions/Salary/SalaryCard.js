@@ -1,11 +1,25 @@
 import React, { Component } from 'react';
 import moment from 'moment';
+import { switchTab } from '../../../../constants/action-types';
+import { connect } from 'react-redux';
 
 class SalaryCard extends Component {
   constructor(props) {
     super(props);
     this.state = {};
   }
+
+  openCompanyTab = (event, tab) => {
+    const payload = {
+      selectedTab: tab,
+    };
+    //CompanySalaries
+    //CompanyInterviews
+    //GeneralReview
+    localStorage.setItem('companyID', this.props.salary.CompanyID);
+    this.props.switchTab(payload);
+    this.props.openCompanyProfile(event);
+  };
 
   abbrNum = (number, decPlaces = 2) => {
     // 2 decimal places => 100, 3 => 1000, etc
@@ -45,10 +59,13 @@ class SalaryCard extends Component {
     return (
       <tr>
         <td class="summary">
-          <p class="job">
-            <strong>{salary.JobTitle}</strong> at {salary.CompanyName}
-            <br />
-          </p>
+          <a href="#" onClick={(event) => this.openCompanyTab(event, 'CompanySalaries')}>
+            {' '}
+            <p class="job">
+              <strong>{salary.JobTitle}</strong> at {salary.CompanyName}
+              <br />
+            </p>
+          </a>
           <p class="desc">
             {' '}
             {salaryValue} $<span> yearly</span>
@@ -69,4 +86,16 @@ class SalaryCard extends Component {
   }
 }
 
-export default SalaryCard;
+// export default SalaryCard;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    switchTab: (payload) => {
+      dispatch({
+        type: switchTab,
+        payload,
+      });
+    },
+  };
+};
+
+export default connect(null, mapDispatchToProps)(SalaryCard);
