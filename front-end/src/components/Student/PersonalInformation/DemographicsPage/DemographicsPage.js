@@ -53,7 +53,7 @@ class DemographicsPage extends Component {
     student.Gender = '';
     student.Disability = '';
     student.VeteranStatus = '';
-    student.Race = '';
+    student.Race = [];
     this.updateStudentProfile(event, student);
   };
 
