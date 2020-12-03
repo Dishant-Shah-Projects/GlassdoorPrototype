@@ -313,7 +313,7 @@ class CompanyOverView extends Component {
                 {JSON.stringify(this.props.companyOverviewStore.positiveReview) !== '{}' ? (
                   <SpecialReview
                     review={this.props.companyOverviewStore.positiveReview}
-                    reviewType={'Most Helpufl Positive Review'}
+                    reviewType={'Most Helpful Positive Review'}
                   />
                 ) : (
                   ''
@@ -321,7 +321,7 @@ class CompanyOverView extends Component {
                 {JSON.stringify(this.props.companyOverviewStore.negatieReview) !== '{}' ? (
                   <SpecialReview
                     review={this.props.companyOverviewStore.negatieReview}
-                    reviewType={'Most Helpufl Negative Review'}
+                    reviewType={'Most Helpful Negative Review'}
                   />
                 ) : (
                   ''
