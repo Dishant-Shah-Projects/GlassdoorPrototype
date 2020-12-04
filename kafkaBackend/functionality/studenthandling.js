@@ -1439,7 +1439,7 @@ async function handle_request(msg, callback) {
             res.status = 500;
             res.end = 'Student not found';
             callback(null, res);
-          } else {
+          } else if (results) {
             jobTitle = results.JobTitle;
           }
         });

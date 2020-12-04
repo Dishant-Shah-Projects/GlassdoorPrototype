@@ -10,6 +10,7 @@ class JobPreferencePage extends Component {
     super(props);
     this.state = {
       JobType: [],
+      showPreferredIndustryInput: false,
       showJobTitleInput: false,
       showJobSearchDropdown: false,
       showJobTypeDropdown: false,
@@ -65,6 +66,14 @@ class JobPreferencePage extends Component {
     this.updateStudentProfile(student);
   };
 
+  // savePreferredIndustry = (event) => {
+  //   event.preventDefault();
+  //   // let JobType = [...this.state.JobType];
+  //   const student = { ...this.props.studentInfoStore.studentProfile };
+  //   student.PreferredIndustry = this.state.PreferredIndustry;
+  //   this.updateStudentProfile(student);
+  // };
+
   clearAllJobTypes = (event) => {
     event.preventDefault();
     let JobType = [...this.state.JobType];
@@ -84,6 +93,12 @@ class JobPreferencePage extends Component {
   openJobTitleinput = (event) => {
     this.setState({
       showJobTitleInput: true,
+    });
+  };
+
+  openPreferredIndustry = (event) => {
+    this.setState({
+      showPreferredIndustryInput: true,
     });
   };
 
@@ -150,6 +165,32 @@ class JobPreferencePage extends Component {
     }
   };
 
+  onChangePreferredIndustryHandler = (event) => {
+    const studentProfile = { ...this.props.studentInfoStore.studentProfile };
+    studentProfile.PreferredIndustry = event.target.value;
+    // update in reducer
+    const payload = {
+      studentProfile,
+    };
+    this.props.updateStudentProfile(payload);
+  };
+
+  removePreferredIndustry = (event) => {
+    event.preventDefault();
+    const student = { ...this.props.studentInfoStore.studentProfile };
+    student.PreferredIndustry = '';
+    this.updateStudentProfile(student);
+  };
+
+  savePreferredIndustry = (event) => {
+    event.preventDefault();
+    if (this.props.studentInfoStore.studentProfile.PreferredIndustry.length === 0) {
+    } else {
+      const student = { ...this.props.studentInfoStore.studentProfile };
+      this.updateStudentProfile(student);
+    }
+  };
+
   // updateStudentProfile = (student) => {
   //   console.log(student);
   //   this.setState({
@@ -178,6 +219,7 @@ class JobPreferencePage extends Component {
             showJobTitleInput: false,
             showJobTypeDropdown: false,
             showtargetSalaryInput: false,
+            showPreferredIndustryInput: false,
           });
         }
       },
@@ -687,6 +729,105 @@ class JobPreferencePage extends Component {
             <p>We use this information to help find you the best company matches.</p>
             <div class="relative" id="PreferredLocations">
               <div class="pb-0">
+                <p class="mt-xl mb-xs">
+                  <strong>What industry do you prefer?</strong>
+                </p>
+                {this.state.showPreferredIndustryInput ? (
+                  <div class="d-flex">
+                    <div class="idealJobStyle__adjustWidth___IiDqt">
+                      <div class="pb-sm css-1ohf0ui">
+                        <label
+                          for="Autocomplete-b1e701-0266-54c-2cec-650f106534c7"
+                          class="css-1opum1l"
+                        >
+                          <span>Industry Type</span>
+                        </label>
+                        <div
+                          aria-expanded="false"
+                          role="combobox"
+                          aria-autocomplete="list"
+                          class="css-1xtvih1"
+                        >
+                          <div class=" css-1ohf0ui">
+                            <div class="input-wrapper css-q444d9">
+                              <input
+                                onChange={this.onChangePreferredIndustryHandler}
+                                placeholder="Industry Type"
+                                autocomplete="off"
+                                name="Autocomplete"
+                                id="Autocomplete-b1e701-0266-54c-2cec-650f106534c7"
+                                data-test=""
+                                aria-label="Industry Type"
+                                class="css-ofiv3k"
+                                value={this.props.studentInfoStore.studentProfile.PreferredIndustry}
+                              />
+                            </div>
+                          </div>
+                          <div>
+                            <div data-test="FilterChips"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="pl-sm link idealJobStyle__addIcon___22lnv" data-test="saveIcon">
+                      <span
+                        onClick={(event) => this.savePreferredIndustry(event)}
+                        class="SVGInline"
+                      >
+                        <svg
+                          class="SVGInline-svg"
+                          width="18"
+                          height="18"
+                          viewBox="0 0 18 18"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <defs>
+                            <circle id="prefix__circle" cx="9" cy="9" r="9"></circle>
+                            <mask id="prefix__plus" x="0" y="0" width="18" height="18" fill="#fff">
+                              <use href="#prefix__circle"></use>
+                            </mask>
+                          </defs>
+                          <g stroke="#1861BF" fill="none" fill-rule="evenodd">
+                            <use
+                              mask="url(#prefix__plus)"
+                              stroke-width="2"
+                              href="#prefix__circle"
+                            ></use>
+                            <path d="M9 4.757v8.486M4.757 9h8.486" stroke-linejoin="round"></path>
+                          </g>
+                        </svg>
+                      </span>
+                    </div>
+                  </div>
+                ) : (
+                  <div class="idealJobStyle__chips___1iw1E" data-test="idealJobList">
+                    {this.props.studentInfoStore.studentProfile.PreferredIndustry.length > 0 ? (
+                      <div class="chip idealJobStyle__chip___3I3VC">
+                        <span class="pr-sm">
+                          {this.props.studentInfoStore.studentProfile.PreferredIndustry}
+                        </span>
+                        <span data-test="removePreferredIndustry" class="remove pl-sm pointer link">
+                          <i onClick={this.removePreferredIndustry} class="icon-cross"></i>
+                        </span>
+                      </div>
+                    ) : (
+                      ''
+                    )}
+                    <div class="idealJobStyle__chips___1iw1E" data-test="idealJobList">
+                      <button
+                        onClick={this.openPreferredIndustry}
+                        class="gd-ui-button idealJobStyle__addEntryIcon___2IO95 d-flex justify-content-center align-items-center css-1c2vj07"
+                        data-test="addIcon"
+                      >
+                        {this.props.studentInfoStore.studentProfile.PreferredIndustry.length > 0 ? (
+                          <span class="px-xxsm">+ Change Industry Type</span>
+                        ) : (
+                          <span class="px-xxsm">+ Add Industry Type</span>
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                )}
                 <p class="mt-xl mb-sm">
                   <strong>Where would you prefer to work?</strong>
                 </p>

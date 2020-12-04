@@ -72,15 +72,12 @@ class SalaryCard extends Component {
           </p>
         </td>
         <td class="submitted center nowrap middle"> {moment(salary.DatePosted).format('ll')}</td>
-        <td class="actions center noWrap middle">
-          {/*<a href="/member/account/editSalary_input.htm?editId=29925291&amp;gdToken=hNopzthp9xvg_Gc0hEJMwg%3ApZwrLPDHSRcSGLOaGgZ3u2qzmRkWAo-GunUwlBfAJmqBXDTtRBVtdFqc0oKykfK2bKfOl5O09NvoeY8G3LQKNg%3AlynaUNXG0LJU6CMkJN7_AJ7kh7TKRBjxvw47W7DQiMw">
-                    Edit
-        </a>
-      &nbsp;&nbsp;|&nbsp;&nbsp;*/}
+        {/*<td class="actions center noWrap middle">
+         
           <a href="" onClick={(event) => this.props.delete(event)}>
             Delete
           </a>
-        </td>
+    </td>*/}
       </tr>
     );
   }

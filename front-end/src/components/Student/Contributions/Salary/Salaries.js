@@ -95,7 +95,6 @@ class Salaries extends Component {
               <tr>
                 <th class="summary chubby middle">Details</th>
                 <th class="submitted center middle">Submitted</th>
-                <th></th>
               </tr>
             </thead>
             <tbody>

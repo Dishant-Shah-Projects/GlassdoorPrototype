@@ -54,6 +54,7 @@ const StudentSchema = new mongoose.Schema({
     },
   ],
   PreferredJobTitle: { type: String },
+  PreferredIndustry: { type: String },
   TargetSalary: { type: Number },
   OpentoRelocation: { type: Boolean, default: false },
   WorkRemotely: { type: Boolean, default: false },

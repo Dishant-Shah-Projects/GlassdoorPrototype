@@ -109,7 +109,6 @@ class Interview extends Component {
                   </span>
                   ]{' '}
                 </th>
-                <th></th>
               </tr>
             </thead>
             <tbody>

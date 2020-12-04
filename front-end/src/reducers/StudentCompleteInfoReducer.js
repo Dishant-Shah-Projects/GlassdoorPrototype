@@ -24,6 +24,7 @@ const defaultState = {
       JobType: [],
       Resumes: [],
       AppliedJobs: [],
+      PreferredIndustry: '',
     },
   },
 };

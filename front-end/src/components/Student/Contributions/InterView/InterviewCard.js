@@ -37,15 +37,12 @@ class InterviewCard extends Component {
         </td>
         <td class="submitted center"> {moment(interview.DatePosted).format('ll')}</td>
         <td class="itemStatus hideMob center"> {interview.Status}</td>
-        <td class="actions center noWrap">
-          {/*<a href="/member/account/editInterview_input.htm?editId=38213485&amp;gdToken=KHHEmO68WzDfNopVTPHw_w%3AMQFMIcRK2h7CuTbpk18qNXS_vgJg3Fu1f1Y2qm_3Kre-KPP_Sch4oLGVC3Adc8V-SPEZ2WoRsCk9hoK9zZdqcA%3Ah1yX63Ywq_qPtBqVDb6WXjZFftZU3lin7oj6qHsXjqM">
-                    Edit
-                </a>
-      &nbsp;&nbsp;|&nbsp;&nbsp;*/}
+        {/*<td class="actions center noWrap">
+       
           <a href="#" onClick={(event) => this.props.delete(event)}>
             Delete
           </a>
-        </td>
+    </td>*/}
       </tr>
     );
   }

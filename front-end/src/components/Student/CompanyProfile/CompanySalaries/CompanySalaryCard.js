@@ -88,7 +88,7 @@ class CompanySalaryCard extends Component {
             <div class="" data-test="job-info">
               <p style={{ marginTop: '13%' }}>
                 <a href="/Salary/Google-Software-Engineer-San-Jose-Salaries-EJI_IE9079.0,6_KO7,24_IL.25,33_IM761.htm">
-                  {salary.JobTitle}
+                  {salary._id}
                 </a>
               </p>
             </div>

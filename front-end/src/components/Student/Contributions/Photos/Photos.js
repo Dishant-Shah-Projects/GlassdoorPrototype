@@ -104,7 +104,6 @@ class Photos extends Component {
                   </span>
                   ]{' '}
                 </th>
-                <th></th>
               </tr>
             </thead>
             <tbody>

@@ -71,6 +71,7 @@ class Navbar extends Component {
               JobType: [],
               Resumes: [],
               AppliedJobs: [],
+              PreferredIndustry: '',
               ...response.data[0],
             },
           };

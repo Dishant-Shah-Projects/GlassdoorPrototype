@@ -57,15 +57,12 @@ class RevieCard extends Component {
         <td class="empStatus noWrap hideMob center"> {review.EmployeeStatus}</td>
         <td class="submitted noWrap hideMob center">{moment(review.DatePosted).format('ll')}</td>
         <td class="itemStatus noWrap hideMob center"> {review.Status}</td>
-        <td class="actions noWrap center">
-          {/*<a href="/member/account/editReview_input.htm?editId=37250114&amp;gdToken=0mclOMbkvweHVLjLoX4Omg%3AA-JscUXxKVuQHMd6OgG0OWLhaVGPs6iVAAeT8zx3px9XCfPtfyTbFqqUsX5Iv4QmagDvC_XoFDqA2y5oHCe_yw%3A4wJ7Bwj8od-rGv-kYisFLMwukqQMBxUEgtw9-TPRjhQ">
-                    Edit
-                </a>
-      &nbsp;&nbsp;|&nbsp;&nbsp;*/}
+        {/*<td class="actions noWrap center">
+       
           <a href="#" onClick={(event) => this.props.delete(event)}>
             Delete
           </a>
-        </td>
+              </td>*/}
       </tr>
     );
   }
