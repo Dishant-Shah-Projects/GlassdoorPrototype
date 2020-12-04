@@ -820,4 +820,22 @@ Router.post('/deletePhoto', checkAuth, async (req, res) => {
     }
   });
 });
+// get search job result
+Router.get('/jobStatus', checkAuth, async (req, res) => {
+  const data = {
+    api: 'jobStatus',
+    query: req.query,
+  };
+  kafka.make_request('student2', data, (err, results) => {
+    // console.log('in result');
+    // console.log(results);
+    if (err) {
+      res.status(500);
+      res.end('Network Error');
+    } else {
+      res.status(results.status);
+      res.end(results.end);
+    }
+  });
+});
 module.exports = Router;
