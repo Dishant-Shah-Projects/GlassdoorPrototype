@@ -280,4 +280,21 @@ Router.get('/applicantCount', checkAuth, async (req, res) => {
   });
 });
 
+Router.post('/findCompanyName', async (req, res) => {
+  const data = {
+    api: 'findCompanyName',
+    body: req.body,
+  };
+  kafka.make_request('company2', data, (err, results) => {
+    // console.log('in result');
+    // console.log(results);
+    if (err) {
+      res.status(500);
+      res.end('Network Error');
+    } else {
+      res.status(results.status);
+      res.end(results.end);
+    }
+  });
+});
 module.exports = Router;

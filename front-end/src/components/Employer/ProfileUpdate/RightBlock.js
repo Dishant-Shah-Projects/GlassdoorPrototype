@@ -71,7 +71,7 @@ class RightBlock extends Component {
 
   componentDidMount() {
     //set the with credentials to true
-    if(!localStorage.getItem('userId')) {
+    if (!localStorage.getItem('userId')) {
       return <Redirect to="/Employer" />;
     }
     const data = localStorage.getItem('userId');
@@ -149,6 +149,7 @@ class RightBlock extends Component {
 
     const data = {
       CompanyID: CompanyID,
+      CompanyName: this.state.CompanyName,
       Website: this.state.Website,
       Size: this.state.Size,
       Type: this.state.Type,
@@ -202,9 +203,9 @@ class RightBlock extends Component {
         }
       },
       (error) => {
-        console.log(error);
+        console.log(error);        
         this.setState({
-          errorMessage: error.response.data,
+          errorMessage: 'Name already in use',
         });
       }
     );
@@ -216,6 +217,44 @@ class RightBlock extends Component {
     });
   };
 
+  CompanyNameChange = (e) => {
+    this.setState({
+      errorMessage: '',
+    });
+    this.setState({
+      CompanyName: e.target.value,
+    });
+  };
+
+  checkAvailability = (e) => {
+    e.preventDefault();
+    console.log('check availability');
+    let CompanyID = localStorage.getItem('userId');
+    const data = {
+      CompanyID,
+      CompanyName: this.state.CompanyName,
+    };
+    axios.defaults.withCredentials = true;
+    //make a post request with the user data
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    axios
+      .post(serverUrl + 'company/findCompanyName', data)
+      .then((response) => {
+        if (response.status === 200) {
+          this.setState({
+            errorMessage: 'Available',
+          });
+        }
+        
+      })
+      .catch((error) => {
+        if (error.response.status === 409) {
+          this.setState({
+            errorMessage: error.response.data,
+          });
+        }        
+      });
+  };
   uploadImage = (event) => {
     if (event.target.files.length === 1) {
       axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
@@ -377,7 +416,61 @@ class RightBlock extends Component {
             </div>
             <div className="relative" id="JobSearchStatus">
               <ul>
-                <li
+                <div
+                  className="ajax-input"
+                  style={{
+                    '-webkit-box-align': 'center',
+                    'align-items': 'center',
+                    'flex-wrap': 'wrap',
+                    width: 'auto',
+                    'margin-bottom': '16px',
+                  }}
+                >
+                  <label style={{ paddingBottom: '5px' }}>CompanyName</label>
+                  <input type="hidden" name="CompanyName" value="0" />
+                  <div className=" css-1ohf0ui">
+                    <div aria-expanded="false" aria-autocomplete="list" className="css-1xtvih1">
+                      <div className=" css-1ohf0ui">
+                        <div className="input-wrapper css-q444d9">
+                          <input
+                            placeholder="CompanyName"
+                            autocomplete="off"
+                            name="CompanyName"
+                            type="text"
+                            id="userEnteredOccupationInput-jobTitleId"
+                            data-test=""
+                            aria-label=""
+                            className="css-1sk6eli"
+                            onChange={this.CompanyNameChange}
+                            value={this.state.CompanyName}
+                          />
+                        </div>
+                      </div>
+                      <a href="#" onClick={(event) => this.checkAvailability(event)}>
+                        <button
+                          className="gd-ui-button ml-std col-auto css-iixdfr"
+                          type="button"
+                          data-test="search-bar-submit"
+                          style={{
+                            width: '50',
+                            backgroundColor: '#fff',
+                            border: '#808080',
+                            color: '#808080',
+                            'margin-left': '10px',
+                          }}
+                        >
+                          <span>Check Availability</span>
+                        </button>
+                      </a>
+                      <p style={{ color: this.state.errorMessage ==="Available" ? 'green' : 'red' }}>{this.state.errorMessage}</p>
+                      <ul className="suggestions down"></ul>
+                      <div>
+                        <div data-test="FilterChips"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
                   className="ajax-input"
                   style={{
                     '-webkit-box-align': 'center',
@@ -413,9 +506,9 @@ class RightBlock extends Component {
                       </div>
                     </div>
                   </div>
-                </li>
+                </div>
 
-                <li
+                <div
                   className="ajax-input"
                   style={{
                     '-webkit-box-align': 'center',
@@ -452,7 +545,7 @@ class RightBlock extends Component {
                       </div>
                     </div>
                   </div>
-                </li>
+                </div>
 
                 <div
                   className="ajax-input"
