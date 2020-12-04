@@ -10,6 +10,8 @@ import {
 import PostJobModal from './PostJobModal';
 import JobCard from './JobCard';
 import RightBlock from './RightBlock';
+import axios from 'axios';
+import serverUrl from '../../../config.js';
 
 class LeftBlock extends Component {
   constructor(props) {
@@ -22,6 +24,26 @@ class LeftBlock extends Component {
     const selectedJob = {
       ...this.props.jobsStore.jobsList[index],
     };
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    axios
+      .get(serverUrl + 'company/applicantCount', {
+        params: {
+          JobID: Jobid,
+        },
+        withCredentials: true,
+      })
+      .then(
+        (response) => {
+          console.log('applicant count', response.data);
+          let payload2 = {
+            ApplicantCount: response.data.ApplicantNumber.appcount,
+          };
+          this.props.updateJobSelectList(payload2);
+        },
+        (error) => {
+          console.log('error', error);
+        }
+      );
     let payload2 = {
       jobsInfo: selectedJob,
     };

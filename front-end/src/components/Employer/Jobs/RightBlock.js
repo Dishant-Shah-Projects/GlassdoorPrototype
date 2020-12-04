@@ -109,7 +109,7 @@ class RightBlock extends Component {
                                   );
                                 }}
                               >
-                                Applicants List
+                                Applicants List ({this.props.jobSelectStore.ApplicantCount})
                               </button>
                             </div>
                           </div>

@@ -33,14 +33,33 @@ class JobsHome extends Component {
             PageCount: Math.ceil(response.data.count / 10),
             Totalcount: response.data.count,
             // PageCount: Math.ceil(response.data.Totalcount / 3),
-          };          
+          };
           this.props.updateJobList(payload1);
 
           if (response.data.jobs.length > 0) {
             let payload2 = {
               jobsInfo: { ...response.data.jobs[0] },
             };
-            this.props.updateJobSelectList(payload2);
+
+            axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+            axios
+              .get(serverUrl + 'company/applicantCount', {
+                params: {
+                  JobID: payload2.jobsInfo._id,
+                },
+                withCredentials: true,
+              })
+              .then(
+                (response) => {
+                  console.log('applicant count', response.data);
+
+                  payload2.ApplicantCount = response.data.ApplicantNumber.appcount;
+                  this.props.updateJobSelectList(payload2);
+                },
+                (error) => {
+                  console.log('error', error);
+                }
+              );
           }
         },
         (error) => {
@@ -67,8 +86,8 @@ class JobsHome extends Component {
               <span id="NodePageData"> </span>
               <div id="JobSearch">
                 <div className="gdGrid noPad">
-                  <div id="JobResults" className="module noPad">                    
-                      {<LeftBlock jobFetch={(PageNo) => this.jobFetch(PageNo)} />}                                         
+                  <div id="JobResults" className="module noPad">
+                    {<LeftBlock jobFetch={(PageNo) => this.jobFetch(PageNo)} />}
                   </div>
                 </div>
               </div>

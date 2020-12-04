@@ -5,17 +5,18 @@ const defaultState = {
     jobsList: [],
     PageNo: 0,
     PageCount: 5,
-    Totalcount: 10,    
+    Totalcount: 10,
   },
   jobSelectStore: {
-    jobsInfo: {},    
-  }
+    jobsInfo: {},
+    ApplicantCount: 0,
+  },
 };
 
-const JobsListReducer = (state = defaultState, action) => {  
+const JobsListReducer = (state = defaultState, action) => {
   switch (action.type) {
-    case updateJobList: {     
-      return {       
+    case updateJobList: {
+      return {
         ...state,
         jobsStore: { ...state.jobsStore, ...action.payload1 },
         //   return Object.assign(state, action.payload);

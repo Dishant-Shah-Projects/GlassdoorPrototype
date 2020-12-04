@@ -271,9 +271,11 @@ async function handle_request(msg, callback) {
         con = await mysqlConnection();
         const [results, fields] = await con.query(fetchApplicationsQuery, [JobID]);
         con.release();
-        if (results[0].appcount) {
+        console.log('results', results);
+        if (results[0]) {
+          console.log('inside', results);
           res.status = 200;
-          res.end = JSON.stringify({ ApplicantNumber: results[0].appcount });
+          res.end = JSON.stringify({ ApplicantNumber: results[0] });
           callback(null, res);
         }
       } catch (error) {
