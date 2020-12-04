@@ -261,4 +261,23 @@ Router.get('/demographicsJob', async (req, res) => {
   });
 });
 
+// Fetch applications
+Router.get('/applicantCount', checkAuth, async (req, res) => {
+  const data = {
+    api: 'applicantCount',
+    query: req.query,
+  };
+  kafka.make_request('company2', data, (err, results) => {
+    // console.log('in result');
+    // console.log(results);
+    if (err) {
+      res.status(500);
+      res.end('Network Error');
+    } else {
+      res.status(results.status);
+      res.end(results.end);
+    }
+  });
+});
+
 module.exports = Router;

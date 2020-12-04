@@ -12,6 +12,9 @@ const Static = require('../model/Static');
 const Job = require('../model/Job');
 const General = require('../model/GeneralReview');
 const redisClient = require('../redisClient');
+const Interview = require('../model/InterviewReview');
+const Salary = require('../model/SalaryReview');
+const Photo = require('../model/Photos');
 // eslint-disable-next-line camelcase
 async function handle_request(msg, callback) {
   // eslint-disable-next-line default-case
@@ -55,8 +58,22 @@ async function handle_request(msg, callback) {
     }
     case 'companyProfileUpdate': {
       const res = {};
+      let con = null;
       try {
         const { CompanyID } = msg.body;
+        const compcheck = await Company.findOne({ CompanyID }).select('CompanyName');
+        if (msg.body.CompanyName !== compcheck.CompanyName) {
+          await General.update({ CompanyID }, { CompanyName: msg.body.CompanyName });
+          await Job.update({ CompanyID }, { CompanyName: msg.body.CompanyName });
+          await Salary.update({ CompanyID }, { CompanyName: msg.body.CompanyName });
+          await Interview.update({ CompanyID }, { CompanyName: msg.body.CompanyName });
+          await Photo.update({ CompanyID }, { CompanyName: msg.body.CompanyName });
+          const querynew = 'UPDATE APPLICATION_JOB SET CompanyName = ?  WHERE COmpanyID = ?;';
+          // eslint-disable-next-line no-underscore-dangle
+          con = await mysqlConnection();
+          const [results, fields] = await con.query(querynew, [msg.body.CompanyName, CompanyID]);
+          con.release();
+        }
         const redisKey = `getCompanyProfile-CompanyID=${CompanyID}`;
         await redisClient.get(redisKey, async (err, data) => {
           // data is available in Redis
@@ -79,6 +96,10 @@ async function handle_request(msg, callback) {
         res.status = 500;
         res.end = 'Network Error';
         callback(null, res);
+      } finally {
+        if (con) {
+          con.release();
+        }
       }
       break;
     }
@@ -227,6 +248,32 @@ async function handle_request(msg, callback) {
           resultdata.push(results[1]);
           res.status = 200;
           res.end = JSON.stringify(resultdata);
+          callback(null, res);
+        }
+      } catch (error) {
+        res.status = 500;
+        res.end = 'Network Error';
+        callback(null, res);
+      } finally {
+        if (con) {
+          con.release();
+        }
+      }
+      break;
+    }
+    case 'applicantCount': {
+      const res = {};
+      let con = null;
+      try {
+        const { JobID } = msg.query;
+        const fetchApplicationsQuery =
+          'SELECT count(*) as appcount FROM APPLICATION_RECEIVED WHERE JobID=?';
+        con = await mysqlConnection();
+        const [results, fields] = await con.query(fetchApplicationsQuery, [JobID]);
+        con.release();
+        if (results[0].appcount) {
+          res.status = 200;
+          res.end = JSON.stringify({ ApplicantNumber: results[0].appcount });
           callback(null, res);
         }
       } catch (error) {
