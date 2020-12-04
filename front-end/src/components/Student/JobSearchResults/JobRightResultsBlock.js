@@ -12,8 +12,50 @@ import { updateStudentProfile } from '../../../constants/action-types';
 class JobRightResultsBlock extends Component {
   constructor(props) {
     super(props);
-    this.state = { tabOpened: 'Job' };
+    this.state = { tabOpened: 'Job', JobStatus: '' };
   }
+
+  getStatus = () => {
+    debugger;
+    if (
+      this.props.studentInfoStore.studentProfile.AppliedJobs.includes(
+        this.props.jobOonFocusStore.jobOonFocus._id
+      )
+    ) {
+      axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+      axios
+        .get(serverUrl + 'student/jobStatus', {
+          params: {
+            JobID: this.props.jobOonFocusStore.jobOonFocus._id,
+            StudentID: localStorage.getItem('userId'),
+          },
+          withCredentials: true,
+        })
+        .then(
+          (response) => {
+            console.log('job status:', response.data);
+            return response.data[0].Status;
+            // this.setState({
+            //   JobStatus: response.data[0].Status,
+            // });
+            // let interviewSearchList = response.data.returns.map((inter) => {
+            //   return { ...inter.Interview, ProfileImg: inter.ProfileImg };
+            // });
+            // let payload = {
+            //   interviewSearchList: interviewSearchList,
+            //   PageNo,
+            //   PageCount: Math.ceil(response.data.count / 10),
+            //   Totalcount: response.data.count,
+            //   // PageCount: Math.ceil(response.data.Totalcount / 3),
+            // };
+            // this.props.updateInterviewList(payload);
+          },
+          (error) => {
+            return '';
+          }
+        );
+    }
+  };
 
   tabChange = (event, tabOpened) => {
     this.setState({
@@ -98,24 +140,34 @@ class JobRightResultsBlock extends Component {
     let alreadyApplied = false;
 
     if (this.props.studentInfoStore.studentProfile.AppliedJobs.includes(selectedJob._id)) {
+      // const JobStatus = this.getStatus();
+      // console.log(JobStatus);
       alreadyApplied = true;
     }
     const withdrawJob = (
       <div>
-        <div style={{ paddingTop: '5px' }} class="applyCTA gdGrid">
-          <span style={{ fontSize: 'large' }} class="appliedOnMsg">
-            Already Applied! want to{' '}
-          </span>
-          <span onClick={this.withdrawJob} style={{ fontSize: 'large' }}>
-            <a>withdraw?</a>
-          </span>
-        </div>
+        {this.props.jobOonFocusStore.jobOonFocus.Status !== 'Hired' ? (
+          <div style={{ paddingTop: '5px' }} class="applyCTA gdGrid">
+            <span style={{ fontSize: 'large' }} class="appliedOnMsg">
+              Already Applied! want to{' '}
+            </span>
+            <span onClick={this.withdrawJob} style={{ fontSize: 'large' }}>
+              <a>withdraw?</a>
+            </span>
+          </div>
+        ) : (
+          ''
+        )}
         <div style={{ paddingTop: '5px' }} class="applyCTA gdGrid">
           <span style={{ fontSize: 'large' }} class="appliedOnMsg">
             Application Status:{' '}
           </span>
           <span style={{ fontSize: 'large' }}>
-            <strong>withdraw?</strong>
+            <strong>
+              {this.props.jobOonFocusStore.jobOonFocus.Status
+                ? this.props.jobOonFocusStore.jobOonFocus.Status
+                : 'Submitted'}
+            </strong>
           </span>
         </div>
       </div>

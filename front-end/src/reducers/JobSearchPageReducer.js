@@ -22,7 +22,7 @@ const defaultState = {
   jobFilterStore: {
     fiterSlected: '',
   },
-  jobOonFocusStore: { jobOonFocus: { jobdetails: [] } },
+  jobOonFocusStore: { jobOonFocus: { jobdetails: [], Status: '' } },
 };
 
 const JobSearchPageReducer = (state = defaultState, action) => {

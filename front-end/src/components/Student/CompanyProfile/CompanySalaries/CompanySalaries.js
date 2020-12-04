@@ -29,13 +29,18 @@ class CompanySalaries extends Component {
       })
       .then(
         (response) => {
-          console.log('Salaryies', response.data);
+          console.log('Salaryies', response.data);          
+          let totalcount = 0;
+          let pagecount = 0;
+          if (response.data.count.length !== 0) {             
+            totalcount= response.data.count[0].JobTitle;
+            pagecount= Math.ceil(response.data.count[0].JobTitle / 10);
+          }
           let payload = {
             SalaryList: response.data.result,
             PageNo,
-            Totalcount: response.data.count[0].JobTitle,
-            PageCount: Math.ceil(response.data.count[0].JobTitle / 10),
-
+            Totalcount: totalcount,
+            PageCount: pagecount,
             // PageCount: Math.ceil(response.data.Totalcount / 3),
           };
           this.props.updateCompanySalariesStore(payload);
