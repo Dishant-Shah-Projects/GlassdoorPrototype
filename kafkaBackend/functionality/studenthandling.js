@@ -1012,6 +1012,66 @@ async function handle_request(msg, callback) {
       }
       break;
     }
+
+    case 'companyReview': {
+      const res = {};
+      try {
+        const { CompanyID, PageNo, StudentID } = msg.query;
+        const Status = 'Approved';
+        const studentReviewCount = await General.find({ StudentID }).countDocuments();
+        let count23 = null;
+        if (studentReviewCount > 0) {
+          console.log('Greater than 5');
+          const results = await General.find({
+            CompanyID,
+            Status,
+          })
+            .limit(10)
+            .skip(PageNo * 10);
+          // console.log(results);
+          const temp = await General.countDocuments({
+            CompanyID,
+            Status,
+          });
+
+          if (temp) {
+            // console.log(temp);
+            count23 = temp;
+          } else {
+            count23 = 0;
+          }
+          const resultData = [];
+          resultData.push({ count: count23 });
+          const no = Math.ceil(count23 / 10);
+          resultData.push({ noOfPages: no });
+          resultData.push(results);
+          res.status = 200;
+          res.end = JSON.stringify(resultData);
+          callback(null, res);
+        } else {
+          console.log('Less than 5');
+          const results = await General.find({
+            CompanyID,
+            Status,
+          }).limit(5);
+
+          const resultData = [];
+          resultData.push({ count: results.length });
+          const no = 1;
+          resultData.push({ noOfPages: no });
+          resultData.push(results);
+          res.status = 200;
+          res.end = JSON.stringify(resultData);
+          callback(null, res);
+        }
+      } catch {
+        res.status = 500;
+        res.end = 'Network Error';
+        callback(null, res);
+      }
+      break;
+    }
+    /* 
     case 'companyReview': {
       const res = {};
       try {
@@ -1050,6 +1110,7 @@ async function handle_request(msg, callback) {
       }
       break;
     }
+    */
     case 'companyProfile': {
       const res = {};
       try {

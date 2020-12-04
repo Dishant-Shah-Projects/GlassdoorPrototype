@@ -45,6 +45,7 @@ class CompanyReviews extends Component {
         params: {
           CompanyID: localStorage.getItem('companyID'),
           PageNo,
+          StudentID: localStorage.getItem('userId'),
         },
         withCredentials: true,
       })
