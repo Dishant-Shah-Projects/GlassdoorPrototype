@@ -11,10 +11,10 @@ const Student = require('../model/Student');
 const Static = require('../model/Static');
 const Job = require('../model/Job');
 const General = require('../model/GeneralReview');
-const redisClient = require('../redisClient');
-const Interview = require('../model/InterviewReview');
 const Salary = require('../model/SalaryReview');
+const Interview = require('../model/InterviewReview');
 const Photo = require('../model/Photos');
+const redisClient = require('../redisClient');
 // eslint-disable-next-line camelcase
 async function handle_request(msg, callback) {
   // eslint-disable-next-line default-case
@@ -63,12 +63,12 @@ async function handle_request(msg, callback) {
         const { CompanyID } = msg.body;
         const compcheck = await Company.findOne({ CompanyID }).select('CompanyName');
         if (msg.body.CompanyName !== compcheck.CompanyName) {
-          await General.update({ CompanyID }, { CompanyName: msg.body.CompanyName });
-          await Job.update({ CompanyID }, { CompanyName: msg.body.CompanyName });
-          await Salary.update({ CompanyID }, { CompanyName: msg.body.CompanyName });
-          await Interview.update({ CompanyID }, { CompanyName: msg.body.CompanyName });
-          await Photo.update({ CompanyID }, { CompanyName: msg.body.CompanyName });
-          const querynew = 'UPDATE APPLICATION_JOB SET CompanyName = ?  WHERE COmpanyID = ?;';
+          await General.updateMany({ CompanyID }, { CompanyName: msg.body.CompanyName });
+          await Job.updateMany({ CompanyID }, { CompanyName: msg.body.CompanyName });
+          await Salary.updateMany({ CompanyID }, { CompanyName: msg.body.CompanyName });
+          await Interview.updateMany({ CompanyID }, { CompanyName: msg.body.CompanyName });
+          await Photo.updateMany({ CompanyID }, { CompanyName: msg.body.CompanyName });
+          const querynew = 'UPDATE APPLICATION_JOB SET CompanyName = ?  WHERE CompanyID = ?;';
           // eslint-disable-next-line no-underscore-dangle
           con = await mysqlConnection();
           const [results, fields] = await con.query(querynew, [msg.body.CompanyName, CompanyID]);
@@ -100,7 +100,7 @@ async function handle_request(msg, callback) {
         if (con) {
           con.release();
         }
-      }
+      }      
       break;
     }
     case 'companyReviews': {
@@ -552,6 +552,34 @@ async function handle_request(msg, callback) {
         if (con) {
           con.release();
         }
+      }
+      break;
+    }
+
+    case 'findCompanyName': {
+      const res = {};
+      let con = null;
+      try {
+        const { CompanyName } = msg.body;
+        const name = await Company.find({CompanyName}, (err, result) => {
+          if (err) {
+            res.status = 500;
+            res.end = 'Network Error';
+            callback(null, res);
+          } if (result.length !== 0) {            
+            res.status = 409;
+            res.end = 'Name already in use';
+            callback(null, res);
+          } else {
+            res.status = 200;
+            res.end = JSON.stringify('Name available');
+            callback(null, res);
+          }
+        });
+      } catch (error) {
+        res.status = 500;
+        res.end = 'Network Error';
+        callback(null, res);
       }
       break;
     }
