@@ -150,11 +150,45 @@ class JobList extends Component {
         };
         this.props.updateJobFilterStore(payload2);
 
+        // if (response.data.job.length > 0) {
+        //   let payload3 = {
+        //     jobOonFocus: { ...response.data.job[0] },
+        //   };
+        //   this.props.updateOnFocusJob(payload3);
+        // }
         if (response.data.job.length > 0) {
           let payload3 = {
             jobOonFocus: { ...response.data.job[0] },
           };
-          this.props.updateOnFocusJob(payload3);
+          if (
+            this.props.studentInfoStore.studentProfile.AppliedJobs.includes(
+              payload3.jobOonFocus._id
+            )
+          ) {
+            axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+            axios
+              .get(serverUrl + 'student/jobStatus', {
+                params: {
+                  JobID: payload3.jobOonFocus._id,
+                  StudentID: localStorage.getItem('userId'),
+                },
+                withCredentials: true,
+              })
+              .then(
+                (response) => {
+                  console.log('job status:', response.data);
+                  // return response.data[0].Status;
+                  payload3.jobOonFocus.Status = response.data[0].Status;
+                  // let payload3 = {
+                  //   jobOonFocus,
+                  // };
+                  this.props.updateOnFocusJob(payload3);
+                },
+                (error) => {}
+              );
+          } else {
+            this.props.updateOnFocusJob(payload3);
+          }
         }
       });
   };
@@ -192,7 +226,35 @@ class JobList extends Component {
           let payload3 = {
             jobOonFocus: { ...response.data.job[0] },
           };
-          this.props.updateOnFocusJob(payload3);
+          if (
+            this.props.studentInfoStore.studentProfile.AppliedJobs.includes(
+              payload3.jobOonFocus._id
+            )
+          ) {
+            axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+            axios
+              .get(serverUrl + 'student/jobStatus', {
+                params: {
+                  JobID: payload3.jobOonFocus._id,
+                  StudentID: localStorage.getItem('userId'),
+                },
+                withCredentials: true,
+              })
+              .then(
+                (response) => {
+                  console.log('job status:', response.data);
+                  // return response.data[0].Status;
+                  payload3.jobOonFocus.Status = response.data[0].Status;
+                  // let payload3 = {
+                  //   jobOonFocus,
+                  // };
+                  this.props.updateOnFocusJob(payload3);
+                },
+                (error) => {}
+              );
+          } else {
+            this.props.updateOnFocusJob(payload3);
+          }
         }
       });
   };

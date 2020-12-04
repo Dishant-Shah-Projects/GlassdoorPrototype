@@ -4,6 +4,8 @@ import './JobResultCard.css';
 import { connect } from 'react-redux';
 import { updateOnFocusJob } from '../../../constants/action-types';
 import defaultplaceholder from '../CompanyProfile/CompanyNavbar/default-placeholder.png';
+import axios from 'axios';
+import serverUrl from '../../../config';
 
 class JobResultCard extends Component {
   constructor(props) {
@@ -16,11 +18,35 @@ class JobResultCard extends Component {
     const jobOonFocus = {
       ...this.props.jobListStore.jobList[index],
     };
-
-    let payload3 = {
-      jobOonFocus,
-    };
-    this.props.updateOnFocusJob(payload3);
+    debugger;
+    if (this.props.studentInfoStore.studentProfile.AppliedJobs.includes(jobOonFocus._id)) {
+      axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+      axios
+        .get(serverUrl + 'student/jobStatus', {
+          params: {
+            JobID: jobOonFocus._id,
+            StudentID: localStorage.getItem('userId'),
+          },
+          withCredentials: true,
+        })
+        .then(
+          (response) => {
+            console.log('job status:', response.data);
+            // return response.data[0].Status;
+            jobOonFocus.Status = response.data[0].Status;
+            let payload3 = {
+              jobOonFocus,
+            };
+            this.props.updateOnFocusJob(payload3);
+          },
+          (error) => {}
+        );
+    } else {
+      let payload3 = {
+        jobOonFocus,
+      };
+      this.props.updateOnFocusJob(payload3);
+    }
   }
   render() {
     const job = this.props.job;
