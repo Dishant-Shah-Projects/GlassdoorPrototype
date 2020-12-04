@@ -101,13 +101,23 @@ class JobRightResultsBlock extends Component {
       alreadyApplied = true;
     }
     const withdrawJob = (
-      <div style={{ paddingTop: '5px' }} class="applyCTA gdGrid">
-        <span style={{ fontSize: 'large' }} class="appliedOnMsg">
-          Already Applied! want to{' '}
-        </span>
-        <span onClick={this.withdrawJob} style={{ fontSize: 'large' }}>
-          <a>withdraw?</a>
-        </span>
+      <div>
+        <div style={{ paddingTop: '5px' }} class="applyCTA gdGrid">
+          <span style={{ fontSize: 'large' }} class="appliedOnMsg">
+            Already Applied! want to{' '}
+          </span>
+          <span onClick={this.withdrawJob} style={{ fontSize: 'large' }}>
+            <a>withdraw?</a>
+          </span>
+        </div>
+        <div style={{ paddingTop: '5px' }} class="applyCTA gdGrid">
+          <span style={{ fontSize: 'large' }} class="appliedOnMsg">
+            Application Status:{' '}
+          </span>
+          <span style={{ fontSize: 'large' }}>
+            <strong>withdraw?</strong>
+          </span>
+        </div>
       </div>
     );
     return (

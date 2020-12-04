@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable camelcase */
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-unused-vars */
@@ -294,7 +295,7 @@ async function handle_request(msg, callback) {
             res.status = 500;
             res.end = 'Network Error';
             callback(null, res);
-          } 
+          }
         });
         const querynew =
           'INSERT INTO APPLICATION_JOB (JobID,CompanyName, CompanyID, PostedDate,StreetAddress,City,State) VALUES (?,?,?,CURDATE(),?,?,?);';
@@ -315,19 +316,19 @@ async function handle_request(msg, callback) {
           { CompanyID },
           { $inc: { JobCount: 0.5 } },
 
-        async   (error, results) => {
+          async (error, results) => {
             if (error) {
               res.status = 500;
               res.end = 'Network Error';
               callback(null, res);
-            } else {  
+            } else {
               const redisKey = `getCompanyProfile-CompanyID=${CompanyID}`;
-            await redisClient.get(redisKey, async (err, data) => {
-              // data is available in Redis
-              if (data) {
-                redisClient.del(redisKey);
-              }
-            });
+              await redisClient.get(redisKey, async (err, data) => {
+                // data is available in Redis
+                if (data) {
+                  redisClient.del(redisKey);
+                }
+              });
             }
           }
         );
@@ -423,35 +424,34 @@ async function handle_request(msg, callback) {
       const res = {};
       let con = null;
       try {
-        const resultApplication = {};
         const finalResult = [];
         const { CompanyID, PageNo } = msg.query;
         const year = new Date().getFullYear();
         const date = new Date(year, 0, 1);
-        const jobDataFetched = await Job.find({ CompanyID, PostedDate: { $gte: date } })
+        const jobDataFetched = await Job.find({ CompanyID, PostedDate: { $gt: date } })
           .limit(5)
           .skip(PageNo * 5);
         con = await mysqlConnection();
         for (let i = 0; i < jobDataFetched.length; i += 1) {
-          // jobID.push(data[i].JobID);
+          const resultApplication = {};
           const jobData = jobDataFetched[i];
           resultApplication.jobDetails = { jobData };
           let getQuery =
             'SELECT COUNT(*) As TotalApplicants FROM APPLICATION_RECEIVED WHERE JobID = ?';
-          let [results] = await con.query(getQuery, jobData.JobID);
+          let [results] = await con.query(getQuery, jobData._id.toString());
           resultApplication.Applied = { results };
           getQuery =
             'SELECT COUNT(*) AS SelectedApplicants FROM APPLICATION_RECEIVED WHERE JobID = ? AND STATUS = ?';
-          [results] = await con.query(getQuery, [jobData.JobID, 'Hired']);
+          [results] = await con.query(getQuery, [jobData._id.toString(), 'Hired']);
           resultApplication.Selected = { results };
           getQuery =
             'SELECT COUNT(*) As RejectedApplicants FROM APPLICATION_RECEIVED WHERE JobID = ? AND STATUS = ?';
-          [results] = await con.query(getQuery, [jobData.JobID, 'Rejected']);
+          [results] = await con.query(getQuery, [jobData._id.toString(), 'Rejected']);
           resultApplication.Rejected = { results };
           finalResult.push(resultApplication);
         }
         con.release();
-        const count = await Job.find({ CompanyID, PostedDate: { $lt: date } }).countDocuments();
+        const count = await Job.find({ CompanyID, PostedDate: { $gt: date } }).countDocuments();
         const noOfPages = Math.ceil(count / 10);
         const output = { statsData: finalResult, count, noOfPages };
         res.status = 200;

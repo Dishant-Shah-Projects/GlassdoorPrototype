@@ -24,7 +24,6 @@ class ResumeCard extends Component {
             >
               {resume.split(/[/ ]+/).pop()}
             </a>
-            <div style={{ lineHeight: '30px' }}>10/20/2020</div>
           </div>
         </div>
         <button

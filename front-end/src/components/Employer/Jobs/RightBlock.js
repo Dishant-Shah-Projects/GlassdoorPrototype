@@ -25,15 +25,14 @@ class RightBlock extends Component {
     axios
       .get(serverUrl + 'company/jobsApplications', {
         params: {
-          JobID: this.props.jobSelectStore.jobsInfo.JobID,
+          JobID: this.props.jobSelectStore.jobsInfo._id,
           applicationPageNo: PageNo,
         },
         withCredentials: true,
       })
-      .then(
-        (response) => {
-          console.log('getapplicants', response);
-          if(response.data.length > 1) {
+      .then((response) => {
+        console.log('getapplicants', response);
+        if (response.data.length > 1) {
           let payload1 = {
             applicantsList: response.data[0],
             PageNo,
@@ -43,24 +42,22 @@ class RightBlock extends Component {
           };
           console.log('payload', payload1);
           this.props.updateApplicantsList(payload1);
-        }
-        else {
+        } else {
           localStorage.setItem('message', response.data);
         }
       })
-        .catch((error) => {          
-          console.log('error', error.status);
-          let payload1 = {
-            applicantsList: [],
-            PageNo: 0,
-            PageCount: 5,
-            Totalcount: 10
-            // PageCount: Math.ceil(response.data.Totalcount / 3),
-          };
-          console.log('payload', payload1);
-          this.props.updateApplicantsList(payload1);
-        });
-      
+      .catch((error) => {
+        console.log('error', error.status);
+        let payload1 = {
+          applicantsList: [],
+          PageNo: 0,
+          PageCount: 5,
+          Totalcount: 10,
+          // PageCount: Math.ceil(response.data.Totalcount / 3),
+        };
+        console.log('payload', payload1);
+        this.props.updateApplicantsList(payload1);
+      });
   };
   showApplicantsList = (event, JobId) => {
     localStorage.setItem('currentId', JobId);
@@ -70,10 +67,9 @@ class RightBlock extends Component {
     this.props.hideApplicantsModal();
   };
 
-  render() {    
-    console.log('jobstore',this.props.jobSelectStore.jobsInfo);
+  render() {
+    console.log('jobstore', this.props.jobSelectStore.jobsInfo);
     return (
-      
       <div id="JDCol" className="noPad opened transformNone">
         {this.props.applicantsModalStore.popSeen ? (
           <ApplicantsList
@@ -82,41 +78,17 @@ class RightBlock extends Component {
           />
         ) : (
           <div id="JDWrapper">
-            {JSON.stringify(this.props.jobSelectStore.jobsInfo) === '{}' ? ('') : (
-            <article className="jobDetails scrollable active" id="3708699629">
-              <div className="jobViewMinimal">
-                <div class="intersection-visible-wrapper">
-                  <div
-                    id="HeroHeaderModule"
-                    data-brandviews="BRAND:n=jsearch-hero-header:eid=148784:jlid=3708699629"
-                  >
-                    <div id="HeroHeaderModuleTop"></div>
-                    <div class="empWrapper ctasTest">
-                      <div class="empInfo newDetails">
-                        <div class="title">{this.props.jobSelectStore.jobsInfo.Title}</div>
-                        <div class="location">
-                          {this.props.jobSelectStore.jobsInfo.City}, {this.props.jobSelectStore.jobsInfo.State}
-                        </div>
-                      </div>
-                      <div class="justify-content-around justify-content-md-between mt-lg row">
-                        <div class="d-flex">
-                          <div class="mr-md">
-                            <button
-                              class="gd-ui-button  css-glrvaa"
-                              onClick={(event) => {
-                                this.showApplicantsList(
-                                  event,
-                                  this.props.jobSelectStore.jobsInfo._id
-                                );
-                              }}
-                            >
-                              Applicants List
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div id="SerpFixedHeader" style={{ display: 'none' }}>
+            {JSON.stringify(this.props.jobSelectStore.jobsInfo) === '{}' ? (
+              ''
+            ) : (
+              <article className="jobDetails scrollable active" id="3708699629">
+                <div className="jobViewMinimal">
+                  <div class="intersection-visible-wrapper">
+                    <div
+                      id="HeroHeaderModule"
+                      data-brandviews="BRAND:n=jsearch-hero-header:eid=148784:jlid=3708699629"
+                    >
+                      <div id="HeroHeaderModuleTop"></div>
                       <div class="empWrapper ctasTest">
                         <div class="empInfo newDetails">
                           <div class="title">{this.props.jobSelectStore.jobsInfo.Title}</div>
@@ -125,54 +97,81 @@ class RightBlock extends Component {
                             {this.props.jobSelectStore.jobsInfo.State}
                           </div>
                         </div>
+                        <div class="justify-content-around justify-content-md-between mt-lg row">
+                          <div class="d-flex">
+                            <div class="mr-md">
+                              <button
+                                class="gd-ui-button  css-glrvaa"
+                                onClick={(event) => {
+                                  this.showApplicantsList(
+                                    event,
+                                    this.props.jobSelectStore.jobsInfo._id
+                                  );
+                                }}
+                              >
+                                Applicants List
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div id="SerpFixedHeader" style={{ display: 'none' }}>
+                        <div class="empWrapper ctasTest">
+                          <div class="empInfo newDetails">
+                            <div class="title">{this.props.jobSelectStore.jobsInfo.Title}</div>
+                            <div class="location">
+                              {this.props.jobSelectStore.jobsInfo.City},{' '}
+                              {this.props.jobSelectStore.jobsInfo.State}
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
 
-                <div id="Details" style={{ 'border-top': '1px solid #DEE0E3' }}>
-                  <div class="jobDetailsInfoWrap">
-                    <div>
-                      <div id="JobDescriptionContainer" class="p-std css-1k5huso e856ufb0">
-                        <div id="JobDesc3708699629" class="css-13klhtw e856ufb7">
-                          <div class="jobDescriptionContent desc">
-                            <strong>Job Description:</strong>
-                            <p>{this.props.jobSelectStore.jobsInfo.JobDescription}</p>
+                  <div id="Details" style={{ 'border-top': '1px solid #DEE0E3' }}>
+                    <div class="jobDetailsInfoWrap">
+                      <div>
+                        <div id="JobDescriptionContainer" class="p-std css-1k5huso e856ufb0">
+                          <div id="JobDesc3708699629" class="css-13klhtw e856ufb7">
+                            <div class="jobDescriptionContent desc">
+                              <strong>Job Description:</strong>
+                              <p>{this.props.jobSelectStore.jobsInfo.JobDescription}</p>
 
-                            <ul>
-                              <li>
-                                <strong>Qualifications: </strong>
-                                {this.props.jobSelectStore.jobsInfo.Qualifications}
-                              </li>
-                              <li>
-                                <strong>JobType: </strong>
-                                {this.props.jobSelectStore.jobsInfo.JobType}
-                              </li>
-                              <li>
-                                <strong>Remote: </strong>
-                                {this.props.jobSelectStore.jobsInfo.Remote}
-                              </li>
-                              <li>
-                                <strong>Responsibilities: </strong>
-                                {this.props.jobSelectStore.jobsInfo.Responsibilities}
-                              </li>
-                              <li>
-                                <strong>Salary offered: </strong>$
-                                {this.props.jobSelectStore.jobsInfo.ExpectedSalary}
-                              </li>
-                              <li>
-                                <strong>JobStatus: </strong>
-                                {this.props.jobSelectStore.jobsInfo.CurrentStatus}
-                              </li>
-                            </ul>
+                              <ul>
+                                <li>
+                                  <strong>Qualifications: </strong>
+                                  {this.props.jobSelectStore.jobsInfo.Qualifications}
+                                </li>
+                                <li>
+                                  <strong>JobType: </strong>
+                                  {this.props.jobSelectStore.jobsInfo.JobType}
+                                </li>
+                                <li>
+                                  <strong>Remote: </strong>
+                                  {this.props.jobSelectStore.jobsInfo.Remote}
+                                </li>
+                                <li>
+                                  <strong>Responsibilities: </strong>
+                                  {this.props.jobSelectStore.jobsInfo.Responsibilities}
+                                </li>
+                                <li>
+                                  <strong>Salary offered: </strong>$
+                                  {this.props.jobSelectStore.jobsInfo.ExpectedSalary}
+                                </li>
+                                <li>
+                                  <strong>JobStatus: </strong>
+                                  {this.props.jobSelectStore.jobsInfo.CurrentStatus}
+                                </li>
+                              </ul>
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </article>
+              </article>
             )}
           </div>
         )}

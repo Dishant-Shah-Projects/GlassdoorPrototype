@@ -18,8 +18,8 @@ class RightBlock extends Component {
   }
 
   render() {
-          //console.log(this.props.demographicsStore.demographics.Ethnicity[0]);
-      
+    //console.log(this.props.demographicsStore.demographics.Ethnicity[0]);
+
     return (
       <div>
         <div class="d-flex flex-column">
@@ -38,7 +38,7 @@ class RightBlock extends Component {
                 loader={<div>Loading Chart</div>}
                 data={this.props.demographicsStore.demographics.Ethnicity}
                 options={{
-                  title: 'My Daily Activities',
+                  title: 'Ethnicity',
                   // Just add this option
                   pieHole: 0.4,
                 }}
@@ -57,7 +57,7 @@ class RightBlock extends Component {
               loader={<div>Loading Chart</div>}
               data={this.props.demographicsStore.demographics.Gender}
               options={{
-                title: 'My Daily Activities',
+                title: 'Gender',
                 // Just add this option
                 pieHole: 0.4,
               }}
@@ -76,7 +76,7 @@ class RightBlock extends Component {
               loader={<div>Loading Chart</div>}
               data={this.props.demographicsStore.demographics.Disability}
               options={{
-                title: 'My Daily Activities',
+                title: 'Disability',
                 // Just add this option
                 pieHole: 0.4,
               }}
@@ -95,7 +95,7 @@ class RightBlock extends Component {
               loader={<div>Loading Chart</div>}
               data={this.props.demographicsStore.demographics.Veteran}
               options={{
-                title: 'My Daily Activities',
+                title: 'Veteran Status',
                 // Just add this option
                 pieHole: 0.4,
               }}

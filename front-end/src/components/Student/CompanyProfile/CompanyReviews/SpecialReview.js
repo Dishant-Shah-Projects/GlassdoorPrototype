@@ -168,6 +168,15 @@ class SpecialReview extends Component {
               <p class="strong">Cons</p>
               <span data-test="">{review.Cons}</span>
             </div>
+
+            {review.Response ? (
+              <div class="my-std css-1raszzq e16x8fv01">
+                <p class="strong">Employeer Response</p>
+                <span data-test="">{review.Response}</span>
+              </div>
+            ) : (
+              ''
+            )}
           </div>
         </div>
       </div>

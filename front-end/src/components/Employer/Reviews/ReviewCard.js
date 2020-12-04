@@ -169,18 +169,27 @@ class ReviewCard extends Component {
                 </p>
               </div>
               <div class="row mt-xsm mx-0"></div>
-              <div class="justify-content-around justify-content-md-between mt-lg row">
-                <div class="d-flex">
-                  <div class="mr-md">
-                    <button
-                      class="gd-ui-button  css-glrvaa"
-                      onClick={() => this.showReply(review.ID)}
-                    >
-                      Reply
-                    </button>
+              {review.Response ? (
+                <div class="v2__EIReviewDetailsV2__fullWidth v2__EIReviewDetailsV2__clickable">
+                  <p class="strong mb-0 mt-xsm">You Replied</p>
+                  <p class="mt-0 mb-xsm v2__EIReviewDetailsV2__bodyColor v2__EIReviewDetailsV2__lineHeightLarge v2__EIReviewDetailsV2__isCollapsed v2__EIReviewDetailsV2__singleLine ">
+                    <span data-test="cons">{review.Response}</span>
+                  </p>
+                </div>
+              ) : (
+                <div class="justify-content-around justify-content-md-between mt-lg row">
+                  <div class="d-flex">
+                    <div class="mr-md">
+                      <button
+                        class="gd-ui-button  css-glrvaa"
+                        onClick={() => this.showReply(review.ID)}
+                      >
+                        Reply
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
               <div>
                 {this.state.popSeen ? (
                   <ReplyModal toggle={this.closeReplyModal} reviewID={review.ID} />

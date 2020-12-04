@@ -121,6 +121,17 @@ class AllReview extends Component {
                   </p>
                 </div>
 
+                {review.Response ? (
+                  <div class="v2__EIReviewDetailsV2__fullWidth v2__EIReviewDetailsV2__clickable">
+                    <p class="strong mb-0 mt-xsm">Employeer Response </p>
+                    <p class="mt-0 mb-xsm v2__EIReviewDetailsV2__bodyColor v2__EIReviewDetailsV2__lineHeightLarge v2__EIReviewDetailsV2__isCollapsed  ">
+                      <span data-test="cons">{review.Response}</span>
+                    </p>
+                  </div>
+                ) : (
+                  ''
+                )}
+
                 <div class="row mt-xsm mx-0"></div>
                 <div
                   id="companyReview"
