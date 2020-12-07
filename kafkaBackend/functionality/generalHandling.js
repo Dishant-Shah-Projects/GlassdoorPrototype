@@ -188,6 +188,60 @@ async function handle_request(msg, callback) {
       }
       break;
     }
+    case 'authenticate': {
+      const res = {};
+      let con = null;
+      try {
+        const { ID } = msg.query;
+        const Role = msg.query.rol;
+        if (Role === 'student') {
+          Student.findOne({ StudentID: ID }, (err, results) => {
+            if (err) {
+              return callback(err, false);
+            }
+            if (results) {
+              callback(null, results);
+            } else {
+              callback(null, false);
+            }
+          });
+        } else if (Role === 'company') {
+          Company.findOne({ CompanyID: ID }, (err, results) => {
+            if (err) {
+              return callback(err, false);
+            }
+            if (results) {
+              callback(null, results);
+            } else {
+              callback(null, false);
+            }
+          });
+        } else if (Role === 'admin') {
+          try {
+            const findQuery = 'SELECT * FROM SIGNUP WHERE UserID=?';
+            con = await mysqlConnection();
+            const [results] = await con.query(findQuery, ID);
+            con.end();
+            if (results[0].Role === 'admin') {
+              callback(null, results);
+            } else {
+              callback(null, false);
+            }
+          } catch (error) {
+            return callback(error, false);
+          }
+        }
+      } catch {
+        res.status = 500;
+        res.end = 'Network Error';
+        callback(null, res);
+      } finally {
+        if (con) {
+          con.end();
+        }
+      }
+      break;
+    }
   }
 }
 exports.handle_request = handle_request;
